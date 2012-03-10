@@ -1,0 +1,648 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="/css/rss20.xsl" type="text/xsl"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:nyt="http://www.nytimes.com/namespaces/rss/2.0" version="2.0" xmlns:pheedo="http://www.pheedo.com/namespace/pheedo">
+	<channel>
+		<title>NYT &gt; Technology</title>
+		<link>http://www.nytimes.com/pages/technology/index.html?partner=rss&amp;emc=rss</link>
+		<description/>
+		<language>en-us</language>
+		<copyright>Copyright 2012  The New York Times Company</copyright>
+		<lastBuildDate>Tue, 07 Feb 2012 15:30:37 GMT </lastBuildDate>
+		<image>
+			<title>NYT &gt; Technology</title>
+			<url>http://graphics8.nytimes.com/images/misc/NYT_logo_rss_250x40.png</url>
+			<link>http://www.nytimes.com/pages/technology/index.html?partner=rss&amp;emc=rss</link>
+		</image>
+		<atom:link rel="hub" href="http://www.pheedo.com/api/hub/"/>
+		<atom:link rel="self" href="http://feeds.nytimes.com/nyt/rss/Technology" type="application/rss+xml"/>
+		<item>
+			<title>Wolfram, a Search Engine, Finds Answers Within Itself</title>
+			<link>http://feeds.nytimes.com/click.phdo?i=8aa7b4228b728e8b70334669dc31241a</link>
+			<pheedo:origLink>http://www.nytimes.com/2012/02/07/technology/wolfram-a-search-engine-finds-answers-within-itself.html?partner=rss&amp;amp;emc=rss</pheedo:origLink>
+			<guid isPermaLink="false">http://www.nytimes.com/2012/02/07/technology/wolfram-a-search-engine-finds-answers-within-itself.html</guid>
+			<atom:link rel="standout" href="http://www.nytimes.com/2012/02/07/technology/wolfram-a-search-engine-finds-answers-within-itself.html?partner=rss&amp;emc=rss"/>
+			<description>Wolfram Alpha Pro&#x2019;s creator wants his &#x201C;computational knowledge engine&#x201D; to appeal to more than math and science enthusiasts.&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;a href=&quot;http://ads.pheedo.com/click.phdo?s=8aa7b4228b728e8b70334669dc31241a&amp;p=1&quot;&gt;&lt;img alt=&quot;&quot; style=&quot;border: 0;&quot; border=&quot;0&quot; src=&quot;http://ads.pheedo.com/img.phdo?s=8aa7b4228b728e8b70334669dc31241a&amp;p=1&quot;/&gt;&lt;/a&gt;
+</description>
+			<dc:creator>By STEVE LOHR</dc:creator>
+			<pubDate>Tue, 07 Feb 2012 15:07:19 GMT</pubDate>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_org_all">Wolfram Research</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Search Engines</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_per">Wolfram, Stephen</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/mdes">Enterprise Computing</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">Google Inc|GOOG|NASDAQ</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">Apple Incorporated|AAPL|NASDAQ</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">International Business Machines Corporation|IBM|NYSE</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">Microsoft Corporation|MSFT|NASDAQ</category>
+		</item>
+		<item>
+			<title>Media Decoder Blog: Verizon Teaming With Redbox for DVD and Streaming Service</title>
+			<link>http://feeds.nytimes.com/click.phdo?i=da59bdd1b670a4abc385ed59c52b48ed</link>
+			<pheedo:origLink>http://mediadecoder.blogs.nytimes.com/2012/02/06/verizon-teaming-with-redbox-for-dvd-and-streaming-service/?partner=rss&amp;amp;emc=rss</pheedo:origLink>
+			<guid isPermaLink="false">http://mediadecoder.blogs.nytimes.com/2012/02/06/verizon-teaming-with-redbox-for-dvd-and-streaming-service/</guid>
+			<atom:link rel="standout" href="http://mediadecoder.blogs.nytimes.com/2012/02/06/verizon-teaming-with-redbox-for-dvd-and-streaming-service/?partner=rss&amp;emc=rss"/>
+			<description>The two companies will combine to try to give customers more access to video on the Web, and possibly position the new venture as an alternative to Netflix.&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;a href=&quot;http://ads.pheedo.com/click.phdo?s=da59bdd1b670a4abc385ed59c52b48ed&amp;p=1&quot;&gt;&lt;img alt=&quot;&quot; style=&quot;border: 0;&quot; border=&quot;0&quot; src=&quot;http://ads.pheedo.com/img.phdo?s=da59bdd1b670a4abc385ed59c52b48ed&amp;p=1&quot;/&gt;&lt;/a&gt;
+</description>
+			<dc:creator>By AMY CHOZICK</dc:creator>
+			<pubDate>Tue, 07 Feb 2012 13:16:39 GMT</pubDate>
+			<category domain="http://www.nytimes.com/namespaces/">Coinstar Inc</category>
+			<category domain="http://www.nytimes.com/namespaces/">Redbox</category>
+			<category domain="http://www.nytimes.com/namespaces/">verizon</category>
+			<category domain="http://www.nytimes.com/namespaces/">Davis, Paul</category>
+			<category domain="http://www.nytimes.com/namespaces/">Cable Television</category>
+			<category domain="http://www.nytimes.com/namespaces/">Computers and the Internet</category>
+			<category domain="http://www.nytimes.com/namespaces/">DVD (Digital Versatile Disc)</category>
+			<category domain="http://www.nytimes.com/namespaces/">Telephones and Telecommunications</category>
+			<category domain="http://www.nytimes.com/namespaces/">Wireless Communications</category>
+			<category domain="http://www.nytimes.com/namespaces/">Netflix Inc</category>
+			<category domain="http://www.nytimes.com/namespaces/">Verizon Communications Inc</category>
+			<category domain="http://www.nytimes.com/namespaces/">Coinstar Inc|CSTR|NASDAQ</category>
+			<category domain="http://www.nytimes.com/namespaces/">Netflix Inc|NFLX|NASDAQ</category>
+			<category domain="http://www.nytimes.com/namespaces/">Verizon Communications Inc|VZ|NYSE</category>
+			<category domain="http://www.nytimes.com/namespaces/">Movies</category>
+		</item>
+		<item>
+			<title>Art Review: VIP Art Fair 2.0 Is Virtual, Modeled on the Traditional</title>
+			<link>http://feeds.nytimes.com/click.phdo?i=0b11e4865aca56c9af139fff06a9d13d</link>
+			<pheedo:origLink>http://www.nytimes.com/2012/02/07/arts/design/vip-art-fair-2-0-is-virtual-modeled-on-the-traditional.html?partner=rss&amp;amp;emc=rss</pheedo:origLink>
+			<guid isPermaLink="false">http://www.nytimes.com/2012/02/07/arts/design/vip-art-fair-2-0-is-virtual-modeled-on-the-traditional.html</guid>
+			<atom:link rel="standout" href="http://www.nytimes.com/2012/02/07/arts/design/vip-art-fair-2-0-is-virtual-modeled-on-the-traditional.html?partner=rss&amp;emc=rss"/>
+			<media:content url="http://graphics8.nytimes.com/images/2012/02/07/arts/VIP1/VIP1-thumbStandard.jpg" medium="image" height="75" width="75"/>
+			<media:description>
+				<em class="bold">VIP Art Fair 2.0</em>&#x201C;O Cowboy&#x201D; (2010), by Beatriz Milhazes is among the works showing at this virtual exposition.</media:description>
+			<media:credit>James Cohan Gallery</media:credit>
+			<description>Art Fair 2.0 takes a second stab at the virtual exhibition (and the Web site runs more smoothly this year).&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;a href=&quot;http://ads.pheedo.com/click.phdo?s=0b11e4865aca56c9af139fff06a9d13d&amp;p=1&quot;&gt;&lt;img alt=&quot;&quot; style=&quot;border: 0;&quot; border=&quot;0&quot; src=&quot;http://ads.pheedo.com/img.phdo?s=0b11e4865aca56c9af139fff06a9d13d&amp;p=1&quot;/&gt;&lt;/a&gt;
+</description>
+			<dc:creator>By MARTHA SCHWENDENER</dc:creator>
+			<pubDate>Tue, 07 Feb 2012 03:15:01 GMT</pubDate>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Art</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Computers and the Internet</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_org_all">VIP Art Fair 2.0</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_per">Saatchi, Charles</category>
+		</item>
+		<item>
+			<title>Facebook&#x2019;s Mobility Challenge</title>
+			<link>http://feeds.nytimes.com/click.phdo?i=60f83a5de5c6c0877e5f9de9382a7ae8</link>
+			<pheedo:origLink>http://www.nytimes.com/2012/02/06/technology/facebooks-mobility-challenge.html?partner=rss&amp;amp;emc=rss</pheedo:origLink>
+			<guid isPermaLink="false">http://www.nytimes.com/2012/02/06/technology/facebooks-mobility-challenge.html</guid>
+			<atom:link rel="standout" href="http://www.nytimes.com/2012/02/06/technology/facebooks-mobility-challenge.html?partner=rss&amp;emc=rss"/>
+			<media:content url="http://graphics8.nytimes.com/images/2012/02/06/business/mobilejump1/mobilejump1-thumbStandard.jpg" medium="image" height="75" width="75"/>
+			<media:description>Mark Zuckerberg and Facebook plan to experiment with mobile advertising, including inserting so-called sponsored stories into users' update streams.</media:description>
+			<media:credit>Kim White/Getty Images</media:credit>
+			<description>Although more than half of its 845 million members log into Facebook on a mobile device, the company has not yet found a way to make real money from that use.&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;a href=&quot;http://ads.pheedo.com/click.phdo?s=60f83a5de5c6c0877e5f9de9382a7ae8&amp;p=1&quot;&gt;&lt;img alt=&quot;&quot; style=&quot;border: 0;&quot; border=&quot;0&quot; src=&quot;http://ads.pheedo.com/img.phdo?s=60f83a5de5c6c0877e5f9de9382a7ae8&amp;p=1&quot;/&gt;&lt;/a&gt;
+</description>
+			<dc:creator>By JENNA WORTHAM</dc:creator>
+			<pubDate>Mon, 06 Feb 2012 21:28:25 GMT</pubDate>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_org_all">Facebook Inc</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/mdes">Online Advertising</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/mdes">Smartphones</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Social Networking (Internet)</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/mdes">Mobile Applications</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">Google Inc|GOOG|NASDAQ</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">Apple Incorporated|AAPL|NASDAQ</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">Zynga Inc|ZNGA|NASDAQ</category>
+		</item>
+		<item>
+			<title>Cancer Center, in Suit, Claims Ex-Official Took Research</title>
+			<link>http://feeds.nytimes.com/click.phdo?i=57a376e348f19446f7081fc137f1b46e</link>
+			<pheedo:origLink>http://www.nytimes.com/2012/02/06/health/cancer-center-in-lawsuit-says-a-doctor-appropriated-a-discovery.html?partner=rss&amp;amp;emc=rss</pheedo:origLink>
+			<guid isPermaLink="false">http://www.nytimes.com/2012/02/06/health/cancer-center-in-lawsuit-says-a-doctor-appropriated-a-discovery.html</guid>
+			<atom:link rel="standout" href="http://www.nytimes.com/2012/02/06/health/cancer-center-in-lawsuit-says-a-doctor-appropriated-a-discovery.html?partner=rss&amp;emc=rss"/>
+			<media:content url="http://graphics8.nytimes.com/images/2012/02/06/business/BIOTECH/BIOTECH-thumbStandard.jpg" medium="image" height="75" width="75"/>
+			<media:description>Dr. Craig B. Thompson, now of Memorial Sloan-Kettering Cancer Center, is being sued.</media:description>
+			<media:credit/>
+			<description>The president of Memorial Sloan-Kettering Cancer Center, Dr. Craig B. Thompson, is in a billion-dollar dispute with his former workplace over accusations that he walked away with research.&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;a href=&quot;http://ads.pheedo.com/click.phdo?s=57a376e348f19446f7081fc137f1b46e&amp;p=1&quot;&gt;&lt;img alt=&quot;&quot; style=&quot;border: 0;&quot; border=&quot;0&quot; src=&quot;http://ads.pheedo.com/img.phdo?s=57a376e348f19446f7081fc137f1b46e&amp;p=1&quot;/&gt;&lt;/a&gt;
+</description>
+			<dc:creator>By ANDREW POLLACK</dc:creator>
+			<pubDate>Mon, 06 Feb 2012 15:03:03 GMT</pubDate>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_org_all">Memorial Sloan-Kettering Cancer Center</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_org_all">University of Pennsylvania</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Suits and Litigation</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/mdes">Intellectual Property</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Colleges and Universities</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Research</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/mdes">Biotechnology</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_per">Thompson, Craig B</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/mdes">Cancer</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">Celgene Corporation|CELG|NASDAQ</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">Aetna Inc|AET|NYSE</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">Nektar Therapeutics|NKTR|NASDAQ</category>
+		</item>
+		<item>
+			<title>A New Question of Internet Freedom</title>
+			<link>http://feeds.nytimes.com/click.phdo?i=34ee140bb3d0fd8c4b253da881c1441e</link>
+			<pheedo:origLink>http://www.nytimes.com/2012/02/06/technology/06iht-acta06.html?partner=rss&amp;amp;emc=rss</pheedo:origLink>
+			<guid isPermaLink="false">http://www.nytimes.com/2012/02/06/technology/06iht-acta06.html</guid>
+			<atom:link rel="standout" href="http://www.nytimes.com/2012/02/06/technology/06iht-acta06.html?partner=rss&amp;emc=rss"/>
+			<media:content url="http://graphics8.nytimes.com/images/2012/02/06/business/acta/acta-thumbStandard-v2.jpg" medium="image" height="75" width="75"/>
+			<media:description>In January, lawmakers in Poland held up masks to protest the ratifying of the Anti-Counterfeiting Trade Agreement.</media:description>
+			<media:credit>Pawel Supernak/European Pressphoto Agency</media:credit>
+			<description>European activists are hoping to stop the international Anti-Counterfeiting Trade Agreement, which they say will erode Internet freedom and stifle innovation.&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;a href=&quot;http://ads.pheedo.com/click.phdo?s=34ee140bb3d0fd8c4b253da881c1441e&amp;p=1&quot;&gt;&lt;img alt=&quot;&quot; style=&quot;border: 0;&quot; border=&quot;0&quot; src=&quot;http://ads.pheedo.com/img.phdo?s=34ee140bb3d0fd8c4b253da881c1441e&amp;p=1&quot;/&gt;&lt;/a&gt;
+</description>
+			<dc:creator>By DAVID JOLLY</dc:creator>
+			<pubDate>Mon, 06 Feb 2012 16:54:15 GMT</pubDate>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Intellectual Property</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Computers and the Internet</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Copyrights and Copyright Violations</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Counterfeit Merchandise</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_geo">Europe</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">Google Inc|GOOG|NASDAQ</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">eBay Inc|EBAY|NASDAQ</category>
+		</item>
+		<item>
+			<title>Bits Blog: Start-Up Nicira Plans to Disrupt Networking Giants</title>
+			<link>http://feeds.nytimes.com/click.phdo?i=d6de13b5c5ae90dd4a2957f05dc90e2c</link>
+			<pheedo:origLink>http://bits.blogs.nytimes.com/2012/02/06/start-up-nicira-plans-to-disrupt-networking-giants/?partner=rss&amp;amp;emc=rss</pheedo:origLink>
+			<guid isPermaLink="false">http://bits.blogs.nytimes.com/2012/02/06/start-up-nicira-plans-to-disrupt-networking-giants/</guid>
+			<atom:link rel="standout" href="http://bits.blogs.nytimes.com/2012/02/06/start-up-nicira-plans-to-disrupt-networking-giants/?partner=rss&amp;emc=rss"/>
+			<description>A small company called Nicira and a few other scrappy players are pursuing what is called software-defined networking.&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;a href=&quot;http://ads.pheedo.com/click.phdo?s=d6de13b5c5ae90dd4a2957f05dc90e2c&amp;p=1&quot;&gt;&lt;img alt=&quot;&quot; style=&quot;border: 0;&quot; border=&quot;0&quot; src=&quot;http://ads.pheedo.com/img.phdo?s=d6de13b5c5ae90dd4a2957f05dc90e2c&amp;p=1&quot;/&gt;&lt;/a&gt;
+</description>
+			<dc:creator>By QUENTIN HARDY</dc:creator>
+			<pubDate>Mon, 06 Feb 2012 22:26:02 GMT</pubDate>
+			<category domain="http://www.nytimes.com/namespaces/">Data Centers</category>
+			<category domain="http://www.nytimes.com/namespaces/">Nicira</category>
+			<category domain="http://www.nytimes.com/namespaces/">software-defined virtualization</category>
+			<category domain="http://www.nytimes.com/namespaces/">virtualization</category>
+			<category domain="http://www.nytimes.com/namespaces/">Casado, Martin</category>
+			<category domain="http://www.nytimes.com/namespaces/">Cloud Computing</category>
+			<category domain="http://www.nytimes.com/namespaces/">Computers and the Internet</category>
+			<category domain="http://www.nytimes.com/namespaces/">Enterprise Computing</category>
+			<category domain="http://www.nytimes.com/namespaces/">Google Inc</category>
+			<category domain="http://www.nytimes.com/namespaces/">Nicira Networks Inc</category>
+			<category domain="http://www.nytimes.com/namespaces/">Google Inc|GOOG|NASDAQ</category>
+			<category domain="http://www.nytimes.com/namespaces/">Data</category>
+			<category domain="http://www.nytimes.com/namespaces/">Start-ups</category>
+		</item>
+		<item>
+			<title>Raw Data: Austrian Law Student Faces Down Facebook</title>
+			<link>http://feeds.nytimes.com/click.phdo?i=8962ca7937228db5ec11ca918c9d5976</link>
+			<pheedo:origLink>http://www.nytimes.com/2012/02/06/technology/06iht-rawdata06.html?partner=rss&amp;amp;emc=rss</pheedo:origLink>
+			<guid isPermaLink="false">http://www.nytimes.com/2012/02/06/technology/06iht-rawdata06.html</guid>
+			<atom:link rel="standout" href="http://www.nytimes.com/2012/02/06/technology/06iht-rawdata06.html?partner=rss&amp;emc=rss"/>
+			<media:content url="http://graphics8.nytimes.com/images/2012/02/06/blogs/max-rdv/max-rdv-thumbStandard.jpg" medium="image" height="75" width="75"/>
+			<media:description>Max Schrems, 24, an Austrian law student, is leading a campaign in Europe against Facebook's use of personal data.</media:description>
+			<media:credit>Ronald Zak/Associated Press</media:credit>
+			<description>Max Schrems's crusade against the information collected by the social network has become a cause c&#xE9;l&#xE8;bre in parts of Europe, looming over the company as it prepares to go public.&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;a href=&quot;http://ads.pheedo.com/click.phdo?s=8962ca7937228db5ec11ca918c9d5976&amp;p=1&quot;&gt;&lt;img alt=&quot;&quot; style=&quot;border: 0;&quot; border=&quot;0&quot; src=&quot;http://ads.pheedo.com/img.phdo?s=8962ca7937228db5ec11ca918c9d5976&amp;p=1&quot;/&gt;&lt;/a&gt;
+</description>
+			<dc:creator>By KEVIN J. O'BRIEN</dc:creator>
+			<pubDate>Mon, 06 Feb 2012 17:00:32 GMT</pubDate>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_org_all">Facebook Inc</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Privacy</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_org_all">European Union</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_org_all">European Commission</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_geo">Austria</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_geo">Ireland</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_per">Schrems, Max</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_geo">Europe</category>
+		</item>
+		<item>
+			<title>Sheryl Sandberg of Facebook, Staying on Message</title>
+			<link>http://feeds.nytimes.com/click.phdo?i=2b00dcc582f905ea2702cf36c8d2a5f1</link>
+			<pheedo:origLink>http://www.nytimes.com/2012/02/05/business/sheryl-sandberg-of-facebook-staying-on-message.html?partner=rss&amp;amp;emc=rss</pheedo:origLink>
+			<guid isPermaLink="false">http://www.nytimes.com/2012/02/05/business/sheryl-sandberg-of-facebook-staying-on-message.html</guid>
+			<atom:link rel="standout" href="http://www.nytimes.com/2012/02/05/business/sheryl-sandberg-of-facebook-staying-on-message.html?partner=rss&amp;emc=rss"/>
+			<media:content url="http://graphics8.nytimes.com/images/2012/02/05/business/05-SANDBERG/05-SANDBERG-thumbStandard.jpg" medium="image" height="75" width="75"/>
+			<media:description>Facebook's No. 2 executive, Sheryl Sandberg,&#xA0;will reap a fortune in its stock offering. And she hasn't stopped telling the world how women should take responsibility for their careers.</media:description>
+			<media:credit>Antoine Antoniol/Bloomberg News</media:credit>
+			<description>Sheryl Sandberg, Facebook&#x2019;s No. 2 executive, considers herself a role model for women. But her call isn&#x2019;t simply about mentoring and empowering; it&#x2019;s also a business strategy.&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;a href=&quot;http://ads.pheedo.com/click.phdo?s=2b00dcc582f905ea2702cf36c8d2a5f1&amp;p=1&quot;&gt;&lt;img alt=&quot;&quot; style=&quot;border: 0;&quot; border=&quot;0&quot; src=&quot;http://ads.pheedo.com/img.phdo?s=2b00dcc582f905ea2702cf36c8d2a5f1&amp;p=1&quot;/&gt;&lt;/a&gt;
+</description>
+			<dc:creator>By NICOLE PERLROTH and CLAIRE CAIN MILLER</dc:creator>
+			<pubDate>Mon, 06 Feb 2012 19:30:04 GMT</pubDate>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_per">Sandberg, Sheryl K.</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Careers and Professions</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Women and Girls</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Initial Public Offerings</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_org_all">Facebook Inc</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_per">Zuckerberg, Mark E</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_geo">Silicon Valley (Calif)</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Hiring and Promotion</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">Yahoo! Inc|YHOO|NASDAQ</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">Hewlett-Packard Company|HPQ|NYSE</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">Google Inc|GOOG|NASDAQ</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">Procter &amp; Gamble Company|PG|NYSE</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">eBay Inc|EBAY|NASDAQ</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">Microsoft Corporation|MSFT|NASDAQ</category>
+		</item>
+		<item>
+			<title>Slipstream: Employers and Brands Use Gaming to Gauge Engagement</title>
+			<link>http://feeds.nytimes.com/click.phdo?i=06db81bcb0258bb2d22eea97096ba130</link>
+			<pheedo:origLink>http://www.nytimes.com/2012/02/05/business/employers-and-brands-use-gaming-to-gauge-engagement.html?partner=rss&amp;amp;emc=rss</pheedo:origLink>
+			<guid isPermaLink="false">http://www.nytimes.com/2012/02/05/business/employers-and-brands-use-gaming-to-gauge-engagement.html</guid>
+			<atom:link rel="standout" href="http://www.nytimes.com/2012/02/05/business/employers-and-brands-use-gaming-to-gauge-engagement.html?partner=rss&amp;emc=rss"/>
+			<media:content url="http://graphics8.nytimes.com/images/2012/02/05/business/05-STREAM/05-STREAM-thumbStandard.jpg" medium="image" height="75" width="75"/>
+			<media:description/>
+			<media:credit>Stephen Savage</media:credit>
+			<description>More companies are turning to gamification &#x2014; offering games that let their customers win points for certain activities &#x2014; as a way to build both loyalty and a trove of data.&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;a href=&quot;http://ads.pheedo.com/click.phdo?s=06db81bcb0258bb2d22eea97096ba130&amp;p=1&quot;&gt;&lt;img alt=&quot;&quot; style=&quot;border: 0;&quot; border=&quot;0&quot; src=&quot;http://ads.pheedo.com/img.phdo?s=06db81bcb0258bb2d22eea97096ba130&amp;p=1&quot;/&gt;&lt;/a&gt;
+</description>
+			<dc:creator>By NATASHA SINGER</dc:creator>
+			<pubDate>Mon, 06 Feb 2012 19:41:03 GMT</pubDate>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Computers and the Internet</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Games</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/mdes">Consumer Behavior</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/mdes">Contests and Prizes</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Customer Relations</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_org_all">Samsung Group</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Social Networking (Internet)</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">Forrester Research Inc|FORR|NASDAQ</category>
+		</item>
+		<item>
+			<title>In Silicon Valley, Socks Make the Tech Entrepreneur</title>
+			<link>http://feeds.nytimes.com/click.phdo?i=dcbfbe644f3b003a68ffbf00a443cf20</link>
+			<pheedo:origLink>http://www.nytimes.com/2012/02/05/fashion/in-silicon-valley-socks-make-the-tech-entrepreneur.html?partner=rss&amp;amp;emc=rss</pheedo:origLink>
+			<guid isPermaLink="false">http://www.nytimes.com/2012/02/05/fashion/in-silicon-valley-socks-make-the-tech-entrepreneur.html</guid>
+			<atom:link rel="standout" href="http://www.nytimes.com/2012/02/05/fashion/in-silicon-valley-socks-make-the-tech-entrepreneur.html?partner=rss&amp;emc=rss"/>
+			<media:content url="http://graphics8.nytimes.com/images/2012/02/05/fashion/05SOCKS1_SPAN/05SOCKS1_SPAN-thumbStandard.jpg" medium="image" height="75" width="75"/>
+			<media:description>Some say the craze took hold because patterned socks are an acceptable shot of flair in a dressed-down culture.</media:description>
+			<media:credit>Peter DaSilva for The New York Times</media:credit>
+			<description>In Silicon Valley, wearing flashy socks is more than an expression of your personality. It signals that you are part of the in crowd.&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;a href=&quot;http://ads.pheedo.com/click.phdo?s=dcbfbe644f3b003a68ffbf00a443cf20&amp;p=1&quot;&gt;&lt;img alt=&quot;&quot; style=&quot;border: 0;&quot; border=&quot;0&quot; src=&quot;http://ads.pheedo.com/img.phdo?s=dcbfbe644f3b003a68ffbf00a443cf20&amp;p=1&quot;/&gt;&lt;/a&gt;
+</description>
+			<dc:creator>By CLAIRE CAIN MILLER and NICK BILTON</dc:creator>
+			<pubDate>Mon, 06 Feb 2012 16:40:05 GMT</pubDate>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Socks</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Fashion and Apparel</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_geo">Silicon Valley (Calif)</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Men and Boys</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_per">Malik, Om</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_per">Walk, Hunter</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_per">Costolo, Dick</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">Google Inc|GOOG|NASDAQ</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">Zynga Inc|ZNGA|NASDAQ</category>
+		</item>
+		<item>
+			<title>Digital Domain: On HealthTap, Advice for You and Points for Doctors</title>
+			<link>http://feeds.nytimes.com/click.phdo?i=ffaa20836d962fc93d7ee735ba84d3f1</link>
+			<pheedo:origLink>http://www.nytimes.com/2012/02/05/business/on-healthtap-advice-for-you-and-points-for-doctors.html?partner=rss&amp;amp;emc=rss</pheedo:origLink>
+			<guid isPermaLink="false">http://www.nytimes.com/2012/02/05/business/on-healthtap-advice-for-you-and-points-for-doctors.html</guid>
+			<atom:link rel="standout" href="http://www.nytimes.com/2012/02/05/business/on-healthtap-advice-for-you-and-points-for-doctors.html?partner=rss&amp;emc=rss"/>
+			<media:content url="http://graphics8.nytimes.com/images/2012/02/05/business/05-DIGI/05-DIGI-thumbStandard.jpg" medium="image" height="75" width="75"/>
+			<media:description>On the HealthTap Web site, users can seek all kinds of free medical advice, and doctors can earn recognition and whimsical &#x201C;awards&#x201D; for providing the answers.</media:description>
+			<media:credit/>
+			<description>On HealthTap, an interactive Web site, users can ask for medical advice, and doctors can gain whimsical &#x201C;awards&#x201D; for their answers.&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;a href=&quot;http://ads.pheedo.com/click.phdo?s=ffaa20836d962fc93d7ee735ba84d3f1&amp;p=1&quot;&gt;&lt;img alt=&quot;&quot; style=&quot;border: 0;&quot; border=&quot;0&quot; src=&quot;http://ads.pheedo.com/img.phdo?s=ffaa20836d962fc93d7ee735ba84d3f1&amp;p=1&quot;/&gt;&lt;/a&gt;
+</description>
+			<dc:creator>By RANDALL STROSS</dc:creator>
+			<pubDate>Mon, 06 Feb 2012 20:10:05 GMT</pubDate>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Doctors</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_org_all">HealthTap</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/mdes">Social Networking (Internet)</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">Zynga Inc|ZNGA|NASDAQ</category>
+		</item>
+		<item>
+			<title>Video Games: Curt Schilling, Former Red Sox Pitcher, Makes Video Games</title>
+			<link>http://feeds.nytimes.com/click.phdo?i=8d315ce1d306aefed2cc2430ea04546c</link>
+			<pheedo:origLink>http://www.nytimes.com/2012/02/05/arts/video-games/curt-schilling-former-red-sox-pitcher-makes-video-games.html?partner=rss&amp;amp;emc=rss</pheedo:origLink>
+			<guid isPermaLink="false">http://www.nytimes.com/2012/02/05/arts/video-games/curt-schilling-former-red-sox-pitcher-makes-video-games.html</guid>
+			<atom:link rel="standout" href="http://www.nytimes.com/2012/02/05/arts/video-games/curt-schilling-former-red-sox-pitcher-makes-video-games.html?partner=rss&amp;emc=rss"/>
+			<media:content url="http://graphics8.nytimes.com/images/2012/02/05/arts/05SCHILLING1_SPAN/05SCHILLING1-thumbStandard.jpg" medium="image" height="75" width="75"/>
+			<media:description>R. A. Salvatore, left, and the former Red Sox pitcher Curt Schilling, chairman of the video game company 38 Studios.</media:description>
+			<media:credit>Gretchen Ertl for The New York Times</media:credit>
+			<description>Curt Schilling, the former Boston Red Sox pitcher, left baseball to start 38 Studios, a video game company, maker of Kingdoms of Amalur: Reckoning.&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;a href=&quot;http://ads.pheedo.com/click.phdo?s=8d315ce1d306aefed2cc2430ea04546c&amp;p=1&quot;&gt;&lt;img alt=&quot;&quot; style=&quot;border: 0;&quot; border=&quot;0&quot; src=&quot;http://ads.pheedo.com/img.phdo?s=8d315ce1d306aefed2cc2430ea04546c&amp;p=1&quot;/&gt;&lt;/a&gt;
+</description>
+			<dc:creator>By ETHAN GILSDORF</dc:creator>
+			<pubDate>Mon, 06 Feb 2012 20:45:45 GMT</pubDate>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_org_all">38 Studios</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Computer and Video Games</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_per">Schilling, Curt</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_ttl">Kingdoms of Amalur: Reckoning (Video Game)</category>
+		</item>
+		<item>
+			<title>E.U. Presses Google to Delay Privacy Policy Changes</title>
+			<link>http://feeds.nytimes.com/click.phdo?i=c62797d67ed85589a65a04833d22f4fe</link>
+			<pheedo:origLink>http://www.nytimes.com/2012/02/04/technology/eu-backs-delay-in-googles-privacy-policy.html?partner=rss&amp;amp;emc=rss</pheedo:origLink>
+			<guid isPermaLink="false">http://www.nytimes.com/2012/02/04/technology/eu-backs-delay-in-googles-privacy-policy.html</guid>
+			<atom:link rel="standout" href="http://www.nytimes.com/2012/02/04/technology/eu-backs-delay-in-googles-privacy-policy.html?partner=rss&amp;emc=rss"/>
+			<media:content url="http://graphics8.nytimes.com/images/2012/02/04/business/Google/Google-thumbStandard.jpg" medium="image" height="75" width="75"/>
+			<media:description>Viviane Reding is the European Union justice commissioner.</media:description>
+			<media:credit>Georges Gobet/Agence France-Presse &#x2014; Getty Images</media:credit>
+			<description>Viviane Reding, the European Union justice commissioner, is pressing Google to halt changes to its privacy policies while the implications for personal data protection are being explored.&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;a href=&quot;http://ads.pheedo.com/click.phdo?s=c62797d67ed85589a65a04833d22f4fe&amp;p=1&quot;&gt;&lt;img alt=&quot;&quot; style=&quot;border: 0;&quot; border=&quot;0&quot; src=&quot;http://ads.pheedo.com/img.phdo?s=c62797d67ed85589a65a04833d22f4fe&amp;p=1&quot;/&gt;&lt;/a&gt;
+</description>
+			<dc:creator>By JAMES KANTER</dc:creator>
+			<pubDate>Sat, 04 Feb 2012 08:11:02 GMT</pubDate>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_org_all">Google Inc|GOOG|NASDAQ</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_org_all">European Union</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_org_all">European Commission</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Privacy</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Regulation and Deregulation of Industry</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">Motorola Mobility Hldg  Inc|MMI|NYSE</category>
+		</item>
+		<item>
+			<title>F.B.I. Admits Hacker Group&#x2019;s Eavesdropping</title>
+			<link>http://feeds.nytimes.com/click.phdo?i=e9f76d508a487aeb221b10ed1ecd6058</link>
+			<pheedo:origLink>http://www.nytimes.com/2012/02/04/us/fbi-admits-hacker-groups-eavesdropping.html?partner=rss&amp;amp;emc=rss</pheedo:origLink>
+			<guid isPermaLink="false">http://www.nytimes.com/2012/02/04/us/fbi-admits-hacker-groups-eavesdropping.html</guid>
+			<atom:link rel="standout" href="http://www.nytimes.com/2012/02/04/us/fbi-admits-hacker-groups-eavesdropping.html?partner=rss&amp;emc=rss"/>
+			<description>The group known as Anonymous listened in on a call between the bureau, Scotland Yard and other foreign police agencies about their joint investigation of the group and its allies.&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;a href=&quot;http://ads.pheedo.com/click.phdo?s=e9f76d508a487aeb221b10ed1ecd6058&amp;p=1&quot;&gt;&lt;img alt=&quot;&quot; style=&quot;border: 0;&quot; border=&quot;0&quot; src=&quot;http://ads.pheedo.com/img.phdo?s=e9f76d508a487aeb221b10ed1ecd6058&amp;p=1&quot;/&gt;&lt;/a&gt;
+</description>
+			<dc:creator>By SCOTT SHANE</dc:creator>
+			<pubDate>Tue, 07 Feb 2012 00:14:47 GMT</pubDate>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_org_all">Federal Bureau of Investigation</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_org_all">Anonymous (Internet Group)</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_org_all">Scotland Yard (Metropolitan Police Service)</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/mdes">Wiretapping and Other Eavesdropping Devices and Methods</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Cyberattacks and Hackers</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">MasterCard Inc|MA|NYSE</category>
+		</item>
+		<item>
+			<title>Steve Appleton, Micron Technology C.E.O., Dies in Plane Crash</title>
+			<link>http://feeds.nytimes.com/click.phdo?i=31685be41069b5bb02de8de82f08b2e1</link>
+			<pheedo:origLink>http://www.nytimes.com/2012/02/04/business/chief-of-micron-technology-dies-in-plane-crash.html?partner=rss&amp;amp;emc=rss</pheedo:origLink>
+			<guid isPermaLink="false">http://www.nytimes.com/2012/02/04/business/chief-of-micron-technology-dies-in-plane-crash.html</guid>
+			<atom:link rel="standout" href="http://www.nytimes.com/2012/02/04/business/chief-of-micron-technology-dies-in-plane-crash.html?partner=rss&amp;emc=rss"/>
+			<description>Steve Appleton, whose death was considered a major loss for the struggling company, was piloting the small craft in Boise, Idaho.&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;a href=&quot;http://ads.pheedo.com/click.phdo?s=31685be41069b5bb02de8de82f08b2e1&amp;p=1&quot;&gt;&lt;img alt=&quot;&quot; style=&quot;border: 0;&quot; border=&quot;0&quot; src=&quot;http://ads.pheedo.com/img.phdo?s=31685be41069b5bb02de8de82f08b2e1&amp;p=1&quot;/&gt;&lt;/a&gt;
+</description>
+			<dc:creator>By REUTERS</dc:creator>
+			<pubDate>Sat, 04 Feb 2012 06:20:02 GMT</pubDate>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_org_all">Micron Technology Inc|MU|NASDAQ</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Aviation Accidents and Safety</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_per">Appleton, Steve</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Deaths (Fatalities)</category>
+		</item>
+		<item>
+			<title>Zuckerberg&#x2019;s Big Tax Bill May Benefit Facebook</title>
+			<link>http://feeds.nytimes.com/click.phdo?i=fe853b94171b14a266dc0a549bba8306</link>
+			<pheedo:origLink>http://www.nytimes.com/2012/02/04/business/zuckerbergs-big-tax-bill-may-benefit-facebook.html?partner=rss&amp;amp;emc=rss</pheedo:origLink>
+			<guid isPermaLink="false">http://www.nytimes.com/2012/02/04/business/zuckerbergs-big-tax-bill-may-benefit-facebook.html</guid>
+			<atom:link rel="standout" href="http://www.nytimes.com/2012/02/04/business/zuckerbergs-big-tax-bill-may-benefit-facebook.html?partner=rss&amp;emc=rss"/>
+			<media:content url="http://graphics8.nytimes.com/images/2012/02/04/business/Facebookjp/Facebookjp-thumbStandard.jpg" medium="image" height="75" width="75"/>
+			<media:description>Facebook&#x2019;s corporate headquarters in Menlo Park, Calif.</media:description>
+			<media:credit>Peter Dasilva/European Pressphoto Agency</media:credit>
+			<description>Mark Zuckerberg plans to exercise stock options with an estimated value of $5 billion ahead of Facebook&#x2019;s initial public offering, which will translate into a big tax benefit for the company.&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;a href=&quot;http://ads.pheedo.com/click.phdo?s=fe853b94171b14a266dc0a549bba8306&amp;p=1&quot;&gt;&lt;img alt=&quot;&quot; style=&quot;border: 0;&quot; border=&quot;0&quot; src=&quot;http://ads.pheedo.com/img.phdo?s=fe853b94171b14a266dc0a549bba8306&amp;p=1&quot;/&gt;&lt;/a&gt;
+</description>
+			<dc:creator>By DAVID KOCIENIEWSKI</dc:creator>
+			<pubDate>Sat, 04 Feb 2012 06:00:43 GMT</pubDate>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_per">Zuckerberg, Mark E</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_org_all">Facebook Inc</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Stock Options and Purchase Plans</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Federal Taxes (US)</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/mdes">Tax Credits, Deductions and Exemptions</category>
+		</item>
+		<item>
+			<title>DealBook Column: Those Millions on Facebook? Some May Not Actually Visit</title>
+			<link>http://feeds.nytimes.com/click.phdo?i=289b1dc966c1cde5db748733b1f4c7d4</link>
+			<pheedo:origLink>http://dealbook.nytimes.com/2012/02/06/those-millions-on-facebook-some-may-not-actually-visit/?partner=rss&amp;amp;emc=rss</pheedo:origLink>
+			<guid isPermaLink="false">http://dealbook.nytimes.com/2012/02/06/those-millions-on-facebook-some-may-not-actually-visit/</guid>
+			<atom:link rel="standout" href="http://dealbook.nytimes.com/2012/02/06/those-millions-on-facebook-some-may-not-actually-visit/?partner=rss&amp;emc=rss"/>
+			<description>"Active users" add up in Facebook's prospectus, but some of those clicks aren't on the Web site.&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;a href=&quot;http://ads.pheedo.com/click.phdo?s=289b1dc966c1cde5db748733b1f4c7d4&amp;p=1&quot;&gt;&lt;img alt=&quot;&quot; style=&quot;border: 0;&quot; border=&quot;0&quot; src=&quot;http://ads.pheedo.com/img.phdo?s=289b1dc966c1cde5db748733b1f4c7d4&amp;p=1&quot;/&gt;&lt;/a&gt;
+</description>
+			<dc:creator>By ANDREW ROSS SORKIN</dc:creator>
+			<pubDate>Tue, 07 Feb 2012 13:53:03 GMT</pubDate>
+			<category domain="http://www.nytimes.com/namespaces/">accounting</category>
+			<category domain="http://www.nytimes.com/namespaces/">Facebook</category>
+			<category domain="http://www.nytimes.com/namespaces/">Groupon</category>
+			<category domain="http://www.nytimes.com/namespaces/">Initial Public Offerings</category>
+			<category domain="http://www.nytimes.com/namespaces/">Social Networking (Internet)</category>
+			<category domain="http://www.nytimes.com/namespaces/">Facebook Inc</category>
+			<category domain="http://www.nytimes.com/namespaces/">DealBook Column</category>
+			<category domain="http://www.nytimes.com/namespaces/">I.P.O./Offerings</category>
+			<category domain="http://www.nytimes.com/namespaces/">Media</category>
+			<category domain="http://www.nytimes.com/namespaces/">Technology</category>
+		</item>
+		<item>
+			<title>Disruptions: Disruptions: Facebook Users Ask, 'Where's Our Cut?'</title>
+			<link>http://feeds.nytimes.com/click.phdo?i=dc1280d12be7e102f2d3e1543bafbacb</link>
+			<pheedo:origLink>http://bits.blogs.nytimes.com/2012/02/05/disruptions-facebook-users-ask-wheres-our-cut/?partner=rss&amp;amp;emc=rss</pheedo:origLink>
+			<guid isPermaLink="false">http://bits.blogs.nytimes.com/2012/02/05/disruptions-facebook-users-ask-wheres-our-cut/</guid>
+			<atom:link rel="standout" href="http://bits.blogs.nytimes.com/2012/02/05/disruptions-facebook-users-ask-wheres-our-cut/?partner=rss&amp;emc=rss"/>
+			<media:content url="http://graphics8.nytimes.com/images/2012/02/06/business/disrupt/disrupt-thumbStandard.jpg" medium="image" height="75" width="75"/>
+			<media:description>Mark Zuckerberg, chief executive officer and founder of Facebook, spoke at a Facebook conference in September.</media:description>
+			<media:credit>David Paul Morris/Bloomberg News</media:credit>
+			<description>Without the free content created by its 850 million users, Facebook would surely not be on the verge of a multibillion-dollar initial public offering.&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;a href=&quot;http://ads.pheedo.com/click.phdo?s=dc1280d12be7e102f2d3e1543bafbacb&amp;p=1&quot;&gt;&lt;img alt=&quot;&quot; style=&quot;border: 0;&quot; border=&quot;0&quot; src=&quot;http://ads.pheedo.com/img.phdo?s=dc1280d12be7e102f2d3e1543bafbacb&amp;p=1&quot;/&gt;&lt;/a&gt;
+</description>
+			<dc:creator>By NICK BILTON</dc:creator>
+			<pubDate>Mon, 06 Feb 2012 19:35:49 GMT</pubDate>
+			<category domain="http://www.nytimes.com/namespaces/">Facebook</category>
+			<category domain="http://www.nytimes.com/namespaces/">social networking</category>
+			<category domain="http://www.nytimes.com/namespaces/">Initial Public Offerings</category>
+			<category domain="http://www.nytimes.com/namespaces/">Social Networking (Internet)</category>
+			<category domain="http://www.nytimes.com/namespaces/">Facebook Inc</category>
+			<category domain="http://www.nytimes.com/namespaces/">Internet</category>
+			<category domain="http://www.nytimes.com/namespaces/">Social</category>
+		</item>
+		<item>
+			<title>The Media Equation: At BuzzFeed, the Significant and the Silly</title>
+			<link>http://feeds.nytimes.com/click.phdo?i=af46daef34a48a29d1a922f33d551447</link>
+			<pheedo:origLink>http://www.nytimes.com/2012/02/06/business/media/at-buzzfeed-the-significant-and-the-silly.html?partner=rss&amp;amp;emc=rss</pheedo:origLink>
+			<guid isPermaLink="false">http://www.nytimes.com/2012/02/06/business/media/at-buzzfeed-the-significant-and-the-silly.html</guid>
+			<atom:link rel="standout" href="http://www.nytimes.com/2012/02/06/business/media/at-buzzfeed-the-significant-and-the-silly.html?partner=rss&amp;emc=rss"/>
+			<media:content url="http://graphics8.nytimes.com/images/2012/02/06/sports/carrjump1/carrjump1-thumbStandard.jpg" medium="image" height="75" width="75"/>
+			<media:description>Jonah Peretti, left, creator of BuzzFeed, and Ben Smith, its new editor in chief. The site tries to offer material that will be passed along, pulling more visitors to the site.</media:description>
+			<media:credit>Yana Paskova for The New York Times</media:credit>
+			<description>The Web site is trying for pollination: providing the kind of content that will have visitors passing along links from one person to the next, that will in turn bring them around to BuzzFeed.&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;a href=&quot;http://ads.pheedo.com/click.phdo?s=af46daef34a48a29d1a922f33d551447&amp;p=1&quot;&gt;&lt;img alt=&quot;&quot; style=&quot;border: 0;&quot; border=&quot;0&quot; src=&quot;http://ads.pheedo.com/img.phdo?s=af46daef34a48a29d1a922f33d551447&amp;p=1&quot;/&gt;&lt;/a&gt;
+</description>
+			<dc:creator>By DAVID CARR</dc:creator>
+			<pubDate>Mon, 06 Feb 2012 18:19:53 GMT</pubDate>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_org_all">BuzzFeed Inc</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_org_all">BuzzFeed</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_per">Peretti, Jonah</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_org_all">Huffington Post</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Social Networking (Internet)</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">News and News Media</category>
+		</item>
+		<item>
+			<title>Opinion: The Death of the Cyberfl&#xE2;neur</title>
+			<link>http://feeds.nytimes.com/click.phdo?i=fbe7b95d433fe7e8d404b08626a04f76</link>
+			<pheedo:origLink>http://www.nytimes.com/2012/02/05/opinion/sunday/the-death-of-the-cyberflaneur.html?partner=rss&amp;amp;emc=rss</pheedo:origLink>
+			<guid isPermaLink="false">http://www.nytimes.com/2012/02/05/opinion/sunday/the-death-of-the-cyberflaneur.html</guid>
+			<atom:link rel="standout" href="http://www.nytimes.com/2012/02/05/opinion/sunday/the-death-of-the-cyberflaneur.html?partner=rss&amp;emc=rss"/>
+			<description>Today&#x2019;s Internet is a place for getting things done, pushing aside the cyberfl&#xE2;neur &#x2014; the heir to the fl&#xE2;neur culture of 19th-century France.&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;a href=&quot;http://ads.pheedo.com/click.phdo?s=fbe7b95d433fe7e8d404b08626a04f76&amp;p=1&quot;&gt;&lt;img alt=&quot;&quot; style=&quot;border: 0;&quot; border=&quot;0&quot; src=&quot;http://ads.pheedo.com/img.phdo?s=fbe7b95d433fe7e8d404b08626a04f76&amp;p=1&quot;/&gt;&lt;/a&gt;
+</description>
+			<dc:creator>By EVGENY MOROZOV</dc:creator>
+			<pubDate>Sun, 05 Feb 2012 16:16:04 GMT</pubDate>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_org_all">Facebook Inc</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Computers and the Internet</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Social Networking (Internet)</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/mdes">Web Browsers</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/mdes">Friendship</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_org_all">Google Inc|GOOG|NASDAQ</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Online Advertising</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">Groupon Inc|GRPN|NASDAQ</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">eBay Inc|EBAY|NASDAQ</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">Netflix Inc|NFLX|NASDAQ</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">Microsoft Corporation|MSFT|NASDAQ</category>
+		</item>
+		<item>
+			<title>Gray Matter: Is GPS All in Our Heads?</title>
+			<link>http://feeds.nytimes.com/click.phdo?i=eac88fa65bec9a86af61fb4d6ce102f0</link>
+			<pheedo:origLink>http://www.nytimes.com/2012/02/05/opinion/sunday/is-gps-all-in-our-head.html?partner=rss&amp;amp;emc=rss</pheedo:origLink>
+			<guid isPermaLink="false">http://www.nytimes.com/2012/02/05/opinion/sunday/is-gps-all-in-our-head.html</guid>
+			<atom:link rel="standout" href="http://www.nytimes.com/2012/02/05/opinion/sunday/is-gps-all-in-our-head.html?partner=rss&amp;emc=rss"/>
+			<media:content url="http://graphics8.nytimes.com/images/2012/02/05/sunday-review/05GRAYMATTER/05GRAYMATTER-thumbStandard.jpg" medium="image" height="75" width="75"/>
+			<media:description/>
+			<media:credit>Cosimo Galluzzi</media:credit>
+			<description>Relying on GPS devices can erode our ability to develop mental maps.&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;a href=&quot;http://ads.pheedo.com/click.phdo?s=eac88fa65bec9a86af61fb4d6ce102f0&amp;p=1&quot;&gt;&lt;img alt=&quot;&quot; style=&quot;border: 0;&quot; border=&quot;0&quot; src=&quot;http://ads.pheedo.com/img.phdo?s=eac88fa65bec9a86af61fb4d6ce102f0&amp;p=1&quot;/&gt;&lt;/a&gt;
+</description>
+			<dc:creator>By JULIA FRANKENSTEIN</dc:creator>
+			<pubDate>Sun, 05 Feb 2012 02:27:01 GMT</pubDate>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Maps</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Navigation</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Memory</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Global Positioning System</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Brain</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">Garmin Ltd|GRMN|NASDAQ</category>
+		</item>
+		<item>
+			<title>Strategies: I.P.O. Euphoria, Without Much Memory &#x2014; Strategies</title>
+			<link>http://feeds.nytimes.com/click.phdo?i=c9e66f5ebefa8dc96628663db8b5bd53</link>
+			<pheedo:origLink>http://www.nytimes.com/2012/02/05/your-money/ipo-euphoria-without-much-memory-strategies.html?partner=rss&amp;amp;emc=rss</pheedo:origLink>
+			<guid isPermaLink="false">http://www.nytimes.com/2012/02/05/your-money/ipo-euphoria-without-much-memory-strategies.html</guid>
+			<atom:link rel="standout" href="http://www.nytimes.com/2012/02/05/your-money/ipo-euphoria-without-much-memory-strategies.html?partner=rss&amp;emc=rss"/>
+			<media:content url="http://graphics8.nytimes.com/images/2012/02/05/business/05-STRA/05-STRA-thumbStandard.jpg" medium="image" height="75" width="75"/>
+			<media:description/>
+			<media:credit>Minh Uong/The New York Times</media:credit>
+			<description>Amid the Wall Street excitement over Facebook&#x2019;s planned initial public offering, it may be a good time to take a look at I.P.O. history.&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;a href=&quot;http://ads.pheedo.com/click.phdo?s=c9e66f5ebefa8dc96628663db8b5bd53&amp;p=1&quot;&gt;&lt;img alt=&quot;&quot; style=&quot;border: 0;&quot; border=&quot;0&quot; src=&quot;http://ads.pheedo.com/img.phdo?s=c9e66f5ebefa8dc96628663db8b5bd53&amp;p=1&quot;/&gt;&lt;/a&gt;
+</description>
+			<dc:creator>By JEFF SOMMER</dc:creator>
+			<pubDate>Sun, 05 Feb 2012 01:23:02 GMT</pubDate>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Initial Public Offerings</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Stocks and Bonds</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_org_all">Facebook Inc</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/nyt_per">Zuckerberg, Mark E</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">Google Inc|GOOG|NASDAQ</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">T Rowe Price Group Inc|TROW|NASDAQ</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">Zynga Inc|ZNGA|NASDAQ</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">Microsoft Corporation|MSFT|NASDAQ</category>
+		</item>
+		<item>
+			<title>With Filters, Photos Take On Multiple Identities</title>
+			<link>http://feeds.nytimes.com/click.phdo?i=80c2ff7d9e4e24e4eeb58c45338e877b</link>
+			<pheedo:origLink>http://www.nytimes.com/2012/02/02/technology/personaltech/with-filters-photos-take-on-multiple-identities.html?partner=rss&amp;amp;emc=rss</pheedo:origLink>
+			<guid isPermaLink="false">http://www.nytimes.com/2012/02/02/technology/personaltech/with-filters-photos-take-on-multiple-identities.html</guid>
+			<atom:link rel="standout" href="http://www.nytimes.com/2012/02/02/technology/personaltech/with-filters-photos-take-on-multiple-identities.html?partner=rss&amp;emc=rss"/>
+			<media:content url="http://graphics8.nytimes.com/images/2012/02/02/business/2-BASICS5/2-BASICS5-thumbStandard.jpg" medium="image" height="75" width="75"/>
+			<media:description>The Graphic Novel filter is meant to simulate the look from a hand illustrated novel.</media:description>
+			<media:credit/>
+			<description>Photo filtering software is becoming more sophisticated, and some photographers share filters they have created themselves.&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;a href=&quot;http://ads.pheedo.com/click.phdo?s=80c2ff7d9e4e24e4eeb58c45338e877b&amp;p=1&quot;&gt;&lt;img alt=&quot;&quot; style=&quot;border: 0;&quot; border=&quot;0&quot; src=&quot;http://ads.pheedo.com/img.phdo?s=80c2ff7d9e4e24e4eeb58c45338e877b&amp;p=1&quot;/&gt;&lt;/a&gt;
+</description>
+			<dc:creator>By PETER WAYNER</dc:creator>
+			<pubDate>Thu, 02 Feb 2012 20:20:02 GMT</pubDate>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Photography</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/mdes">Software</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Filters</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/mdes">Art</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Mobile Applications</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">Apple Incorporated|AAPL|NASDAQ</category>
+		</item>
+		<item>
+			<title>App Smart: Scanner Apps Make Digital Versions of Paper Documents</title>
+			<link>http://feeds.nytimes.com/click.phdo?i=f860568b2d5111f3f3e2a8baf913d8db</link>
+			<pheedo:origLink>http://www.nytimes.com/2012/02/02/technology/personaltech/scanner-apps-make-digital-versions-of-paper-documents.html?partner=rss&amp;amp;emc=rss</pheedo:origLink>
+			<guid isPermaLink="false">http://www.nytimes.com/2012/02/02/technology/personaltech/scanner-apps-make-digital-versions-of-paper-documents.html</guid>
+			<atom:link rel="standout" href="http://www.nytimes.com/2012/02/02/technology/personaltech/scanner-apps-make-digital-versions-of-paper-documents.html?partner=rss&amp;emc=rss"/>
+			<media:content url="http://graphics8.nytimes.com/images/2012/02/02/business/02-SMART2/02-SMART2-thumbStandard.jpg" medium="image" height="75" width="75"/>
+			<media:description>The JotNot Scanner Pro app for iPhone.</media:description>
+			<media:credit/>
+			<description>Apps for Apple and Android phones let a user take a photo of a document and turn it into a PDF that can be exported or printed.&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;a href=&quot;http://ads.pheedo.com/click.phdo?s=f860568b2d5111f3f3e2a8baf913d8db&amp;p=1&quot;&gt;&lt;img alt=&quot;&quot; style=&quot;border: 0;&quot; border=&quot;0&quot; src=&quot;http://ads.pheedo.com/img.phdo?s=f860568b2d5111f3f3e2a8baf913d8db&amp;p=1&quot;/&gt;&lt;/a&gt;
+</description>
+			<dc:creator>By BOB TEDESCHI</dc:creator>
+			<pubDate>Thu, 02 Feb 2012 20:20:02 GMT</pubDate>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Mobile Applications</category>
+			<category domain="http://www.nytimes.com/namespaces/keywords/des">Scanning Devices</category>
+			<category domain="http://www.nytimes.com/namespaces/nyt_org_all">Apple Incorporated|AAPL|NASDAQ</category>
+		</item>
+		<item>
+			<title>Gadgetwise Blog: Q&amp;A: Backup Options for iTunes</title>
+			<link>http://feeds.nytimes.com/click.phdo?i=980170e6069f3d10d44b9647d3efd720</link>
+			<pheedo:origLink>http://gadgetwise.blogs.nytimes.com/2012/02/07/qa-backup-options-for-itunes/?partner=rss&amp;amp;emc=rss</pheedo:origLink>
+			<guid isPermaLink="false">http://gadgetwise.blogs.nytimes.com/2012/02/07/qa-backup-options-for-itunes/</guid>
+			<atom:link rel="standout" href="http://gadgetwise.blogs.nytimes.com/2012/02/07/qa-backup-options-for-itunes/?partner=rss&amp;emc=rss"/>
+			<description>How to back up iTunes files locally.&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;a href=&quot;http://ads.pheedo.com/click.phdo?s=980170e6069f3d10d44b9647d3efd720&amp;p=1&quot;&gt;&lt;img alt=&quot;&quot; style=&quot;border: 0;&quot; border=&quot;0&quot; src=&quot;http://ads.pheedo.com/img.phdo?s=980170e6069f3d10d44b9647d3efd720&amp;p=1&quot;/&gt;&lt;/a&gt;
+</description>
+			<dc:creator>By J.D. BIERSDORFER</dc:creator>
+			<pubDate>Tue, 07 Feb 2012 11:18:39 GMT</pubDate>
+			<category domain="http://www.nytimes.com/namespaces/">iTunes</category>
+			<category domain="http://www.nytimes.com/namespaces/">Computers and the Internet</category>
+			<category domain="http://www.nytimes.com/namespaces/">Apple Incorporated</category>
+			<category domain="http://www.nytimes.com/namespaces/">Apple Incorporated|AAPL|NASDAQ</category>
+			<category domain="http://www.nytimes.com/namespaces/">Music &amp; Video</category>
+			<category domain="http://www.nytimes.com/namespaces/">Q&amp;A</category>
+		</item>
+		<item>
+			<title>Gadgetwise Blog: Q&amp;A: Finding a Phone's Android Version</title>
+			<link>http://feeds.nytimes.com/click.phdo?i=fedfd9479840bda1f40440edeb4bd9a7</link>
+			<pheedo:origLink>http://gadgetwise.blogs.nytimes.com/2012/02/06/qa-finding-a-phones-android-version/?partner=rss&amp;amp;emc=rss</pheedo:origLink>
+			<guid isPermaLink="false">http://gadgetwise.blogs.nytimes.com/2012/02/06/qa-finding-a-phones-android-version/</guid>
+			<atom:link rel="standout" href="http://gadgetwise.blogs.nytimes.com/2012/02/06/qa-finding-a-phones-android-version/?partner=rss&amp;emc=rss"/>
+			<description>How to check to see which version of Android your handset is running.&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;a href=&quot;http://ads.pheedo.com/click.phdo?s=fedfd9479840bda1f40440edeb4bd9a7&amp;p=1&quot;&gt;&lt;img alt=&quot;&quot; style=&quot;border: 0;&quot; border=&quot;0&quot; src=&quot;http://ads.pheedo.com/img.phdo?s=fedfd9479840bda1f40440edeb4bd9a7&amp;p=1&quot;/&gt;&lt;/a&gt;
+</description>
+			<dc:creator>By J.D. BIERSDORFER</dc:creator>
+			<pubDate>Tue, 07 Feb 2012 00:20:04 GMT</pubDate>
+			<category domain="http://www.nytimes.com/namespaces/">Android</category>
+			<category domain="http://www.nytimes.com/namespaces/">Android (Operating System)</category>
+			<category domain="http://www.nytimes.com/namespaces/">Google Inc</category>
+			<category domain="http://www.nytimes.com/namespaces/">Google Inc|GOOG|NASDAQ</category>
+			<category domain="http://www.nytimes.com/namespaces/">Mobile Tech</category>
+			<category domain="http://www.nytimes.com/namespaces/">Q&amp;A</category>
+		</item>
+		<item>
+			<title>Gadgetwise Blog: A Compact Camera Whose Lens Isn't</title>
+			<link>http://feeds.nytimes.com/click.phdo?i=0f47e739909e2aae269f6b156ab8fe1d</link>
+			<pheedo:origLink>http://gadgetwise.blogs.nytimes.com/2012/02/06/a-compact-camera-whose-lens-isnt/?partner=rss&amp;amp;emc=rss</pheedo:origLink>
+			<guid isPermaLink="false">http://gadgetwise.blogs.nytimes.com/2012/02/06/a-compact-camera-whose-lens-isnt/</guid>
+			<atom:link rel="standout" href="http://gadgetwise.blogs.nytimes.com/2012/02/06/a-compact-camera-whose-lens-isnt/?partner=rss&amp;emc=rss"/>
+			<description>Nikon has announced nine new Coolpix cameras, including the P510, which has a zoom that goes from the equivalent of a 24-millimeter wide angle to a 1,000-millimeter telephoto.&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;br clear=&quot;both&quot; style=&quot;clear: both;&quot;/&gt;
+&lt;a href=&quot;http://ads.pheedo.com/click.phdo?s=0f47e739909e2aae269f6b156ab8fe1d&amp;p=1&quot;&gt;&lt;img alt=&quot;&quot; style=&quot;border: 0;&quot; border=&quot;0&quot; src=&quot;http://ads.pheedo.com/img.phdo?s=0f47e739909e2aae269f6b156ab8fe1d&amp;p=1&quot;/&gt;&lt;/a&gt;
+</description>
+			<dc:creator>By ROY FURCHGOTT</dc:creator>
+			<pubDate>Mon, 06 Feb 2012 23:06:35 GMT</pubDate>
+			<category domain="http://www.nytimes.com/namespaces/">nikon</category>
+			<category domain="http://www.nytimes.com/namespaces/">P510</category>
+			<category domain="http://www.nytimes.com/namespaces/">Cameras</category>
+			<category domain="http://www.nytimes.com/namespaces/">Nikon Corp</category>
+			<category domain="http://www.nytimes.com/namespaces/">Nikon Corp|NINOY|other-OTC</category>
+			<category domain="http://www.nytimes.com/namespaces/">Photography</category>
+		</item>
+	</channel>
+</rss>

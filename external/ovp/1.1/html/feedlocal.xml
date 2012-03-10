@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0" xmlns:media="http://search.yahoo.com/mrss/">
+	<channel>
+		<title>Mutton Publication</title>
+		<link>http://www.akamai.com/</link>
+		<description>Testing OVP.js Multi Clip Streaming</description>
+		<language>en</language>
+		<copyright>2010</copyright>
+		<lastBuildDate>Thu, 01 Apr 2010 00:00:00 -0000</lastBuildDate>
+		<pubDate>Thu, 01 Apr 2010 00:00:00 -0000</pubDate>
+		<item>
+			<title>Big Buck Bunny Trailer</title>
+			<link>http://localhost/videos/bbb_trailer.mp4</link>
+			<description>The Big Buck Bunny trailer clip.</description>
+			<author>jmutton@akamai.com (James Mutton)</author>
+			<pubDate>Sun, 24 Jan 2010 00:00:00 -0000</pubDate>
+			<comments>mailto:jmutton@akamai.com</comments>
+			<guid isPermaLink="false">guid1</guid>
+			<media:group>
+				<media:content url="http://localhost/videos/bbb_trailer.m3u8" type="application/vnd.apple.mpegurl"></media:content>
+				<media:content url="http://localhost/videos/bbb_trailer.mp4" type="video/mp4"></media:content>
+				<media:content url="http://localhost/videos/bbb_trailer.ogg" type="video/ogg"></media:content>
+			</media:group>
+			<enclosure url="http://localhost/videos/bbb_trailer.mp4" length="7355272" type="application/vnd.apple.mpegurl"></enclosure>
+			<itunes:duration>0</itunes:duration>
+			<media:thumbnail url="http://localhost/videos/bbb.png"></media:thumbnail>
+			<itunes:keywords>animals,bunny,test</itunes:keywords>
+		</item>
+		<item>
+			<title>Big Buck Bunny</title>
+			<link>http://localhost/videos/bbb.mp4</link>
+			<description>The full Big Buck Bunny short.</description>
+			<author>jmutton@akamai.com (James Mutton)</author>
+			<pubDate>Mon, 25 Jan 2010 00:00:00 -0000</pubDate>
+			<comments></comments>
+			<guid isPermaLink="false">guid1</guid>
+			<media:group>
+				<media:content url="http://localhost/videos/bbb.m3u8" type="application/vnd.apple.mpegurl"></media:content>
+				<media:content url="http://localhost/videos/bbb.mp4" type="video/mp4"></media:content>
+				<media:content url="http://localhost/videos/bbb.ogg" type="video/ogg"></media:content>
+			</media:group>
+			<enclosure url="http://localhost/videos/bbb.mp4" length="134849522" type="text/xml"></enclosure>
+			<itunes:duration>0</itunes:duration>
+			<media:thumbnail url="http://localhost/videos/bbb.png"></media:thumbnail>
+			<itunes:keywords>animals,bunny,test</itunes:keywords>
+		</item>
+		<item>
+			<title>Elephants Dream Trailer</title>
+			<link>http://localhost/videos/elephantsdream_trailer.mp4</link>
+			<description>Elephants Dream video from the blender project</description>
+			<author>jmutton@akamai.com (James Mutton)</author>
+			<pubDate>Wed, 27 Jan 2010 00:00:00 -0000</pubDate>
+			<comments>A test clip.</comments>
+			<guid isPermaLink="false">laksjfdlkajlkdjlfksjf</guid>
+			<media:group>
+				<media:content url="http://localhost/videos/elephantsdream_trailer_720x400.m3u8" type="application/vnd.apple.mpegurl"></media:content>
+				<media:content url="http://localhost/videos/elephantsdream_trailer.mp4" type="video/mp4"></media:content>
+				<media:content url="http://localhost/videos/elephantsdream_trailer.ogg" type="video/ogg"></media:content>
+			</media:group>
+			<enclosure url="http://localhost/videos/elephantsdream_trailer.mp4" length="30639218" type="video/mp4"></enclosure>
+			<itunes:duration>0</itunes:duration>
+			<media:thumbnail url="http://localhost/img/bg_player.png"></media:thumbnail>
+			<itunes:keywords></itunes:keywords>
+		</item>
+		<item>
+			<title>Earth</title>
+			<link>http://localhost/videos/earth.mp4</link>
+			<description>A clip from the BBC's Earth project</description>
+			<author>jmutton@akamai.com (James Mutton)</author>
+			<pubDate>Thu, 01 Apr 2010 00:00:00 -0000</pubDate>
+			<comments></comments>
+			<guid isPermaLink="false">lskjdflkjslfkjsldkjflsdkjlfkjs</guid>
+			<media:group>
+				<media:content url="http://localhost/videos/earth.mp4"></media:content>
+				<media:content url="http://localhost/videos/earth.ogv"></media:content>
+			</media:group>
+			<enclosure url="http://localhost/videos/earth.mp4" length="134723403" type="video/mp4"></enclosure>
+			<itunes:duration>0</itunes:duration>
+			<media:thumbnail url="http://localhost/videos/earth.jpg"></media:thumbnail>
+		</item>
+		<item>
+			<title>WWDC 2009 Coverage</title>
+			<link>http://localhost/videos/iphone.m3u8</link>
+			<description>Iphone 3GS and Snow Leopard Realease Coverage</description>
+			<pubDate>Sat, 15 May 2010 00:00:00 -0000</pubDate>
+			<guid isPermaLink="false">espn2</guid>
+			<media:group>
+				<media:content url="http://localhost/videos/iphone.m3u8"></media:content>
+				<media:content url="http://localhost/videos/iphone.mp4"></media:content>
+				<media:content url="http://localhost/videos/iphone.ogv"></media:content>
+			</media:group>
+			<enclosure url="http://localhost/videos/iphone.m3u8" length="0" type="application/vnd.apple.mpegurl"></enclosure>
+			<itunes:duration>0</itunes:duration>
+			<media:thumbnail url="http://localhost/videos/iphone.jpg"></media:thumbnail>
+		</item>
+	</channel>
+</rss>

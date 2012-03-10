@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>JWPlayer Flash Plugin Test | Metaplayer</title>
+
+    <style>
+        #target {
+            width: 300px;
+            height: 150px;
+            background:  #333;
+            position: fixed;
+            top: 10px; right: 10px;
+        }
+    </style>
+
+    <!--Dependency: jQuery-->
+    <script src="../../../../external/jquery/jquery-1.6.2.js" type="text/javascript"></script>
+    
+    <!--Dependency: JwPlayer -->
+    <script src="../../../../external/jwplayer/jwplayer.js"></script>
+
+    <!--Dependency: OKJS -->
+    <script src="../../../../external/okjs/ok.js" type="text/javascript"></script>
+
+    <!-- Unit CSS -->
+    <link href="../../../unit/unit.css" rel="stylesheet" type="text/css">
+
+    <!-- Unit : Player API -->
+    <script src="../../../unit/flash/unit.flash.js" type="text/javascript"></script>
+
+    <!-- Core: Ramp -->
+    <script src="../../../core/metaplayer.js"></script>
+    <script src="../../../core/utils/util.event.js"></script>
+    <script src="../../../core/utils/util.proxy.js"></script>
+    <script src="../../../core/utils/util.script.js"></script>
+    <script src="../../../core/utils/util.timer.js"></script>
+    <script src="../../../core/utils/util.format.js"></script>
+    <script src="../../../core/utils/util.ui.js"></script>
+    <script src="../../../core/playlist/player.playlist.js"></script>
+    <script src="../../../core/metadata/core.metadata.js"></script>
+    <script src="../../../core/search/core.search.js"></script>
+    <script src="../../../core/cues/core.cues.js"></script>
+    <script src="../../../core/layout/core.layout.js"></script>
+    <link href="../../../core/layout/core.layout.css" rel="stylesheet" type="text/css">
+
+    <!-- Media Plugin: Flowplayer -->
+    <script src="../../../players/jwplayer/player.jwplayer.js"></script>
+
+    <script type="text/javascript">
+
+        var unit = okjs({
+            exceptions: 1, // enable for debugging
+            verbose: true
+        });
+
+        var harness = PlayerUnit( unit );
+        var video;
+
+        unit.test("ramp setup", function () {
+           // ramp services
+            video = MetaPlayer.jwplayer("#target", {
+                id          : 'jwplayer',
+                autostart   : false,
+                controlbar  : "none",
+                file        : '../../../../media/elephants_dream/elephant.mp4',
+                modes       : [ {type: 'flash', src : '../../../../external/jwplayer/player.swf'}],
+                image       : "",
+                volume      : 100
+            });
+            harness.media = video;
+        });
+
+        harness.addTests();
+
+        $( function () {
+            unit.start();
+        });
+    </script>
+</head>
+<body>
+
+<h3>Unit Test &raquo;Metaplayer &raquo; JWPlayer Flash Plugin</h3>
+
+<div id='target'></div>
+
+</body>
+</html>

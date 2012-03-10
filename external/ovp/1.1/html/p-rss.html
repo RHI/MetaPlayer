@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Open Video Player RSS Feed Development Page - Powered by Akamai</title>
+
+<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+
+<link rel="stylesheet" type="text/css" href="css/site.css">
+<link rel="stylesheet" type="text/css" href="../ovp-min.css" />
+
+<style type="text/css">
+video {
+	background-color:black;
+}
+</style>
+
+<script type="text/javascript" src="../ovp_jquery.js"></script>
+
+<script type="text/javascript">
+/**
+ * sets a simple cookie that expires a year from now
+ * pub.util.setCookie("yourcookie",50);
+ */
+setCookie = function(name, val){
+	document.cookie=name+"="+escape(val)+";expires=Sat, 31 Dec 2099 23:59:59 GMT;";
+};
+/**
+ * Retrieves a cookie or the provided string if the cookie does not exist
+ */
+getCookie = function(check_name, return_if_not_found) {
+	var a_all_cookies = document.cookie.split( ';' );
+	var a_temp_cookie = '';
+	var cookie_name = '';
+	var cookie_value = '';
+	for ( i = 0; i < a_all_cookies.length; i++ ) {
+		a_temp_cookie = a_all_cookies[i].split( '=' );
+		cookie_name = a_temp_cookie[0].replace(/^\s+|\s+$/g, '');
+		if ( cookie_name == check_name ) {
+			if ( a_temp_cookie.length > 1 )	{
+				cookie_value = unescape( a_temp_cookie[1].replace(/^\s+|\s+$/g, '') );
+			}
+			return cookie_value;
+		}
+		a_temp_cookie = null;
+		cookie_name = '';
+	}
+	return return_if_not_found;
+};
+	
+function jm(o) {
+	for (var i=0;i<o.length;i++) {
+		setCookie('ovp_strategy'+i,o[i]);
+	}
+	window.location.reload();
+}
+function initStrategy() {
+	// Get the strategy out of our cookies
+	var strategy = [];
+	strategy.push(getCookie('ovp_strategy0','HTML5'))
+	strategy.push(getCookie('ovp_strategy1','Flash'));
+	// Write out our strategy
+	document.getElementById("stratstr").innerHTML = strategy;
+	return strategy;
+}
+function showFeed() {	
+	var strategy = initStrategy();
+	// Render the feed
+	var configobj = {
+		"controls": { 'src_img':'../images/pixel.png' },
+		"strategy":{ "order":strategy },
+		"sliderdelay":5000,
+		"sliderspeed":"fast",
+		"immediately":true	// When the player render fires, start playing immediately, don't wait for poster click.
+	};
+	ovp.init(configobj);
+	
+	// render the player
+	return ovp.renderFeed('vplayer', 'feedlocal.xml');	
+}
+</script>
+<script type="text/javascript">
+$(document).ready(function(){
+	showFeed();
+});
+</script>
+
+</head>
+<body>
+    <div id="header">
+        <div>
+            <a href="http://www.akamai.com/"><img alt="Akamai logo" src="img/akamai_logo.gif" /></a>
+        </div>
+    </div>
+    <div id="videoSelector" class="content">
+		<div id="version-info">
+			<span class="orange">High-quality, adaptive-bitrate and adaptive-platform video delivery</span><br/>
+			<span class="blue">Current Strategy: <span id="stratstr"></span></span>
+		</div>
+    </div>
+    <div id="bodyContent" class="content">
+    	<div id="player-container">
+			<div id="vplayer"></div>
+		</div>
+    </div>
+
+	
+	<div id="footer">
+		copyright 2010 - Akamai Technologies, Inc.<br/>
+		prefer: <a href="javascript:jm(['HTML5','Flash']);">HTML5</a> | <a href="javascript:jm(['Flash','HTML5']);">Flash</a> | <a href="javascript:jm(['Silverlight','HTML5']);">Silverlight</a>
+	</div>
+
+</body>
+</html>

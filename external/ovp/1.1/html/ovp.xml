@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0" xmlns:media="http://search.yahoo.com/mrss/">
+	<channel>
+		<title>OVP HTML5 Demo Feed</title>
+		<link>http://players.edgesuite.net/html5demo/</link>
+		<description>Content used for demonstrating Akamai's OVP.js HTML5 library and iPhone streaming technologies.</description>
+		<language>en</language>
+		<lastBuildDate>Sat, 15 May 2010 00:00:00 -0000</lastBuildDate>
+		<pubDate>Sat, 15 May 2010 00:00:00 -0000</pubDate>
+		<item>
+			<title>BBC Planet Earth</title>
+			<link>http://iphonedemo.edgeflash.akadns.net/efvod/earth_1/14411/master.m3u8</link>
+			<description>iPad only. BBC Planet Earth: a landmark series on the natural history. Five years in the making, it was the most expensive nature documentary series ever commissioned by the BBC, and also the first to be filmed in high definition. This content is encoded in main profile and is thus only compatible with the iPad.</description>
+			<pubDate>Sat, 15 May 2010 00:00:00 -0000</pubDate>
+			<guid isPermaLink="false">earth</guid>
+			<media:group>
+				<media:content url="http://iphonedemo.edgeflash.akadns.net/efvod/earth_1/14411/master.m3u8"></media:content>
+				<media:content url="http://players.edgesuite.net/televisia/earth/earth.mp4"></media:content>
+				<media:content url="http://www.smoothhd.com/iphone/earth.ogg"></media:content>
+			</media:group>
+			<enclosure url="http://iphonedemo.edgeflash.akadns.net/efvod/earth_1/14411/master.m3u8" length="0" type="application/vnd.apple.mpegurl"></enclosure>
+			<itunes:duration>0</itunes:duration>
+			<media:thumbnail url="http://players.edgesuite.net/televisia/earth/earth_trailer_with_end_credit_1080p_3000000_2500_Thumb.jpg"></media:thumbnail>
+			<itunes:keywords></itunes:keywords>
+		</item>
+		<item>
+			<title>USA Today&quot;s Talking Tech</title>
+			<link>http://qthttp.akamai.com.edgesuite.net/iphone_demo/Video_Content/usat/tt_062209_iphone/all.m3u8</link>
+			<description>USA TODAY&quot;s Talking Tech with Ed Baig and Jefferson Graham: Apple announces the new iPhone 3G-S.</description>
+			<pubDate>Sat, 15 May 2010 00:00:00 -0000</pubDate>
+			<guid isPermaLink="false">usatoday</guid>
+			<media:group>
+				<media:content url="http://qthttp.akamai.com.edgesuite.net/iphone_demo/Video_Content/usat/tt_062209_iphone/all.m3u8"></media:content>
+				<media:content url="http://players.edgesuite.net/televisia/iphone/iphone.mp4" width="852" bitrate="1912" height="480"></media:content>
+				<media:content url="http://players.edgesuite.net/televisia/iphone/iphone.ogg" width="852" bitrate="1864" height="480"></media:content>
+			</media:group>
+			<enclosure url="http://qthttp.akamai.com.edgesuite.net/iphone_demo/Video_Content/usat/tt_062209_iphone/all.m3u8" length="0" type="application/vnd.apple.mpegurl"></enclosure>
+			<itunes:duration>0</itunes:duration>
+			<media:thumbnail url="http://players.edgesuite.net/televisia/iphone/iphone.jpg"></media:thumbnail>
+		</item>
+		<item>
+			<title>ESPN2 Live</title>
+			<link>http://iphonedemo.edgeflash.akadns.net/live/iphonedemo_1/13903/master.m3u8</link>
+			<description>A Multi-protocol/format demo of live streaming over the HD Network. ESPN2</description>
+			<pubDate>Sat, 15 May 2010 00:00:00 -0000</pubDate>
+			<guid isPermaLink="false">espn2</guid>
+			<media:group>
+				<media:content url="http://iphonedemo.edgeflash.akadns.net/live/iphonedemo_1/13903/master.m3u8"></media:content>
+				<media:content url="http://mediapm.edgesuite.net/edgeflash/public/debug/assets/smil/iphone-demo.smil"></media:content>
+			</media:group>
+			<enclosure url="http://iphonedemo.edgeflash.akadns.net/live/iphonedemo_1/13903/master.m3u8" length="0" type="application/vnd.apple.mpegurl"></enclosure>
+			<itunes:duration>0</itunes:duration>
+			<media:thumbnail url="http://players.edgesuite.net/televisia/espn/espn.png"></media:thumbnail>
+		</item>
+	</channel>
+</rss>

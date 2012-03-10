@@ -1,0 +1,59 @@
+<!DOCTYPE smil PUBLIC "-//W3C//DTD SMIL 3.0 Tiny//EN" "http://www.w3.org/2008/SMIL30/SMIL30Tiny.dtd">
+<smil xmlns="http://www.w3.org/ns/SMIL" xmlns:json="xalan://org.json.JSONObject" version="3.0" baseProfile="Tiny">
+<head>
+<meta name="Broadcaster" content="SouthBySouthWest"/>
+</head>
+<body>
+<seq xml:id="playlist">
+<par xmlns="" xml:id="item1">
+<video xml:id="v1" type="flv" title="LG L-Style phones " src="http://www.youtube.com/watch?v=AHs6VjpLq8Q&amp;feature=youtube_gdata">
+<metadata>
+<meta name="rampId" content="52325663"/>
+<meta name="thumbnail" content="http://publishing.ramp.com/thumbnails/cached_media/0006/0006818/0006818229/images/thumb.jpg"/>
+<meta name="searchapi" content="http://publishing.ramp.com/sxsw/device/services/playerdata?episode=52325663"/>
+<meta name="searchterm" content="''"/>
+<meta name="linkURL" content="http://publishing.ramp.com/sxsw/v/52325663/AHs6VjpLq8Q"/>
+<meta name="embedURL" content="http://publishing.ramp.com/widgets/sxsw/4240/?episode=52325663"/>
+<meta name="siteSearchURL" content="http://publishing.ramp.com/sxsw/search?mediatype=Video&amp;q="/>
+<meta name="iosURL" content=""/>
+<meta name="description">LG L-Style phones LG's L-Style series phones sport slick designs, but features vary from functional to high-end From: CNETTV Views: 1060 20 ratings Time: 02:21 More in News &amp; Politics</meta>
+</metadata>
+</video>
+<metadata xml:id="transcodes1">
+<meta type="video/youtube" name="youtube" content="AHs6VjpLq8Q"/>
+</metadata>
+<seq xml:id="metaqs1"/>
+<seq xml:id="jumptags1" max="4">
+<ref begin="89.54s">
+<param name="term"><![CDATA[L-3]]></param>
+<param name="type"><![CDATA[company]]></param>
+<param name="score"><![CDATA[11.053614]]></param>
+<param name="origin"><![CDATA[namedentity]]></param>
+<param name="timestamps"><![CDATA[89.539]]></param>
+</ref>
+<ref begin="67.25s">
+<param name="term"><![CDATA[megahertz processor]]></param>
+<param name="type"><![CDATA[unk]]></param>
+<param name="score"><![CDATA[10.316706]]></param>
+<param name="origin"><![CDATA[keyword]]></param>
+<param name="timestamps"><![CDATA[67.249]]></param>
+</ref>
+<ref begin="136.76s">
+<param name="term"><![CDATA[LG'S L]]></param>
+<param name="type"><![CDATA[unk]]></param>
+<param name="score"><![CDATA[8.842892]]></param>
+<param name="origin"><![CDATA[keyword]]></param>
+<param name="timestamps"><![CDATA[136.759]]></param>
+</ref>
+<ref begin="78.98s">
+<param name="term"><![CDATA[cream sandwiches]]></param>
+<param name="type"><![CDATA[unk]]></param>
+<param name="score"><![CDATA[7.595227]]></param>
+<param name="origin"><![CDATA[keyword]]></param>
+<param name="timestamps"><![CDATA[78.979]]></param>
+</ref>
+</seq>
+</par>
+</seq>
+</body>
+</smil>

@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+<head>
+    <title>example: ramp smil service</title>
+
+    <!--Dependency: jQuery-->
+    <script src="../../../../external/jquery/jquery-1.7.1.js" type="text/javascript"></script>
+
+    <!-- json2html-->
+    <script src="../../../../external/json2html/json2html.js" type="text/javascript"></script>
+    <link href="../../../../external/json2html/json2html.css" rel="stylesheet" type="text/css">
+
+    <!-- Core: Ramp -->
+    <script src="../../../core/metaplayer.js"></script>
+    <script src="../../../core/utils/util.event.js"></script>
+    <script src="../../../core/utils/util.proxy.js"></script>
+    <script src="../../../core/utils/util.script.js"></script>
+    <script src="../../../core/utils/util.timer.js"></script>
+    <script src="../../../core/utils/util.format.js"></script>
+    <script src="../../../core/utils/util.ui.js"></script>
+    <script src="../../../core/playlist/player.playlist.js"></script>
+    <script src="../../../core/layout/core.layout.js"></script>
+    <script src="../../../core/metadata/core.metadata.js"></script>
+    <script src="../../../core/search/core.search.js"></script>
+    <script src="../../../core/cues/core.cues.js"></script>
+
+    <!-- Service Plugin: RAMP -->
+    <script src="../../../services/ramp/service.ramp.js"></script>
+
+    <script type="text/javascript">
+        var url = "../../../../media/sxsw/mp2-playlist-e=52300242.xml";
+        var url2 = "../../../../media/sxsw/mp2-playlist-e=52307770.xml";
+        var metaplayer;
+
+
+        $(function () {
+            var template = $('#content').hide().remove();
+
+            metaplayer = MetaPlayer().ramp().load();
+//            json2html("#dump", metaplayer.metadata.getData() );
+
+            metaplayer.metadata.listen( MetaPlayer.MetaData.DATA, function (e) {
+                json2html("#dump", metaplayer.metadata.getData() );
+            });
+
+
+        })
+    </script>
+
+
+
+</head>
+<body>
+
+<div>
+    <button onclick="metaplayer.ramp('../../../../media/sxsw/L-Style.xml')">L-Style.xml</button>
+    <button onclick="metaplayer.ramp('../../../../media/sxsw/Galaxy_Mini_2.xml')">Galaxy_Mini_2.xml</button>
+</div>
+
+
+
+> metaplayer.metadata.getData()
+<div id="dump">
+</div>
+
+<script>
+
+
+</script>
+</body>
+</html>

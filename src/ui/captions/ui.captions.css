@@ -1,0 +1,12 @@
+.metaplayer-captions {
+    color: white;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 32px;
+    background-color: rgba(99,99,99,.4);
+    text-align: center;
+}
+.metaplayer-captions-text {
+    padding:  5px 20px;
+}

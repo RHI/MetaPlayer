@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Open Video Player Development - Powered by Akamai</title>
+
+<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+
+<link rel="stylesheet" type="text/css" href="css/site.css">
+	
+</head>
+<body>
+    <div id="header">
+        <div>
+            <a href="http://www.akamai.com/"><img alt="Akamai logo" src="img/akamai_logo.gif" /></a>
+        </div>
+    </div>
+
+    <div id="videoSelector" class="content">
+		<div id="version-info">
+			<span class="orange">High-quality, adaptive-bitrate and adaptive-platform video delivery</span><br/>
+		</div>
+    </div>
+
+    <div id="bodyContent" class="content">
+		<select id="videotype" name="videotype">
+			<optgroup label="Select a usage demo">
+				<option value="rss">RSS Feed</option>
+				<option value="script">Script Insertion</option>
+				<option value="adopt">Adopted Video Tag</option>
+			</optgroup> 
+		</select>
+		<button type="button" onclick="demoSelector()">Go</button>
+		<script type="text/javascript">
+			/**
+			 * Directs the user to the right page
+			 */
+			function demoSelector() {
+				var pages = {
+					"rss":"p-rss.html",
+					"script":"p-script.html",
+					"adopt":"p-videotag.html"
+				};
+				var t = document.getElementById("videotype");
+				var selected = t.options[t.options.selectedIndex].value;
+				var url = pages[selected];
+				window.location = url;
+			}
+		</script>
+    </div>
+	
+	<div id="footer">
+		copyright 2010 - Akamai Technologies, Inc.<br/>
+	</div>
+	
+</body>
+</html>

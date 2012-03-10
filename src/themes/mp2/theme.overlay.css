@@ -1,0 +1,84 @@
+
+.metaplayer-overlay {
+    background: url('assets/black80.png');
+}
+
+.metaplayer-overlay-tag-label {
+    color: #439DDD;
+    background: none;
+}
+.metaplayer-overlay-tag-label:hover {
+    color: #FFF;
+}
+
+.metaplayer-overlay-search-input,
+.metaplayer-overlay-search-input:focus
+{
+    right: 0px;
+    background-color: #878787;
+    color: white;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    padding-right: 30px;
+}
+.metaplayer-overlay-search-btn {
+    background-image: url('assets/control/search-16.png');
+    background-color: #878787;
+    height: 16px;
+    width: 16px;
+    margin: 1px 0;
+    background-repeat:no-repeat;
+    background-position:center;
+    border: none;
+    z-index: 10;
+}
+
+.metaplayer-overlay-play {
+    width: 28px;
+    height: 24px;
+    background: url('assets/control/play-28x24.png');
+}
+
+.metaplayer-overlay-pause {
+    width: 28px;
+    height: 24px;
+    background: url('assets/control/pause-28x24.png');
+}
+
+.metaplayer-overlay-cc {
+    background: url('assets/control/cc-32x24.png');
+    width: 32px;
+    height: 24px;
+}
+
+.metaplayer-overlay-cc-off {
+    background: url('assets/control/cc-disabled.png');
+    width: 32px;
+    height: 24px;
+}
+
+.metaplayer-overlay-mute {
+    background: url('assets/control/vol-20x24.png');
+    width: 22px;
+    height: 24px;
+}
+.metaplayer-overlay-unmute {
+    background: url('assets/control/mute-22x24.png');
+    width: 22px;
+    height: 24px;
+}
+.metaplayer-overlay-volume {
+    background: url('assets/control/volume-bars-blue.png');
+}
+.metaplayer-overlay-volume-bg {
+    background: url('assets/control/volume-bars.png');
+    width: 79px;
+    height: 24px;
+}
+/* Close */
+.metaplayer-overlay-close-btn {
+    background: url(assets/close-button-arrow.png) no-repeat;
+    width: 25px;
+    height: 25px;
+}
+

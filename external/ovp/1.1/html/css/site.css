@@ -1,0 +1,60 @@
+html {
+	background:url(../img/bg.png) repeat-x 0 0 #646F86;
+}
+body {
+	font-family:Arial,Helvetica,sans-serif;
+	font-size:10pt;
+	width:900px;
+	margin:auto;
+	height:auto;
+	padding:0;
+}
+#header {
+	background:url(../img/ovplogo.png) no-repeat left bottom transparent;
+	margin:15px auto;
+	height:60px;
+}
+#header div {
+	text-align:right;
+	float:right;
+}
+#header div img {
+	max-height:60px;
+	margin-left:20px;
+	border:0;
+}
+.content {
+	border-top:1px solid;
+	padding:10px 0;
+	margin:auto;
+	text-align:center;
+}
+.orange {
+	font-weight:bold;
+	color:#ff9933;
+}
+.blue {
+	font-weight:bold;
+	color:#0099cc;
+}
+.example_button {
+	padding: 10px;
+	display: inline;
+}
+
+#player-container {
+	color:#ffffff;
+	display:block;
+	margin:auto;
+	max-width:640px;
+}
+#footer {
+	font-color:#aaa;
+	font-size:62%;
+	font-style:italic;
+	margin-top:5em;
+	padding-bottom:1em;
+}
+select {
+	margin:10px;
+}

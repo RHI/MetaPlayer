@@ -1,0 +1,147 @@
+.mp-controls {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    height: 32px;
+    z-index: 100;
+}
+
+.mp-controls-box {
+    background: #aaa;
+    padding:  4px;
+}
+
+.mp-controls-play,
+.mp-controls-time {
+    display: block;
+    position: absolute;
+    top: 4px;
+}
+
+.mp-controls-time {
+    width: 96px;
+    height: 24px;
+    line-height: 28px;
+    font-size: 16px;
+    text-align: center;
+    right: 4px;
+    text-shadow: 0 0 2px #666;
+}
+.mp-controls-time-current {
+    display: inline;
+    color: #fff;
+}
+
+.mp-controls-time-duration {
+    display: inline;
+    color: #ddd;
+}
+
+.mp-controls-play,
+.mp-controls-pause
+{
+    cursor: pointer;
+}
+
+.mp-controls-play {
+    width: 28px;
+    height: 24px;
+    left: 4px;
+}
+
+.mp-controls-pause {
+    width: 28px;
+    height: 24px;
+}
+
+.mp-controls-fullscreen {
+    width: 32px;
+    height: 24px;
+    right: 4px;
+    display: none;
+}
+
+.mp-controls-track {
+    height: 24px;
+    background: #333;
+    margin-left: 32px;
+    margin-right: 100px;
+    display: block;
+    position: relative;
+    top: 0;
+    left: 0;
+    border-radius: 5px;
+    margin-top: 1px;
+}
+
+.mp-controls-track-fill {
+    width: 0%;
+    background: #fff;
+    height: 100%;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.mp-controls-track-marker {
+    width: 4px;
+    height: 22px;
+    margin-left: -2px;
+    margin-top: 1px;
+    position: absolute;
+    left:  0;
+    top: 0;
+    cursor: pointer;
+    background: gray;
+}
+
+.mp-controls-tag {
+    background: cyan;
+}
+
+.mp-controls-metaq {
+    background: #ee82ee;
+}
+
+.mp-controls-track-knob {
+    width: 8px;
+    height: 24px;
+    border: 1px solid #666;
+    margin-top: -1px;
+    margin-left: -5px;
+    background: #eee;
+    position: absolute;
+    top : 0;
+    z-index: 100;
+    cursor: pointer;
+    border-radius: 3px;
+
+}
+
+.mp-controls-track-knob:hover {
+    border: 1px solid blue;
+}
+
+.mp-controls-track-knob:active {
+    background: #aaaaff;
+    border: 1px solid blue;
+}
+
+.mp-controls-track-buffer {
+    width: 0%;
+    margin-top: -1px;
+    height: 24px;
+    background: #666;
+    left: 0px;
+    top: 0px;
+    border-radius: 5px;
+}
+
+.mp-controls-query {
+  background: orange;
+  border-radius: 2px;
+}
+

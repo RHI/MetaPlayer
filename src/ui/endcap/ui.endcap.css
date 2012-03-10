@@ -1,0 +1,152 @@
+
+.metaplayer-endcap {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    color: white;
+    background:  rgba(0,0,0, .5);
+    font-family: arial,sans-serif;
+    overflow:  hidden;
+    z-index: 10;
+    padding:  10px 0;
+}
+.metaplayer-endcap-divider {
+    background: gray;
+    width: 1px;
+    position: absolute;
+    right: 0px;
+    top: 10px;
+    bottom: 10px;
+}
+
+.metaplayer-endcap-search-title,
+.metaplayer-endcap-left-title,
+.metaplayer-endcap-right-title {
+    color: white;
+    padding:  12px 10px 0 10px;
+    font-size: 14px;
+    font-weight: bold;
+    height: 16px;
+}
+/* Left Panel */
+.metaplayer-endcap-left {
+    width: 50%;
+    float: left;
+    position: relative;
+    top: 0; left: 0;
+}
+
+
+/* Right Panel */
+.metaplayer-endcap-right {
+    float: right;
+    width: 50%;
+}
+
+.metaplayer-endcap-clear {
+    clear: both;
+    height: 1px;
+    width: 1px;
+    line-height: 1px;
+}
+
+
+/* Up Next */
+.metaplayer-endcap-again-icon,
+.metaplayer-endcap-countdown {
+    background: blue;
+    cursor: pointer;
+    position:  absolute;
+    top: 10px;
+    left: 15px;
+    cursor: pointer;
+    text-align: right;
+}
+
+.metaplayer-endcap-repeat,
+.metaplayer-endcap-next {
+    cursor: pointer;
+    position: relative;
+    top: 0; left: 0;
+}
+.metaplayer-endcap-social,
+.metaplayer-endcap-again,
+.metaplayer-endcap-preview {
+    margin: 14px 15px 10px 15px;
+}
+.metaplayer-endcap-again-thumb,
+.metaplayer-endcap-preview-thumb {
+    width: 140px;
+    height: 90px;
+    border:  none;
+    float: left;
+}
+.metaplayer-endcap-again-desc,
+.metaplayer-endcap-preview-desc {
+    height: 90px;
+    margin-left: 140px;
+}
+.metaplayer-endcap-again-title,
+.metaplayer-endcap-preview-title {
+    font-size: 14px;
+    color: #999;
+    padding: 5px;
+}
+
+/* Embed */
+.metaplayer-endcap-embed {
+    padding:  0 15px 0 15px;
+    display: none;
+}
+
+/* Search */
+
+.metaplayer-endcap-search-title {
+    float: left;
+}
+.metaplayer-endcap-search {
+    float: left;
+    position: relative;
+    top: 5px;
+    left: 0;
+    margin:  5px 0;
+    width: 150px;
+    height: 18px;
+}
+.metaplayer-endcap-search-input {
+    position:  absolute;
+    right: 36px;
+    left: 0px;
+    height: 16px;
+    padding:  1px;
+    color: white;
+    cursor: pointer;
+    border:  none;
+    margin:  0;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+.metaplayer-endcap-search-input:focus {
+    background:  white;
+    color: black;
+}
+.metaplayer-endcap-search-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 18px;
+    width: 25px;
+    cursor: pointer;
+    line-height: 18px;
+    padding-left: 5px;
+    padding-right: 5px;
+    background:  #888;
+    color: white;
+    font-size: 8px;
+    overflow:  hidden;
+    border-left:  1px solid #ddd;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
+

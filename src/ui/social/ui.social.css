@@ -1,0 +1,16 @@
+/* Social */
+.metaplayer-social-twitter,
+.metaplayer-social-facebook {
+    overflow-x: hidden;
+    overflow-y: hidden;
+    width: 90px;
+    height: 21px;
+    border: none;
+    float: left;
+}
+.metaplayer-social-clear {
+    clear: both; line-height: 0; height : 0
+}
+
+    -ms-filter: 'progid:DXImageTransform.Microsoft.Alpha( style=0,opacity=25)';
+}

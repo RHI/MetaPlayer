@@ -1,0 +1,10 @@
+.metaplayer-captions {
+    bottom: 40px;
+}
+.metaplayer-captions-text {
+    color: white;
+    text-shadow: 0 0 5px black, 0 0 5px black, 0 0 10px black, 0 0 10px black;
+    font-family: Verdana, sans-serif;
+    font-size: 14px;
+    padding: 10px;
+}

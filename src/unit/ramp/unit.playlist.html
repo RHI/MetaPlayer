@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Service API Test | Metaplayer</title>
+
+    <!--Dependency: jQuery-->
+    <script src="../../../external/jquery/jquery-1.6.2.js" type="text/javascript"></script>
+
+    <!--Dependency: OKJS -->
+    <script src="../../../external/okjs/ok.js" type="text/javascript"></script>
+
+    <!-- Unit CSS -->
+    <link href="../unit.css" rel="stylesheet" type="text/css">
+
+    <!-- Core: Ramp -->
+    <script src="../../ramp.js"></script>
+    <script src="../../utils/util.event.js"></script>
+    <script src="../../utils/util.proxy.js"></script>
+    <script src="../../models/model.media.js"></script>
+    <script src="../../models/model.playlist.js"></script>
+
+    <!--Service: JSON-->
+    <script src="../../services/smil/service.smil.js"></script>
+
+
+    <script type="text/javascript">
+
+        var unit = okjs({
+            exceptions: 1, // enable for debugging
+            verbose: true
+        });
+
+        var media, playlist;
+
+        unit.test("media init", function () {
+            media = Ramp.media(36234882, '/pca');
+            playlist = Ramp.playlist();
+            playlist.setTracks(media);
+
+            unit.assert( media, "media defined");
+            unit.assert( playlist, "playlist defined");
+        });
+
+        unit.test("playlist loading", function () {
+            unit.event("playlistChange", playlist, "playlist change event");
+            unit.event("trackChange", playlist, "track change event");
+            playlist.setTracks(media);
+        });
+        unit.test("track change", function () {
+            unit.event("trackChange", playlist, "track change event");
+            playlist.index++;
+        });
+
+        $(function () {
+            unit.start()
+        });
+    </script>
+
+
+</head>
+<body>
+
+<h3>Unit Test &raquo; Metaplayer &raquo; Playlist API</h3>
+
+</body>
+</html>
+

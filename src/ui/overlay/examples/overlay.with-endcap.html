@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+
+    <style>
+        #target {
+            width: 600px;
+            height: 300px;
+            background:  #333;
+        }
+    </style>
+
+    <!--Dependency: jQuery-->
+    <script src="../../../../external/jquery/jquery-1.7.1.js" type="text/javascript"></script>
+
+    <!--Dependency: Popcorn -->
+    <script src="../../../../external/popcorn/popcorn.js" type="text/javascript"></script>
+
+    <!-- Core: Ramp -->
+    <script src="../../../core/metaplayer.js"></script>
+    <script src="../../../core/utils/util.event.js"></script>
+    <script src="../../../core/utils/util.proxy.js"></script>
+    <script src="../../../core/utils/util.script.js"></script>
+    <script src="../../../core/utils/util.timer.js"></script>
+    <script src="../../../core/utils/util.format.js"></script>
+    <script src="../../../core/utils/util.ui.js"></script>
+    <script src="../../../core/playlist/player.playlist.js"></script>
+    <script src="../../../core/layout/core.layout.js"></script>
+    <link href="../../../core/layout/core.layout.css" rel="stylesheet" type="text/css">
+
+    <!-- Service Plugin: RAMP -->
+    <script src="../../../services/smil/service.smil.js"></script>
+
+    <!-- Playback Plugin: HTML5 -->
+    <script src="../../../players/html5/player.html5.js"></script>
+
+    <!-- UI : MetaQ  -->
+    <script src="../../../ui/metaq/ui.metaq.js"></script>
+
+    <!-- UI: Captions -->
+    <script src="../../../ui/captions/ui.captions.js"></script>
+    <link href="../../../ui/captions/ui.captions.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.captions.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Social -->
+    <script src="../../../ui/social/ui.social.js"></script>
+    <link href="../../../ui/social/ui.social.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Embed -->
+    <script src="../../../ui/embed/ui.embed.js"></script>
+    <link href="../../../ui/embed/ui.embed.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.embed.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Overlay -->
+    <script src="../../../ui/overlay/ui.overlay.js"></script>
+    <link href="../../../ui/overlay/ui.overlay.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.overlay.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Endcap -->
+    <script src="../../../ui/endcap/ui.endcap.js"></script>
+    <link href="../../../ui/endcap/ui.endcap.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.endcap.css" rel="stylesheet"  type="text/css">
+
+</head>
+<body>
+<h3>Metaplayer &raquo; Overlay Plugin</h3>
+Endcap should replace overlay at video end.
+
+<div id='target'></div>
+
+<button onclick="video.currentTime = video.duration - 5">skip to end duration-5s</button>
+
+<script type="text/javascript">
+
+    var player = MetaPlayer("#target")
+            .html5({ autoplay: true })
+            .ramp()
+            .metaq()
+            .endcap()
+            .overlay()
+            .load("ramp:/advisor:48920875");
+
+    video = player.video;
+
+</script>
+
+</body>
+</html>

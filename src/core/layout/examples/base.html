@@ -1,0 +1,168 @@
+<!doctype html>
+<html>
+<head>
+
+
+    <!-- Dependency: jQuery -->
+    <script src="../../../../external/jquery/jquery-1.7.1.js" type="text/javascript"></script>
+
+    <!-- Core: Ramp -->
+    <script src="../../../core/metaplayer.js"></script>
+    <script src="../../../core/utils/util.event.js"></script>
+    <script src="../../../core/utils/util.proxy.js"></script>
+    <script src="../../../core/utils/util.script.js"></script>
+    <script src="../../../core/utils/util.timer.js"></script>
+    <script src="../../../core/utils/util.format.js"></script>
+    <script src="../../../core/utils/util.ui.js"></script>
+    <script src="../../../core/playlist/player.playlist.js"></script>
+    <script src="../../../core/layout/core.layout.js"></script>
+    <link href="../../../core/layout/core.layout.css" rel="stylesheet" type="text/css">
+
+    <!-- Media Plugin: HTML5 -->
+    <script src="../../../players/html5/player.html5.js"></script>
+
+    <style>
+        body {
+            background:  #fff;
+        }
+
+        .test{
+            width: 300px;
+            height: 150px;
+            background: beige;
+        }
+
+        .metaplayer {
+            outline: 5px solid blue;
+            background:  gray;
+            margin: 24px 0;
+        }
+
+        .mp-stage {
+            background: red;
+        }
+
+        .layout .mp-stage {
+            top: 25px;
+            left: 25px;
+            bottom: 25px;
+            right: 25px;
+        }
+
+        .tl, .tr, .bl, .br {
+            position: absolute;
+            background: green;
+            height: 25px;
+            width: 25px;
+        }
+        .tl, .tr {
+            top: 0;
+        }
+        .bl, .br {
+            bottom: 0;
+        }
+        .tl, .bl {
+            left : 0;
+        }
+        .tr, .br {
+            right : 0;
+        }
+
+
+    </style>
+</head>
+<body>
+
+<h3>Metaplayer &raquo; UI Base Plugin</h3>
+
+<div>
+    Player container is <span style="color:gray">gray</span> and outlined in
+      <span style="color:blue">blue</span>
+</div>
+<div>
+    Playback areas are  <span style="color:red">red</span>
+</div>
+<div>
+    Example UI additions are  <span style="color:green">green</span>
+</div>
+
+<br>
+
+Empty Div:
+<div id="empty" class="test">
+</div>
+
+
+Div with child video element
+<div id="one" class="test">
+    <video controls>
+        <source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.mp4" type="video/mp4">
+        <source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.webm" type="video/webM">
+        <source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.ogv" type="video/ogg">
+    </video>
+</div>
+
+Empty Div with corner blocks and resized playback:
+<div id="two" class="test layout">
+    <div class='tl'></div>
+    <div class='tr'></div>
+    <div class='bl'></div>
+    <div class='br'></div>
+</div>
+
+Div with child video element, corner blocks
+<div id="three" class="test layout">
+    <div class='tl'></div>
+    <div class='tr'></div>
+    <div class='bl'></div>
+    <div class='br'></div>
+    <video controls>
+        <source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.mp4" type="video/mp4">
+        <source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.webm" type="video/webM">
+        <source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.ogv" type="video/ogg">
+    </video>
+</div>
+
+
+Div with child video, corner blocks, and pre-assigned css classes.
+<div id="four" class="metaplayer test layout">
+    <div class='tl'></div>
+    <div class='tr'></div>
+    <div class='bl'></div>
+    <div class='br'></div>
+    <div class="mp-stage">
+        <video controls>
+            <source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.mp4" type="video/mp4">
+            <source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.webm" type="video/webM">
+            <source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.ogv" type="video/ogg">
+        </video>
+    </div>
+</div>
+
+Empty Div, full constructor instantiation:
+<div id="alternate" class="test">
+</div>
+
+
+<!--<video id='video' controls>-->
+<!--<source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.mp4" type="video/mp4">-->
+<!--<source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.webm" type="video/webM">-->
+<!--<source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.ogv" type="video/ogg">-->
+<!--</video>-->
+
+<script type="text/javascript">
+    MetaPlayer.layout('#empty');
+    MetaPlayer.layout('#one');
+    MetaPlayer.layout('#two');
+    MetaPlayer.layout('#three');
+    MetaPlayer.layout('#four');
+
+    var full = MetaPlayer("#alternate").html5().load([
+            "http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.mp4",
+            "http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.webm",
+            "http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.ogv"
+    ]);
+</script>
+
+</body>
+</html>

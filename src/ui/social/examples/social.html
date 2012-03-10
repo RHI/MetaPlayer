@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+
+    <style>
+        body {
+            background:  #eee;
+        }
+        #social {
+            margin: 20px 0;
+        }
+
+    </style>
+
+    <!--Dependency: Twitter -->
+    <script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>
+
+    <!-- Dependency: jQuery -->
+    <script src="../../../../external/jquery/jquery-1.6.2.js" type="text/javascript"></script>
+
+    <!--Dependency: Popcorn -->
+    <script src="../../../../external/popcorn/popcorn.js" type="text/javascript"></script>
+
+    <!-- Core: Ramp -->
+    <script src="../../../core/metaplayer.js"></script>
+    <script src="../../../core/utils/util.event.js"></script>
+    <script src="../../../core/utils/util.proxy.js"></script>
+    <script src="../../../core/utils/util.script.js"></script>
+    <script src="../../../core/utils/util.timer.js"></script>
+    <script src="../../../core/utils/util.format.js"></script>
+    <script src="../../../core/utils/util.ui.js"></script>
+    <script src="../../../core/playlist/player.playlist.js"></script>
+    <script src="../../../core/layout/core.layout.js"></script>
+    <link href="../../../core/layout/core.layout.css" rel="stylesheet" type="text/css">
+
+    <!-- Service Plugin: RAMP -->
+    <script src="../../../services/smil/service.smil.js"></script>
+
+    <!-- UI: Social -->
+    <script src="../../../ui/social/ui.social.js"></script>
+    <link href="../../../ui/social/ui.social.css" rel="stylesheet"  type="text/css">
+
+</head>
+<body>
+<h3>Metaplayer &raquo; Social Plugin</h3>
+
+<button data-src="ramp:/pca:36234882">Clip 1</button>
+<button data-src="ramp:/advisor:48920875">Clip 2</button>
+
+<div id="social"></div>
+
+<script type="text/javascript">
+    var service = MetaPlayer.ramp();
+    var social = MetaPlayer.social('#social', service);
+
+    $('button').click( function () {
+        service.load( $(this).data('src') );
+    });
+</script>
+
+</body>
+</html>

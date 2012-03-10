@@ -1,0 +1,870 @@
+
+<!doctype html>
+<html>
+<head>
+    <script src="../../external/jquery/jquery-1.7.1.js" type="text/javascript"></script>
+
+    <!-- prettify - http://code.google.com/p/google-code-prettify/ -->
+    <link href="../../external/prettify/prettify.css" type="text/css" rel="stylesheet" />
+    <script type="text/javascript" src="../../external/prettify/prettify.js"></script>
+
+    <!-- quickstart tale of contents, etc -->
+    <script type="text/javascript" src="quickstart.js"></script>
+    <link href="quickstart.css" type="text/css" rel="stylesheet" />
+
+    <title>MetaPlayer</title>
+</head>
+<body>
+
+
+<div class="toc">
+    <div style="font-weight: bold">
+        Contents:
+    </div>
+    <div class="toc-list">
+    </div>
+</div>
+
+<div class='container'>
+
+<div class="header title">
+    MetaPlayer Framework
+</div>
+
+<div class='section'>
+    <a href="#" class='top'>top &uarr;</a>
+
+    <div class="header" id="overview">
+        Overview
+    </div>
+
+    The MetaPlayer Framework is a player-independent, interactive media framework for web video.
+    <br /><br />
+
+    MPF aims to satisfy the need for:
+    <ul>
+        <li> Standards-based UI development, compatible with mobile devices. </li>
+        <li> Interactive widgets, such as video search, scrolling transcript, or annotated timeline. </li>
+        <li> Consistent initialization across players from MRSS or other web services</li>
+        <li> Support for enterprise players</li>
+    </ul>
+
+    Standard and compatible UI development is provided by adhering to the MediaElement interface provided by HTML5,
+    which is natively supported by modern browsers and mobile devices.
+
+    <br /><br />
+    Metadata is provided by drop-in modules allowing for initialization from MRSS, SMIL, or enterprise transcription
+    services. Additional interfaces, such as search and timed metadata, are also provided as services.
+    <br /><br />
+
+    Interactivity is powered by PopcornJS, a Mozilla library for HTML5 events and UI plugins.  Each MetaPlayer instance contains a PopcornJS instance, which can be
+    initialized by MetaPlayer's cue manager.  The cue manager allows for configuring, sequencing, and cloning
+    of timed events before they are scheduled with PopcornJS.  In addition to the UI plugins provided by PopcornJS, the
+    MetaPlayer Framework provides resize-able, structured CSS and DOM upon which video overlays and
+    controls can be placed.
+
+    <br /><br />
+    To broaden the reach of HTML5 into enterprise and Flash-based players, the Metaplayer Framework of provides HTML5
+    adapters. Currently, MPF supports:
+
+    <ul  class="stress">
+        <li>HTML5</li>
+        <li>YouTube &nbsp; </li>
+        <li>JWPlayer</li>
+        <li>Flowplayer</li>
+    </ul>
+
+    In addition to providing a stable interface for development, these adapters can be used to provide these players
+    with compatibility with libraries such as PopcornJS and VideoJS.
+</div>
+
+<div class='section'>
+    <a href="#" class='top'>top &uarr;</a>
+
+    <div class="header" id="quickstart">
+        Quick Start
+    </div>
+
+
+    The following quick start will set up a YouTube video, fetch metadata from RAMP services
+    and load up a PopcornJS instance with subtitles to be rendered by the MPF Captions plugin.
+    <br /><br />
+
+    <img src="assets/demo.png" width="400" title="Controls, Captions, and Search Annotations">
+    <img src="assets/demo-overlay.png" width="400" title="Overlay, Embed, Social">
+    <br /><br />
+
+    Include required Script and CSS:
+    <pre class="prettyprint"><code>
+        &lt;!--Dependency: jQuery-->
+        &lt;script src="../external/jquery/jquery-1.7.1.js" type="text/javascript">&lt;/script>
+
+        &lt;!--Dependency: Popcorn-->
+        &lt;script src="../external/popcorn/popcorn.js" type="text/javascript">&lt;/script>
+
+        &lt;!-- Metaplayer -->
+        &lt;script src="../build/metaplayer.js">&lt;/script>
+        &lt;link href="../build/mp2/theme.mp2.css" rel="stylesheet"  type="text/css">
+
+        &lt;!-- MetaPlayer: Captions -->
+        &lt;script src="../build/metaplayer.captions.js">&lt;/script>
+    </code></pre>
+
+    The metaplayer.js file contains all core services and interfaces, while each UI module is available
+    individually.  Lastly, the CSS is required for UI layout.
+
+    Set up the HTML targets:
+    <pre class="prettyprint"><code>
+        &lt;div id="myDiv" style="width: 800px; height: 450px ">&lt;/div>
+    </code></pre>
+
+
+    In JavaScript, after the DOM has loaded:
+    <pre class="prettyprint"><code>
+    $( function () {
+
+    MetaPlayer( "#myDiv" )
+        .youtube()
+        .ramp( "http://dev.api.ramp.com/v1/mp2/playlist?e=52114913&apikey=0302cd28e05e0800f752e0db235d5440" )
+        .controls()
+        .captions()
+        .overlay()
+        .load();
+
+    });
+    </code></pre>
+
+</div>
+
+
+<!-- WIDGETS -->
+<div class='section'>
+    <a href="#" class='top'>top &uarr;</a>
+    <div class="header" id="widgets">
+        Widgets
+    </div>
+
+    MetaPlayer widgets consist of any module which is visible to the user, with HTML and DOM elements placed
+    either over the video or elsewhere on the page.  These widgets have access to the video element and all
+    metadata available through the MPF instance.
+
+    <br /><br />
+
+    Widgets generally consist of a JavaScript source and a CSS file, and containa PopcornJS interface for responding
+    to timed events during the playback of the video.
+
+    <br /><br />
+
+    Many UI elements are provided with the MPF distribution:
+
+    <!-- CAPTIONS -->
+    <div class=' subsection'>
+
+        <div class="header" id="captions">Captions</div>
+
+
+        The default Caption plugin provides CSS skin-able subtitles which dynamically scale with video size.
+
+        <br /><br />
+
+        <img src="assets/captions-youtube.png" width="400" title="Captions on a YouTube video">
+        <br /><br />
+
+        If you're not using a UI package, you will need to include the captions source file:
+
+        <pre class="prettyprint"><code>
+            &lt;!-- MetaPlayer: Captions -->
+            &lt;script src="../build/metaplayer.captions.js">&lt;/script>
+        </code></pre>
+
+        In JavaScript:
+        <pre class="prettyprint"><code>
+            var metaplayer = MetaPlayer( "#myDiv" )
+            .youtube({ chromeless : false })
+            .ramp( "http://dev.api.ramp.com/v1/mp2/playlist?e=52114913&apikey=0302cd28e05e0800f752e0db235d5440" )
+            .captions()
+            .load();
+        </code></pre>
+    </div>
+
+
+    <!-- CONTROLS -->
+    <div class='subsection'>
+        <div class="header" id="controlbar">
+            Controls
+        </div>
+
+        The Controls plugin provides a annotation-enabled timeline, play button, and a display of the current
+        playback time in relation to the total duration.  This plugin is designed to be used in conjunction with
+        the Overlay plugin, which provides additional controls for volume and enabling captions.
+        <br /><br />
+
+        <img src="assets/controls.png" width="400" title="MetaPlayer Controls with Annotations">
+        <br /><br />
+
+        HTML:
+
+        <pre class="prettyprint"><code>
+    &lt;!-- MetaPlayer: Controls -->
+    &lt;script src="../build/metaplayer.controls.js">&lt;/script>
+        </code></pre>
+
+        JavaScript:
+
+        <pre class="prettyprint"><code>
+    var metaplayer = MetaPlayer( "#myDiv" )
+        .youtube()
+        .ramp( "http://dev.api.ramp.com/v1/mp2/playlist?e=52114913&apikey=0302cd28e05e0800f752e0db235d5440" )
+        .controls()
+        .load();
+        </code></pre>
+
+    </div>
+
+    <!-- OVERLAY -->
+    <div class=' subsection'>
+        <div class="header" id="overlay">
+            Overlay
+        </div>
+
+        The Overlay plugin provides a drop down panel over the video which contains:
+        <ul>
+            <li>additional playback, volume levels, and close captioning</li>
+            <li>relevant tags</li>
+            <li>video search-within</li>
+            <li>Title and thumbnail ofthe next video in the playlist, if any</li>
+            <li>Social buttons</li>
+            <li>Embed buttons</li>
+        </ul>
+
+        Social and Embed, are themselves plugins which will only be rendered if their relevant sources are included.
+
+        <br /><br />
+
+        <img src="assets/overlay-captions.png" width="400" title="Overlay with Captions enabled">
+        <img src="assets/overlay-searched.png" width="400" title="Overlay showing Search results">
+        <br /><br />
+
+        HTML:
+
+        <pre class="prettyprint"><code>
+    &lt;!-- MetaPlayer: Overlay -->
+    &lt;script src="../build/metaplayer.controls.js">&lt;/script>
+        </code></pre>
+
+        JavaScript:
+
+        <pre class="prettyprint"><code>
+    var metaplayer = MetaPlayer( "#myDiv" )
+        .youtube()
+        .ramp( "http://dev.api.ramp.com/v1/mp2/playlist?e=52114913&apikey=0302cd28e05e0800f752e0db235d5440" )
+        .captions()
+        .overlay()
+        .load();
+        </code></pre>
+
+        On iOS devices where mouse events are not supported, the overlay will contain a close button.
+    </div>
+
+    <div class=' subsection'>
+        <div class="header" id="endcap">
+            Endcap
+        </div>
+
+        The Endcap plugin is an overlay which appears at the end of a video containing:
+        <ul>
+            <li>Title, thumbnail of current video and a prompt to watch again</li>
+            <li>Title, thumbnail of next playlist video</li>
+            <li>Countdown timer</li>
+            <li>Social buttons</li>
+            <li>Embed buttons</li>
+        </ul>
+
+        When the endcap is enabled playlist do not automatically advance, but instead pause
+        to render the endcap information.  A countdown is started when the panel is rendered
+        which, which complete, will hide the endcap and begin the next video.
+        <br /><br />
+
+        <img src="assets/endcap.png" width="400" title="Endcap shown at the end of video">
+        <br /><br />
+
+        HTML:
+
+        <pre class="prettyprint"><code>
+    &lt;!-- MetaPlayer: Endcap -->
+    &lt;script src="../build/metaplayer.endcap.js">&lt;/script>
+        </code></pre>
+
+        JavaScript:
+
+        <pre class="prettyprint"><code>
+    var metaplayer = MetaPlayer( "#myDiv" )
+        .youtube()
+        .ramp( "http://dev.api.ramp.com/v1/mp2/playlist?e=52114913&apikey=0302cd28e05e0800f752e0db235d5440" )
+        .controls()
+        .endcap()
+        .load();
+
+        </code></pre>
+    </div>
+
+    <!-- TRANSCRIPT -->
+    <div class=' subsection'>
+        <div class="header" id="transcript">
+            Transcript
+        </div>
+
+        The transcript plugin is an interactive page widget containing the full text of a video.
+        As the video plays, the transcript will highlight the current subtitle, adjusting the scroll as
+        necessary. If a height is specified on the transcript target an iOS-friendly scrollbar will appear.
+
+
+        <img src="assets/transcript.png" width="400" title="Transcript"
+             style="vertical-align: top">
+        <img src="assets/transcript-breaks.png" width="400" title="Transcript w/ Breaks, Timestamps"
+             style="vertical-align: top">
+        <br /><br />
+
+        HTML:
+
+        <pre class="prettyprint"><code>
+    &lt;div id="transcript" style="height:150px; width: 600px">&lt;/div>
+        </code></pre>
+
+        JavaScript:
+
+        <pre class="prettyprint"><code>
+    var player = MetaPlayer('#myDiv')
+        .youtube()
+        .ramp( "http://dev.api.ramp.com/v1/mp2/playlist?e=52114913&apikey=0302cd28e05e0800f752e0db235d5440" )
+        .transcript('#transcript')
+        .load()
+        </code></pre>
+
+        By default subtitles are each rendered on a new line.  This behavior can be overwritten with
+        by overriding the default options.
+
+        <pre class="prettyprint"><code>
+    var player.transcript('#transcript', {
+        timestamps: false,
+        breaks: false
+        });
+        </code></pre>
+    </div>
+
+    <!-- FEED -->
+    <div class=' subsection'>
+        <div class="header" id="framefeed">
+            FrameFeed
+        </div>
+
+        The FrameFeed plugin provides a twitter-style feed of IFrames which are loaded as the video plays.
+        These frames, or cards, can be uses to render related information or advertising based on
+        video content. Feeds can be filtered by tags, if desired.  If a height is specified on the target an iOS-friendly scrollbar will appear.
+        <br /><br />
+
+        <img src="assets/framefeed.png" width="400" title="Framefeed with example content">
+        <br /><br />
+
+        HTML:
+
+        <pre class="prettyprint"><code>
+    &lt;div id="feed" style="height:300px; width: 300px">&lt;/div>
+        </code></pre>
+
+        JavaScript:
+
+        <pre class="prettyprint"><code>
+    var metaplayer = MetaPlayer('#myDiv')
+        .html5()
+        .ramp( "http://publishing.ramp.com/thechewpoc/device/services/mp2-playlist?e=51416098" )
+        .framefeed("#feed", {
+            baseUrl : "http://publishing.ramp.com/thechewpoc/themename/1.0"
+        })
+        .load();
+        </code></pre>
+
+        FrameFeed is implemented as a PopcornJS plugin, and can be used outside of a MetaPlayer instance.
+
+        <pre class="prettyprint"><code>
+    var popcorn = Popcorn('video');
+    popcorn.framefeed ({
+        target : "#feed",
+        url : "http://www.example.com",
+        tags : "example"
+        height: 300,
+        start : 5
+    });
+        </code></pre>
+    </div>
+
+    <!-- SEARCH BOX -->
+    <div class=' subsection'>
+        <div class="header" id="searchbox">
+            SearchBox
+        </div>
+
+        SearchBox is a page widget which provides a list of video keywords as well as video search-within.
+        By default, the renderd keyword links serve as search shortcuts.  Search results include a timestamp
+        and excerpt which can be clicked to seek the video.
+        <br /><br />
+
+        <img src="assets/search-tags.png" width="400" title="SearchBox">
+        <img src="assets/search-result.png" width="400" title="SearchBox with results">
+        <br /><br />
+
+        HTML:
+
+        <pre class="prettyprint"><code>
+    &lt;div id="#search" style="height:300px; width: 300px">&lt;/div>
+        </code></pre>
+
+        JavaScript:
+
+        <pre class="prettyprint"><code>
+    var player = MetaPlayer("#myDiv")
+           .youtube()
+           .controls()
+           .captions()
+           .ramp( "http://dev.api.ramp.com/v1/mp2/playlist?e=52114913&apikey=0302cd28e05e0800f752e0db235d5440" )
+           .searchbox("#search")
+           .load();
+        </code></pre>
+
+    </div>
+
+    <!-- SOCIAL -->
+    <div class=' subsection'>
+        <div class="header" id="social">
+            Social Buttons
+        </div>
+
+        The Social widget provides buttons which update to target the current playlist item. Currently,
+         Facebook and Twitter are provided.
+        <br /><br />
+
+        Buttons are initialized with the "link" metadata attribute.
+        <br /><br />
+
+        <img src="assets/social.png" width="400" title="Social Buttons">
+        <br /><br />
+
+        HTML:
+
+        <pre class="prettyprint"><code>
+    &lt;!--Dependency: Twitter -->
+    &lt;script src="http://platform.twitter.com/widgets.js" type="text/javascript">&lt;/script>
+            
+    &lt;div id="#social" style="height:40px; width: 300px">&lt;/div>
+        </code></pre>
+
+        JavaScript:
+
+        <pre class="prettyprint"><code>
+
+    var metaplayer = MetaPlayer( "#myDiv" )
+            .youtube()
+            .controls()
+            .ramp( "http://dev.api.ramp.com/v1/mp2/playlist?e=52114913&apikey=0302cd28e05e0800f752e0db235d5440" )
+            .social("#social")
+            .load();
+        </code></pre>
+
+    </div>
+
+    <!-- EMBED -->
+    <div class=' subsection'>
+        <div class="header" id="embed">
+            Embed Buttons
+        </div>
+
+        The Embed plugin provides buttons which, when clicked, reveal HTML for embedding the currently
+        playing video.
+        <br /><br />
+
+        <img src="assets/embed.png" width="400" title="Embed Buttons" style="vertical-align: top">
+        <img src="assets/embed-open.png" width="400" title="Embed Code">
+        <br /><br />
+
+        HTML:
+
+        <pre class="prettyprint"><code>
+    &lt;!-- MetaPlayer: Social -->
+    &lt;script src="../build/metaplayer.social.js">&lt;/script>
+            
+    &lt;div id="#embed" style="height:150px; width: 300px">&lt;/div>
+        </code></pre>
+
+        JavaScript:
+
+        <pre class="prettyprint"><code>
+    var metaplayer = MetaPlayer( "#myDiv" )
+        .ramp( "http://dev.api.ramp.com/v1/mp2/playlist?e=52345506&apikey=0302cd28e05e0800f752e0db235d5440" )
+        .embed("#embed")
+        .load();
+        </code></pre>
+    </div>
+
+
+</div>
+
+
+<div class='section'>
+    <a href="#" class='top'>top &uarr;</a>
+    <div class="header" id="dataservices">
+        Data Services
+    </div>
+
+
+    <div class='subsection'>
+        <div class="header" id="mrss">MRSS</div>
+        The MRSS parser modules provides playlist urls and metadata. The MFSS file is loaded by AJAX, and restricted
+        by the normal same-domain browser policies.
+
+        <pre class="prettyprint"><code>
+            var metaplayer = MetaPlayer( "#myDiv" )
+            .mrss( "example-mrss.xml" )
+            .captions();
+            .load();
+
+            metaplayer.video.autoplay = true;
+
+        </code></pre>
+    </div>
+
+    <div class='subsection'>
+        <div class="header" id="ramp">RAMP</div>
+        The RAMP data provider provides services for its SMIL feed which contains metadata, subtitles, timed metadata,
+        playlist, search, and popcornjs initialization. By default, the video source URL is set automatically based on playback
+        support.
+
+        <pre class="prettyprint"><code>
+    var metaplayer = MetaPlayer( "#myDiv" )
+        .ramp( "http://dev.api.ramp.com/v1/mp2/playlist?e=52871540&apikey=0302cd28e05e0800f752e0db235d5440" )
+        .captions();
+        .load();
+
+    metaplayer.video.autoplay = true;
+        </code></pre>
+    </div>
+
+</div>
+
+<div class='section'>
+    <a href="#" class='top'>top &uarr;</a>
+    <div class="header" id="html5api">
+        HTML5 Video API
+    </div>
+
+    The video object and adapters provided support the majority of the
+    <a href="http://dev.w3.org/html5/spec/Overview.html#media-elements">
+        HTML5 MediaElement
+    </a>
+    interface, plussome DOM properties.
+
+    The video instance is accessible though the <code>metaplayer.video</code> instance property.
+
+    <br /><br />
+    Specifically, the following APIs are supported:
+    <br /><br />
+
+    <div style="width: 50%; float: left;">
+        Methods:
+        <ul>
+            <li><code>.load()</code></li>
+            <li><code>.play()</code></li>
+            <li><code>.pause()</code></li>
+            <li><code>.canPlayType( type )</code></li>
+            <li><code>.addEventListener(type, callback)</code></li>
+            <li><code>.removeEventListener(type, callback)</code></li>
+        </ul>
+
+        Properties
+        <ul>
+            <li><code>.paused</code></li>
+            <li><code>.duration</code></li>
+            <li><code>.seeking</code></li>
+            <li><code>.ended</code></li>
+            <li><code>.currentTime</code></li>
+            <li><code>.muted</code></li>
+            <li><code>.volume</code></li>
+            <li><code>.src</code></li>
+            <li><code>.readyState</code></li>
+        </ul>
+    </div>
+
+    <div style="width: 50%; float: right;">
+
+        Events:
+        <ul>
+            <li><code>loadstart</code></li>
+            <li><code>loadedmetadata</code></li>
+            <li><code>canplay</code></li>
+            <li><code>timeupdate</code></li>
+            <li><code>playing</code></li>
+            <li><code>play</code></li>
+            <li><code>pause</code></li>
+            <li><code>seeking</code></li>
+            <li><code>seeked</code></li>
+            <li><code>durationchange</code></li>
+            <li><code>volumechange</code></li>
+            <li><code>error</code></li>
+        </ul>
+
+        DOM properties:
+        <ul>
+            <li><code>parentNode</code></li>
+            <li><code>appendChild</code></li>
+            <li><code>style</code></li>
+        </ul>
+    </div>
+
+    <br style="clear: both">
+</div>
+
+<div class='section'>
+    <a href="#" class='top'>top &uarr;</a>
+    <div class="header" id="html5interface">
+        HTML5 Player Adapters
+    </div>
+
+    There are an enormous number of Flash, HTML5, and Silverlight based players out there, all providing
+    similar media controls under different method and event names.  Player controls are not consistent
+    across browsers, and custom UI written for one player is not compatible with another.
+    <br /><br />
+    With HTML5, a standard interface now exists. UI and library developers can build upon this interface to provide
+    forward compatibility with new browsers, and backward compatibility with enterprise Flash player.  By taking this
+    approach, MPF provides not only a stable development platform for its own UI, but also provides these players
+    with compatibility other HTML5 video libraries.
+
+    <br /><br />
+    The MetaPlayer Framework was built to provide the HTML5 MediaElement interface to non-HTML5 players, extending the use of HTML5
+    libraries into enterprise
+    players and legacy browsers.
+
+    <br /><br />
+
+    Player adapters may optionally specify a playlist module. If none are specified by the player, MPF will provide one.
+
+    <div class='subsection'>
+
+        <div class="header" id="html5">HTML5</div>
+
+        HTML5 is the playback if no player is specified. By default, it will append a video tag
+        to the MetaPlayer target element, if it is not already a video.
+
+        <pre class="prettyprint"><code>
+    var metaplayer = MetaPlayer("#target")
+        .html5()
+        .controls()
+        .load();
+
+    metaplayer.video.src = "http://media.w3.org/2010/05/sintel/trailer.mp4";
+    metaplayer.video.play();
+        </code></pre>
+    </div>
+
+
+    <div class='subsection'>
+
+        <div class="header" id="youtube">YouTube</div>
+        MetaPlayer's YouTube support utilizes the
+        <a href="https://developers.google.com/youtube/iframe_api_reference">IFrame API</a> which includes
+        iPad support.
+
+        You can let MPF do the initialization:
+
+        <pre class="prettyprint"><code>
+    var video = Metaplayer.youtube("mydiv");
+    video.src = "http://www.youtube.com/v/II1Lrxz2Lgg";
+    video.play();
+        </code></pre>
+
+        Alternately, you can pass in a full YT.Player reference:
+
+        <pre class="prettyprint"><code>
+    var tag = document.createElement('script');
+    tag.src = "http://www.youtube.com/player_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    var yt, player, video;
+    function onYouTubePlayerAPIReady() {
+        yt = new YT.Player('player', {
+            height: '100%',
+            width: '100%'
+        });
+
+        video = MetaPlayer.youtube(yt);
+        video.src = "u1zgFlCw8Aw";
+    }
+        </code></pre>
+
+
+    </div>
+
+
+    <div class='subsection'>
+
+        <div class="header" id="flowplayer">FlowPlayer</div>
+
+        Pass in a custom configured FlowPlayer instance:
+
+        <pre class="prettyprint"><code>
+            var fp = $f( 'video',  "flowplayer/flowplayer-3.2.7.swf", {} );
+
+            var metaplayer = MetaPlayer("#target")
+            .flowplayer( fp );
+            .load();
+
+            video.autoplay = true;
+            video.src = "http://media.w3.org/2010/05/sintel/trailer.mp4";
+        </code></pre>
+
+        For simple purposes, MPF can handle initialization. This has the advantage that
+        the wmode is automatically set for "transparent" for HTML overlay support.
+
+        <pre class="prettyprint"><code>
+    var metaplayer = MetaPlayer("#target")
+        .flowplayer({
+            swfUrl : "flowplayer/flowplayer-3.2.7.swf",
+            fpConfig : {}
+        })
+        .controls()
+        .load();
+
+    metaplayer.video.autoplay = true;
+    metaplayer.video.src = "http://media.w3.org/2010/05/sintel/trailer.mp4";
+        </code></pre>
+
+    </div>
+
+    <div class='subsection'>
+
+        <div class="header" id="jwplayer">JWPlayer</div>
+
+        <pre class="prettyprint"><code>
+    var config = {
+        id          : 'jwplayer',
+        autostart   : false,
+        controlbar  : "none",
+        modes       : [{type: 'html5'}],
+        file        : "elephant.ogv",
+        image       : "",
+        volume      : 0
+    };
+
+    var metaplayer = MetaPlayer("#target")
+        .jwplayer(config)
+        .controls()
+        .load();
+        </code></pre>
+
+    </div>
+
+    Player modules also provide a static functions, allowing for use of the adapters outside of a MetaPlayer instance.
+    <br /><br />
+    <pre class="prettyprint"><code>
+        var fp = $f( 'video', "../../../../external/flowplayer/flowplayer-3.2.7.swf", {
+            clip : {
+            url : "sintel.mp4"
+        }}).load();
+
+        var video = MetaPlayer.flowplayer(fp);
+    </code></pre>
+
+    After obtaining the video object, one can pass it to other HTML5 frameworks.
+
+    <pre class="prettyprint"><code>
+        // PopcornJS - http://popcornjs.org/
+        var pop = Popcorn(metaplayer.video)
+
+        // VideoJS - http://videojs.com/
+        var vjs = VideoJS.setup([metaplayer.video]);
+    </code></pre>
+</div>
+
+<!--
+
+<div class='section'>
+    <a href="#" class='top'>top &uarr;</a>
+    <div class="header" id="addthemes">
+        Creating Themes *
+    </div>
+    ...todo
+</div>
+
+
+<div class='section'>
+    <a href="#" class='top'>top &uarr;</a>
+    <div class="header" id="addplugins">
+        Creating Plugins *
+    </div>
+    ...todo
+</div>
+
+-->
+
+
+
+<div class='section'>
+    <a href="#" class='top'>top &uarr;</a>
+    <div class="header" id="iexplorer">
+        IE Support
+    </div>
+    MetaPlayer supports IE8 and above, but has dependencies upon jQuery and Popcorn which require additional
+    libraries to support Internet Explorer.
+
+
+    <div class='subsection'>
+        <div class="header">
+            Popcorn
+        </div>
+        Popcorn supports IE9+, and official support for
+        IE8 is <a href="http://scottdowne.wordpress.com/2012/02/10/popcorn-js-down-the-dark-path-of-ie8-support/">
+        in the works</a>.  Meanwhile, MPF provides an <a href="https://github.com/gkindel/popcorn-js">augmented copy</a>
+        of PopcornJS which can be used until support makes it into the core.
+    </div>
+
+    <div class='subsection'>
+        <div class="header">jQuery</div>
+        As of jQuery 1.7.1, the JavaScript library does not support cross-site requests (CORS) on IE8 or IE9.
+        We recommend using Derek Kastner's <a href="https://github.com/dkastner/jquery.iecors">iecors</a> libarary.
+    </div>
+</div>
+
+
+<div class='section'>
+    <a href="#" class='top'>top &uarr;</a>
+    <div class="header" id="license">
+        License
+    </div>
+
+ <pre>
+ Metaplayer - A standards-based, multiple player, UI and Event framework for JavaScript.
+
+ Copyright (c) 2011 RAMP Holdings, Inc.
+
+ Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+ </pre>
+
+</div>
+
+
+<div class="footer">
+    &nbsp;
+</div>
+
+
+</body>
+</html>

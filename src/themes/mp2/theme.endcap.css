@@ -1,0 +1,57 @@
+.metaplayer-endcap{
+    background: url('assets/black80.png');
+}
+
+.metaplayer-endcap-again-icon {
+    position: absolute;
+    width: 20px;
+    height: 26px;
+    top: 10px;
+    left: 15px;
+    background: url(assets/control/watch-again-20x26.png) no-repeat;
+}
+.metaplayer-endcap-countdown {
+    position: absolute;
+    width: 38px;
+    height: 26px;
+    top: 10px;
+    left: 10px;
+    font-size: 26px;
+    font-weight: bold;
+    cursor: pointer;
+    background: transparent;
+    text-align: center;
+}
+
+.metaplayer-endcap-left-title,
+.metaplayer-endcap-right-title {
+    padding-top: 16px;
+    padding-left: 50px;
+}
+
+.metaplayer-endcap-search-input,
+.metaplayer-endcap-search-input:focus
+{
+    background: none repeat scroll 0 0 #878787;
+    border: 0 none;
+    color: #FFFFFF;
+    font-family: arial,sans-serif;
+    font-size: 14px;
+    font-style: italic;
+    line-height: 16px;
+    right: 0px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    padding-right: 30px;
+}
+.metaplayer-endcap-search-btn {
+    background-image: url('assets/control/search-16.png');
+    background-color: #878787;
+    height: 16px;
+    width: 16px;
+    margin: 1px 0;
+    background-repeat:no-repeat;
+    background-position:center;
+    border: none;
+    z-index: 10;
+}

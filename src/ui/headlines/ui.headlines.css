@@ -1,0 +1,39 @@
+.mp-hl {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    height: 1.5em;
+    line-height: 1.5em;
+}
+
+.mp-hl-nav {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    line-height: 1.5em;
+    display: none;
+}
+.mp-hl-prev,
+.mp-hl-next {
+    height: 1.5em;
+    line-height: 1.5em;
+    text-align: center;
+    border: 1px solid black;
+    margin:  0 2px;
+    padding:  1px 4px;
+}
+.mp-hl-title{
+    float: left;
+    margin: 0 8px;
+}
+.mp-hl-scroll{
+    /*margin-right: 46px;*/
+    overflow: hidden;
+}
+.mp-hl-item {
+    margin: 0 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    background: white
+}

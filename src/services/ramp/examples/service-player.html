@@ -1,0 +1,142 @@
+<!doctype html>
+<html>
+<head>
+
+    <title>HTML5 Plugin | RAMP</title>
+
+    <style>
+        #target {
+            width: 600px;
+            height: 300px;
+            background:  #333;
+        }
+    </style>
+
+    <!--Dependency: jQuery-->
+    <script src="../../../../external/jquery/jquery-1.7.1.js" type="text/javascript"></script>
+    <script src="../../../../external/jquery/jquery-ui-1.8.17..min.js" type="text/javascript"></script>
+
+    <!-- Core: Ramp -->
+    <script src="../../../core/metaplayer.js"></script>
+    <script src="../../../core/utils/util.event.js"></script>
+    <script src="../../../core/utils/util.proxy.js"></script>
+    <script src="../../../core/utils/util.script.js"></script>
+    <script src="../../../core/utils/util.timer.js"></script>
+    <script src="../../../core/utils/util.format.js"></script>
+    <script src="../../../core/utils/util.ui.js"></script>
+    <script src="../../../core/playlist/player.playlist.js"></script>
+    <script src="../../../core/layout/core.layout.js"></script>
+    <script src="../../../core/metadata/core.metadata.js"></script>
+    <script src="../../../core/search/core.search.js"></script>
+    <script src="../../../core/cues/core.cues.js"></script>
+
+    <!-- Service Plugin: ramp -->
+    <script src="../../../services/ramp/service.ramp.js"></script>
+
+    <!-- UI Plugin: youtube -->
+    <script src="../../../players/youtube/player.youtube.js"></script>
+
+
+    <script type="text/javascript">
+        var player;
+
+        $(function () {
+            var template = $('#template').remove();
+
+            player = MetaPlayer('#target')
+                    .ramp()
+                    .youtube({ chromeless : false })
+                    .load();
+
+            player.video.autoplay = true;
+
+
+            player.metadata.listen( MetaPlayer.MetaData.DATA, function (e) {
+
+                // show some of the metadata fields
+                $('#title').text( e.data.title);
+                $('#description').text( e.data.description);
+                $('#source').text( player.video.src )
+                        .attr("href", player.video.src );
+
+
+                // jumptags
+                var tags = $("#tags").empty();
+                $.each( e.data.ramp.tags, function (i, tag) {
+                    var clone = template
+                            .clone()
+                            .appendTo(tags);
+
+                    // create the tag
+                    clone.find(".term").text(tag.term);
+
+                    // create the timestamp links
+                    var times = clone.find(".times");
+                    $.each( tag.timestamps, function (i, ts){
+                        $("<a></a>").text(ts + "s")
+                                .appendTo(times)
+                                .attr("href", "#"+ts)
+                                .click( function (e) {
+                                    player.video.currentTime = ts;
+                                    e.preventDefault();
+                                    return false;
+                                });
+                    });
+
+                })
+
+            });
+        })
+    </script>
+    <style>
+        .field { padding: 4px; }
+        .label {
+            font-weight: bold;
+        }
+        .val {
+            display: block;
+            padding-right: 15px;
+            font-style: italic
+        }
+        #tags {
+            padding-left: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <button onclick="player.ramp('../../../../media/sxsw/L-Style.xml')">L-Style.xml</button>
+    <button onclick="player.ramp('../../../../media/sxsw/Galaxy_Mini_2.xml')">Galaxy_Mini_2.xml</button>
+</div>
+
+<div>
+    <div class="field">
+        <span class="label">Title</span>
+        <span class="val" id="title"></span>
+    </div>
+    <div class="field">
+        <span class="label">Description</span>
+        <span class="val" id="description"></span>
+    </div>
+    <div class="field">
+        <span class="label">Source</span>
+        <a class="val" id="source"></a>
+    </div>
+    <div class="field">
+        <span class="label">Tags</span>
+        <div class="val" id="tags">
+            <div class='tag' id="template">
+                <span class="term"></span>:
+                <span class="times"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="target"></div>
+
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE smil PUBLIC "-//W3C//DTD SMIL 3.0 Tiny//EN" "http://www.w3.org/2008/SMIL30/SMIL30Tiny.dtd">
+<smil xmlns="http://www.w3.org/ns/SMIL" xmlns:json="xalan://org.json.JSONObject" version="3.0" baseProfile="Tiny">
+<head>
+<meta name="Broadcaster" content="SouthBySouthWest"/>
+</head>
+<body>
+<seq xml:id="playlist">
+<par xmlns="" xml:id="item1">
+<video xml:id="v1" type="flv" title="Samsung Galaxy Mini 2 " src="http://www.youtube.com/watch?v=2QwsRD8qRNQ&amp;feature=youtube_gdata">
+<metadata>
+<meta name="rampId" content="52329822"/>
+<meta name="thumbnail" content="http://publishing.ramp.com/thumbnails/cached_media/0006/0006818/0006818278/images/thumb.jpg"/>
+<meta name="searchapi" content="http://publishing.ramp.com/sxsw/device/services/playerdata?episode=52329822"/>
+<meta name="searchterm" content="''"/>
+<meta name="linkURL" content="http://publishing.ramp.com/sxsw/v/52329822/2QwsRD8qRNQ"/>
+<meta name="embedURL" content="http://publishing.ramp.com/widgets/sxsw/4240/?episode=52329822"/>
+<meta name="siteSearchURL" content="http://publishing.ramp.com/sxsw/search?mediatype=Video&amp;q="/>
+<meta name="iosURL" content=""/>
+<meta name="description">Samsung Galaxy Mini 2 The small, simple Android smartphone was on display at Mobile World Congress. From: CNETTV Views: 4582 71 ratings Time: 00:43 More in News &amp; Politics</meta>
+</metadata>
+</video>
+<metadata xml:id="transcodes1">
+<meta type="video/youtube" name="youtube" content="2QwsRD8qRNQ"/>
+</metadata>
+<seq xml:id="metaqs1"/>
+<seq xml:id="jumptags1" max="4">
+<ref begin="13.27s">
+<param name="term"><![CDATA[Samsung]]></param>
+<param name="type"><![CDATA[company]]></param>
+<param name="score"><![CDATA[8.755182]]></param>
+<param name="origin"><![CDATA[namedentity]]></param>
+<param name="timestamps"><![CDATA[13.269]]></param>
+</ref>
+<ref begin="22.51s">
+<param name="term"><![CDATA[megahertz processor]]></param>
+<param name="type"><![CDATA[unk]]></param>
+<param name="score"><![CDATA[9.825435]]></param>
+<param name="origin"><![CDATA[keyword]]></param>
+<param name="timestamps"><![CDATA[22.509]]></param>
+</ref>
+</seq>
+</par>
+</seq>
+</body>
+</smil>

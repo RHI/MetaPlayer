@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+
+    <title>Playlist | Metaplayer</title>
+
+    <style>
+        #video {
+            width: 600px;
+            height:300px;
+            background: #aaa;;
+        }
+
+    </style>
+
+    <!--Dependency: jQuery-->
+    <script src="../../../../external/jquery/jquery-1.6.2.js" type="text/javascript"></script>
+
+    <!-- Core: Ramp -->
+    <script src="../../../core/metaplayer.js"></script>
+    <script src="../../../core/utils/util.event.js"></script>
+    <script src="../../../core/utils/util.proxy.js"></script>
+    <script src="../../../core/utils/util.script.js"></script>
+    <script src="../../../core/utils/util.timer.js"></script>
+    <script src="../../../core/utils/util.format.js"></script>
+    <script src="../../../core/utils/util.ui.js"></script>
+    <script src="../../../core/playlist/player.playlist.js"></script>
+    <script src="../../../core/layout/core.layout.js"></script>
+    <script src="../../../core/metadata/core.metadata.js"></script>
+    <script src="../../../core/search/core.search.js"></script>
+    <script src="../../../core/cues/core.cues.js"></script>
+    <link href="../../../core/layout/core.layout.css" rel="stylesheet" type="text/css">
+
+</head>
+<body>
+    <h3>Metaplayer &raquo; Playlist Plugin</h3>
+
+    <div>
+        Example of using playlist without a MetaPlayer instance.
+    </div>
+
+
+    <video id="video" controls="controls" autoplay="true">
+    </video>
+
+    <div>
+        <button onclick="playlist.previous()">playlist.previous()</button>
+        <button onclick="playlist.next()">playlist.next()</button>
+        <button onclick="video.currentTime = video.duration - 2">jump to end</button>
+    </div>
+
+    <script type="text/javascript">
+
+        var urls= [
+            "http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.webm",
+            "http://media.w3.org/2010/05/sintel/trailer.webm"
+        ];
+
+        var video = document.getElementById('video');
+
+        var mp = MetaPlayer('#video').load();
+        playlist = mp.playlist;
+        playlist.queue( urls );
+
+    </script>
+
+</body>
+</html>

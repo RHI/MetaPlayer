@@ -1,0 +1,106 @@
+.mp-controls {
+    background: silver;
+    height: 26px;
+}
+.mp-controls-box {
+    background: #aaa;
+}
+
+.mp-controls-time {
+    text-shadow: 0 0 2px #666;
+    font-family: verdana, arial, sans-serif;
+    font-size:11px;
+    height:100%;
+    width: 100px;
+    vertical-align: top;
+    margin-top: -4px;
+}
+.mp-controls-time-current {
+    color: black;
+    text-shadow: 0 1px 0 #fff;
+}
+
+.mp-controls-time-duration {
+    text-shadow: none;
+    color:#777777;
+}
+
+.mp-controls-play {
+    width: 17px;
+    height: 17px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    background-image: url(assets/control/play-28x24.png);
+    left: 7px;
+}
+
+.mp-controls-pause {
+    background-image: url(assets/control/pause-28x24.png);
+}
+
+.mp-controls-fullscreen {
+    background: url(assets/control/fullscreen-32x24.png);
+}
+
+.mp-controls-track {
+    border: 1px solid dimGray;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    background: #4C4C4C;
+    height: 15px;
+    margin-left: 30px;
+
+}
+
+.mp-controls-track-fill {
+    background: #d3d3d3; /* for non-css3 browsers */
+    /* filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#d3d3d3', endColorstr='#9f9f9f');  for IE but doesn't work in IE9 */
+    background: -webkit-gradient(linear, left top, left bottom, from(#d3d3d3), to(#9f9f9f)); /* for webkit browsers */
+    background: -moz-linear-gradient(top,  #d3d3d3,  #9f9f9f); /* for firefox 3.6+ */
+    border-radius:3px;
+    -moz-border-radius:3px;
+    -webkit-border-radius:3px;
+    }
+
+.mp-controls-track-marker {
+    width: 14px;
+    height: 14px;
+    margin-left: -7px;
+    background: url(assets/dot-blue.png) no-repeat;
+}
+
+.mp-controls-query {
+    background: transparent url(assets/dot-orange.png) no-repeat;
+}
+
+.mp-controls-tag {
+}
+
+.mp-controls-metaq {
+}
+
+.mp-controls-track-knob {
+    background: url(assets/playhead.png) no-repeat;
+    border:  none;
+    width:9px;
+    height:20px;
+    top:-2px;
+}
+
+.mp-controls-track-knob:hover {
+    border:  none;
+    background: url(assets/playhead.png) no-repeat;
+}
+
+.mp-controls-track-knob:active {
+    border:  none;
+    background: url(assets/playhead.png) no-repeat;
+}
+
+.mp-controls-track-buffer {
+    background: #666;
+    border-radius: 5px;
+}
+

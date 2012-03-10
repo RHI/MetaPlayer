@@ -1,0 +1,28 @@
+{
+    "metadata" : {
+        "title" : "Video 2",
+        "rampId" : "video2"
+    },
+    "transcodes" : [
+        {
+            "name" : "default",
+            "type" : "video/mp4",
+            "url"  : "http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.mp4"
+        },
+        {
+            "name" : "some.name",
+            "type" : "video/webm",
+            "url"  : "http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.webm"
+        },
+        {
+            "name" : "some.name",
+            "type" : "video/ogg",
+            "url"  : "http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.ogv"
+        }
+    ],
+    "related" : [
+        {
+            "rampId" : "video1"
+        }
+    ]
+}

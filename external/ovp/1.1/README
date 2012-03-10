@@ -1,0 +1,173 @@
+
+==== GETTING STARTED ====
+ 
+An OVP project to simplify the deployment of multiple video players.  It provides a unified
+facade to each OVP technology and frees the user from having to write
+dependent code for each individual player-type.  It also provides failover,
+to give the best possible experience for the end-user when different
+technologies are available.  OVP will use a selective list of possible
+technologies depending on the format of the media and the configuration
+passed into the player.  It is cross-browser and can utilize the new HTML 5
+video tags as well. 
+
+It supports a configurable and pluggable interface and can be extended at
+runtime.  Plugins are notified of each step and given the option of
+manipulating the result of a call.  Plugins may choose to abort calls to
+further plugins or (more typically) will be called sequentially in the order
+they are loaded. If an error occurs in a plugin, it may pass the error up to
+halt processing all together or it may handle the error and indicate to the
+calling function it failure (but allow other plugins to continue).
+
+Basic steps:
+1) Include all required files on the page (ovp javascript and css files)
+2) Optionally Create a configuration dictionary for the desired behavior
+   and call the init method
+3a) Optionally call the ovp.adopt method to adopt all video tags on the page
+3b) Optionally Call render method to render a player to a specific location
+    on the page
+ 
+
+==== EXAMPLES ====
+
+To use the included examples unzip the release to a folder in your document
+root, then point your browser to the ./html/ folder in this release.  The
+examples refer to several video files, which you mut provide to fully test.
+
+
+==== BUILDING ====
+
+This file and several other files will be concatenated together to build the
+final product.  This is all controlled by a simple Makefile using GNU make.
+To build, "cd" to the top-most directory of the project (probably the
+direcory containing this file) and type:
+
+make
+
+If you wish to delete the concatenated versions you can use:
+
+make clean
+
+
+==== USAGE ====
+
+There are 3 main ways of using OVP.js (adopt, render and renderFeed).  Each
+fits a slightly different need.  Always use each of the three examples only
+when the DOM is ready.
+
+Using "adopt":
+--------------
+
+Use adopt() when you simply want to put a standard HTML5 video tag within the
+HTML and have ovp.js replace and enhance the DOM element.  This is useful for
+simple HTML-standard pages that will still behave nicely (although maybe not
+exactly how you would like) when Javascript is disabled.  To do this you would
+place a video tag directly on the page then include the following Javascript
+
+    // We can optionally start with a config object to manipulate our strategy
+    var configobj = {"strategy":{
+        "order":["HTML5","Silverlight","Flash"]  // Case is important
+    }};
+    // If we have a config, we init-it to the ovp framework
+    ovp.init(configobj);
+    // Then we call adopt() to adopt all video tags on the page
+    ovp.adopt();
+
+
+Using "render":
+---------------
+
+Use render() when you wish to programatically load the video onto the page
+using Javascript.
+
+    // We can optionally start with a config object to manipulate our strategy
+    var configobj = {"strategy":{
+        "order":["HTML5","Silverlight","Flash"]  // Case is important
+    }};
+    // If we have a config, we init-it to the ovp framework
+    ovp.init(configobj);
+	// in this case we need a video config object to describe our videos and
+	// their behavior
+	var videoconf = {
+		"sources":[
+			{'src':'http://localhost/video.mp4','type':'video/mp4'}
+			{'src':'http://localhost/video/video.ogv', 'type':'video/ogg'},
+		],
+	'posterimg':'http://localhost/img/poster.png',
+	'autobuffer':true,
+	'controls':true,
+	'height':360,
+	'width':640,
+	'id':'vplayer'
+	};
+    // Then we call render() to render the player to the desired location
+	ovp.render('vplayer', videoconf);
+
+
+Using "renderFeed":
+-------------------
+
+Use renderFeed() when you have an RSS Feed that defines a list of content you
+would like to use for playback.  This will result in a "content-slider" where
+the thumbnails are shown and clicking on the thumbnail results in the video
+being rendered.  Feeds must be loaded from the same location as the ovp
+Javascript for sandboxing.
+
+    // We can optionally start with a config object to manipulate our strategy
+    var configobj = {
+		"strategy":{ "order":["HTML5","Silverlight","Flash"] }
+		"sliderdelay":5000,
+		"sliderspeed":"fast",
+		"immediately":true	// When the player render fires, start playing immediately, don't wait for poster click.
+    };
+    // If we have a config, we init-it to the ovp framework
+    ovp.init(configobj);
+    // Then we call renderFeed to render the feed to the desired location
+    ovp.renderFeed('mydivid', 'feed.xml');
+
+
+==== UNIT TESTS ====
+
+Unit tests are run from a browser in the ./tests directory.  To run the
+tests simply navigate your browser to the index.html file that is in
+that directory.  Tests are something we hope to improve in the coming
+versions as the initial version was rather light on unit tests..
+
+Writing Unit Tests:
+-------------------
+
+Unit tests are each written to correspond to the module being tested.  You
+will find several testX.js files in the tests/ directory.  When writing
+unit tests you should follow the example of an existing test harness
+(testUtil.js is a good one to start with).  Each unique test should test
+both the positive and negative of your assertion and each test should be
+isolated to its own test() clause.
+
+When creating new test modules ensure that your module starts with:
+	$(document).ready(function(){
+	    module("The name of the module I am testing");
+		test("Description of Test", function(){ "TEST HERE" });
+	}
+
+The tests are built using jQuery's QUnit framework.
+
+==== DEVELOPMENT ====
+
+Coding Standards:
+----------------
+
+* Use tabs not spaces
+* functions are camelCase
+* variables are camelCase
+* variables you mean to be private begin with an underscore ("_")
+* ALWAYS use curlies, unless on a single-line statement
+
+* Open brackets on same line as if [ eg:  if (true) {  ]
+* Else's on the same line as closing brackets [ eg: } else {  ]
+
+Classes:
+* Classes are stored in their own file for ease of editing
+  (be sure to add them into the Makefile)
+* ovp is the main class that is exposed to the window objet, all interfaces must
+  be defined here.
+
+

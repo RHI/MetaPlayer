@@ -1,0 +1,140 @@
+
+
+.mp-search {
+    position: relative;
+    top: 0; left: 0;
+    height: 100%;
+    width: 100%;
+}
+
+.mp-search-form {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    right: 0;
+    height: 32px;
+}
+
+.mp-search-input {
+    position: absolute;
+    right: 100px;
+    left: 10px;
+    top: 3px;
+    bottom: 3px;
+    border: 1px solid gray;
+    border-right:  none;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    padding: 1px 4px;
+    font-size: 16px;
+    margin: 0;
+}
+
+.mp-search-submit {
+    width: 89px;
+    display: block;
+    position: absolute;
+    right: 10px;
+    top: 3px;
+    bottom: 3px;
+    border: 1px solid blue;
+    background:  blue;
+    color: white;
+    font-size: 18px;
+    text-align: center;
+    cursor: pointer;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+
+.mp-search-submit-label {
+    text-align: center;
+}
+.mp-search-submit-label:after {
+    content : "Search";
+}
+
+.mp-search-close {
+    position : absolute;
+    right: 15px;
+    top: 0px;
+    width: 13px;
+    height: 13px;
+    color: blue;
+    cursor: pointer;
+    font-family: monospace;
+    font-size: 15px;
+}
+
+.mp-search-tags
+{
+    position: absolute !important;
+    top: 42px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 5px 10px;
+    font-size: .8em;
+}
+.mp-search-results
+{
+    position: absolute !important;
+    top: 42px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    font-size: .8em;
+}
+
+.mp-search-results .mp-scroll-body {
+    padding: 5px 15px 5px 15px;
+}
+.mp-search-results .mp-scroll-knob {
+    right: 2px !important;
+    width: 8px !important;
+}
+
+.mp-search-result-count {
+}
+.mp-search-result {
+    border-top:  1px solid #aaa;
+    padding:  5px 0 5px 0;
+    cursor:pointer;
+}
+.mp-search-result:first-child {
+    border-top: none;
+}
+
+.mp-search-time {
+    float: left;
+    width: 25px;
+    text-align: right;
+    margin-right: 10px;
+    color: orange;
+}
+.mp-search-text:before {
+    content: "...";
+}
+
+.mp-search-result:hover {
+    text-decoration: underline;
+}
+
+.mp-search-match {
+    font-weight: bold;
+}
+
+.mp-search-tags {
+}
+
+.mp-search-tag {
+    white-space: nowrap;
+    float: left;
+    width: 50%;
+}
+.mp-search-tag-label {
+    cursor: pointer;
+    color: blue;
+    text-decoration: underline;
+}

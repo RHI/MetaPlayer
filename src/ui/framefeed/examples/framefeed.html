@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+<head>
+
+    <style>
+        body {
+            background:  #eee;
+        }
+        #target {
+            width: 500px;
+            height: 300px;
+            background:  #333;
+            float: left
+        }
+        #feedheader {
+            height: 25px;
+            margin-left: 510px;
+        }
+
+        #feed {
+            background:  gray;
+            margin-left: 510px;
+            height: 275px;
+            width: 300px;
+        }
+    </style>
+
+    <!--Dependency: jQuery-->
+    <script src="../../../../external/jquery/jquery-1.7.1.js" type="text/javascript"></script>
+
+    <!--Dependency: Popcorn -->
+    <script src="../../../../external/popcorn/popcorn.js" type="text/javascript"></script>
+
+    <!-- Dependency: swfobject -->
+    <script src="../../../../external/swfobject/swfobject.js" type="text/javascript"></script>
+
+    <!-- Core: Ramp -->
+    <script src="../../../core/metaplayer.js"></script>
+    <script src="../../../core/utils/util.event.js"></script>
+    <script src="../../../core/utils/util.proxy.js"></script>
+    <script src="../../../core/utils/util.scrollbar.js"></script>
+    <script src="../../../core/utils/util.script.js"></script>
+    <script src="../../../core/utils/util.timer.js"></script>
+    <script src="../../../core/utils/util.format.js"></script>
+    <script src="../../../core/utils/util.ui.js"></script>
+    <script src="../../../core/playlist/player.playlist.js"></script>
+    <script src="../../../core/layout/core.layout.js"></script>
+    <link href="../../../core/layout/core.layout.css" rel="stylesheet" type="text/css">
+
+    <!-- Media: YouTube -->
+    <script src="../../../players/youtube/player.youtube.js"></script>
+
+    <!-- UI: FrameFeed -->
+    <script src="../../../ui/framefeed/ui.framefeed.js"></script>
+    <link href="../../../ui/framefeed/ui.framefeed.css" rel="stylesheet"  type="text/css">
+
+
+</head>
+<body>
+<h3>Metaplayer &raquo; FrameFeed Plugin</h3>
+
+<div id='target'></div>
+<div id='feedheader'>
+    Filter by group:
+    <button onclick="feed.filter('one')">one</button>
+    <button onclick="feed.filter('two')">two</button>
+    <button onclick="feed.filter('three')">three</button>
+    <button onclick="feed.filter()">none</button>
+</div>
+
+<div id='feed'></div>
+
+<script type="text/javascript">
+    var feed, video, pop;
+
+    $( function () {
+
+        feed = MetaPlayer.framefeed("#feed", {
+            duplicates : true
+        });
+
+        video = MetaPlayer.youtube("#target", { chromeless : false });
+        video.preload = false;
+        video.src = "http://www.youtube.com/v/Ip2ZGND1I9Q?version=3";
+        //        video.muted = true;
+        video.volume = 0;
+
+        pop = Popcorn( video );
+        // generate a few iframe color boxes
+        var i, hex, maxHex = parseInt("ffffff",16) + 1;
+        for( i = 0; i < 100; i++) {
+            var highlight = ( i % 3 == 2 );
+            pop.framefeed ({
+                target : "#feed",
+                url : "items/test.html?i=" + i + "#" + (  highlight ? "ff8888" : "8888ff"),
+                tags : highlight ? "one" : "two",
+                height: highlight ? 150 : 100,
+                start : i * 10
+            });
+        }
+
+    })
+</script>
+
+</body>
+</html>
