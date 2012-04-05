@@ -21,7 +21,8 @@
         this.config = $.extend({}, defaults, options);
         this.player = player;
 
-        this.baseUrl = MetaPlayer.script.base();
+        // used to find our templates
+        this.baseUrl = MetaPlayer.script.base("(metaplayer|ui).endcap.js");
 
         this.container = this.player.layout.stage;
         this.getTemplate();

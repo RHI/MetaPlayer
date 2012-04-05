@@ -129,7 +129,7 @@
 }
 
 .mp-search-tag {
-    white-space: nowrap;
+    /*white-space: nowrap;*/
     float: left;
     width: 50%;
 }

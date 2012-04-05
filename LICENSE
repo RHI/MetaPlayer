@@ -1,5 +1,8 @@
-/*
-Metaplayer - A standards-based, multiple player, UI and Event framework for JavaScript.
+/**
+
+MetaPlayer Framework  v{{VERSION}}
+
+A standards-based, multiple player, UI and Event framework for JavaScript.
 
 Copyright (c) 2011 RAMP Holdings, Inc.
 

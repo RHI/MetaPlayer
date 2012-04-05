@@ -44,11 +44,13 @@
     MetaData.DATA = "data";
 
 
-    MetaData.prototype = {
+    MetaData.prototype =  {
+
 
         /**
          * Request MetaData for an uri
          * @param uri
+         * @this {MetaData}
          * @param callback (optional)  If specified will suppress the DATA event
          */
         load : function ( uri, callback, scope) {

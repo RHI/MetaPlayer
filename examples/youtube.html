@@ -33,9 +33,10 @@
             player = MetaPlayer("#target")
                     .youtube()
                     .overlay()
+                    .captions()
                     .endcap()
                     .controls()
-                    .ramp( "http://dev.api.ramp.com/v1/mp2/playlist?e=52345506&apikey=0302cd28e05e0800f752e0db235d5440" )
+                    .ramp( "http://api.ramp.com/v1/mp2/playlist?e=52345506&apikey=0302cd28e05e0800f752e0db235d5440" )
                     .load();
 
             player.video.autoplay = true;

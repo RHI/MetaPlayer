@@ -8,6 +8,7 @@
         filterMsec : 500,
         revealMsec : 1500,
         duplicates : false,
+        renderAnnotations : true,
         baseUrl : ""
     };
 
@@ -25,7 +26,6 @@
             return new FrameFeed(target, options);
 
         this.config = $.extend(true, {}, defaults, options);
-
 
         this.target = $("<div></div>")
             .addClass( this.cssName("scroller") )
@@ -48,6 +48,7 @@
     MetaPlayer.addPlugin("framefeed", function (target, options){
         this.cues.enable("framefeed", { target : target });
         this.framefeed = FrameFeed(target, options);
+        this.framefeed.player = this;
     });
 
     MetaPlayer.framefeed = FrameFeed;
@@ -86,6 +87,14 @@
 
         filtered : function (obj) {
             return ( this.query && (! obj.tags || ! obj.tags.match(this.query) ) );
+        },
+
+        setup :  function (options) {
+            var self = this;
+            // render annotations if asked
+            if( this.config.renderAnnotations && this.player && this.player.controls ){
+                this.player.controls.addAnnotation(options.start, null, options.topic || '', 'metaq');
+            }
         },
 
         focus : function (obj) {
@@ -216,7 +225,7 @@
         Popcorn.plugin( "framefeed" , {
 
             _setup: function( options ) {
-                FrameFeed(options.target);
+                FrameFeed(options.target).setup(options);
             },
 
             start: function( event, options ){

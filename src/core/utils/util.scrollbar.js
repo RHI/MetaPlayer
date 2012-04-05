@@ -11,6 +11,8 @@
         fixedHeight : false,
         minHeight : 20, //px
         mouseDrag : false,
+        listenChanges : true,
+        knobAnimateMs : 1000,
         inertial : false  // beta
     };
     var ScrollBar = function (container, options) {
@@ -113,7 +115,6 @@
         },
 
         scrollTo : function (x, y, duration){
-
             var max = this.body.height() - this.parent.height();
             var at_max = ( max > 0 && this.scroller.scrollTop() + 1 >= max ); // allow rounding fuzzyiness
 
@@ -144,11 +145,16 @@
         },
 
         render: function (duration) {
-            if( ! this.body ) {
+
+            // ff 11 crashes without second check if this.body isn't visible (or part of dom yet)
+            if( ! this.body || ! this.body.is(":visible")) {
                 return;
             }
+
             var bh = this.body.height();
             var ph = this.parent.height();
+
+
             var kh =  Math.min( ph - ( (bh - ph) / bh * ph ), ph);
 
             if( kh < this.config.minHeight || this.config.fixedHeight )
@@ -157,6 +163,13 @@
             var y = (this._scrollY != null) ? this._scrollY : this.scroller.scrollTop();
             var perY = y /  ( bh - ph );
             var knobY = (ph - kh) * perY;
+
+            // don't trigger animations if we haven't changed
+            var cacheHeight = knobY + kh;
+            if(  this._cacheHeight == cacheHeight ){
+                return;
+            }
+            this._cacheHeight = cacheHeight;
 
             this.knob
                 .toggle( kh < ph );
@@ -175,7 +188,8 @@
         },
 
         onResize : function () {
-            this.render(1000);
+            if( this.config.listenChanges )
+                this.render(this.config.knobAnimateMs);
         },
 
         onTouchStart : function (e) {

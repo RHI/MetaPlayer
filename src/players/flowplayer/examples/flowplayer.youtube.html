@@ -1,0 +1,197 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset=utf-8>
+
+    <title>Flowplayer Plugin | Metaplayer</title>
+
+    <!--Dependency: jQuery-->
+    <script src="../../../../external/jquery/jquery-1.7.1.js" type="text/javascript"></script>
+    <script src="../../../../external/jquery/jquery-ui-1.8.17..min.js" type="text/javascript"></script>
+
+    <!--Dependency: Flowplayer-->
+    <script src="../../../../external/flowplayer/flowplayer-3.2.6.js"></script>
+    <script src="../../../../external/flowplayer/flowplayer.ipad-3.2.2-ramp.js"></script>
+
+    <!--Dependency: Popcorn -->
+    <script src="../../../../external/popcorn/popcorn.js" type="text/javascript"></script>
+    <!--script src="../../../../external/popcorn-ie8/popcorn-ie8.js" type="text/javascript"></script-->
+
+   <!-- Core: Ramp -->
+    <script src="../../../core/metaplayer.js"></script>
+    <script src="../../../core/utils/util.event.js"></script>
+    <script src="../../../core/utils/util.proxy.js"></script>
+    <script src="../../../core/utils/util.script.js"></script>
+    <script src="../../../core/utils/util.timer.js"></script>
+    <script src="../../../core/utils/util.format.js"></script>
+    <script src="../../../core/utils/util.ui.js"></script>
+    <script src="../../../core/playlist/player.playlist.js"></script>
+    <script src="../../../core/layout/core.layout.js"></script>
+    <script src="../../../core/metadata/core.metadata.js"></script>
+    <script src="../../../core/search/core.search.js"></script>
+    <script src="../../../core/cues/core.cues.js"></script>
+
+    <link href="../../../core/layout/core.layout.css" rel="stylesheet" type="text/css">
+
+    <!-- Service Plugin: RAMP -->
+    <script src="../../../services/ramp/service.ramp.js"></script>
+
+    <!-- Media Plugin: Flowplayer -->
+    <script src="../../../players/flowplayer/player.flowplayer.js"></script>
+
+    <!-- UI: Captions -->
+    <script src="../../../ui/captions/ui.captions.js"></script>
+    <link href="../../../ui/captions/ui.captions.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.captions.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Social -->
+    <script src="../../../ui/social/ui.social.js"></script>
+    <link href="../../../ui/social/ui.social.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Embed -->
+    <script src="../../../ui/embed/ui.embed.js"></script>
+    <link href="../../../ui/embed/ui.embed.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.embed.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Controls -->
+    <script src="../../../ui/controls/ui.controls.js"></script>
+    <link href="../../../ui/controls/ui.controls.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.controls.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Overlay -->
+    <script src="../../../ui/overlay/ui.overlay.js"></script>
+    <link href="../../../ui/overlay/ui.overlay.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.overlay.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Endcap -->
+    <script src="../../../ui/endcap/ui.endcap.js"></script>
+    <link href="../../../ui/endcap/ui.endcap.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.endcap.css" rel="stylesheet"  type="text/css">
+
+    <style>
+        #video {
+            width: 600px;
+            height: 300px;
+            background:  gray;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<h3>Metaplayer &raquo; Flowplayer Plugin</h3>
+
+<div id='video'></div>
+<script type="text/javascript">
+window.mdp = {};
+if( ! mdp.videoPlayer )
+    mdp.videoPlayer = { video : {} };
+    mdp.videoPlayer.sb = "recipecom";
+    mdp.videoPlayer.channel = "videohome";
+    mdp.videoPlayer.kw = "breakfastsandwich";
+    mdp.videoPlayer.video.id = "52692564";
+    mdp.videoPlayer.extraAdParams = "";
+</script>
+
+<script type="text/javascript">
+
+    var fp = $f( 'video',
+            {
+                src: "../../../../external/flowplayer/flowplayer-3.2.7.swf",
+                wmode: "transparent"
+            },
+            {
+
+                plugins : {
+                    youtube : {
+                        url : "../../../../external/flowplayer/flowplayer.youtube-3.2.7-ramp.swf"
+                    },
+
+                    ova: {
+                        //url: "http://www.recipe.com/bhg/files/videoplayer/flowplayer/ova/dist/swf/ova.swf",
+                        url: "../../../../external/flowplayer/ova.swf",
+                        debug: { "debugger": "firebug", "levels": "fatal, vast_template"},
+
+/*                        ads: {
+                                "notice": { "textStyle": "smalltext" },
+                                "deliveryType": "progressive",
+                                "displayCompanions": true,
+                                "restoreCompanions": false,
+                                "companions": [
+                                        {"id":"mp2-companionAd-1", "width":"300","height":"250"},
+                                        {"id":"mp2-companionAd-leaderboard", "width":"728","height":"90"}
+                                ],
+                                "pauseOnClickThrough": true,
+                                "servers": [{
+                                        "type": "DART",
+                                        "tag":"http://ad.doubleclick.net/pfadx/"+mdp.videoPlayer.sb+".mdp.video/"+mdp.videoPlayer.channel
+                                        +";chID="+mdp.videoPlayer.channel+";dcmt=text/xml;sz=60x60;frmt=na;kw="+mdp.videoPlayer.kw
+                                        +";vid="+ mdp.videoPlayer.video.id+";"
+                                        + ( mdp.videoPlayer.extraAdParams ? mdp.videoPlayer.extraAdParams : "")
+                                        + ";cue=pre;ord=__timestamp__;"
+                                }],
+                                "schedule": [{
+                                    "position": "pre-roll",
+                                    "applyToParts": [0]
+                                }]
+                            }*/
+
+                        "ads": {
+                            "displayCompanions": true,
+                            "companions": [ {
+                                "id": "companion-160x600",
+                                "width": 160,
+                                "height": 600
+                            }],
+                            "servers": [
+                                {
+                                    "type": "OpenX",
+                                    "apiAddress": "http://openx.openvideoads.org/openx/www/delivery/fc.php"
+                                }
+                            ],
+                            "schedule": [
+                                {
+                                    "zone": "5",
+                                    "position": "pre-roll"
+                                },
+                                {
+                                    "zone": "33",
+                                    "position": "reserved-bottom-w450px-h50px-transparent-0m",
+                                    "width": 450,
+                                    "height": 50,
+                                    "startTime": "00:00:05",
+                                    "duration": "15"
+                                }
+                            ]
+                        }
+                    }
+                },
+                clip : {
+                    scaling : "fit",
+                    autoPlay: true
+
+                },
+                playlist : [
+                    {
+//                        url : "http://content.bitsontherun.com/videos/rO8PIVrl-393434.mp4"
+                        url : "api:G4YahBNTHdc",
+                        provider: "youtube",
+                        autoPlay: true
+                    }
+                ]
+            });
+//    fp.ipad({ simulateiDevice : false });
+    fp.load();
+
+
+    player = MetaPlayer( MetaPlayer.flowplayer(fp), { selectSource : false, sourceTags : false} )
+            .controls()
+            .ramp("http://publishing.ramp.com/recipe/themename/ws_1.3_6724/mp2-playlist?e=46740341")
+            .load();
+
+
+</script>
+
+</body>
+</html>

@@ -1,25 +1,4 @@
-/**
- Metaplayer - A standards-based, multiple player, UI and Event framework for JavaScript.
 
- Copyright (c) 2011 RAMP Holdings, Inc.
-
- Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
-
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
-
- The above copyright notice and this permission notice shall be included in
- all copies or substantial portions of the Software.
-
- Created: 2011 by Greg Kindel <greg@gkindel.com>
-
- Dependencies: jQuery
-
- */
 /**
  * @fileOverview A media player framework for HTML5/JavaScript for use with RAMP services.
  * @author Greg Kindel <greg@gkindel.com>
@@ -33,6 +12,7 @@
 
 
     var defaults  = {
+        isTouchDevice : null, // autodetect
         debug : "",
         layout : {},
         metadata : {},
@@ -83,6 +63,11 @@
         this._loadQueue = [];
         this.target = video;
 
+        // autodetect, or manual set for testing
+        this.isTouchDevice = ( this.config.isTouchDevice != null )
+            ? this.config.isTouchDevice
+            : /iPad|iPhone|iPod/i.test(navigator.userAgent);
+
         // metadata interface
         if( this.config.metadata )
             this.metadata = new MetaPlayer.MetaData(this, this.config);
@@ -96,10 +81,10 @@
             this.cues = new MetaPlayer.Cues(this, this.config );
 
         // resolve video element from string, popcorn instance, or direct reference
-        if( video ) {
-            if( typeof video == "string")
-                video = $(video).get(0);
+        if( typeof video == "string")
+            video = $(video).get(0);
 
+        if( video ) {
             if( video.getTrackEvents instanceof Function ) {
                 // is popcorn instance
                 this.video = video.media;
@@ -110,12 +95,11 @@
                 // is already a media element
                 this.video = video;
             }
-
         }
 
         // optional layout disabling, use at own risk for player UI layout
         if( video && this.config.layout ) {
-            this.layout = MetaPlayer.layout(video);
+            this.layout = MetaPlayer.layout(video, this.config.layout);
         }
 
         // start loading after this execution block, can be triggered earlier by load()
@@ -179,17 +163,18 @@
 
         _load : function () {
 
-            if (! this._loadQueue ) {
+            if ( this._loaded ) {
                 // load() was already called
                 return;
             }
+            this._loaded = true;
 
             // fill in core interfaces were not implemented
             if( ! this.video && this.layout )
                 this.html5();
 
             if( this.video && ! this.playlist )
-                this.playlist = new MetaPlayer.Playlist(this, this.config);
+                this.playlist = new MetaPlayer.Playlist(this, this.config.playlist);
 
             if( this.video && ! this.popcorn && Popcorn != null )
                 this.popcorn = Popcorn(this.video);
@@ -198,15 +183,15 @@
             // run the plugins, any video will have been initialized by now
             var self = this;
             $( this._loadQueue ).each(function (i, plugin) {
-                plugin.fn.apply(self, plugin.args);
+                    plugin.fn.apply(self, plugin.args);
             });
-            this._loadQueue = null;
+            this._loadQueue = [];
 
+            this.ready = true;
 
             // let plugins do any setup which requires other plugins
             this.dispatcher.dispatch( MetaPlayer.READY );
 
-            this.ready = true;
         }
 
     };

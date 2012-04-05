@@ -252,7 +252,7 @@ $f.addPlugin("ipad", function(options) {
 				url = extendedClip.baseUrl + '/' + url;
 				
 			extendedClip.originalUrl = extendedClip.url;
-			extendedClip.completeUrl = url;
+			extendedClip.completeUrl = url || '';
 			extendedClip.extension = extendedClip.completeUrl.substr(extendedClip.completeUrl.lastIndexOf('.'));
 			extendedClip.type = 'video';
 			
@@ -852,13 +852,15 @@ $f.addPlugin("ipad", function(options) {
 				var api = document.createElement('video');
 				container.appendChild(api);
 				root.appendChild(container);
-				
+
 				//var hasBuiltinControls = conf.config['plugins'] == undefined || (conf.config['plugins'] && conf.config['plugins']['controls'] && conf.config['plugins']['controls'] != null
 				//						&& self['controls'] == undefined);	// we make a careful use of "self", as we're looking in the prototype
 				
 				// styling  container
-				container.style.height = height+'px';
-				container.style.width  = width+'px';
+//				container.style.height = height+'px';
+//				container.style.width  = width+'px';
+				container.style.height = '100%';
+				container.style.width = '100%';
 				container.style.display= 'block';
 				container.style.position = 'relative';
 				container.style.background = '-webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0.5)), to(rgba(0, 0, 0, 0.7)))';

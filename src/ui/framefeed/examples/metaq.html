@@ -4,7 +4,6 @@
 
     <style>
         body {
-            background:  #eee;
         }
         #target {
             width: 600px;
@@ -21,6 +20,8 @@
             margin-left: 610px;
             height: 275px;
             width: 310px;
+			border-top:  1px solid #888;
+			border-bottom:  1px solid #888;
         }
     </style>
 
@@ -30,12 +31,10 @@
 
     <!--Dependency: jQuery-->
     <script src="../../../../external/jquery/jquery-1.7.1.js" type="text/javascript"></script>
+    <script src="../../../../external/jquery/jquery-ui-1.8.17..min.js" type="text/javascript"></script>
 
     <!--Dependency: Popcorn -->
     <script src="../../../../external/popcorn/popcorn.js" type="text/javascript"></script>
-
-    <!-- Dependency: swfobject -->
-    <script src="../../../../external/swfobject/swfobject.js" type="text/javascript"></script>
 
     <!-- Core: Ramp -->
     <script src="../../../core/metaplayer.js"></script>
@@ -97,7 +96,8 @@
             .controls({ renderTags : false })
             .ramp("ramp:/thechewpoc:51416098")
             .framefeed("#feed", {
-                baseUrl : "/thechewpoc/themename/1.0"
+                baseUrl : "/thechewpoc/themename/1.0",
+				renderAnnotations : true
             })
             .load();
 

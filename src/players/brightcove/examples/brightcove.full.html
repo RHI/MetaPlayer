@@ -1,0 +1,245 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset=utf-8>
+
+    <style>
+        /* Stylign for Demo Page */
+        html {
+            background: #dedede;
+        }
+        body {
+            background: #3A7996 url(http://dev.ramp.com/sites/all/themes/aloha/images/theme-developer_connect/bg-body.gif) repeat-x scroll left top !important;
+            font-family: "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;            
+            border-radius: 15px;
+            box-shadow: 0px 0px 10px 2px #111111;
+            margin: 20px;
+            padding: 20px;
+            color: #fff;
+        }
+
+        #transcript {
+            width: 486px;
+            height: 200px;
+            box-shadow: 0px 0px 10px #000;
+            text-shadow: none;
+            font-size: 12px;
+            text-align: left;
+            position: relative;
+            top: -270px;
+            left: 0px;
+        }
+
+        #metaplayer-search {
+            color: #000;
+            position: absolute;
+            top: 190px;
+            left: 550px;
+            width: 400px;
+            height: 200px;            
+            background: #dedede;
+            border-radius: 10px;
+            box-shadow: 0px 0px 5px #000;
+        }
+
+        #metaplayer-framefeed {
+            left: 510px;
+            top: -235px;
+            width: 400px;
+            height: 250px;
+        }
+    </style>
+ 
+     <!--Dependency: jQuery-->
+    <script src="../../../../external/jquery/jquery-1.7.1.js" type="text/javascript"></script>
+    <script src="../../../../external/jquery/jquery-ui-1.8.17..min.js" type="text/javascript"></script>
+
+    <!--Dependency: Popcorn -->
+    <script src="../../../../external/popcorn/popcorn.js" type="text/javascript"></script>
+
+    <!-- Core: Ramp -->
+    <script src="../../../core/metaplayer.js"></script>
+    <script src="../../../core/utils/util.event.js"></script>
+    <script src="../../../core/utils/util.proxy.js"></script>
+    <script src="../../../core/utils/util.script.js"></script>
+    <script src="../../../core/utils/util.timer.js"></script>
+    <script src="../../../core/utils/util.format.js"></script>
+    <script src="../../../core/utils/util.ui.js"></script>
+    <script src="../../../core/utils/util.scrollbar.js"></script>
+    <script src="../../../core/playlist/player.playlist.js"></script>
+    <script src="../../../core/layout/core.layout.js"></script>
+    <script src="../../../core/metadata/core.metadata.js"></script>
+    <script src="../../../core/search/core.search.js"></script>
+    <script src="../../../core/cues/core.cues.js"></script>
+
+    <link href="../../../core/layout/core.layout.css" rel="stylesheet" type="text/css">
+
+    <!-- Service Plugin: RAMP -->
+    <script src="../../../services/ramp/service.ramp.js"></script>
+
+    <!-- Media: Brightcove -->
+    <script src="../../../players/brightcove/player.brightcove.js"></script>
+
+    <!-- UI: Searchbox -->
+    <script src="../../../ui/searchbox/ui.searchbox.js"></script>
+    <link href="../../../ui/searchbox/ui.searchbox.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Framefeed -->
+    <script src="../../../ui/framefeed/ui.framefeed.js"></script>
+    <link href="../../../ui/framefeed/ui.framefeed.css" rel="stylesheet"  type="text/css">
+
+
+    <!-- UI: Captions -->
+    <script src="../../../ui/captions/ui.captions.js"></script>
+    <link href="../../../ui/captions/ui.captions.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.captions.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Social -->
+    <script src="../../../ui/social/ui.social.js"></script>
+    <link href="../../../ui/social/ui.social.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Social -->
+    <script src="../../../ui/transcript/ui.transcript.js"></script>
+    <link href="../../../ui/transcript/ui.transcript.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Embed -->
+    <script src="../../../ui/embed/ui.embed.js"></script>
+    <link href="../../../ui/embed/ui.embed.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.embed.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Controls -->
+    <script src="../../../ui/controls/ui.controls.js"></script>
+    <link href="../../../ui/controls/ui.controls.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.controls.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Overlay -->
+    <script src="../../../ui/overlay/ui.overlay.js"></script>
+    <link href="../../../ui/overlay/ui.overlay.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.overlay.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Endcap -->
+    <script src="../../../ui/endcap/ui.endcap.js"></script>
+    <link href="../../../ui/endcap/ui.endcap.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.endcap.css" rel="stylesheet"  type="text/css">
+
+</head>
+
+<body>
+
+<div style="background: url('http://dev.ramp.com/sites/all/themes/aloha/images/theme-developer_connect/logo.gif') no-repeat; width: 488px; height: 52px"></div>
+
+<br>
+
+<!-- Start of Brightcove Player -->
+
+<div id="player"></div>
+
+<!--
+By use of this code snippet, I agree to the Brightcove Publisher T and C 
+found at https://accounts.brightcove.com/en/terms-and-conditions/. 
+-->
+
+<script type="text/javascript" src="http://admin.brightcove.com/js/BrightcoveExperiences.js"></script>
+
+<!-- Sample Control Buttons -->
+video.src = <button onclick="video.src = '1531130529001'">1531130529001</button>
+<button onclick="video.src = '983586956001';">983586956001</button>
+<br><br>
+<button onClick="video.load()">video.load()</button>
+<button onclick="video.play()">video.play()</button>
+<button onclick="video.pause()">video.pause()</button>
+<button onclick="video.currentTime += 2;">video.currentTime += 2</button>
+
+<br><br>
+
+<style> .metaplayer { width: 486px; height: 412px ; }</style>
+
+<div class="metaplayer">
+    <object id="myExperience" class="BrightcoveExperience">
+        <param name="bgcolor" value="#FFFFFF" />
+        <param name="width" value="100%" />
+        <param name="height" value="100%" />
+        <param name="playerID" value="1898225880" />
+        <param name="playerKey" value="AQ~~,AAAAAHEkmvY~,SRcNfxhuB9mACjhKYyTKucIsjqiB0eGm" />
+        <param name="isVid" value="true" />
+        <param name="wmode" value="transparent" />
+        <param name="dynamicStreaming" value="true" />
+        <param name="includeAPI" value="true" />
+        <param name="templateLoadHandler" value="myTemplateLoaded" />
+    </object>
+</div>
+
+<br><br>
+
+<div id="metaplayer-framefeed">
+
+</div>
+
+
+<div id="transcript">
+
+</div>
+
+<br><br>
+
+<div id="metaplayer-search">
+
+</div>
+
+
+<!-- 
+This script tag will cause the Brightcove Players defined above it to be created as soon
+as the line is read by the browser. If you wish to have the player instantiated only after
+the rest of the HTML is processed and the page load is complete, remove the line.
+-->
+<script type="text/javascript">brightcove.createExperiences();</script>
+
+<!-- End of Brightcove Player -->
+
+<script>
+
+    // Store reference to the player
+    var bc, video, player;
+
+    // This method is called when the player loads with the ID of the player
+    // We can use that ID to get a reference to the player, and then the modules
+    // The name of this method can vary but should match the value you specified
+    // in the player publishing code for “templateLoadHandler”.
+    function myTemplateLoaded(experienceID) {   
+        var config = { 
+            autoplay: false,
+            preload: true,
+            selectSource: false,
+            playerVars: {
+                experienceID: experienceID
+            }
+        };
+
+        
+        video = MetaPlayer.brightcove(brightcove, config);
+        player = MetaPlayer( video , { selectSource : false, appendSources : false} )            
+        .endcap()   
+        .transcript('#transcript')
+        .searchbox("#metaplayer-search", {
+             strings: {
+                 searchPlaceholder: "Search within video",
+                 resultsHeader: "{{count}} search {{results}}",
+                 ellipsis: "",
+                 clear: ""
+             }
+         })
+        .framefeed('#metaplayer-framefeed', {
+            revealMs: 1500,
+            baseUrl: "http://sxsw.ramp.com/themename/1.0/"
+        })
+        .ramp("http://api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440")
+        .load();
+    
+        video.src = '1545219064001';
+
+    };
+
+</script>
+
+</body>
+</html>

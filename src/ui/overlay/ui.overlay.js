@@ -28,8 +28,7 @@
         this.playlist = player.playlist;
 
         // used to find our templates
-        this.baseUrl = MetaPlayer.script.base();
-        this._touchDevice = /iPad|iPhone|iPod/i.test(navigator.userAgent);
+        this.baseUrl = MetaPlayer.script.base("(metaplayer|ui).overlay.js");
 
         if( this.config.container ) {
             this.container = this.config.container;
@@ -43,7 +42,7 @@
     };
 
     MetaPlayer.addPlugin("overlay", function (options) {
-        return Overlay(this, options);
+        this.overlay = Overlay(this, options);
     });
 
     Overlay.prototype = {
@@ -59,7 +58,7 @@
             this.onPlayStateChange();
             this.setCaptions(this.config.captions);
 
-            if( this._touchDevice || ! this.config.autoHide )
+            if( this.player.isTouchDevice || ! this.config.autoHide )
                 this.find('close-btn').show();
 
             if( MetaPlayer.Embed ) {
@@ -69,6 +68,14 @@
 
             if( MetaPlayer.Social )
                 this.social = new MetaPlayer.Social( this.find('social'), this.player );
+        },
+
+        getMarkup : function () {
+            var root = $("<div></div>")
+                .addClass("metaplayer-overlay")
+
+            var container = $("<div></div>")
+                .addClass("metaplayer-overlay-container")
         },
 
         addUIListeners : function () {
@@ -119,32 +126,38 @@
                 self.onVolumeDrag(e);
             });
 
-            if( ! this.config.target ) {
-                var node = this.find().get(0);
-
-                if( this._touchDevice ) {
-                    var video = $(this.container ).find( 'video'  );
-                    video.bind('touchstart', function () {
-                        if( ! self._ended )
-                            self.delayedToggle(true)
-                    });
-                }
-                else {
-                    var container = $( this.container  );
-                    container.bind('mouseenter', function (e) {
-                        if( ! self._ended )
-                            self.delayedToggle(true)
-                    });
-
-                    container.bind('mouseleave', function (e) {
-                        if( ! self._ended )
-                            self.delayedToggle(false)
-                    });
-                }
-            }
+            if( this.player.isTouchDevice )
+                this._addTouchListeners();
+            else
+                this._addMouseListeners();
 
             this.find('preview').click( function () {
                 self.playlist.next();
+            });
+        },
+
+        _addTouchListeners : function () {
+            var self = this;
+            var video = $(this.container ).find( 'video'  );
+            video.bind('touchstart', function () {
+                console.log("touch start " + video);
+                if( ! self._ended )
+                    self.delayedToggle(true)
+            });
+        },
+
+        _addMouseListeners : function () {
+            var self = this;
+
+            var containers = $([ this.container, this.player.video ]);
+            containers.bind('mouseenter', function (e) {
+                if( ! self._ended )
+                    self.delayedToggle(true)
+            });
+
+            containers.bind('mouseleave', function (e) {
+                if( ! self._ended )
+                    self.delayedToggle(false)
             });
         },
 

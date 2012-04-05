@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+<head>
+
+    <style>
+        body {
+            background:  #eee;
+        }
+        #target {
+            width: 600px;
+            height: 300px;
+            background:  #888;
+            float: left;
+        }
+        #carousel {
+            width: 300px;
+            height: 300px;
+            background:  #888;
+            margin-left: 610px;
+            color: white;
+        }
+
+    </style>
+
+    <!--Dependency: jQuery-->
+    <script src="../../../../external/jquery/jquery-1.7.1.js" type="text/javascript"></script>
+    <script src="../../../../external/jquery/jquery-ui-1.8.17..min.js" type="text/javascript"></script>
+
+    <!--Dependency: Popcorn -->
+    <script src="../../../../external/popcorn/popcorn.js" type="text/javascript"></script>
+
+    <!--Dependency: Flowplayer-->
+    <script src="../../../../external/flowplayer/flowplayer-3.2.6.min.js"></script>
+
+    <!-- Core: Ramp -->
+    <script src="../../../core/metaplayer.js"></script>
+    <script src="../../../core/utils/util.event.js"></script>
+    <script src="../../../core/utils/util.proxy.js"></script>
+    <script src="../../../core/utils/util.scrollbar.js"></script>
+    <script src="../../../core/utils/util.script.js"></script>
+    <script src="../../../core/utils/util.timer.js"></script>
+    <script src="../../../core/utils/util.format.js"></script>
+    <script src="../../../core/utils/util.ui.js"></script>
+    <script src="../../../core/playlist/player.playlist.js"></script>
+    <script src="../../../core/layout/core.layout.js"></script>
+    <script src="../../../core/metadata/core.metadata.js"></script>
+    <script src="../../../core/search/core.search.js"></script>
+    <script src="../../../core/cues/core.cues.js"></script>
+
+    <link href="../../../core/layout/core.layout.css" rel="stylesheet" type="text/css">
+
+    <!-- Service Plugin: RAMP -->
+    <script src="../../../services/ramp/service.ramp.js"></script>
+
+    <!-- Media Plugin: flowplayer -->
+    <script src="../../../players/flowplayer/player.flowplayer.js"></script>
+
+    <!-- UI: Controls -->
+    <script src="../../../ui/controls/ui.controls.js"></script>
+    <link href="../../../ui/controls/ui.controls.css" rel="stylesheet" type="text/css">
+    <link href="../../../themes/mp2/theme.controls.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Captions -->
+    <script src="../../../ui/captions/ui.captions.js"></script>
+    <link href="../../../ui/captions/ui.captions.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.captions.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Carousel -->
+    <script src="../../../ui/carousel/ui.carousel.js"></script>
+    <link href="../../../ui/carousel/ui.carousel.css" rel="stylesheet" type="text/css">
+
+</head>
+<body>
+<h3>Metaplayer &raquo; Captions </h3>
+
+
+<div id='target'></div>
+
+<div id='carousel'>
+</div>
+
+
+<script type="text/javascript">
+    var player = MetaPlayer('#target')
+            .flowplayer({ swfUrl: "../../../../external/flowplayer/flowplayer-3.2.7.swf"})
+            .controls({
+                renderTags: false
+            })
+            .captions()
+            .carousel("#carousel")
+            .ramp( "http://publishing.ramp.com/recipe//themename/ws_1.3_6724/mp2-playlist?e=52110028" )
+            .load();
+
+    player.video.autoplay = true;
+</script>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!doctype html>
+<html>
+<head>
+
+
+    <!-- Dependency: jQuery -->
+    <script src="../../../../external/jquery/jquery-1.7.1.js" type="text/javascript"></script>
+
+    <!-- Core: Ramp -->
+    <script src="../../../core/layout/core.layout.js"></script>
+    <link href="../../../core/layout/core.layout.css" rel="stylesheet" type="text/css">
+
+
+    <style>
+
+        body {
+            background:  #fff;
+        }
+
+        .sized {
+            width: 300px;
+            height: 150px;
+        }
+
+        .metaplayer {
+            outline: 3px solid green;
+			background:  green;
+            margin: 24px 0;
+        }
+
+        .mp-stage  {
+			outline: 1px solid red;
+        }
+
+		video, .video  {
+			outline: 2px solid gray;
+			background: gray;
+        }
+
+        .tl, .tr, .bl, .br {
+            position: absolute;
+            background: orange;
+            height: 25px;
+            width: 25px;
+        }
+        .tl, .tr {
+            top: 0;
+        }
+        .bl, .br {
+            bottom: 0;
+        }
+        .tl, .bl {
+            left : 0;
+        }
+        .tr, .br {
+            right : 0;
+        }
+
+
+    </style>
+</head>
+<body>
+
+<div style="margin-bottom: 25px; border-bottom: 1px solid black">
+
+	<span style='color: green'>metaplayer</span>
+	<span style='color: red'>panels</span>
+	<span style='color: gray'>video</span>
+
+</div>
+
+Empty Div:
+<div id="empty" class="sized">
+</div>
+
+Empty Div class .metaplayer
+<div id="emptyclass" class="metaplayer sized">
+</div>
+
+Video With adoptVideo false (default)
+<div>
+    <video controls id="videoparent" class="sized" >
+        <source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.mp4" type="video/mp4">
+        <source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.webm" type="video/webM">
+        <source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.ogv" type="video/ogg">
+    </video>
+</div>
+
+Video With adoptVideo true
+<div>
+    <video controls id="videoparentyes" class="sized" >
+        <source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.mp4" type="video/mp4">
+        <source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.webm" type="video/webM">
+        <source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.ogv" type="video/ogg">
+    </video>
+</div>
+
+Video With adoptVideo true, bottom panel indent
+<div>
+    <video controls id="videoparentindent" class="sized" >
+        <source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.mp4" type="video/mp4">
+        <source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.webm" type="video/webM">
+        <source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.ogv" type="video/ogg">
+    </video>
+</div>
+
+
+Video with .metaplayer Parent
+<div class='metaplayer'>
+    <video controls id="videoparentmp" class="sized" >
+        <source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.mp4" type="video/mp4">
+        <source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.webm" type="video/webM">
+        <source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.ogv" type="video/ogg">
+    </video>
+</div>
+
+Div with .metaplayer, with panels
+<div id="emptyclasslayout" class="metaplayer sized">
+    <div class='tl'></div>
+    <div class='tr'></div>
+    <div class='bl'></div>
+    <div class='br'></div>
+</div>
+
+Video with .metaplayer Parent, with panels
+<div class="metaplayer">
+    <div class='tl'></div>
+    <div class='tr'></div>
+    <div class='bl'></div>
+    <div class='br'></div>
+    <video controls class="sized" id="videoparentlayout">
+        <source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.mp4" type="video/mp4">
+        <source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.webm" type="video/webM">
+        <source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.ogv" type="video/ogg">
+    </video>
+</div>
+
+
+
+<script type="text/javascript">
+
+	var frame1 = {
+		top: 25,
+		left: 25,
+		bottom: 25,
+		right: 25,
+		video: true
+	};
+
+	var controls = {
+		id : "test",
+		enabled : true,
+		bottom: 32,
+		video: false
+	};
+
+	var l;
+
+    MetaPlayer.layout('#empty');
+    MetaPlayer.layout('#emptyclass');
+
+    MetaPlayer.layout('#videoparent');
+
+    MetaPlayer.layout('#videoparentyes', { adoptVideo : true } );
+
+    MetaPlayer.layout('#videoparentmp');
+
+	l = MetaPlayer.layout('#videoparentindent',  { adoptVideo : true } );
+	l.addPanel(controls);
+
+	MetaPlayer.layout('#emptyclasslayout');
+
+	l = MetaPlayer.layout('#videoparentlayout');
+	l.addPanel(frame1);
+	var p = l.addPanel(controls);
+
+</script>
+
+</body>
+</html>

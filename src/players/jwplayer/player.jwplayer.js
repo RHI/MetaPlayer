@@ -7,8 +7,6 @@
         autostart  : true,
         autobuffer : true,
         controlbar :  "none",
-        flashplayer: "",
-        file       : "",
         image      : "",
         id         : "jwplayer",
         //duration   : 0,
@@ -41,9 +39,17 @@
         this.__src = "";
 
         this._jwplayer = this._render( $(el).get(0) );
-        this.video = this._jwplayer.container;
+
+        // we have to wrap: jwplayer will clone this container and eventually
+        // remove it from the DOM.
+        var video = $("<div></div>")
+            .height( el.config.height )
+            .width( el.config.width )
+            .insertAfter( el.container )
+            .append(el.container);
+
         this.dispatcher = MetaPlayer.dispatcher( this );
-        MetaPlayer.proxy.proxyPlayer( this, this.video );
+        this.video = MetaPlayer.proxy.proxyPlayer( this, video.get(0) );
 
         var self = this;
         this._jwplayer.onReady(function() {
@@ -52,10 +58,14 @@
     };
 
     if( window.MetaPlayer ) {
-        MetaPlayer.addPlayer("jwplayer", function ( options ) {
-            var target = $("<div></div>").appendTo(this.layout.stage);
-            // jwplayer always requires with a element id.
-            $(target).attr("id", options.id);
+        MetaPlayer.addPlayer("jwplayer", function ( target, options ) {
+            if(target.container ) {
+                $(this.layout.stage).append(target.container);
+            }
+            else {
+                options = target;
+                target = this.layout.stage;
+            }
             this.jwplayer = JWPlayer(target, options);
             this.video = this.jwplayer.video;
         });
@@ -70,8 +80,12 @@
 
     JWPlayer.prototype = {
         _render: function (el) {
-            jwplayer(el).setup(this.config);
-            return jwplayer(el);
+            if( el.container ) {
+                this.__autoplay = el.config.autostart;
+                return el;
+            }
+            var target = $("<div class='mpf-jwplayer'></div>").appendTo(el).get(0);
+            return jwplayer(target).setup(this.config);
         },
 
         _onLoad: function() {
@@ -96,11 +110,12 @@
                 self.dispatch("timeupdate");
             });
 
-            this._jwplayer.onIdle( function (level) {
+            this._jwplayer.onIdle( function (e) {
                 // not sure what should do for this event.
             });
 
             this._jwplayer.onBuffer( function (e) {
+                self.__readyState = 4;
                 self.dispatch("buffering");       
             });
 
@@ -135,7 +150,7 @@
                 }
             });
 
-            this._jwplayer.onPlaylist( function (level) {
+            this._jwplayer.onPlaylist( function (e) {
                 self.__started = false;
                 self.dispatch("playlistChange");
             });
@@ -164,7 +179,7 @@
             var self = this;
             setTimeout (function () {
                 self._updateTime(); // trigger a time update
-                self.__seeking = false;
+                self.__seeking = null;
                 self.dispatch("seeked");
                 self.dispatch("timeupdate");
             }, 1500)
@@ -184,6 +199,34 @@
         _getSrc : function () {
             if (! this._jwplayer ) return "";
             return this._jwplayer.getPlaylist()[0].file;
+        },
+
+        /**
+         * adding to video src to jwplayer's playlist
+         * due to its async for getting a video src,
+         * creates a interval to check the player is initiated or not to put a video source.
+         */ 
+        _addToPlaylist : function (val) {
+            var self = this;
+            if( typeof val !== 'undefined' && val.length > 0 ) {
+                if( self._jwplayer && self._jwplayer.getState() ) {
+                    self._jwplayer.load({file : val, autostart: self._jwplayer.config.autostart});
+                    clearInterval( self._playlistCheckInterval );
+                    self._playlistCheckInterval = null;
+                } else {
+                    if( self._playlistCheckInterval ) {
+                        return;
+                    }
+                    self._playlistCheckInterval = setInterval(function () {
+                        self._addToPlaylist(val);
+                    }, 1000);
+                }
+                self.__src = val;
+            }
+        },
+
+        _getVideoContainer : function (target) {
+            return (target.container)? target.container.parentElement : target;
         },
 
         /**
@@ -257,6 +300,8 @@
             return this.__currentTime;
         },
         readyState : function (val) {
+            if( val !== undefined )
+                this.__readyState = val;
             return this.__readyState;
         },
         muted : function (val) {
@@ -276,16 +321,27 @@
             return (this.__volume > 1)? (this.__volume/100):this.__volume;
         },
         src : function (val) {
-            if( val !== undefined ) {
-                this.__src = val;
-            }
+            this._addToPlaylist(val);
             return this.__src
         },
         controls : function (val) {
             if( typeof val !== 'undefined' ) {
                 this.__controls = val;
+                if( val )
+                    this._jwplayer.getPlugin("controlbar").show();
+                else
+                    this._jwplayer.getPlugin("controlbar").hide();
             }
             return this.__controls;
+        },
+
+        // MPF Extensions
+        mpf_resize : function (w, h) {
+            if( this._height != h || this._width != w ){
+                this._height = h;
+                this._width = w;
+                this._jwplayer.resize(w +"px", h+"px");
+            }
         }
     };
 

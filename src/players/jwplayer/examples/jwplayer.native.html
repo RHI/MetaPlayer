@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset=utf-8>
+
+    <title>JWPlayer Plugin | Metaplayer</title>
+
+    <!--Dependency: jQuery-->
+    <script src="../../../../external/jquery/jquery-1.7.1.js" type="text/javascript"></script>
+
+    <!--Dependency: JwPlayer -->
+    <script src="../../../../external/jwplayer/jwplayer.js"></script>
+
+    <!-- Core: Ramp -->
+    <script src="../../../core/metaplayer.js"></script>
+    <script src="../../../core/utils/util.event.js"></script>
+    <script src="../../../core/utils/util.proxy.js"></script>
+    <script src="../../../core/utils/util.script.js"></script>
+    <script src="../../../core/utils/util.timer.js"></script>
+    <script src="../../../core/utils/util.format.js"></script>
+    <script src="../../../core/utils/util.ui.js"></script>
+    <script src="../../../core/utils/util.scrollbar.js"></script>
+    <script src="../../../core/playlist/player.playlist.js"></script>
+    <script src="../../../core/metadata/core.metadata.js"></script>
+    <script src="../../../core/search/core.search.js"></script>
+    <script src="../../../core/cues/core.cues.js"></script>
+    <script src="../../../services/ramp/service.ramp.js"></script>
+
+    <!-- Core: Layout -->
+    <script src="../../../core/layout/core.layout.js"></script>
+    <link href="../../../core/layout/core.layout.css" rel="stylesheet" type="text/css">
+
+    <!-- Media : OVP -->
+    <script src="../../../players/jwplayer/player.jwplayer.js"></script>
+
+    <!-- UI: Controls -->
+    <script src="../../../ui/controls/ui.controls.js"></script>
+    <link href="../../../ui/controls/ui.controls.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.controls.css" rel="stylesheet"  type="text/css">
+
+    <style>
+        #target {
+            width: 600px;
+            height: 300px;
+            background:  #333;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<h3>Metaplayer &raquo; JWPlayer Plugin</h3>
+<div id='target'>
+    <div id="jwplayer"></div>
+</div>
+
+<script type="text/javascript">
+
+// Please note that if you want to instantiate a jwplayer first and put into
+// MetaPlayer, it requires a wrapper being assigned by MetaPlayer.
+// And jwplayer should instantiate with a child element of wrapper.
+
+var player = jwplayer('jwplayer').setup({
+    flashplayer : "../../../../external/jwplayer/player.swf",
+    controlbar  : "none",
+    width: "100%",
+    height: "100%",
+    autostart   : true,
+    icons      : false, // disable a big play button on the middle of screen
+    plugins: { viral: { onpause: false, oncomplete: false, allowmenu: false } } // disable all viral features.
+});
+
+MetaPlayer('#target')
+    .jwplayer(player)
+    .controls()
+    .ramp("http://api.ramp.com/v1/mp2/playlist?e=52871241&apikey=0302cd28e05e0800f752e0db235d5440")
+    .load();
+
+</script>
+
+</body>
+</html>

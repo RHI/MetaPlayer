@@ -32,6 +32,13 @@
      */
     Cues.CUES = "cues";
 
+    /**
+     * Fired when cue list reset, usually due to a track change
+     * @name CLEAR
+     * @event
+     */
+    Cues.CLEAR = "clear";
+
     Cues.prototype = {
         /**
          * Bulk adding of cue lists to a uri.
@@ -67,7 +74,9 @@
             if( ! this._cues[guid] )
                 this._cues[guid] = {};
 
-            this._cues[guid][type] = cues;
+            if( ! this._cues[guid][type] )
+                this._cues[guid][type] = [];
+            this._cues[guid][type] = this._cues[guid][type].concat(cues);
 
             this._dispatchCues(guid, type)
         },
@@ -99,7 +108,8 @@
 
             if(! this._cues[guid]  || ! this._cues[guid][type])
                 return [];
-            return this._cues[guid][type];
+
+            return this._cues[guid][type].sort( Cues.cueSortFn );
         },
 
         /**
@@ -194,6 +204,12 @@
         _onFocus : function (e) {
             //... remove all popcorn events because the track has changed
             this._removeEvents();
+
+            // let others know we've cleared
+            var event = this.createEvent();
+            event.initEvent(Cues.CLEAR, false, true);
+            this.dispatchEvent(event);
+
             this._dispatchCues( e.uri );
         },
 
@@ -264,6 +280,10 @@
             }
         }
 
+    };
+
+    Cues.cueSortFn = function (one, two){
+        return parseFloat( one.start ) - parseFloat( two.start );
     };
 
 })();

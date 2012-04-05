@@ -9,8 +9,8 @@
     float: left;
 }
 .metaplayer-social-clear {
-    clear: both; line-height: 0; height : 0
-}
-
+    clear: both;
+    line-height: 0;
+    height : 0;
     -ms-filter: 'progid:DXImageTransform.Microsoft.Alpha( style=0,opacity=25)';
 }

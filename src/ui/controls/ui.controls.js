@@ -19,7 +19,6 @@
         renderMetaq : false,
         autoHide : false,
         annotationAnimate : true,
-        annotationEasing : '',
         annotationMsec : 1200,
         annotationEntropy : 1,
         annotationSpacing : .5,
@@ -37,7 +36,7 @@
         this.annotations = [];
         this.video.controls = false;
         this._iOS = /iPad|iPhone|iPod/i.test(navigator.userAgent);
-        //this._iOS = 1;
+        this._hasTween = $.easing.easeOutBounce; // jquery UI
 
         if( this.config.createMarkup )
             this.createMarkup();
@@ -58,8 +57,14 @@
         this.hideTimer = Ramp.timer(this.config.hideDelayMsec);
         this.hideTimer.listen('time', this.onHideTimer, this);
 
+        this.panel = this.player.layout.addPanel({ });
+
+
+        if( this.config.autoHide ) {
+            this.config.showBelow = false;
+        }
+
         if( this.config.showBelow ) {
-            this.config.autoHide = false;
             this.showBelow(true);
         }
 
@@ -68,8 +73,6 @@
             this.showBelow(false);
         }
 
-        if( this.config.autoHide )
-            this.toggle(false, 0);
     };
 
     MetaPlayer.addPlugin("controls", function (options) {
@@ -82,6 +85,14 @@
             var self = this;
             $(this.video).bind('pause play seeked seeking ended', function(e){
                 self.onPlayStateChange(e)
+            });
+
+            $(this.video).bind('adstart adstop', function(e){
+                self.toggle( e.type != "adstart");
+            });
+
+            $(this.video).bind('durationchange', function(e){
+                self.renderAnnotations(true)
             });
         },
 
@@ -134,11 +145,12 @@
 
         addDataListeners : function () {
             var metadata = this.player.metadata;
+
             if( this.config.renderTags )
                 metadata.listen( MetaPlayer.MetaData.DATA, this.onTags, this);
 
-            var playlist = this.player.playlist;
-            playlist.listen("trackchange", this.onTrackChange, this);
+            var cues = this.player.cues;
+            cues.listen( MetaPlayer.Cues.CLEAR, this._onCuesClear, this);
 
             var search = this.player.search;
             search.listen(MetaPlayer.Search.RESULTS, this.onSearch, this);
@@ -155,17 +167,17 @@
             this.renderAnnotations();
         },
 
-        _onMetaq : function (e, popcorn) {
+        addAnnotations : function (events, type) {
+            if( type == null )
+                type = "metaq";
             var self = this;
-            $.each(popcorn, function (type, events){
-                $.each(events, function (i, event){
-                    self.addAnnotation(event.start, event.end, event.text || event.term, "metaq");
-                });
+            $.each(events, function (i, event){
+                self.addAnnotation(event.start, event.end, event.text || event.term, type);
             });
             this.renderAnnotations();
         },
 
-        onTrackChange: function (e, track) {
+        _onCuesClear: function (e, track) {
             this.clearAnnotations();
         },
 
@@ -314,7 +326,7 @@
 
         render : function (){
             var duration = this.video.duration;
-            var time = this.video.currentTime // render seek target if present
+            var time = this.video.currentTime; // render seek target if present
 
             this.find('play').toggleClass( this.cssName('pause'), ! this.video.paused );
             this.find('time-duration').html(' / ' + this.formatTime( duration ) );
@@ -348,6 +360,7 @@
 
             if( this.video.seeking ){
                 msec = msec * 3; // give time and don't overshoot the animation
+                return;
             }
 
             fill.width( trackPercent + "%");
@@ -390,6 +403,9 @@
             if( show  ) // make visible to fade in
                 el.toggle(true);
 
+            if( this.config.showBelow )
+                this.showBelow(bool);
+
             el.stop().animate({
                 opacity: show ? 1 : 0
                 }, duration == null ? this.config.revealTimeMsec : duration,
@@ -399,19 +415,8 @@
         },
 
         showBelow : function (bool){
-            var stage = $(this.player.layout.stage);
-            var h = this.find().height();
-            var b = parseFloat( stage.css('bottom') );
-            if( bool ) {
-                if( this.__shownBelow == null ) {
-                    stage.css('bottom', (b + h) );
-                    this.__shownBelow = h;
-                }
-            }
-            else {
-                stage.css('bottom', (b - this.__shownBelow) );
-                this.__shownBelow = null;
-            }
+            var h = bool ? this.find().height() : 0;
+            this.player.layout.updatePanel(this.panel, { bottom: h } );
         },
 
         addAnnotation : function (start, end, title, cssClass) {
@@ -450,7 +455,7 @@
 
         },
 
-        renderAnnotations : function () {
+        renderAnnotations : function (force) {
             var duration = this.video.duration;
             if( ! duration )
                 return;
@@ -458,20 +463,14 @@
             var videoHeight = $(this.video).height();
             var config = this.config;
             var last;
-            var spacing = this.config.annotationSpacing
+            var self = this;
+
+            var spacing = this.config.annotationSpacing;
             var sorted = this.annotations.sort( Controls.annotationSort );
+
             $(sorted).each( function (i, annotation) {
 
-                if( last && (last.start + spacing > annotation.start) ){
-                    annotation.el.hide();
-                    return;
-                }
-                annotation.el.show();
-                last = annotation;
-
-
                 var trackPercent = annotation.start / duration * 100;
-
                 if( trackPercent > 100 )
                     trackPercent = 100;
 
@@ -480,16 +479,34 @@
                     var widthPercent = (annotation.end - annotation.start) / duration * 100;
                     annotation.el.css('width', widthPercent + "%");
                 }
-                if(! annotation.rendered && config.annotationAnimate ){
-                    annotation.el.css('top', -videoHeight).animate({ top : 0 },
-                        (config.annotationMsec + ( Math.random() * config.annotationEntropy * config.annotationMsec)),
-                        config.annotationEasing || ($.easing.easeOutBounce ? "easeOutBounce" : "linear" ) );
+
+                // bouncy
+                if(force || ! annotation.rendered  ){
+                    if( config.annotationAnimate && self._hasTween ) {
+                        annotation.el.css('top', -videoHeight).animate({
+                                top : 0
+                            },
+                            (config.annotationMsec + ( Math.random() * config.annotationEntropy * config.annotationMsec)),
+                             "easeOutBounce"
+                        );
+                    }
                     annotation.rendered = true;
                 }
 
                 annotation.el.show();
 
+                // enforce annotation spacing rendering (but not firing)
+                if (last && spacing != null
+                    && last.el.position().left + ( last.el.width() * spacing )
+                       > annotation.el.position().left ) {
+                    annotation.el.stop().hide();
+                    return;
+                }
+
+                last = annotation;
             });
+
+
             this.annotations.modified = false;
         },
 
@@ -579,6 +596,6 @@
         if( as > bs )
             return 1;
         return 0;
-    }
+    };
 
 })();

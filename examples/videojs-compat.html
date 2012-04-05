@@ -31,7 +31,7 @@
     <script src="../external/flowplayer/flowplayer-3.2.6.min.js" type="text/javascript"></script>
 
     <!--Metaplayer -->
-    <script src="../build/metaplayer.js"></script>
+    <script src="../build/metaplayer-complete.js"></script>
 
 </head>
 
@@ -54,21 +54,25 @@
 
 <script type="text/javascript">
     var player, vjs;
+
+
     player = MetaPlayer('#target')
             .flowplayer( {
                 swfUrl : "../external/flowplayer/flowplayer-3.2.7.swf"
             })
-            .ramp()
-            .load("ramp:/pca:36234882");
+            .ramp("ramp:/advisor:48920875")
+            .load("");
 
     player.video.controls = false;
-    player.video.addEventListener("loadstart", function(){
+
+    player.video.addEventListener("canplay", function(){
         vjs = VideoJS.setup([player.video], {
             controlsHiding : false
         });
     });
 
-    // css selector
+
+    /* css selector */
     $('#css-select').bind("change", function  (){
        $('#target').attr('class', 'video-js-box');
        $('#target').addClass( $(this).val() );

@@ -3,6 +3,7 @@
 
     var $ = jQuery;
 
+
     var defaults = {
         sourceTags : true,
         selectSource : true,
@@ -13,7 +14,15 @@
         loop : false
     };
 
-    var Playlist = function (player, options ){
+
+    /**
+     *
+     * @name MetaPlayer.Playlist
+     * @constructor
+     * @param player
+     * @param options
+     */
+     var Playlist = function (player, options ){
 
         this.config = $.extend({}, defaults, options);
         this.player = player;
@@ -70,6 +79,10 @@
         },
 
         empty : function ( tracks ) {
+            if(! this.config.selectSource ){
+                return;
+            }
+
             this.player.video.pause();
             this.player.video.src = "";
             this._tracks = [];
@@ -85,9 +98,9 @@
             var t = this.track(i);
 
             if( this.linkAdvance ) {
-                var link = t.link || t.linkURL;
-                if( link ) {
-                    window.top.location = link;
+                var data = this.player.metadata.getData();
+                if( data.link ) {
+                    window.top.location = data.link;
                     return;
                 }
             }

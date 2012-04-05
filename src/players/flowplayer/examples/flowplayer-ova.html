@@ -1,0 +1,118 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset=utf-8>
+
+    <title>Flowplayer Plugin | Metaplayer</title>
+
+    <!--Dependency: jQuery-->
+    <script src="../../../../external/jquery/jquery-1.7.1.js" type="text/javascript"></script>
+    <script src="../../../../external/jquery/jquery-ui-1.8.17..min.js" type="text/javascript"></script>
+
+    <!--Dependency: Flowplayer-->
+    <script src="../../../../external/flowplayer/flowplayer-3.2.6.js"></script>
+    <script src="../../../../external/flowplayer/flowplayer.ipad-3.2.2-ramp.js"></script>
+
+    <!--Dependency: Popcorn -->
+    <script src="../../../../external/popcorn/popcorn.js" type="text/javascript"></script>
+
+   <!-- Core: Ramp -->
+    <script src="../../../core/metaplayer.js"></script>
+    <script src="../../../core/utils/util.event.js"></script>
+    <script src="../../../core/utils/util.proxy.js"></script>
+    <script src="../../../core/utils/util.script.js"></script>
+    <script src="../../../core/utils/util.timer.js"></script>
+    <script src="../../../core/utils/util.format.js"></script>
+    <script src="../../../core/utils/util.ui.js"></script>
+    <script src="../../../core/playlist/player.playlist.js"></script>
+    <script src="../../../core/layout/core.layout.js"></script>
+    <script src="../../../core/metadata/core.metadata.js"></script>
+    <script src="../../../core/search/core.search.js"></script>
+    <script src="../../../core/cues/core.cues.js"></script>
+
+    <link href="../../../core/layout/core.layout.css" rel="stylesheet" type="text/css">
+
+    <!-- Service Plugin: RAMP -->
+    <script src="../../../services/ramp/service.ramp.js"></script>
+
+    <!-- Media Plugin: Flowplayer -->
+    <script src="../../../players/flowplayer/player.flowplayer.js"></script>
+
+    <!-- UI: Captions -->
+    <script src="../../../ui/captions/ui.captions.js"></script>
+    <link href="../../../ui/captions/ui.captions.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.captions.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Social -->
+    <script src="../../../ui/social/ui.social.js"></script>
+    <link href="../../../ui/social/ui.social.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Embed -->
+    <script src="../../../ui/embed/ui.embed.js"></script>
+    <link href="../../../ui/embed/ui.embed.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.embed.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Controls -->
+    <script src="../../../ui/controls/ui.controls.js"></script>
+    <link href="../../../ui/controls/ui.controls.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.controls.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Overlay -->
+    <script src="../../../ui/overlay/ui.overlay.js"></script>
+    <link href="../../../ui/overlay/ui.overlay.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.overlay.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Endcap -->
+    <script src="../../../ui/endcap/ui.endcap.js"></script>
+    <link href="../../../ui/endcap/ui.endcap.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.endcap.css" rel="stylesheet"  type="text/css">
+
+    <style>
+        #video {
+            width: 600px;
+            height: 300px;
+            background:  gray;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<h3>Metaplayer &raquo; Flowplayer Plugin</h3>
+
+<div id='video'></div>
+
+<script type="text/javascript">
+    jQuery.noConflict(true);
+
+    var fp = $f( 'video',
+            {
+                src: "../../../../external/flowplayer/flowplayer-3.2.7.swf",
+                wmode: "transparent"
+            },
+            {
+                clip : {
+                    scaling : "fit"
+                },
+                playlist : []
+            });
+    fp.ipad({ simulateiDevice : false });
+    fp.load();
+
+    player = MetaPlayer( MetaPlayer.flowplayer(fp), {
+            autoAdvance: false
+            })
+            .overlay()
+            .endcap()
+            .controls()
+            .captions()
+            .ramp("ramp:/thechewpoc:51416098")
+            .load();
+
+    player.video.autoplay = true;
+
+</script>
+
+</body>
+</html>

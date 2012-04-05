@@ -53,7 +53,7 @@
             }
 
             var params = {
-                q : query
+                q : "\"" + query + "\"" //wrapped with double quotes for multi-words
             };
 
             if( ! query ) {

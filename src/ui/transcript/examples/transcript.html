@@ -7,15 +7,14 @@
             background:  #eee;
         }
         #target {
-            float: left;
             width: 600px;
             height: 300px;
             background:  #333;
         }
         #transcript {
-            width: 500px;
-            height: 290px;
-            margin-left: 610px;
+            width: 600px;
+            height: 100px;
+            margin-top: 10px;
             background: white;
         }
 
@@ -51,6 +50,9 @@
     <!-- Media Plugin: HTML5 -->
     <script src="../../../players/html5/player.html5.js"></script>
 
+    <!-- Media: YouTube -->
+    <script src="../../../players/youtube/player.youtube.js"></script>
+
     <!-- UI: Transcript -->
     <script src="../../../ui/transcript/ui.transcript.js"></script>
     <link href="../../../ui/transcript/ui.transcript.css" rel="stylesheet" type="text/css">
@@ -65,15 +67,14 @@
 
     <script type="text/javascript">
         var player = MetaPlayer('#target')
-                .ramp()
-                .html5();
+                .youtube()
 
         player.transcript('#transcript', {
             timestamps: false,
             breaks: false
         });
 
-        player.ramp("ramp:/advisor:48920875");
+        player.ramp("http://api.ramp.com/v1/mp2/playlist?e=52345506&apikey=0302cd28e05e0800f752e0db235d5440")
 
     </script>
 </body>

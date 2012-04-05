@@ -32,6 +32,8 @@ PlayerUnit.prototype = {
             unit.event("canplay", self.media, "canplay event");
 //            unit.event("canplaythrough", self.media, "canplaythrough event");
 
+            self.media.src = self.src;
+
         });
 
         unit.test("load events",  function () {
@@ -52,7 +54,7 @@ PlayerUnit.prototype = {
         }, {postDelay : 0 });
 
         unit.test("currentTime",  function () {
-            var seekTarget = Math.floor(self.media.duration / 2);
+            var seekTarget = Math.floor(self.media.duration / 2);            
             unit.log("Seek target: " + seekTarget);
             unit.equal( self.isNearTime(0), true, "initial self.media.currentTime is 0");
             unit.equal( self.media.seeking, false, "initial self.media.seeking is false");
@@ -111,7 +113,7 @@ PlayerUnit.prototype = {
             unit.equal( self.media.seeking, false, "initial self.media.seeking is false");
 
             unit.event("play", self.media, "play event", function (e) {
-                unit.equal( self.media.paused, false, "media.paused is false");
+                unit.equal( self.media.paused, false, "media.paused is false");                
                 self.media.currentTime = 5;
             });
 
@@ -124,7 +126,6 @@ PlayerUnit.prototype = {
             });
 
             unit.event("timeupdate", self.media, "timeupdate event");
-
             self.media.play();
         });
 
@@ -132,8 +133,8 @@ PlayerUnit.prototype = {
         unit.test("ended event",  function () {
             unit.equal( self.media.paused, false, "media.paused is false");
             unit.event("seeking", self.media, "seeking event");
-            unit.event("ended", self.media, "ended event", null, 5000);
-            self.media.currentTime = self.media.duration - 3;
+            unit.event("ended", self.media, "ended event", null, 7000);
+            self.media.currentTime = self.media.duration - 3;            
         });
 
     }

@@ -10,6 +10,8 @@
 
         proxyFunction : function (props, source, target ){
             $.each(props.split(/\s+/g), function (i, prop) {
+                if( !  source[prop] )
+                    return;
                 target[prop] = function () {
                     return source[prop].apply(source, arguments);
                 };
@@ -126,10 +128,13 @@
             var proxy = Ramp.proxy.getProxyObject(target);
 
             Proxy.mapProperty("duration currentTime volume muted seeking" +
-                " paused controls autoplay preload src ended readyState",
+                " paused controls autoplay preload src ended readyState ad",
                 proxy, source);
 
             Proxy.proxyFunction("load play pause canPlayType" ,source, proxy);
+
+            // MetaPlayer Optional Extensions
+            Proxy.proxyFunction("mpf_resize" ,source, proxy);
 
             Proxy.proxyPlayerEvents(source, proxy);
 
@@ -138,8 +143,8 @@
 
         proxyPlayerEvents : function (source, target){
             Proxy.proxyEvent("timeupdate seeking seeked playing play pause " +
-                "loadeddata loadedmetadata canplay loadstart durationchange volumechange " +
-                "ended error",source, target);
+                "loadeddata loadedmetadata canplay loadstart durationchange volumechange adstart adstop"
+                + " ended error",source, target);
         }
     };
 

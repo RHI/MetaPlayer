@@ -19,13 +19,19 @@
             return match;
         },
 
+        /**
+         * Returns the directory of a specified script if found,
+         * or of metaplayer.js if not.
+         * @param filename
+         */
         base : function (filename) {
-
-            if( ! filename )
-                filename = 'metaplayer(-complete)?(\.min)?\.js';
-
-            var src = this.url(filename) || '';
-            return src.substr(0, src.lastIndexOf('/') + 1);
+            var src, base;
+            if( filename )
+                src = this.url(filename) || '';
+            if( ! src )
+                src = this.url('metaplayer(-complete)?(\.min)?\.js');
+            if( src )
+                return  src.substr(0, src.lastIndexOf('/') + 1);
         }
 
     }

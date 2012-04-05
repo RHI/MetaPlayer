@@ -94,20 +94,18 @@
     <img src="assets/demo-overlay.png" width="400" title="Overlay, Embed, Social">
     <br /><br />
 
+
     Include required Script and CSS:
     <pre class="prettyprint"><code>
-        &lt;!--Dependency: jQuery-->
+        &lt;!-- jQuery-->
         &lt;script src="../external/jquery/jquery-1.7.1.js" type="text/javascript">&lt;/script>
 
-        &lt;!--Dependency: Popcorn-->
+        &lt;!-- Popcorn-->
         &lt;script src="../external/popcorn/popcorn.js" type="text/javascript">&lt;/script>
 
         &lt;!-- Metaplayer -->
-        &lt;script src="../build/metaplayer.js">&lt;/script>
+        &lt;script src="../build/metaplayer-complete.min.js">&lt;/script>
         &lt;link href="../build/mp2/theme.mp2.css" rel="stylesheet"  type="text/css">
-
-        &lt;!-- MetaPlayer: Captions -->
-        &lt;script src="../build/metaplayer.captions.js">&lt;/script>
     </code></pre>
 
     The metaplayer.js file contains all core services and interfaces, while each UI module is available
@@ -115,68 +113,67 @@
 
     Set up the HTML targets:
     <pre class="prettyprint"><code>
-        &lt;div id="myDiv" style="width: 800px; height: 450px ">&lt;/div>
+        &lt;div id="myDiv" style="width: 500px; height: 300px ">&lt;/div>
     </code></pre>
 
 
     In JavaScript, after the DOM has loaded:
-    <pre class="prettyprint"><code>
-    $( function () {
 
-    MetaPlayer( "#myDiv" )
-        .youtube()
-        .ramp( "http://dev.api.ramp.com/v1/mp2/playlist?e=52114913&apikey=0302cd28e05e0800f752e0db235d5440" )
-        .controls()
-        .captions()
-        .overlay()
-        .load();
+    <div class="example">
+        <br>
+        <pre class="prettyprint"><code>
+            $( function () {
+            MetaPlayer( "#myDiv" )
+            .youtube()
+            .ramp( "http://dev.api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440" )
+            .controls()
+            .captions()
+            .overlay()
+            .endcap()
+            .load();
+            });
+        </code></pre>
+    </div>
 
-    });
-    </code></pre>
-
+    <br /><br />
+    <iframe class="fiddle" src="http://jsfiddle.net/ramp/6gXcq/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
 </div>
+
 
 
 <!-- WIDGETS -->
 <div class='section'>
-    <a href="#" class='top'>top &uarr;</a>
-    <div class="header" id="widgets">
-        Widgets
-    </div>
+<a href="#" class='top'>top &uarr;</a>
+<div class="header" id="widgets">
+    Widgets
+</div>
 
-    MetaPlayer widgets consist of any module which is visible to the user, with HTML and DOM elements placed
-    either over the video or elsewhere on the page.  These widgets have access to the video element and all
-    metadata available through the MPF instance.
+MetaPlayer widgets consist of any module which is visible to the user, with HTML and DOM elements placed
+either over the video or elsewhere on the page.  These widgets have access to the video element and all
+metadata available through the MPF instance.
+
+<br /><br />
+
+Widgets generally consist of a JavaScript source and a CSS file, and containa PopcornJS interface for responding
+to timed events during the playback of the video.
+
+<br /><br />
+
+Many UI elements are provided with the MPF distribution:
+
+<!-- CAPTIONS -->
+<div class=' subsection'>
+
+    <div class="header" id="captions">Captions</div>
+
+
+    The default Caption plugin provides CSS skin-able subtitles which dynamically scale with video size.
 
     <br /><br />
 
-    Widgets generally consist of a JavaScript source and a CSS file, and containa PopcornJS interface for responding
-    to timed events during the playback of the video.
+    <img src="assets/captions-youtube.png" width="400" title="Captions on a YouTube video">
 
-    <br /><br />
-
-    Many UI elements are provided with the MPF distribution:
-
-    <!-- CAPTIONS -->
-    <div class=' subsection'>
-
-        <div class="header" id="captions">Captions</div>
-
-
-        The default Caption plugin provides CSS skin-able subtitles which dynamically scale with video size.
-
-        <br /><br />
-
-        <img src="assets/captions-youtube.png" width="400" title="Captions on a YouTube video">
-        <br /><br />
-
-        If you're not using a UI package, you will need to include the captions source file:
-
-        <pre class="prettyprint"><code>
-            &lt;!-- MetaPlayer: Captions -->
-            &lt;script src="../build/metaplayer.captions.js">&lt;/script>
-        </code></pre>
-
+    <div class="example">
         In JavaScript:
         <pre class="prettyprint"><code>
             var metaplayer = MetaPlayer( "#myDiv" )
@@ -187,204 +184,238 @@
         </code></pre>
     </div>
 
+    <br>
+    <iframe class="fiddle" src="http://jsfiddle.net/ramp/bvrxy/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
 
-    <!-- CONTROLS -->
-    <div class='subsection'>
-        <div class="header" id="controlbar">
-            Controls
-        </div>
+</div>
 
-        The Controls plugin provides a annotation-enabled timeline, play button, and a display of the current
-        playback time in relation to the total duration.  This plugin is designed to be used in conjunction with
-        the Overlay plugin, which provides additional controls for volume and enabling captions.
-        <br /><br />
 
-        <img src="assets/controls.png" width="400" title="MetaPlayer Controls with Annotations">
-        <br /><br />
+<!-- CONTROLS -->
+<div class='subsection'>
+    <div class="header" id="controlbar">
+        Controls
+    </div>
 
+    The Controls plugin provides a annotation-enabled timeline, play button, and a display of the current
+    playback time in relation to the total duration.  This plugin is designed to be used in conjunction with
+    the Overlay plugin, which provides additional controls for volume and enabling captions.
+    <br /><br />
+
+    <img src="assets/controls.png" width="400" title="MetaPlayer Controls with Annotations">
+    <br /><br />
+
+    <div class="example">
+        <pre class="prettyprint"><code>
+            var metaplayer = MetaPlayer( "#myDiv" )
+            .youtube()
+            .ramp( "http://dev.api.ramp.com/v1/mp2/playlist?e=52114913&apikey=0302cd28e05e0800f752e0db235d5440" )
+            .controls()
+            .load();
+        </code></pre>
+    </div>
+
+    <br />
+    <iframe class="fiddle" src="http://jsfiddle.net/ramp/PYzRm/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+
+</div>
+
+<!-- OVERLAY -->
+<div class=' subsection'>
+    <div class="header" id="overlay">
+        Overlay
+    </div>
+
+    The Overlay plugin provides a drop down panel over the video which contains:
+    <ul>
+        <li>additional playback, volume levels, and close captioning</li>
+        <li>relevant tags</li>
+        <li>video search-within</li>
+        <li>Title and thumbnail ofthe next video in the playlist, if any</li>
+        <li>Social buttons</li>
+        <li>Embed buttons</li>
+    </ul>
+
+
+    <img src="assets/overlay-captions.png" width="400" title="Overlay with Captions enabled">
+    <img src="assets/overlay-searched.png" width="400" title="Overlay showing Search results">
+    <br /><br />
+
+    <div class="example">
+        HTML:
+            <pre class="prettyprint"><code>
+                &lt;!-- MetaPlayer: Overlay &ndash;&gt;
+                &lt;script src="../build/metaplayer.controls.js">&lt;/script>
+            </code></pre>
+
+        JavaScript:
+
+            <pre class="prettyprint"><code>
+                var metaplayer = MetaPlayer( "#myDiv" )
+                .youtube()
+                .ramp( "http://dev.api.ramp.com/v1/mp2/playlist?e=52114913&apikey=0302cd28e05e0800f752e0db235d5440" )
+                .captions()
+                .overlay()
+                .load();
+            </code></pre>
+    </div>
+
+    <iframe class="fiddle" src="http://jsfiddle.net/ramp/Pux7K/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+
+    Social and Embed, are themselves plugins which will only be rendered if their relevant sources are included.
+    <br /><br />
+
+    On iOS devices where mouse events are not supported, the overlay will contain a close button.
+    <br /><br />
+
+</div>
+
+<div class=' subsection'>
+    <div class="header" id="endcap">
+        Endcap
+    </div>
+
+    The Endcap plugin is an overlay which appears at the end of a video containing:
+    <ul>
+        <li>Title, thumbnail of current video and a prompt to watch again</li>
+        <li>Title, thumbnail of next playlist video</li>
+        <li>Countdown timer</li>
+        <li>Social buttons</li>
+        <li>Embed buttons</li>
+    </ul>
+
+    When the endcap is enabled playlist do not automatically advance, but instead pause
+    to render the endcap information.  A countdown is started when the panel is rendered
+    which, which complete, will hide the endcap and begin the next video.
+    <br /><br />
+
+    <img src="assets/endcap.png" width="400" title="Endcap shown at the end of video">
+    <br /><br />
+
+
+    <div class="example">
         HTML:
 
         <pre class="prettyprint"><code>
-    &lt;!-- MetaPlayer: Controls -->
-    &lt;script src="../build/metaplayer.controls.js">&lt;/script>
+            &lt;!-- MetaPlayer: Endcap -->
+            &lt;script src="../build/metaplayer.endcap.js">&lt;/script>
         </code></pre>
 
         JavaScript:
 
         <pre class="prettyprint"><code>
-    var metaplayer = MetaPlayer( "#myDiv" )
-        .youtube()
-        .ramp( "http://dev.api.ramp.com/v1/mp2/playlist?e=52114913&apikey=0302cd28e05e0800f752e0db235d5440" )
-        .controls()
-        .load();
-        </code></pre>
-
-    </div>
-
-    <!-- OVERLAY -->
-    <div class=' subsection'>
-        <div class="header" id="overlay">
-            Overlay
-        </div>
-
-        The Overlay plugin provides a drop down panel over the video which contains:
-        <ul>
-            <li>additional playback, volume levels, and close captioning</li>
-            <li>relevant tags</li>
-            <li>video search-within</li>
-            <li>Title and thumbnail ofthe next video in the playlist, if any</li>
-            <li>Social buttons</li>
-            <li>Embed buttons</li>
-        </ul>
-
-        Social and Embed, are themselves plugins which will only be rendered if their relevant sources are included.
-
-        <br /><br />
-
-        <img src="assets/overlay-captions.png" width="400" title="Overlay with Captions enabled">
-        <img src="assets/overlay-searched.png" width="400" title="Overlay showing Search results">
-        <br /><br />
-
-        HTML:
-
-        <pre class="prettyprint"><code>
-    &lt;!-- MetaPlayer: Overlay -->
-    &lt;script src="../build/metaplayer.controls.js">&lt;/script>
-        </code></pre>
-
-        JavaScript:
-
-        <pre class="prettyprint"><code>
-    var metaplayer = MetaPlayer( "#myDiv" )
-        .youtube()
-        .ramp( "http://dev.api.ramp.com/v1/mp2/playlist?e=52114913&apikey=0302cd28e05e0800f752e0db235d5440" )
-        .captions()
-        .overlay()
-        .load();
-        </code></pre>
-
-        On iOS devices where mouse events are not supported, the overlay will contain a close button.
-    </div>
-
-    <div class=' subsection'>
-        <div class="header" id="endcap">
-            Endcap
-        </div>
-
-        The Endcap plugin is an overlay which appears at the end of a video containing:
-        <ul>
-            <li>Title, thumbnail of current video and a prompt to watch again</li>
-            <li>Title, thumbnail of next playlist video</li>
-            <li>Countdown timer</li>
-            <li>Social buttons</li>
-            <li>Embed buttons</li>
-        </ul>
-
-        When the endcap is enabled playlist do not automatically advance, but instead pause
-        to render the endcap information.  A countdown is started when the panel is rendered
-        which, which complete, will hide the endcap and begin the next video.
-        <br /><br />
-
-        <img src="assets/endcap.png" width="400" title="Endcap shown at the end of video">
-        <br /><br />
-
-        HTML:
-
-        <pre class="prettyprint"><code>
-    &lt;!-- MetaPlayer: Endcap -->
-    &lt;script src="../build/metaplayer.endcap.js">&lt;/script>
-        </code></pre>
-
-        JavaScript:
-
-        <pre class="prettyprint"><code>
-    var metaplayer = MetaPlayer( "#myDiv" )
-        .youtube()
-        .ramp( "http://dev.api.ramp.com/v1/mp2/playlist?e=52114913&apikey=0302cd28e05e0800f752e0db235d5440" )
-        .controls()
-        .endcap()
-        .load();
+            var metaplayer = MetaPlayer( "#myDiv" )
+            .youtube()
+            .ramp( "http://dev.api.ramp.com/v1/mp2/playlist?e=52114913&apikey=0302cd28e05e0800f752e0db235d5440" )
+            .controls()
+            .endcap()
+            .load();
 
         </code></pre>
     </div>
 
-    <!-- TRANSCRIPT -->
-    <div class=' subsection'>
-        <div class="header" id="transcript">
-            Transcript
-        </div>
+    <iframe class="fiddle" src="http://jsfiddle.net/ramp/Vmy5p/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+</div>
 
-        The transcript plugin is an interactive page widget containing the full text of a video.
-        As the video plays, the transcript will highlight the current subtitle, adjusting the scroll as
-        necessary. If a height is specified on the transcript target an iOS-friendly scrollbar will appear.
+<!-- TRANSCRIPT -->
+<div class=' subsection'>
+    <div class="header" id="transcript">
+        Transcript
+    </div>
+
+    The transcript plugin is an interactive page widget containing the full text of a video.
+    As the video plays, the transcript will highlight the current subtitle, adjusting the scroll as
+    necessary. If a height is specified on the transcript target an iOS-friendly scrollbar will appear.
 
 
-        <img src="assets/transcript.png" width="400" title="Transcript"
-             style="vertical-align: top">
-        <img src="assets/transcript-breaks.png" width="400" title="Transcript w/ Breaks, Timestamps"
-             style="vertical-align: top">
-        <br /><br />
+    <img src="assets/transcript.png" width="400" title="Transcript"
+         style="vertical-align: top">
+    <img src="assets/transcript-breaks.png" width="400" title="Transcript w/ Breaks, Timestamps"
+         style="vertical-align: top">
+    <br /><br />
 
-        HTML:
+    HTML:
 
         <pre class="prettyprint"><code>
     &lt;div id="transcript" style="height:150px; width: 600px">&lt;/div>
         </code></pre>
 
-        JavaScript:
-
+    JavaScript:
+    <div class="example">
         <pre class="prettyprint"><code>
-    var player = MetaPlayer('#myDiv')
-        .youtube()
-        .ramp( "http://dev.api.ramp.com/v1/mp2/playlist?e=52114913&apikey=0302cd28e05e0800f752e0db235d5440" )
-        .transcript('#transcript')
-        .load()
-        </code></pre>
-
-        By default subtitles are each rendered on a new line.  This behavior can be overwritten with
-        by overriding the default options.
-
-        <pre class="prettyprint"><code>
-    var player.transcript('#transcript', {
-        timestamps: false,
-        breaks: false
-        });
+            var player = MetaPlayer('#myDiv')
+            .youtube()
+            .ramp( "http://dev.api.ramp.com/v1/mp2/playlist?e=52114913&apikey=0302cd28e05e0800f752e0db235d5440" )
+            .transcript('#transcript')
+            .load()
         </code></pre>
     </div>
 
-    <!-- FEED -->
-    <div class=' subsection'>
-        <div class="header" id="framefeed">
-            FrameFeed
-        </div>
+    <iframe class="fiddle" style="height: 500px" src="http://jsfiddle.net/ramp/tzDXt/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+    <br/><br/>
 
-        The FrameFeed plugin provides a twitter-style feed of IFrames which are loaded as the video plays.
-        These frames, or cards, can be uses to render related information or advertising based on
-        video content. Feeds can be filtered by tags, if desired.  If a height is specified on the target an iOS-friendly scrollbar will appear.
-        <br /><br />
+    By default subtitles are each rendered continuously on the same line.  This behavior can be overwritten, with lines breaks
+    for each subtitle and timestampes for each line.
 
-        <img src="assets/framefeed.png" width="400" title="Framefeed with example content">
-        <br /><br />
+    <br/><br/>
 
-        HTML:
-
+    <div class="example">
         <pre class="prettyprint"><code>
-    &lt;div id="feed" style="height:300px; width: 300px">&lt;/div>
+            var player.transcript('#transcript', {
+                timestamps: true,
+                breaks: true
+            });
         </code></pre>
+    </div>
+    <iframe class="fiddle" style="height: 500px" src="http://jsfiddle.net/ramp/CcWEX/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
 
-        JavaScript:
+
+</div>
+
+<!-- FEED -->
+<div class=' subsection'>
+    <div class="header" id="framefeed">
+        FrameFeed
+    </div>
+
+    The FrameFeed plugin provides a twitter-style feed of IFrames which are loaded as the video plays.
+    These frames, or cards, can be uses to render related information or advertising based on
+    video content. Feeds can be filtered by tags, if desired.  If a height is specified on the target an iOS-friendly scrollbar will appear.
+    <br /><br />
+
+    <img src="assets/framefeed.png" width="400" title="Framefeed with example content">
+    <br /><br />
+
+    Using RAMP natural language services, these frames can be automatically generated across a large collection
+    of videos, attaching different types of cards to differenct concepts, such as a live twitter feed for a celebrity, or
+    nutritional information for a recipe.
+    <br /><br />
+
+
+
+    HTML:
+
+    <pre class="prettyprint"><code>
+    &lt;div id="feed" style=" width: 330px; height:400px;">&lt;/div>
+    </code></pre>
+
+    JavaScript:
+    <div class="example">
 
         <pre class="prettyprint"><code>
-    var metaplayer = MetaPlayer('#myDiv')
-        .html5()
-        .ramp( "http://publishing.ramp.com/thechewpoc/device/services/mp2-playlist?e=51416098" )
-        .framefeed("#feed", {
+            var metaplayer = MetaPlayer('#myDiv')
+            .html5()
+            .ramp( "http://publishing.ramp.com/thechewpoc/device/services/mp2-playlist?e=51416098" )
+            .framefeed("#feed", {
             baseUrl : "http://publishing.ramp.com/thechewpoc/themename/1.0"
-        })
-        .load();
+            })
+            .load();
         </code></pre>
+    </div>
 
-        FrameFeed is implemented as a PopcornJS plugin, and can be used outside of a MetaPlayer instance.
+    <iframe class="fiddle" style="height: 500px" src="http://jsfiddle.net/ramp/GCUrq/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+
+    <br />
+    FrameFeed is implemented as a PopcornJS plugin, and can be used outside of a MetaPlayer instance.
 
         <pre class="prettyprint"><code>
     var popcorn = Popcorn('video');
@@ -396,114 +427,121 @@
         start : 5
     });
         </code></pre>
+</div>
+
+<!-- SEARCH BOX -->
+<div class=' subsection'>
+    <div class="header" id="searchbox">
+        SearchBox
     </div>
 
-    <!-- SEARCH BOX -->
-    <div class=' subsection'>
-        <div class="header" id="searchbox">
-            SearchBox
-        </div>
+    SearchBox is a page widget which provides a list of video keywords as well as video search-within.
+    By default, the rendered keyword links serve as search shortcuts.  Search results include a timestamp
+    and excerpt which can be clicked to seek the video.
+    <br /><br />
 
-        SearchBox is a page widget which provides a list of video keywords as well as video search-within.
-        By default, the renderd keyword links serve as search shortcuts.  Search results include a timestamp
-        and excerpt which can be clicked to seek the video.
-        <br /><br />
+    <img src="assets/search-tags.png" width="400" title="SearchBox">
+    <img src="assets/search-result.png" width="400" title="SearchBox with results">
+    <br /><br />
 
-        <img src="assets/search-tags.png" width="400" title="SearchBox">
-        <img src="assets/search-result.png" width="400" title="SearchBox with results">
-        <br /><br />
 
-        HTML:
+    HTML:
 
+    <pre class="prettyprint"><code>
+    &lt;div id="search" style=" width: 300px; height:300px;">&lt;/div>
+    </code></pre>
+
+    JavaScript:
+
+    <div class='example'>
         <pre class="prettyprint"><code>
-    &lt;div id="#search" style="height:300px; width: 300px">&lt;/div>
+            var player = MetaPlayer("#myDiv")
+            .youtube()
+            .controls()
+            .captions()
+            .ramp( "http://dev.api.ramp.com/v1/mp2/playlist?e=52114913&apikey=0302cd28e05e0800f752e0db235d5440" )
+            .searchbox("#search")
+            .load();
         </code></pre>
-
-        JavaScript:
-
-        <pre class="prettyprint"><code>
-    var player = MetaPlayer("#myDiv")
-           .youtube()
-           .controls()
-           .captions()
-           .ramp( "http://dev.api.ramp.com/v1/mp2/playlist?e=52114913&apikey=0302cd28e05e0800f752e0db235d5440" )
-           .searchbox("#search")
-           .load();
-        </code></pre>
-
     </div>
 
-    <!-- SOCIAL -->
-    <div class=' subsection'>
-        <div class="header" id="social">
-            Social Buttons
-        </div>
+    <iframe class="fiddle" style="height: 375px" src="http://jsfiddle.net/ramp/NyWjW/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
 
-        The Social widget provides buttons which update to target the current playlist item. Currently,
-         Facebook and Twitter are provided.
-        <br /><br />
 
-        Buttons are initialized with the "link" metadata attribute.
-        <br /><br />
+</div>
 
-        <img src="assets/social.png" width="400" title="Social Buttons">
-        <br /><br />
+<!-- SOCIAL -->
+<div class=' subsection'>
+    <div class="header" id="social">
+        Social Buttons
+    </div>
 
-        HTML:
+    The Social widget provides buttons which update to target the current playlist item. Currently,
+    Facebook and Twitter are provided.
+    <br /><br />
 
+    Buttons are initialized with the "link" metadata attribute.
+    <br /><br />
+
+    <img src="assets/social.png" width="400" title="Social Buttons">
+    <br /><br />
+
+    HTML:
         <pre class="prettyprint"><code>
-    &lt;!--Dependency: Twitter -->
-    &lt;script src="http://platform.twitter.com/widgets.js" type="text/javascript">&lt;/script>
-            
-    &lt;div id="#social" style="height:40px; width: 300px">&lt;/div>
+            &lt;div id="social" style="height:40px; width: 300px">&lt;/div>
         </code></pre>
 
-        JavaScript:
-
+    JavaScript:
+    <div class='example'>
         <pre class="prettyprint"><code>
 
-    var metaplayer = MetaPlayer( "#myDiv" )
+            var metaplayer = MetaPlayer( "#myDiv" )
             .youtube()
             .controls()
             .ramp( "http://dev.api.ramp.com/v1/mp2/playlist?e=52114913&apikey=0302cd28e05e0800f752e0db235d5440" )
             .social("#social")
             .load();
         </code></pre>
-
     </div>
 
-    <!-- EMBED -->
-    <div class=' subsection'>
-        <div class="header" id="embed">
-            Embed Buttons
-        </div>
+    <iframe class="fiddle" style="height: 400px" src="http://jsfiddle.net/ramp/rxPKH/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
 
-        The Embed plugin provides buttons which, when clicked, reveal HTML for embedding the currently
-        playing video.
-        <br /><br />
+</div>
 
-        <img src="assets/embed.png" width="400" title="Embed Buttons" style="vertical-align: top">
-        <img src="assets/embed-open.png" width="400" title="Embed Code">
-        <br /><br />
+<!-- EMBED -->
+<div class=' subsection'>
+    <div class="header" id="embed">
+        Embed Buttons
+    </div>
 
-        HTML:
+    The Embed plugin provides buttons which, when clicked, reveal HTML for embedding the currently
+    playing video.
+    <br /><br />
 
+    <img src="assets/embed.png" width="400" title="Embed Buttons" style="vertical-align: top">
+    <img src="assets/embed-open.png" width="400" title="Embed Code">
+    <br /><br />
+
+    HTML:
+    <pre class="prettyprint"><code>
+    &lt;div id="embed" style="height:15px; width: 500px">&lt;/div>
+    </code></pre>
+
+
+    JavaScript:
+    <br /><br />
+    <div class='example'>
         <pre class="prettyprint"><code>
-    &lt;!-- MetaPlayer: Social -->
-    &lt;script src="../build/metaplayer.social.js">&lt;/script>
-            
-    &lt;div id="#embed" style="height:150px; width: 300px">&lt;/div>
-        </code></pre>
-
-        JavaScript:
-
-        <pre class="prettyprint"><code>
-    var metaplayer = MetaPlayer( "#myDiv" )
-        .ramp( "http://dev.api.ramp.com/v1/mp2/playlist?e=52345506&apikey=0302cd28e05e0800f752e0db235d5440" )
-        .embed("#embed")
-        .load();
+            var metaplayer = MetaPlayer( "#myDiv" )
+            .ramp( "http://dev.api.ramp.com/v1/mp2/playlist?e=52345506&apikey=0302cd28e05e0800f752e0db235d5440" )
+            .embed("#embed")
+            .load();
         </code></pre>
     </div>
+
+    <iframe class="fiddle" style="height: 400px" src="http://jsfiddle.net/ramp/PaTgf/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+
+</div>
 
 
 </div>
@@ -539,12 +577,12 @@
         support.
 
         <pre class="prettyprint"><code>
-    var metaplayer = MetaPlayer( "#myDiv" )
-        .ramp( "http://dev.api.ramp.com/v1/mp2/playlist?e=52871540&apikey=0302cd28e05e0800f752e0db235d5440" )
-        .captions();
-        .load();
+            var metaplayer = MetaPlayer( "#myDiv" )
+            .ramp( "http://dev.api.ramp.com/v1/mp2/playlist?e=52871540&apikey=0302cd28e05e0800f752e0db235d5440" )
+            .captions();
+            .load();
 
-    metaplayer.video.autoplay = true;
+            metaplayer.video.autoplay = true;
         </code></pre>
     </div>
 
@@ -654,13 +692,13 @@
         to the MetaPlayer target element, if it is not already a video.
 
         <pre class="prettyprint"><code>
-    var metaplayer = MetaPlayer("#target")
-        .html5()
-        .controls()
-        .load();
+            var metaplayer = MetaPlayer("#target")
+            .html5()
+            .controls()
+            .load();
 
-    metaplayer.video.src = "http://media.w3.org/2010/05/sintel/trailer.mp4";
-    metaplayer.video.play();
+            metaplayer.video.src = "http://media.w3.org/2010/05/sintel/trailer.mp4";
+            metaplayer.video.play();
         </code></pre>
     </div>
 
@@ -675,29 +713,29 @@
         You can let MPF do the initialization:
 
         <pre class="prettyprint"><code>
-    var video = Metaplayer.youtube("mydiv");
-    video.src = "http://www.youtube.com/v/II1Lrxz2Lgg";
-    video.play();
+            var video = Metaplayer.youtube("mydiv");
+            video.src = "http://www.youtube.com/v/II1Lrxz2Lgg";
+            video.play();
         </code></pre>
 
         Alternately, you can pass in a full YT.Player reference:
 
         <pre class="prettyprint"><code>
-    var tag = document.createElement('script');
-    tag.src = "http://www.youtube.com/player_api";
-    var firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            var tag = document.createElement('script');
+            tag.src = "http://www.youtube.com/player_api";
+            var firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-    var yt, player, video;
-    function onYouTubePlayerAPIReady() {
-        yt = new YT.Player('player', {
+            var yt, player, video;
+            function onYouTubePlayerAPIReady() {
+            yt = new YT.Player('player', {
             height: '100%',
             width: '100%'
-        });
+            });
 
-        video = MetaPlayer.youtube(yt);
-        video.src = "u1zgFlCw8Aw";
-    }
+            video = MetaPlayer.youtube(yt);
+            video.src = "u1zgFlCw8Aw";
+            }
         </code></pre>
 
 
@@ -725,16 +763,16 @@
         the wmode is automatically set for "transparent" for HTML overlay support.
 
         <pre class="prettyprint"><code>
-    var metaplayer = MetaPlayer("#target")
-        .flowplayer({
+            var metaplayer = MetaPlayer("#target")
+            .flowplayer({
             swfUrl : "flowplayer/flowplayer-3.2.7.swf",
             fpConfig : {}
-        })
-        .controls()
-        .load();
+            })
+            .controls()
+            .load();
 
-    metaplayer.video.autoplay = true;
-    metaplayer.video.src = "http://media.w3.org/2010/05/sintel/trailer.mp4";
+            metaplayer.video.autoplay = true;
+            metaplayer.video.src = "http://media.w3.org/2010/05/sintel/trailer.mp4";
         </code></pre>
 
     </div>
@@ -744,20 +782,20 @@
         <div class="header" id="jwplayer">JWPlayer</div>
 
         <pre class="prettyprint"><code>
-    var config = {
-        id          : 'jwplayer',
-        autostart   : false,
-        controlbar  : "none",
-        modes       : [{type: 'html5'}],
-        file        : "elephant.ogv",
-        image       : "",
-        volume      : 0
-    };
+            var config = {
+            id          : 'jwplayer',
+            autostart   : false,
+            controlbar  : "none",
+            modes       : [{type: 'html5'}],
+            file        : "elephant.ogv",
+            image       : "",
+            volume      : 0
+            };
 
-    var metaplayer = MetaPlayer("#target")
-        .jwplayer(config)
-        .controls()
-        .load();
+            var metaplayer = MetaPlayer("#target")
+            .jwplayer(config)
+            .controls()
+            .load();
         </code></pre>
 
     </div>
@@ -766,8 +804,8 @@
     <br /><br />
     <pre class="prettyprint"><code>
         var fp = $f( 'video', "../../../../external/flowplayer/flowplayer-3.2.7.swf", {
-            clip : {
-            url : "sintel.mp4"
+        clip : {
+        url : "sintel.mp4"
         }}).load();
 
         var video = MetaPlayer.flowplayer(fp);

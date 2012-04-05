@@ -8,7 +8,7 @@
         cssPrefix : "mp-search",
         tags : true,
         query : "",
-        seekBeforeSec : 1,
+        seekBeforeSec : .25,
         context : 3,
         strings : {
             'tagHeader' : "In this video:",
@@ -22,27 +22,14 @@
 
     var SearchBox = function (target, player, options) {
 
-        var id;
-        if( typeof target !== "string") {
-            if ( ! target.__SEARCH_ID )
-                target.__SEARCH_ID = "CC!" + (SearchBox._count++);
-            id = target.__SEARCH_ID;
-        }
-        else
-            id = target;
-
-        // return any previous instance for this player
-        if(  SearchBox.instances[id] )
-            return SearchBox.instances[id];
 
         if( !(this instanceof SearchBox) )
             return new SearchBox(target, player, options);
 
         this.player = player;
-        this.target = target;
-        this.config = $.extend(true, {}, defaults, options);
+        this.target = $(target);
 
-        SearchBox.instances[id] = this;
+        this.config = $.extend(true, {}, defaults, options);
 
         this.createMarkup();
 
@@ -75,7 +62,14 @@
             start = offset-context;
         }
 
-        return words.slice( start, start + len)
+        if( start < 0 )
+            start = 0;
+
+        return {
+            words :  words.slice( start, start + len),
+            start : start,
+            len : len
+        };
     },
 
     SearchBox.prototype = {
@@ -220,10 +214,7 @@
 
             $.each(response.results, function (i, result){
                 var el = self.create('result');
-                el.data('start', result.start);
-                var time = self.create('time');
-                time.text( Ramp.format.seconds( result.start) )
-                el.append(time);
+                var start = result.start;
 
                 var words = [], offset;
                 $.each(result.words, function (i, word){
@@ -236,11 +227,19 @@
                     words.push( w.get(0) );
                 });
 
-                var phrase = SearchBox.getPhrase(words, offset, self.config.context );
 
-                $.each(phrase, function (i, word) {
+                var phrase = SearchBox.getPhrase(words, offset, self.config.context );
+                start = result.words[phrase.start].start;
+
+                el.data('start', start);
+
+                var time = self.create('time')
+                    .text( Ramp.format.seconds(start) )
+                    .appendTo(el);
+
+                $.each(phrase.words, function (i, word) {
                     el.append( word );
-                    if( i + 1 < phrase.length )
+                    if( i + 1 < phrase.words.length )
                         el.append(" ");
                 });
 
