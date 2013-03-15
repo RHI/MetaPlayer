@@ -1,0 +1,167 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset=utf-8>
+
+    <style>
+
+        #transcript {
+            width: 480px;
+            height: 200px;
+            box-shadow: 0px 0px 10px #000;
+            text-shadow: none;
+            font-size: 12px;
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        #metaplayer-search {
+            color: #000;
+            position: absolute;
+            top: 190px;
+            left: 550px;
+            width: 400px;
+            height: 200px;            
+            background: #dedede;
+            border-radius: 10px;
+            box-shadow: 0px 0px 5px #000;
+        }
+
+        #metaplayer-framefeed {
+            left: 510px;
+            top: -235px;
+            width: 400px;
+            height: 250px;
+        }
+
+        #searchbar {
+            width: 480px;
+        }
+    </style>
+ 
+     <!--Dependency: jQuery-->
+    <script src="../../../../external/jquery/jquery-1.7.1.js" type="text/javascript"></script>
+    <script src="../../../../external/jquery/jquery-ui-1.8.17..min.js" type="text/javascript"></script>
+
+    <!--Dependency: Popcorn -->
+    <script src="../../../../external/popcorn/popcorn.js" type="text/javascript"></script>
+
+    <!-- Core: Ramp -->
+    <script src="../../../core/metaplayer.js"></script>
+    <script src="../../../core/utils/util.event.js"></script>
+    <script src="../../../core/utils/util.proxy.js"></script>
+    <script src="../../../core/utils/util.script.js"></script>
+    <script src="../../../core/utils/util.timer.js"></script>
+    <script src="../../../core/utils/util.format.js"></script>
+    <script src="../../../core/utils/util.ui.js"></script>
+    <script src="../../../core/utils/util.scrollbar.js"></script>
+    <script src="../../../core/playlist/player.playlist.js"></script>
+    <script src="../../../core/layout/core.layout.js"></script>
+    <script src="../../../core/metadata/core.metadata.js"></script>
+    <script src="../../../core/search/core.search.js"></script>
+    <script src="../../../core/cues/core.cues.js"></script>
+
+    <link href="../../../core/layout/core.layout.css" rel="stylesheet" type="text/css">
+
+    <!-- Service Plugin: RAMP -->
+    <script src="../../../services/ramp/service.ramp.js"></script>
+
+    <!-- Service Plugin: srt -->
+    <script src="../../../services/srt/service.srt.js"></script>
+
+    <!-- Service Plugin: metaq -->
+    <script src="../../../services/metaq/service.metaq.js"></script>
+
+    <!-- Service Plugin: MRSS -->
+    <script src="../../../services/mrss/service.mrss.js"></script>
+
+    <!-- Media: html5 -->
+    <script src="../../../players/html5/player.html5.js"></script>
+
+    <!-- Media: Brightcove -->
+    <script src="../../../players/ooyala/player.ooyala.js"></script>
+
+    <!-- UI: Captions -->
+    <script src="../../../ui/captions/ui.captions.js"></script>
+    <link href="../../../ui/captions/ui.captions.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.captions.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: transcript -->
+    <script src="../../../ui/transcript/ui.transcript.js"></script>
+    <link href="../../../ui/transcript/ui.transcript.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: tracktip -->
+    <script src="../../../ui/tracktip/ui.tracktip.js"></script>
+    <link href="../../../ui/tracktip/theme/ui.tracktip.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: controlbar -->
+    <script src="../../../ui/controlbar/ui.controlbar.js"></script>
+    <link href="../../../ui/controlbar/theme/ui.controlbar.css" rel="stylesheet"  type="text/css">
+
+        <!-- UI: Searchbar -->
+    <script src="../../../ui/searchbar/ui.searchbar.js"></script>
+    <link href="../../../ui/searchbar/theme/ui.searchbar.css" rel="stylesheet"  type="text/css">
+
+</head>
+
+<body>
+
+<!-- Sample Control Buttons -->
+video.src = <button onclick="video.src = '8wNTqa-6MkpEB1c7fNGOpoSJytLptmm9'">8wNTqa-6MkpEB1c7fNGOpoSJytLptmm9</button>
+<button onclick="video.src = 'dmbHViOgvgZMqXtY40DWmh4DuW6Ie6I6';"> dmbHViOgvgZMqXtY40DWmh4DuW6Ie6I6</button>
+<br><br>
+<button onClick="video.load()">video.load()</button>
+<button onclick="video.play()">video.play()</button>
+<button onclick="video.pause()">video.pause()</button>
+<button onclick="video.currentTime += 2;">video.currentTime += 2</button>
+
+<br><br>
+
+<!-- This JS embeds the Ooyala player -->
+<!-- Note playerId, which will be the ID of the object tag -->
+<!-- and the callback which will be the name of a function created on the window object -->
+<!-- You can name these whatever you want, and MPF will figure it out -->
+<div class="metaplayer">
+    <div class="mp-stage">
+      <script src="//player.ooyala.com/player.js?callback=receiveOoyalaEvent&playerId=ooyalaPlayer&width=480&height=360&version=2"></script>
+        </div>
+    </div>
+
+
+<div id="searchbar">
+</div>
+
+<div id="transcript">
+
+</div>
+
+
+<script>
+
+var video, player;
+
+function receiveOoyalaEvent(playerId, eventName, eventArgs) {
+    if (eventName == "apiReady") {
+        video = MetaPlayer.ooyala();
+        player = MetaPlayer(video, { layout: { adoptVideo: false } } )
+                .metaq()
+                .srt()
+                .controlbar()
+                .searchbar("#searchbar")
+                .transcript('#transcript')
+                .ramp("http://api.ramp.com/v1/mp2/playlist/?e=52871241&apikey=f455a86b28160bc0682fec3662e39d3b")
+                .load();
+
+        video.src = 'R2MWNnMjoNDx60S33u5cl9F2FfXgAba_';
+
+
+        video = player.video;
+        video.autoplay = false;
+    }
+};
+    
+
+</script>
+
+</body>
+</html>

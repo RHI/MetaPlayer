@@ -1,0 +1,14 @@
+<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/">
+    <channel>
+        <title>My Movie Review Site</title>
+        <link>http://www.foo.com</link>
+        <description>I review movies.</description>
+        <item>
+            <guid>abcdefg</guid>
+            <title>Movie Title: Is this a good movie?</title>
+            <link>http://www.foo.com/item1.htm</link>
+            <media:content url="http://media.w3.org/2010/05/sintel/trailer.mp4" type="video/mp4" />
+            <media:content url="http://media.w3.org/2010/05/sintel/trailer.ogv" type="video/ogg"  />
+        </item>
+    </channel>
+</rss>

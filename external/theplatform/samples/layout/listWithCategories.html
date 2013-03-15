@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:tp="http://player.theplatform.com/" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-language" content="en" />
+	<title>PDK :: List with Categories</title>
+
+	<!-- ************************************************* -->
+	<!-- This is the feed URL for the videos on this page. -->
+	<!-- The PDK will automatically use this feed in the release list -->
+	<!-- without having to explicitly define it in the component configuration.-->
+	<!-- ************************************************* -->
+	<link rel="alternate" href="http://feed.theplatform.com/f/3JHsmB/TpW4aioBvs6N?form=rss&amp;range=1-100" type="application/rss+xml" />
+
+	<!-- This is the site stylesheet and doesn't care about the PDK -->
+	<link rel="stylesheet" href="../css/listWithCategories.css" type="text/css" media="screen" />
+
+	<script type="text/javascript" src="../../pdk/tpPdk.js"></script> 
+
+	<!-- PDK Glass skin css -->
+	<link rel="stylesheet" href="../../pdk/skins/glass/main.css" type="text/css" media="screen" />
+
+</head>
+<body>	
+	<div id="header">
+		<a href="http://www.theplatform.com/"><img class="tp-logo" src="../../images/thePlatformLarge.png" /></a>
+		<a href="http://www.theplatform.com/products/product_detail/type/player_dev_kit/"><img class="pdk-logo" src="../../images/pdk.png" /></a>
+		<h1>thePlatform</h1>
+		<h2>Player Dev Kit</h2>
+		<h3>Layout / List with Categories Sample</h3>
+	</div>	
+	<div id="play-video">
+		<div id="player" class="tpPlayer"
+			tp:fp.bgcolor="0x131313"
+			tp:wmode="opaque"
+			tp:logLevel="warn"
+			tp:allowFullScreen="true"
+			tp:skinUrl="../../pdk/swf/skinCinematic.swf"
+			tp:plugin0="type=adcomponent|URL=../../pdk/swf/SMIL.swf|priority=3"
+			tp:emailServiceURL="http://player.theplatform.com/m/3JHsmB/demo/select/{releasePid}"
+			tp:playerURL="http://player.theplatform.com/m/3JHsmB/demo/select/{releasePid}"
+			tp:embeddedPlayerHTML="&lt;embed src=&quot;http://player.theplatform.com/m/3JHsmB/demo/embed/select/{releasePid}&quot; width=&quot;412&quot; height=&quot;329&quot; type=&quot;application/x-shockwave-flash&quot; allowFullScreen=&quot;true&quot; bgcolor=&quot;#131313&quot; /&gt;"
+			tp:RSSURL="http://feed.theplatform.com/f/3JHsmB/TpW4aioBvs6N?form=rss"
+			tp:backgroundColor="0xF6F6F6"
+			tp:controlBackgroundColor="0xF6F6F6"
+			tp:controlColor="0x333333"
+			tp:controlFrameColor="0xE0E0E0"
+			tp:controlHoverColor="0x333333"
+			tp:controlSelectedColor="0x333333"
+			tp:frameColor="0xE0E0E0"
+			tp:pageBackgroundColor="0x48697C"
+			tp:playProgressColor="0x48697C"
+			tp:scrubberColor="0x333333"
+			tp:scrubberFrameColor="0x48697C"
+			tp:scrubTrackColor="0x333333"
+			tp:textColor="0x333333"
+			tp:textBackgroundColor="0xF6F6F6"
+			tp:loadProgressColor="0x5D9070">
+		</div>    
+		<div id="info" class="tpClipInfo"
+			tp:skinUrl="../../pdk/swf/skinCinematic.swf"
+			tp:backgroundColor="0xFFFFFF"
+			tp:titleColor="0x000000"
+			tp:descriptionColor="0x000000"
+			tp:frameColor="0xCCCCCC">
+		</div>
+	</div>
+	<div id="browse-video">
+		<div id="search" class="tpSearch"
+			tp:skinUrl="../../pdk/swf/skinCinematic.swf"
+			tp:backgroundColor="0xFFFFFF"
+			tp:controlBackgroundColor="0xFFFFFF"
+			tp:controlColor="0xCCCCCC"
+			tp:controlFrameColor="0xCCCCCC"
+			tp:frameColor="0xCCCCCC"
+			tp:labelColor="0x000000"
+			tp:editBackgroundColor="0xFFFFFF"
+			tp:editColor="0x000000"		
+			>
+		</div>		
+		<div id="categorylist" class="tpCategoryList"
+			tp:flow="horizontal"
+			tp:expandedHeight="510"
+			tp:expandedWidth="455"
+			tp:logLevel="warn"
+			tp:skinUrl="../../pdk/swf/skinCinematic.swf"
+			tp:allChoiceIndex="1"
+			tp:allChoiceLabel="All"
+			tp:mostPopularChoiceIndex="2"
+			tp:mostPopularChoiceLabel="Most Popular"
+			tp:backgroundColor="0xCCCCCC"
+			tp:expanderColor="0xBEBEBE"
+			tp:expanderHoverColor="0xBEBEBE"
+			tp:expanderSelectedColor="0x00CCFF"
+			tp:frameColor="0xCCCCCC"
+			tp:itemBackgroundColor="0xFFFFFF"
+			tp:itemFrameColor="0xCCCCCC"
+			tp:itemShineSelectedColor="0x00CCFF"
+			tp:textColor="0x333333"
+			tp:textFrameColor="0x242424"
+			tp:textFrameHoverColor="0xBEBEBE"
+			tp:textFrameSelectedColor="0x00CCFF"
+			tp:textHoverColor="0x000000"
+			tp:textSelectedColor="0x000000">
+		</div>		
+		<div id="releaselist" class="tpReleaseList"
+			tp:skinUrl="../../pdk/swf/skinCinematic.swf"
+			tp:thumbnailWidth="160"
+			tp:thumbnailHeight="90"
+			tp:columns="1"
+			tp:itemsPerPage="500"
+			tp:allowScrolling="true"
+			tp:showThumbnail="true"
+			tp:showTitle="true"
+			tp:showDescription="true"
+			tp:backgroundColor="0xFFFFFF"
+			tp:frameColor="0xCCCCCC"
+			tp:itemBackgroundColor="0xFFFFFF"
+			tp:itemFrameColor="0xCCCCCC"
+			tp:textColor="0x333333"
+			tp:textSelectedColor="0x000000"
+			tp:textHoverColor="0x000000">
+		</div>
+	</div>	
+	<div style="clear: both"></div>
+</body>
+</html>

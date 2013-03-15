@@ -1,0 +1,333 @@
+.tpClipInfo .tpBackground {
+	margin: 0px;
+	border-width: 2px;
+	border-style: solid;
+	border-radius: 9px;
+}
+
+.tpClipInfo .clipInfoTitle {
+	font-size: 13px;
+}
+
+.tpClipInfo .clipInfo {
+	margin: 12px;
+	font-family: Verdana;
+}
+
+.tpClipInfo .clipInfoCopyright {
+	bottom: 12px;
+}
+
+.tpReleaseList .tpBackground {
+	margin: 0px;
+	border-width: 2px;
+	border-style: solid;
+	border-radius: 9px;
+}
+
+.tpCategoryList .tpBackground {
+	margin: 0px;
+	border-width: 2px;
+	border-style: solid;
+	border-radius: 9px;
+}
+
+.tpPlayer .tpBackground {
+	margin: 0px;
+	border-width: 2px;
+	border-style: solid;
+	border-radius: 9px;
+}
+
+.tpPlayer {
+	position: relative;
+}
+
+.tpPlayer .player {
+	margin: 4px;
+}
+
+.tpSearch {
+	z-index: 100;
+}
+
+.tpSearch .tpBackground {
+	margin: 6px 6px 0px 6px;
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 5px;
+}
+
+.tpNavigation {
+	text-align: center;
+	display: box;
+	position:relative;
+	z-index:100;
+}
+
+.tpNavigation .tpPageLinks {
+	
+	display:inline-block;
+	*display:inline;
+	
+}
+
+.tpNavigation .tpBackground {
+	margin: 6px 6px 0px 6px;
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 5px;
+}
+
+.tpNavigation .tpPreviousRange {
+
+	position:absolute;
+	left:0px;
+/*	padding-top:2px;*/
+
+	margin-left:3px;
+	height: 16px;
+	width: 16px;
+	padding-top: 3px;
+	padding-left: 6px;
+/*	float:left;*/
+}
+
+.tpNavigation .tpPreviousRange.tpDisabled {
+	cursor:default;
+	opacity:0.5;
+	filter:alpha(opacity=50);
+}
+
+.tpNavigation .tpPreviousRange span {
+
+	background-image: url('images/NavigationIconPrevious.png');
+	background-repeat:no-repeat;
+/*	background-attachment:fixed;*/
+	background-position:center;
+	height: 15px;
+	width: 15px;
+	cursor:pointer;
+	text-indent:-3000px;
+
+	/*this is only wanted in IE 7 and below*/
+	*font-size:0;
+	*line-height:0;
+	*text-transform: capitalize;
+	*text-indent:0px;
+
+
+
+	display:inline-block;
+	overflow:hidden;
+
+}
+
+.tpNavigation .tpPreviousRange.tpDisabled span {
+
+	background-image: url('images/NavigationIconPrevious.png');
+	background-repeat:no-repeat;
+/*	background-attachment:fixed;*/
+	background-position:center;
+	height: 15px;
+	width: 15px;
+
+	text-indent:-3000px;
+
+	cursor:default;
+	/*this is only wanted in IE 7 and below*/
+	*font-size:0;
+	*line-height:0;
+	*text-transform: capitalize;
+	*text-indent:0px;
+
+
+
+	display:inline-block;
+	overflow:hidden;
+
+}
+
+.tpNavigation .tpNextRange.tpDisabled {
+	cursor:default;
+	opacity:0.5;
+	filter:alpha(opacity=50);
+}
+
+.tpNavigation .tpNextRange span {
+	background-image:url('images/NavigationIconNext.png');
+	background-repeat:no-repeat;
+/*	background-attachment:fixed;*/
+	background-position:center;
+	height: 15px;
+	width: 15px;
+
+	text-indent:-3000px;
+
+	cursor:pointer;
+
+	/*this is only wanted in IE 7 and below*/
+	*padding: -15px -15px 0 0;
+	*line-height:0;
+	*text-transform: capitalize;
+	*text-indent:0px;
+
+
+	display:inline-block;
+	overflow:hidden;
+}
+
+.tpNavigation .tpNextRange.tpDisabled span {
+	background-image:url('images/NavigationIconNext.png');
+	background-repeat:no-repeat;
+/*	background-attachment:fixed;*/
+	background-position:center;
+	height: 15px;
+	width: 15px;
+	cursor:default;
+	
+	text-indent:-3000px;
+	/*this is only wanted in IE 7 and below*/
+	*padding: -15px -15px 0 0;
+	*line-height:0;
+	*text-transform: capitalize;
+	*text-indent:0px;
+
+
+	display:inline-block;
+	overflow:hidden;
+}
+
+.tpNavigation .tpPreviousRange.tpDisabled span:active {
+	background-image:url('images/NavigationIconPrevious.png');
+	background-repeat:no-repeat;
+/*	background-attachment:fixed;*/
+	background-position:center;
+	height: 15px;
+	width: 15px;
+
+	text-indent:-3000px;
+
+	/*this is only wanted in IE 7 and below*/
+	*line-height:0;
+	*text-transform: capitalize;
+	*text-indent:0px;
+
+
+	display:inline-block;
+	overflow:hidden;
+}
+
+.tpNavigation .tpNextRange.tpDisabled span:active {
+	background-image:url('images/NavigationIconNext.png');
+	background-repeat:no-repeat;
+/*	background-attachment:fixed;*/
+	background-position:center;
+	height: 15px;
+	width: 15px;
+
+	text-indent:-3000px;
+
+	/*this is only wanted in IE 7 and below*/
+	*line-height:0;
+	*text-transform: capitalize;
+	*text-indent:0px;
+
+
+	display:inline-block;
+	overflow:hidden;
+}
+
+.tpNavigation .tpPreviousRange span:active {
+		background-image:url('images/NavigationIconPreviousSelected.png');
+		background-repeat:no-repeat;
+		background-position:center;
+		height: 15px;
+		width: 15px;
+		text-indent:-3000px;
+		/*this is only wanted in IE 7 and below*/
+		*line-height:0;
+		*text-transform: capitalize;
+		*text-indent:0px;
+		display:inline-block;
+		overflow:hidden;
+}
+
+.tpNavigation .tpNextRange span:active {
+		background-image:url('images/NavigationIconNextSelected.png');
+		background-repeat:no-repeat;
+		background-position:center;
+		height: 15px;
+		width: 15px;
+		text-indent:-3000px;
+		/*this is only wanted in IE 7 and below*/
+		*font-size:0;
+		*line-height:0;
+		*text-transform: capitalize;
+		*text-indent:0px;
+		display:inline-block;
+		overflow:hidden;		
+}
+
+.tpNavigation .tpNextRange {
+	position:absolute;
+	right:0px;	
+/*	padding-top:2px;*/
+	margin-right:3px;
+	height: 16px;
+	width: 16px;
+	float:right;
+	padding-top: 3px;
+	padding-right: 6px;
+}
+
+.tpNavigation .tpRangeInfo {
+
+	display:inline-block;
+	*display:inline;
+	zoom:1;
+	height:15px;
+	font-size:14px;
+	color:#FFFFFF;
+	padding-top: 3px;
+}
+
+.tpNavigation .tpPageInfo {
+	padding-top: 3px;
+
+}
+
+.tpNavigation .tpPageLinks {
+	padding-top: 3px;
+
+}
+
+.tpNavigation .tpPageLinks .tpPageLink {
+
+} 
+
+.tpReleaseList {
+	z-index:100;
+}
+
+.tpReleaseListOverlay {
+	height: 33px;
+}
+
+.tpReleaseList .releaseListItem, .tpReleaseList .releaseListItemSelected {
+	border-radius: 5px;
+	background-color: black;
+}
+
+.tpReleaseList .releaseListItem a, .tpReleaseList .releaseListItemSelected a {
+	border-width: 0;
+	margin: 1px;
+}
+
+.tpReleaseList .releaseListItem, .tpReleaseList .releaseListItemSelected {
+	position: relative;
+}
+
+.tpReleaseList .releaseListThumb {
+	margin-left: 5px;
+}

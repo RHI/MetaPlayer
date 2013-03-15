@@ -1,0 +1,64 @@
+/* style */
+
+.block {
+    border: 2px solid rgba(0,0,0,0);
+}
+
+.hover {
+    border-left: 2px solid #ccc;
+    /*border-right: 2px solid black;*/
+    /*background: #f0f0f0;*/
+}
+
+.label, .type {
+    font-weight: bold;
+    font-style: italic;
+}
+
+/* structure */
+
+.block {
+    padding: 2px;
+    margin-left: 10px;
+    padding-left: 10px;
+    clear: both;
+}
+
+.label, .scalar, .separator, .marker, .type {
+    padding: 2px 5px;
+}
+
+.separator, .label,  .type {
+    display: inline;
+    float: left;
+    float: left;
+}
+.marker {
+    display: block;
+    clear: both;
+    margin-left: 10px;
+}
+
+.type {
+    clear: right;
+}
+
+.label {
+    clear: left;
+}
+
+.object, .array {
+    padding: 2px 10px;
+    margin-left: 10px
+}
+
+.clear {
+    display : block;
+    clear: both;
+}
+
+.label,  .separator, .marker {
+    color: blue;
+}
+
+

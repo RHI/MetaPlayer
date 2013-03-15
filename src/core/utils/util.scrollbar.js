@@ -8,6 +8,7 @@
     var $ = jQuery;
 
     var defaults = {
+        disabled : false,
         fixedHeight : false,
         minHeight : 20, //px
         mouseDrag : false,
@@ -75,6 +76,7 @@
                 .css('border-radius', "4px")
                 .css('background', "#000")
                 .css('opacity', .4)
+                .hide()
                 .css('cursor', "pointer")
                 .width(8)
                 .addClass("mp-scroll-knob")
@@ -86,7 +88,7 @@
             this.parent
                 .css("position", "relative")
                 .css("overflow", "visible")
-                .bind("mousewheel", function (e){
+                .bind("mousewheel DOMMouseScroll", function (e){
                     self.onScroll(e);
                 })
                 .bind((this.config.mouseDrag ? "mousedown" : '') + " touchstart", function (e) {
@@ -98,16 +100,19 @@
         },
 
         onScroll : function(e) {
-            var x = e.originalEvent.wheelDeltaX || e.originalEvent.delta || 0;
-            var y = e.originalEvent.wheelDeltaY || e.originalEvent.delta || 0;
-            this.scrollBy(-x, -y);
-            e.preventDefault();
+            var x = e.originalEvent.wheelDeltaX || e.originalEvent.delta || e.originalEvent.detail * 10|| 0;
+            var y = e.originalEvent.wheelDeltaY || e.originalEvent.delta ||  e.originalEvent.detail * 10|| 0;
+            if( ! this.config.disabled ){
+                if( this.scrollBy(-x, -y) ){
+                    e.preventDefault();
+                }
+            }
         },
 
         scrollBy : function (x, y, duration){
             var sl = this.scroller.scrollLeft();
             var st = this.scroller.scrollTop();
-            this.scrollTo( sl + x ,  st + y, duration);
+            return this.scrollTo( sl + x ,  st + y, duration);
         },
 
         scrollTop : function () {
@@ -115,10 +120,12 @@
         },
 
         scrollTo : function (x, y, duration){
-            var max = this.body.height() - this.parent.height();
-            var at_max = ( max > 0 && this.scroller.scrollTop() + 1 >= max ); // allow rounding fuzzyiness
 
-             if( y > max  )
+            var currentY = this.scroller.scrollTop();
+            var max = this.body.height() - this.parent.height();
+            var at_max = ( max > 0 && currentY + 1 >= max ); // allow rounding fuzzyiness
+
+            if( y > max  )
                 y = max;
 
             if( y < 0 )
@@ -126,7 +133,11 @@
 
             this.scroller.stop();
 
-            if( duration && !at_max ){
+            if( y == currentY ){
+                return false;
+            }
+
+            if( duration ){
                 var self = this;
                 this._scrollY = y;
                 this.scroller.animate({
@@ -136,12 +147,29 @@
                     self._scrollY = null;
                 });
                 this.render(duration);
+                return false;
             }
-            else {
+
+            if( y ) {
                 this.scroller.scrollLeft(x);
                 this.scroller.scrollTop(y);
                 this.render();
+                return true;
             }
+        },
+
+        throttledRender : function (duration) {
+            if( this._delay )
+                clearTimeout(this._delay);
+
+            if( duration == null )
+                duration = this.config.knobAnimateMs;
+
+            var self = this;
+            this._delay = setTimeout( function () {
+                self._delay = null;
+                self.render(duration);
+            }, 0);
         },
 
         render: function (duration) {
@@ -150,6 +178,9 @@
             if( ! this.body || ! this.body.is(":visible")) {
                 return;
             }
+
+            if( this.config.disabled )
+                return;
 
             var bh = this.body.height();
             var ph = this.parent.height();
@@ -189,11 +220,10 @@
 
         onResize : function () {
             if( this.config.listenChanges )
-                this.render(this.config.knobAnimateMs);
+                this.throttledRender();
         },
 
         onTouchStart : function (e) {
-
             this.touching = {
                 lastX : this.scroller.scrollLeft(),
                 lastY : this.scroller.scrollTop()
@@ -229,7 +259,7 @@
 
         onTouchStop : function (e) {
 
-             $(document)
+            $(document)
                 .unbind("mousemove touchmove", this._touchMove )
                 .unbind("mouseup touchend", this._touchStop );
             this.touching = null;
@@ -245,9 +275,12 @@
 
             this.touching.lastX = x;
             this.touching.lastY = y;
-            this.scrollTo(x, y);
-            e.stopPropagation();
-            e.preventDefault();
+
+
+            if(  this.scrollTo(x, y) ){
+                e.stopPropagation();
+                e.preventDefault();
+            }
         },
 
         onKnobStart : function (e, inverse) {
@@ -267,7 +300,7 @@
         },
 
         onKnobStop : function (e) {
-             $(document)
+            $(document)
                 .unbind("mousemove touchmove", this._knobMove )
                 .unbind("mouseup touchend", this._knobStop );
             this.dragging = null;

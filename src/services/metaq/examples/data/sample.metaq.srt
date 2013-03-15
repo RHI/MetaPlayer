@@ -1,0 +1,30 @@
+00:00:00,000 --> 00:00:10,000 type:subtitle format:json
+{ "text" : "0sec: First Subtitle" }
+
+00:00:10,000 --> 00:00:15,000 type:subtitle format:json
+{ "text" : "10s: Second Subtitle" }
+
+00:00:10,000 --> 00:00:30,000 type:tag
+bar
+
+00:00:15,000 --> 00:00:20,000 type:framefeed format:json
+{ "url" : "15s: Third Subtitle" }
+
+00:00:20,000 --> 00:00:25,000 type:subtitle format:json
+{ "text" : "20s: Fourth Subtitle" }
+
+00:00:25,000 --> 00:00:30,000 type:subtitle format:json
+{ "text" : "25s: Fifth Subtitle" }
+
+00:00:30,000 --> 00:00:35,000 type:subtitle format:json
+{ "text" : "30s: Sixth Subtitle" }
+
+00:00:30,000 --> 00:00:35,000 type:tag
+foo
+
+00:00:35,000 --> 00:00:40,000 type:subtitle format:json
+{ "text" : "35s: Seventh Subtitle" }
+
+00:00:40,000 --> 00:00:45,000 type:subtitle format:json
+{ "text" : "40s: Eighth Subtitle" }
+

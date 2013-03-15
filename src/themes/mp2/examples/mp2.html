@@ -38,16 +38,16 @@
 
 <body>
 
-<h3>Metaplayer &raquo; HTML5Player Plugin</h3>
+<h3>MetaPlayer &raquo; HTML5Player Plugin</h3>
 
 <div id='target'></div>
 
 <script type="text/javascript">
-    var player = Ramp.html5('#target', "ramp:/pca:36234882", { autoplay: true } );
-    Ramp.controls(player);
-    Ramp.overlay(player);
-    Ramp.captions(player);
-    jQuery.noConflict(true); // test that we we don't have any unsecured jQuery references
+    var player = MetaPlayer('#target');
+	player.ramp("ramp:/pca:36234882");
+    player.controls();
+    player.overlay();
+    player.captions();
 </script>
 
 </body>

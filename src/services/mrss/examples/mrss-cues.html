@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+<head>
+
+    <style>
+        body {
+            background:  #eee;
+        }
+        #video {
+            width: 600px;
+            height: 300px;
+            background:  #333;
+        }
+    </style>
+
+    <!-- Dependency: jQuery -->
+    <script src="../../../../external/jquery/jquery-1.6.2.js" type="text/javascript"></script>
+
+    <!--Dependency: Popcorn -->
+    <script src="../../../../external/popcorn/popcorn.js" type="text/javascript"></script>
+    <script src="../../../../external/popcorn/popcorn.footnote.js" type="text/javascript"></script>
+
+    <!-- Core: Ramp -->
+    <script src="../../../core/metaplayer.js"></script>
+    <script src="../../../core/utils/util.event.js"></script>
+    <script src="../../../core/utils/util.proxy.js"></script>
+    <script src="../../../core/utils/util.script.js"></script>
+    <script src="../../../core/utils/util.timer.js"></script>
+    <script src="../../../core/utils/util.format.js"></script>
+    <script src="../../../core/utils/util.ui.js"></script>
+    <script src="../../../core/playlist/player.playlist.js"></script>
+    <script src="../../../core/layout/core.layout.js"></script>
+    <script src="../../../core/metadata/core.metadata.js"></script>
+    <script src="../../../core/search/core.search.js"></script>
+    <script src="../../../core/cues/core.cues.js"></script>
+    <link href="../../../core/layout/core.layout.css" rel="stylesheet" type="text/css">
+
+    <!-- Service Plugin: srt -->
+    <script src="../../../services/srt/service.srt.js"></script>
+
+    <!-- UI: captions -->
+    <script src="../../../ui/captions/ui.captions.js"></script>
+    <link href="../../../ui/captions/ui.captions.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.captions.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: controlbar -->
+    <script src="../../../ui/controlbar/ui.controlbar.js"></script>
+    <link href="../../../ui/controlbar/theme/ui.controlbar.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: captionconfig -->
+    <script src="../../../ui/captionconfig/ui.captionconfig.js"></script>
+    <link href="../../../ui/captionconfig/theme/ui.captionconfig.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: tracktip -->
+    <script src="../../../ui/tracktip/ui.tracktip.js"></script>
+    <link href="../../../ui/tracktip/theme/ui.tracktip.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: share -->
+    <script src="../../../ui/share/ui.share.js"></script>
+    <link href="../../../ui/share/theme/ui.share.css" rel="stylesheet"  type="text/css">
+
+    <!-- Media : HTML5 -->
+    <script src="../../../players/html5/player.html5.js"></script>
+
+    <!-- Service Plugin: MRSS -->
+     <script src="../../../services/mrss/service.mrss.js"></script>
+</head>
+<body>
+
+
+<video id="video" controls autoplay></video>
+<div id="footnote" style="outline: 1px solid black; margin-top: 10px; width: 600px;">&nbsp;</div>
+
+
+<script type="text/javascript">
+    var player = MetaPlayer("#video")
+            .controlbar({})
+            .mrss('data/cues.mrss.xml')
+            .load();
+    player.cues.enable("footnote");
+    player.popcorn.defaults("footnote", {
+        target: "footnote"
+    });
+</script>
+</body>
+</html>

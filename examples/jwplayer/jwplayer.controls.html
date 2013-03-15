@@ -22,6 +22,8 @@
     <style>
         #jwtarget {
             background:  #333;
+            height: 350px;
+            width: 600px;
         }
 		#transcript, #searchbox {
 			margin-top: 10px;
@@ -44,11 +46,9 @@
 
 <body>
 
-<h3>Metaplayer &raquo; JWPlayer Plugin</h3>
+<h3>MetaPlayer &raquo; JWPlayer Adapter</h3>
 
-<div class="metaplayer">
-	<div id='jwtarget'></div>
-</div>
+<div id='jwtarget'></div>
 
 
 <script type="text/javascript">
@@ -58,20 +58,27 @@ var jwp = jwplayer('jwtarget').setup({
 	width:  '600',
     autostart   : true,
     modes       : [{type: 'html5'}],
-    file        : "../../media/elephants_dream/elephant.ogv",
     image       : "",
-    volume      : 0
+    volume      : 0,
+    'playlist': [{
+        file : "http://ftp.nluug.nl/ftp/graphics/blender/apricot/trailer/sintel_trailer-480p.mp4",
+        guid : "52975368"
+    },{
+        url : "http://sxsw.ramp.com/hosting/media/sxsw/1626298/ed_1024_512kb.mp4",
+        guid : "52871241"
+    }]
 });
 
-var video = MetaPlayer.jwplayer( jwp );
-
-var player = MetaPlayer( video)
-		.ramp( "http://sxsw.ramp.com//theme/6734/mp2-playlist?e=52871241" )
-		.controls()
-		.overlay()
-		.captions()
-		.endcap()
-		.load();
+var player;
+jwp.onReady(  function () {
+    player = MetaPlayer( jwp )
+            .ramp( "f455a86b28160bc0682fec3662e39d3b" )
+            .controls()
+            .overlay()
+            .captions()
+            .endcap()
+            .load();
+});
 
 </script>
 

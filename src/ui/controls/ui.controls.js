@@ -25,6 +25,30 @@
         showBelow : true
     };
 
+    /**
+     * The Controls player widget renders a timeline scrubber, play/pause button, and a current
+     * playback timestamp. The timeline scrubber supports the addition of annotations.
+     * @name UI.Controls
+     * @class The MetaPlayer controls and timeline scrubber player widgets.
+     * @constructor
+     * @param {MetaPlayer} player A MetaPlayer instance.
+     * @param {Object} [options]
+     * @param {Boolean} [options.autoHide=false] Controls are only rendered during mouse hover.
+     * @param {Boolean} [options.renderTags=true] Render any Tags metadata, if available.
+     * @param {Boolean} [options.showBelow=true] Show the controls below the video (not overlaid).
+     * @example
+     * MetaPlayer(video)
+     *       .controls({
+     *           autoHide : false,
+     *           renderTags : true,
+     *           showBelow : true
+     *       })
+     *       .ramp("http://api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440")
+     *       .load();
+     * @example
+     * <iframe style="width: 100%; height: 375px" src="http://jsfiddle.net/ramp/PYzRm/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+     * @see MetaPlayer#controls
+     */
     var Controls = function (player, options) {
 
         this.config = $.extend(true, {}, defaults, options);
@@ -35,7 +59,6 @@
 
         this.annotations = [];
         this.video.controls = false;
-        this._iOS = /iPad|iPhone|iPod/i.test(navigator.userAgent);
         this._hasTween = $.easing.easeOutBounce; // jquery UI
 
         if( this.config.createMarkup )
@@ -45,16 +68,16 @@
         this.addVideoListeners();
         this.addUIListeners();
 
-        this.trackTimer = Ramp.timer(this.config.trackIntervalMsec);
+        this.trackTimer = MetaPlayer.timer(this.config.trackIntervalMsec);
         this.trackTimer.listen('time', this.render, this);
 
-        this.clockTimer = Ramp.timer(this.config.clockIntervalMsec);
+        this.clockTimer = MetaPlayer.timer(this.config.clockIntervalMsec);
         this.clockTimer.listen('time', this.onClockTimer, this);
 
-        this.revealTimer = Ramp.timer(this.config.revealDelayMsec);
+        this.revealTimer = MetaPlayer.timer(this.config.revealDelayMsec);
         this.revealTimer.listen('time', this.onRevealTimer, this);
 
-        this.hideTimer = Ramp.timer(this.config.hideDelayMsec);
+        this.hideTimer = MetaPlayer.timer(this.config.hideDelayMsec);
         this.hideTimer.listen('time', this.onHideTimer, this);
 
         this.panel = this.player.layout.addPanel({ });
@@ -68,13 +91,29 @@
             this.showBelow(true);
         }
 
-        if( this._iOS ){
+        if( MetaPlayer.iOS ){
+            this.video.controls = true;
             this.toggle(false, 0);
             this.showBelow(false);
         }
 
     };
 
+    /**
+     * @name MetaPlayer#controls
+     * @function
+     * @description
+     * Creates a {@link UI.Controls} instance with the given options.
+     * @param {Object} [options]
+     * @example
+     * var mpf = MetaPlayer(video)
+     *     .ramp("http://api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440")
+     *     .controls()
+     *     .load();
+     * @see <a href="http://jsfiddle.net/ramp/PYzRm/">Live Example</a>
+     * @see UI.Controls
+     * @requires  metaplayer-complete.js
+     */
     MetaPlayer.addPlugin("controls", function (options) {
         this.controls = new Controls(this, options);
     });
@@ -83,7 +122,8 @@
 
         addVideoListeners : function () {
             var self = this;
-            $(this.video).bind('pause play seeked seeking ended', function(e){
+            $(this.video).bind('pause play playing seeked seeking ended', function(e){
+                self.video.controls = false
                 self.onPlayStateChange(e)
             });
 
@@ -92,7 +132,7 @@
             });
 
             $(this.video).bind('durationchange', function(e){
-                self.renderAnnotations(true)
+                self.renderAnnotations(true);
             });
         },
 
@@ -138,7 +178,7 @@
             player.bind("mouseleave", function (e) {
                 if( self.config.autoHide ) {
                     self.revealTimer.reset();
-                    self.hideTimer.start()
+                    self.hideTimer.start();
                 }
             });
         },
@@ -157,7 +197,7 @@
         },
 
         onTags : function (e) {
-            var tags = e.data.ramp.tags;
+            var tags = e.data.ramp.tags || [];
             var self = this;
             $.each(tags, function (i, tag){
                 $.each(tag.timestamps, function (j, time){
@@ -203,8 +243,8 @@
         onClockTimer : function (e) {
             if( ! this.dragging )
                 this.renderTime();
-//            if( ! this.buffered )
-//                this.renderBuffer();
+            //            if( ! this.buffered )
+            //                this.renderBuffer();
         },
 
         onPlayToggle : function () {
@@ -315,14 +355,14 @@
             this.find("time-current").text( this.formatTime(time) );
         },
 
-//        renderBuffer : function (){
-//            var status = this.video.status();
-//            var bufferPercent = status.buffer.end / this.video.duration * 100;
-//            var buffer = this.find('track-buffer').stop();
-//            buffer.animate( { width : bufferPercent + "%"}, this.config.clockIntervalMsec, 'linear');
-//            if( bufferPercent == 100)
-//                this.buffered = true;
-//        },
+        //        renderBuffer : function (){
+        //            var status = this.video.status();
+        //            var bufferPercent = status.buffer.end / this.video.duration * 100;
+        //            var buffer = this.find('track-buffer').stop();
+        //            buffer.animate( { width : bufferPercent + "%"}, this.config.clockIntervalMsec, 'linear');
+        //            if( bufferPercent == 100)
+        //                this.buffered = true;
+        //        },
 
         render : function (){
             var duration = this.video.duration;
@@ -376,6 +416,12 @@
 
         },
 
+        /**
+         * toggles whether the controls are visible during mouse-over.
+         * @name UI.Controls#autohide
+         * @function
+         * @param {Boolean} bool True for visible.
+         */
         autoHide : function (bool) {
             if( bool )
                 this.hideTimer.start();
@@ -395,6 +441,13 @@
             this.hideTimer.reset();
         },
 
+        /**
+         * Toggles the visiblity of the controls
+         * @name UI.Controls#toggle
+         * @function
+         * @param {Boolean} bool True for visible.
+         * @param {Number} duration Seconds of fade in/out, if defined.
+         */
         toggle : function (bool, duration) {
             var el = this.find();
             var v = $(this.container).find('.metaplayer-video');
@@ -407,18 +460,34 @@
                 this.showBelow(bool);
 
             el.stop().animate({
-                opacity: show ? 1 : 0
+                    opacity: show ? 1 : 0
                 }, duration == null ? this.config.revealTimeMsec : duration,
                 function () {
                     el.toggle(show);
                 });
         },
 
+        /**
+         * Toggles the rendering of the controls below playback, adding a bottom marign to the video.
+         * @name UI.Controls#showBelow
+         * @function
+         * @param {Boolean} bool True for controls below the video..
+         */
         showBelow : function (bool){
             var h = bool ? this.find().height() : 0;
             this.player.layout.updatePanel(this.panel, { bottom: h } );
         },
 
+         /**
+         * Toggles the rendering of the controls below playback, adding a bottom marign to the video.
+         * @name UI.Controls#addAnnotation
+         * @function
+          * @param {Number} start The start time, in seconds
+          * @param {Number} end The start time, in seconds. This will affect the width of the annotation container,
+          * although the CSS theme may have a fixed with annotation marker.
+          * @param {String} title The tooltip text.
+          * @param [cssClass] An optional CSS class to append to the annotation for custom styling.
+         */
         addAnnotation : function (start, end, title, cssClass) {
             var overlay = this.find('track-overlay');
             var marker = this.create("track-marker");
@@ -487,7 +556,7 @@
                                 top : 0
                             },
                             (config.annotationMsec + ( Math.random() * config.annotationEntropy * config.annotationMsec)),
-                             "easeOutBounce"
+                            "easeOutBounce"
                         );
                     }
                     annotation.rendered = true;
@@ -498,7 +567,7 @@
                 // enforce annotation spacing rendering (but not firing)
                 if (last && spacing != null
                     && last.el.position().left + ( last.el.width() * spacing )
-                       > annotation.el.position().left ) {
+                    > annotation.el.position().left ) {
                     annotation.el.stop().hide();
                     return;
                 }
@@ -510,6 +579,12 @@
             this.annotations.modified = false;
         },
 
+        /**
+         * Removes all annotation markers which were identified with given name. 
+         * @name UI.Controls#removeAnnotations
+         * @function
+         * @param {String} className A CSS class name used to select annotations.
+         */
         removeAnnotations : function (className) {
             var i, a;
             for(i = this.annotations.length - 1; i >= 0 ; i-- ) {

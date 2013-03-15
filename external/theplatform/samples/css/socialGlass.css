@@ -1,0 +1,102 @@
+html {
+	background: #FFF;
+	font-family: helvetica;
+}
+
+body {
+	margin: 0px;
+}
+
+#holder-video {
+	float: left;
+	background-image: url(../../images/glassBackground.jpg);
+	width: 800px;
+	height: 800px;
+}
+
+#adjust-video {
+	width: 560px;	
+	color:#bebebe;
+	font:8pt Verdana;
+	margin: 16px auto 4px auto;
+}
+
+#scaling {
+	float: right;
+	width: 90px;
+}
+
+#info {
+	float: left;
+	width: 470px;
+	height: 50px;	
+}
+
+#player {
+	margin: 5px auto;
+	width: 560px;
+	height: 314px;	
+}
+
+#list-label {
+	text-align: left;
+	color: #b0b0b0;
+	font: bold 12pt Calibri;
+	width: 560px;
+	margin: 14px auto 9px auto;
+}
+
+#releaselist {	
+	width: 500px;
+	height: 100px;	
+	margin: 0 auto;
+	position:relative;
+	z-index:20;
+}
+
+#navigation {  
+	width: 560px;
+	height: 100px;		
+	margin: -100px auto 0 auto;
+}
+
+#releaselist2 {	
+	width: 500px;
+	height: 100px;	
+	margin: 0 auto;
+	position:relative;
+	z-index:20;
+}
+
+#list-label2 {
+	text-align: left;
+	color: #b0b0b0;
+	font: bold 12pt Calibri;
+	width: 560px;
+	margin: 30px auto 9px auto;
+}
+
+#navigation2 {  
+	width: 560px;
+	height: 100px;		
+	margin: -100px auto 0 auto;
+}
+
+.tpNavigation {
+	position:relative;
+	z-index:10;
+}
+
+
+
+.releaseListItemSelected a {
+
+line-height:14px;
+
+}
+
+.releaseListItem a {
+
+line-height:14px;
+
+}

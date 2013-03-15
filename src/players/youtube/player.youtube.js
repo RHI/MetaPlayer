@@ -5,7 +5,7 @@
 
     var defaults = {
         autoplay : false,
-        preload : true,
+        preload : "auto",
         updateMsec : 500,
         playerVars : {
             enablejsapi : 1,
@@ -24,6 +24,10 @@
     };
 
     var YouTubePlayer = function (youtube, options) {
+
+        if( !(this instanceof YouTubePlayer) )
+            return new YouTubePlayer(youtube, options);
+
         this.config = $.extend(true, {}, defaults, options);
 
         this.__seeking = false;
@@ -57,11 +61,18 @@
         }
         else {
             this.youtube = youtube;
+            var el = $(youtube.a);
             // wrap so we have a non-iframe container to append source elements to
             this.container  = $("<div></div>")
-                .appendTo( youtube.a.parentNode )
-                .append( youtube.a )
+                .appendTo( el.parent() )
+                .height( el.height() )
+                .width( el.width() )
+                .append( el )
                 .get(0);
+
+            el.width("100%");
+            el.height("100%");
+
             this.addListeners();
         }
 
@@ -69,6 +80,20 @@
     };
 
 
+    MetaPlayer.youtube = function (youtube, options){
+        var yt = new YouTubePlayer(youtube, options);
+        return yt.video;
+    };
+
+    MetaPlayer.Players.YouTube = function (media) {
+        if( ! ( media.getVideoEmbedCode instanceof Function ) )
+            return false;
+        return MetaPlayer.youtube(media);
+    };
+
+    /**
+     * @deprecated
+     */
     MetaPlayer.addPlayer("youtube", function (youtube, options ) {
 
         // single arg form
@@ -88,19 +113,13 @@
                 options.chromeless = true;
 
            youtube = $("<div></div>")
-               .addClass("mp-video")
-               .appendTo(this.layout.stage);
+               .prependTo(this.layout.base);
         }
 
         var yt = new YouTubePlayer(youtube, options);
         this.video = yt.video;
         this.youtube = yt
     });
-
-    MetaPlayer.youtube = function (youtube, options){
-        var yt = new YouTubePlayer(youtube, options);
-        return yt.video;
-    }
 
 
     YouTubePlayer.prototype = {
@@ -159,77 +178,139 @@
                 return;
             }
 
-            // flash implemented, works in IE?
-            // player.addEventListener(event:String, listener:String):Void
-            this.startVideo();
+            if( this.__readyState < 4 ){
+                this.__readyState = 4;
+            }
+
+
+            if( this.__muted ) {
+                this.youtube.mute();
+            }
+
+            // volume works, this is too early to set mute
+            this.volume(this.__volume);
+
+            this._initTrack();
+
+            this.startDurationCheck();
+
+            this.startTimeCheck(); // check while paused to handle event-less seeks
         },
 
         isReady : function () {
-            return this.youtube && this.youtube.playVideo;
+            return Boolean(this.youtube && this.youtube.playVideo);
         },
 
         onStateChange : function (e) {
             var state = e.data;
 
+            MetaPlayer.log("youtube", "onStateChange", state);
             // http://code.google.com/apis/youtube/js_api_reference.html#Events
             switch(state) {
                 case -1: // unstarted
                     break;
                 case 0: //ended
                     this.__ended = true;
-                    this.__duration = NaN;
                     this.dispatch("ended");
                     break;
                 case 1: // playing
                     this.__paused = false;
-                    this.dispatch("playing");
-                    this.dispatch("play");
+                    if( ! this.__ended ) {
+                        this.dispatch("playing");
+                        this.dispatch("play");
+                    }
+                    this.startDurationCheck();
                     break;
                 case 2: // paused
-                    this.__paused = true;
-                    this.dispatch("pause");
+                    if( ! this.__paused ) {
+                        this.__paused = true;
+                        this.dispatch("pause");
+                    }
                     break;
                 case 3: // buffering
-                    this.startDurationCheck();
-                    this.startTimeCheck(); // check while paused to handle event-less seeks
+                    
                     break;
                 case 5: // queued
+                    this.dispatch("loadstart");
                     this.dispatch("canplay");
                     this.dispatch("loadeddata");
+                    this.dispatch("loadedmetadata");
+
+                    // play then stop if !autoplay to get duration
+                    if (!this.autoplay) {
+                        this.youtube.playVideo();
+                        this.__playingForDuration = true;
+                    }
                     break;
             }
         },
 
         onError : function (e) {
+            MetaPlayer.log("youtube", "onError", e);
             this.dispatch("error");
         },
 
         startTimeCheck : function () {
+
             var self = this;
             if( this._timeCheckInterval ) {
                 return;
             }
 
             this._timeCheckInterval = setInterval(function () {
-                self.onTimeUpdate();
+                self.updateTime();
             }, this.updateMsec);
 
             // set an initial value, too
             this.updateTime();
         },
 
-        stopTimeCheck : function () {
-            clearInterval(this._timeCheckInterval);
-            this._timeCheckInterval = null;
-        },
-
-        onTimeUpdate: function () {
-            this.updateTime();
-            this.dispatch("timeupdate");
-        },
-
         updateTime : function () {
-            this.__currentTime = this.youtube.getCurrentTime();
+            var last = this.__currentTime;
+            var now = this.youtube.getCurrentTime();
+            var seekThreshold = last + (2 * (this.updateMsec / 1000) );
+            var paused = this.paused();
+            var seeked = false;
+
+            // detect seek while playing
+            if( ! paused  && (now < last || now > seekThreshold) )
+                seeked = true;
+
+            // detect seek while paused
+            else if( paused && (now != last ) )
+                seeked = true;
+
+            this.__currentTime = now;
+
+            if( ! this.__ended && now >= this.__duration - (this.updateMsec/1000) && now == last ) {
+                this.__ended = true;
+                this.__paused = true;
+                this.dispatch("ended");
+                this.dispatch("paused");
+                return;
+            }
+
+            if( this.__ended && ! paused) {
+                this.__ended = false;
+                this.__paused = false;
+                this.dispatch("play");
+                console.log("playing");
+                this.dispatch("playing");
+                return;
+            }
+
+            if( seeked ) {
+                if( ! this.__seeking ){
+                    this.__seeking = true;
+                    this.dispatch("seeking");
+                }
+                this.__seeking = false;
+                this.dispatch("seeked");
+            }
+
+            if( now != last ) {
+                this.dispatch("timeupdate");
+            }
         },
 
         startDurationCheck : function () {
@@ -246,47 +327,51 @@
         },
 
         onDurationCheck : function () {
+            if( this.__readyState != 4 )
+                return;
+
             var duration = this.youtube.getDuration();
             if( duration > 0 ) {
                 this.__duration = duration;
-                this.dispatch("loadedmetadata");
+                if (this.__playingForDuration) {
+                    this.youtube.stopVideo();
+                    delete this.__playingForDuration;
+                }
                 this.dispatch("durationchange");
                 clearInterval( this._durationCheckInterval );
                 this._durationCheckInterval = null;
             }
         },
 
-        startVideo : function () {
-            // not loaded yet
-            if( ! this.isReady() )
-                return;
-
-            this.__ended = false;
-
-            if( this.__muted ) {
-                this.youtube.mute();
-            }
-            // volume works, this is too early to set mute
-            this.youtube.setVolume(this.__volume);
-
+        _initTrack : function () {
             var src = this.src();
+            MetaPlayer.log("youtube", "init track", src)
             if( ! src ) {
                 return;
             }
 
-            if( this.__readyState < 4 ){
-                this.dispatch("loadstart");
-                this.__readyState = 4;
-            }
+            // player not loaded yet
+            if( ! this.isReady() )
+                return;
+
+            this.__ended = false;
+            this.__currentTime = 0;
+            this.__duration = NaN;
+            this.__seeking = false;
 
             if( src.match("^http") ){
                 var videoId = src.match( /www.youtube.com\/(watch\?v=|v\/)([\w-]+)/ )[2];
             }
             this.youtube.cueVideoById( videoId || src );
 
+            this.dispatch("loadstart");
+
+            MetaPlayer.log("youtube", "_initTrack", this.autoplay);
+
             if( this.autoplay )
                 this.play();
-            else if( this.preload )
+
+            else if( this.preload != "none" )
                 this.load();
 
         },
@@ -294,47 +379,37 @@
         doSeek : function (time) {
             this.__seeking = true;
             this.dispatch("seeking");
-            this.youtube.seekTo( time );
-            this.__currentTime = time;
-
-            // no seeking events exposed, so fake best we can
-            // will be subject to latency, etc
-            var self = this;
-            setTimeout (function () {
-                self.updateTime(); // trigger a time update
-                self.__seeking = false;
-                self.dispatch("seeked");
-                self.dispatch("timeupdate");
-            }, 1500)
+            if( time != this.__currentTime )
+                this.youtube.seekTo( time );
         },
 
         /* Media Interface */
 
         load : function () {
-            this.preload = true;
-
-            if( ! this.isReady() )
+            this.preload = "auto";
+            if( ! this.isReady() ){
                 return;
+            }
+            MetaPlayer.log("youtube", "load()", this.isReady() );
 
-            if( this.youtube.getPlayerState() != -1 )
-                return;
-
-            var src = this.src();
             // kickstart the buffering so we get the duration
-            this.youtube.playVideo();
-            this.youtube.pauseVideo();
+            //this.youtube.playVideo();
+            //this.youtube.pauseVideo();
+
+            this.startDurationCheck();
         },
 
         play : function () {
             this.autoplay = true;
             if( ! this.isReady() )
                 return;
-
+            MetaPlayer.log("youtube", "play()", this.isReady() );
             this.youtube.playVideo()
         },
 
         pause : function () {
-            if(! this.isReady()  )
+            MetaPlayer.log("youtube", "pause()", this.isReady() );
+            if(! this.isReady() )
                 return false;
             this.youtube.pauseVideo()
         },
@@ -365,7 +440,6 @@
             if(! this.isReady()  )
                 return 0;
             if( val != undefined ) {
-                this.__ended = false;
                 this.doSeek(val);
             }
             return this.__currentTime;
@@ -401,7 +475,7 @@
         src : function (val) {
             if( val !== undefined ) {
                 this.__src = val;
-                this.startVideo();
+                this._initTrack();
             }
             return this.__src
         },

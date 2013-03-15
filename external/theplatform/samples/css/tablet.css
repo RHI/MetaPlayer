@@ -1,0 +1,65 @@
+html {
+	background: #131313;
+}
+
+#browse-video {
+	width: 770px;
+	margin: 0;
+}
+
+#header {
+	width: 790px;
+	height: 80px;
+}   
+
+#info, #clipInfoDiv {
+	/*float: left;*/
+	width: 768px;
+	height: 126px;
+	background: #333333;
+}
+
+#playerDiv {
+   background-image: url('../../images/tile.jpg');
+}
+
+#player {
+	width: 640px;
+	height: 360px;
+	padding: 6px 64px 78px 64px;
+    background-image: url('../../images/tile.jpg');
+    background-position: left;
+    background-repeat: repeat;
+    background-color: black;
+}
+
+#navigation {  
+	width: 768px;
+	height: 24px; 
+	/*float: left;*/
+}
+
+#releaselist, #releaseListDiv {
+	margin-right: auto	;
+	/*float: left;*/
+	width: 768px;
+	height: 246px;
+    background: #383838;
+}
+
+.tpReleaseList .tpThumbnail {
+}
+
+.tpReleaseListItem .tpTitle {
+	font-size: 14px;
+}
+
+.tpReleaseListItem .tpDescription {
+	font-size: 12px;
+	text-indent: 0;
+}
+
+.tpReleaseListItem:hover .tpTitle {
+	color: red;
+}
+

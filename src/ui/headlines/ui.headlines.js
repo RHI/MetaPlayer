@@ -8,12 +8,29 @@
 
     var defaults = {
         cssPrefix : "mp-hl",
-        filterMsec : 500,
-        revealMsec : 1500,
-        duplicates : false,
         baseUrl : ""
     };
 
+    /**
+     * Headlines is a page widget which populates with a set of links harvested from a RSS feed. RSS
+     * feeds can be specified for various times in the video, re-populating the link in the page.
+     * @name UI.Headlines
+     * @class The MetaPlayer headlines widget and plugin for PopcornJS
+     * @constructor
+     * @param {Element} id The DOM target to which the headlines will be added.
+     * @param {Object} [options]
+     * @param {String} [baseUrl=""] An options base url to prepend to item links in the feed.
+     * @example
+     * # shown with default options:
+     * var mpf = MetaPlayer(video)
+     *     .ramp("http://api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440")
+     *     .headlines("#headlines", {
+     *          baseUrl : "/feeds/"
+     *     })
+     *     .load();
+     * @see MetaPlayer#framefeed
+     * @see Popcorn#framefeed
+     */
     var Headlines = function (target, options) {
         var t = $(target);
         target = t.get(0);
@@ -35,7 +52,21 @@
 
     Headlines.instances = {};
 
-
+    /**
+     * @name MetaPlayer#headlines
+     * @function
+     * @description
+     * Creates a {@link UI.Headlines} instance with the given target and options.
+     * @param {Element} id The DOM or jQuery element to which the headlines will be added.
+     * @param {Object} [options]
+     * @example
+     * var mpf = MetaPlayer(video)
+     *     .ramp("http://api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440")
+     *     .headlines("#headlines")
+     *     .load();
+     * @see UI.Headlines
+     * @requires  metaplayer-complete.js
+     */
     MetaPlayer.addPlugin("headlines", function (target, options){
         this.cues.enable("headlines", { target : target });
         this.headlines = Headlines(target, options);
@@ -159,6 +190,25 @@
     };
 
     if( Popcorn ) {
+        /**
+         * Schedules a headline links to be rendered and a given time.
+         * @name Popcorn#headlines
+         * @function
+         * @param {Object} config
+         * @param {Element} config.target The target element for the headlines
+         * @param {String} config.height A height for the feed item
+         * @param {String} config.url An Ajax url for RSS source (subject to ajax cross-domain restrictions)
+         * @param {Number} config.start Start time, in seconds.
+         * @example
+         *  var pop = Popcorn(video);
+         *
+         * pop.headlines ({
+         *     target : "#myheadlines",
+         *     url : "sample-rss.xml",
+         *     start : 10
+         * });
+         *
+         */
         Popcorn.plugin( "headlines" , {
 
             _setup: function( options ) {

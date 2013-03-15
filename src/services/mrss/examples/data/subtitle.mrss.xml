@@ -1,0 +1,21 @@
+<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/">
+    <channel>
+        <title>Test</title>
+        <link>http://www.examples.com</link>
+        <description>A test MRSS feed.</description>
+        <item>
+            <title>HTML5 Video Events and API</title>
+            <link>view-source:http://www.w3.org/2010/05/video/mediaevents.html</link>
+            <media:thumbnail url="http://media.w3.org/2010/05/sintel/poster.png" />
+            <media:content url="http://media.w3.org/2010/05/sintel/trailer.mp4" type="video/mp4" />
+            <media:content url="http://media.w3.org/2010/05/sintel/trailer.ogv" type="video/ogg"  />
+            <media:subTitle type="application/smil" lang="en-us"  href="data/test.srt" />
+            <mpf:cue type="tags" start="00:00:05.000">One</mpf:cue>
+            <mpf:cue type="tags" start="00:00:10.000">Two</mpf:cue>
+            <mpf:cue type="tags" start="00:00:15.000" end="00:00:20.000">Three</mpf:cue>
+            <mpf:cue type="footnote" format="json" start="00:00:30.000">{ "text" : "First" }</mpf:cue>
+            <mpf:cue type="footnote" format="json" start="00:00:35.000" end="00:00:40.000">{ "text" : "Second" }</mpf:cue>
+            <mpf:cue type="footnote" format="json" start="00:00:40.000" end="00:00:45.000">{ "text" : "Third" }</mpf:cue>
+        </item>
+    </channel>
+</rss>

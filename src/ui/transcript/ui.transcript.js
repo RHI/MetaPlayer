@@ -20,6 +20,36 @@
             .indexOf(m[3].toUpperCase()) >= 0;
     };
 
+    /**
+     * Transcript is a PopcornJS plugin for rendering captions in paragraph-form, with each caption scrolled into
+     * view and highlighted as it is activated. Text can be clicked to seek to corresponding parts of the video.
+     * @name UI.Transcript
+     * @class The MetaPlayer moving transcript widget and plugin for PopcornJS
+     * @constructor
+     * @param {Element} id The DOM target to which the transcript will be added.
+     * @param {Object} [options]
+     * @param {Boolean} [options.breaks=false] If true, each caption will be on its own line.
+     * @param {Boolean} [options.timestamps=false] If true, ill prefix each caption with a timestamp
+     * @param {Number} [options.focusMs=750] The fade in animation duration when a caption becomes active
+     * @param {Number} [options.fadeMs=750] The fade out animation duration when a caption becomes inactive
+     * @param {Number} [options.opacity=1] The opacity for inactive captions
+     * @example
+     * # with default options:
+     * var mpf = MetaPlayer(video)
+     *     .ramp("http://api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440")
+     *     .transcript('#mytranscript', {
+     *         breaks: true,
+     *         timestamps: true,
+     *         focusMs: 1000,
+     *         fadeMs : 750,
+     *         opacity: 1
+     *      })
+     *     .load();
+     * @see <a href="http://jsfiddle.net/ramp/CcWEX/">Live Example</a>
+     * @see MetaPlayer#transcript
+     * @see Popcorn#transcript
+     * @requires  metaplayer-complete.js, popcorn.js
+     */
     var Transcript = function (target, player, options) {
 
         // two argument constructor (target, options)
@@ -52,6 +82,21 @@
 
     MetaPlayer.Transcript = Transcript;
 
+    /**
+     * @name MetaPlayer#transcript
+     * @function
+     * @description
+     * Creates a {@link UI.Transcript} instance with the given target and options.
+     * @param {Element} id The DOM or jQuery element to which the transcript will be added.
+     * @param {Object} [options]
+     * @example
+     * var mpf = MetaPlayer(video)
+     *     .ramp("http://api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440")
+     *     .transcript("#mytranscript")
+     *     .load();
+     * @see UI.Transcript
+     * @requires  metaplayer-complete.js, popcorn.js
+     */
     MetaPlayer.addPlugin("transcript", function (target, options) {
         this.cues.enable("transcript", { target : target }, { clone : "captions"} );
         this.transcript = Transcript( target, this.video, options);
@@ -193,7 +238,30 @@
 
     if( Popcorn ) {
         Popcorn.plugin( "transcript" , {
-
+            /**
+             * Adds a caption to be added to the tracscript, and scheduled to be focused at a given time.
+             * @name Popcorn#transcript
+             * @function
+             * @param {Object} config
+             * @param {Element} config.end The target container for the caption text.
+             * @param {String} config.text The caption text.
+             * @param {Number} config.start Start time text, in seconds.
+             * @param {Number} [config.end] End time text, in seconds, if any.
+             * @example
+             *  # without MetaPlayer Framework
+             *  var pop = Popcorn(video);
+             *
+             *  # optional configuration step
+             *  MetaPlayer.transcript('#mytranscript', { breaks: true })
+             *
+             *  pop.transcript({
+             *      start: 0,
+             *      end : 2,
+             *      text : "The first caption"
+             *      target : "#mytranscript"
+             *  });
+             *  @see UI.Transcript
+             */
             _setup: function( options ) {
                 var t = Transcript(options.target, this.media);
                 t.append( options );

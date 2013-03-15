@@ -35,6 +35,13 @@
             border:  none;
         }
 
+        .page-height {
+            clear: both;
+            height: 150%;
+            background: beige;
+            width: 600px;
+        }
+
     </style>
 </head>
 <body>
@@ -71,6 +78,9 @@
 
 <div id="sb3" class="test">
     <div id="sb3_body">
+        <a href="#" id="more">add more text</a>
+        <br />
+        <br />
         Maecenas pretium, est in tristique laoreet, est sapien interdum ante, nec pulvinar orci lorem a urna. Sed varius elit vel ipsum egestas quis gravida quam tempor. Mauris pellentesque imperdiet orci non blandit. Etiam laoreet enim ut massa condimentum sed venenatis arcu aliquam. Quisque eu elit eget arcu sodales pharetra. Fusce ut ante ac orci molestie suscipit id vel felis. Phasellus consequat sagittis ante nec pharetra.
         <div id="moretext" style="display: none;">
             Maecenas pretium, est in tristique laoreet, est sapien interdum ante, nec pulvinar orci lorem a urna. Sed varius elit vel ipsum egestas quis gravida quam tempor. Mauris pellentesque imperdiet orci non blandit. Etiam laoreet enim ut massa condimentum sed venenatis arcu aliquam. Quisque eu elit eget arcu sodales pharetra. Fusce ut ante ac orci molestie suscipit id vel felis. Phasellus consequat sagittis ante nec pharetra.
@@ -139,28 +149,56 @@
     </div>
 </div>
 
-<div>
-    <a href="#" id="more">more</a>
-</div>
+<table style="table-layout:fixed; position: relative;">
+    <tr>
+        <td>
+            <div  id="sb5"class="test" style="background: #ffb6c1; overflow: hidden">
+                <div>
+                    Maecenas pretium, est in tristique laoreet, est sapien interdum ante, nec pulvinar orci lorem a urna. Sed varius elit vel ipsum egestas quis gravida quam tempor. Mauris pellentesque imperdiet orci non blandit. Etiam laoreet enim ut massa condimentum sed venenatis arcu aliquam. Quisque eu elit eget arcu sodales pharetra. Fusce ut ante ac orci molestie suscipit id vel felis. Phasellus consequat sagittis ante nec pharetra.
+                    Maecenas pretium, est in tristique laoreet, est sapien interdum ante, nec pulvinar orci lorem a urna. Sed varius elit vel ipsum egestas quis gravida quam tempor. Mauris pellentesque imperdiet orci non blandit. Etiam laoreet enim ut massa condimentum sed venenatis arcu aliquam. Quisque eu elit eget arcu sodales pharetra. Fusce ut ante ac orci molestie suscipit id vel felis. Phasellus consequat sagittis ante nec pharetra.
+                    Maecenas pretium, est in tristique laoreet, est sapien interdum ante, nec pulvinar orci lorem a urna. Sed varius elit vel ipsum egestas quis gravida quam tempor. Mauris pellentesque imperdiet orci non blandit. Etiam laoreet enim ut massa condimentum sed venenatis arcu aliquam. Quisque eu elit eget arcu sodales pharetra. Fusce ut ante ac orci molestie suscipit id vel felis. Phasellus consequat sagittis ante nec pharetra.
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+
 <script type="text/javascript">
     $(function () {
 
         $("#more").click( function () {
             $("#moretext").clone().show().appendTo( '#sb3_body')
         });
+
         var sb1 = MetaPlayer.scrollbar('#sb1', {
             inertial : true
         });
+
         var sb2 = MetaPlayer.scrollbar('#sb2', {
         });
+
         var sb3 = MetaPlayer.scrollbar('#sb3');
         var sb4 = MetaPlayer.scrollbar('#sb4', {
             minHeight: 35
         });
 
+        var sb5 = MetaPlayer.scrollbar('#sb5');
+
     })
 
 </script>
 
+
+
+<div class="page-height">
+    To test body scroll:
+    <br>
+    Maecenas pretium, est in tristique laoreet, est sapien interdum ante, nec pulvinar orci lorem a urna. Sed varius elit vel ipsum egestas quis gravida quam tempor. Mauris pellentesque imperdiet orci non blandit. Etiam laoreet enim ut massa condimentum sed venenatis arcu aliquam. Quisque eu elit eget arcu sodales pharetra. Fusce ut ante ac orci molestie suscipit id vel felis. Phasellus consequat sagittis ante nec pharetra.
+    Maecenas pretium, est in tristique laoreet, est sapien interdum ante, nec pulvinar orci lorem a urna. Sed varius elit vel ipsum egestas quis gravida quam tempor. Mauris pellentesque imperdiet orci non blandit. Etiam laoreet enim ut massa condimentum sed venenatis arcu aliquam. Quisque eu elit eget arcu sodales pharetra. Fusce ut ante ac orci molestie suscipit id vel felis. Phasellus consequat sagittis ante nec pharetra.
+    Maecenas pretium, est in tristique laoreet, est sapien interdum ante, nec pulvinar orci lorem a urna. Sed varius elit vel ipsum egestas quis gravida quam tempor. Mauris pellentesque imperdiet orci non blandit. Etiam laoreet enim ut massa condimentum sed venenatis arcu aliquam. Quisque eu elit eget arcu sodales pharetra. Fusce ut ante ac orci molestie suscipit id vel felis. Phasellus consequat sagittis ante nec pharetra.
+    Maecenas pretium, est in tristique laoreet, est sapien interdum ante, nec pulvinar orci lorem a urna. Sed varius elit vel ipsum egestas quis gravida quam tempor. Mauris pellentesque imperdiet orci non blandit. Etiam laoreet enim ut massa condimentum sed venenatis arcu aliquam. Quisque eu elit eget arcu sodales pharetra. Fusce ut ante ac orci molestie suscipit id vel felis. Phasellus consequat sagittis ante nec pharetra.
+    Maecenas pretium, est in tristique laoreet, est sapien interdum ante, nec pulvinar orci lorem a urna. Sed varius elit vel ipsum egestas quis gravida quam tempor. Mauris pellentesque imperdiet orci non blandit. Etiam laoreet enim ut massa condimentum sed venenatis arcu aliquam. Quisque eu elit eget arcu sodales pharetra. Fusce ut ante ac orci molestie suscipit id vel felis. Phasellus consequat sagittis ante nec pharetra.
+</div>
 </body>
 </html>

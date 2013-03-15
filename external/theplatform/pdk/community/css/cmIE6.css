@@ -1,0 +1,13 @@
+/*   
+ * This stylesheet adds support for PNG transparency on rating stars in IE 6.
+ */
+
+.communityManagerRatingWidget .cmStarSet .darkStar {
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='community/images/star_dark.png', sizingMethod='image');
+}
+.communityManagerRatingWidget .cmStarSet .star {
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='community/images/star.png', sizingMethod='image');
+}
+.communityManagerRatingWidget .cmStarSet .brightStar {
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='community/images/star_bright.png', sizingMethod='image');
+}

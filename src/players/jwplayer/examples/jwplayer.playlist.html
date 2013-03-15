@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset=utf-8>
+
+    <title>JWPlayer Plugin | Metaplayer</title>
+
+    <!--Dependency: jQuery-->
+    <script src="../../../../external/jquery/jquery-1.7.1.js" type="text/javascript"></script>
+
+    <!--Dependency: JwPlayer -->
+    <script src="../../../../external/jwplayer/jwplayer.js"></script>
+
+
+    <!--Dependency: Popcorn -->
+    <script src="../../../../external/popcorn/popcorn.js"></script>
+
+
+    <!-- Core: Ramp -->
+    <script src="../../../core/metaplayer.js"></script>
+    <script src="../../../core/utils/util.event.js"></script>
+    <script src="../../../core/utils/util.proxy.js"></script>
+    <script src="../../../core/utils/util.script.js"></script>
+    <script src="../../../core/utils/util.scrollbar.js"></script>
+    <script src="../../../core/utils/util.timer.js"></script>
+    <script src="../../../core/utils/util.format.js"></script>
+    <script src="../../../core/utils/util.ui.js"></script>
+    <script src="../../../core/playlist/player.playlist.js"></script>
+    <script src="../../../core/metadata/core.metadata.js"></script>
+    <script src="../../../core/search/core.search.js"></script>
+    <script src="../../../core/cues/core.cues.js"></script>
+    <script src="../../../core/layout/core.layout.js"></script>
+    <link href="../../../core/layout/core.layout.css" rel="stylesheet" type="text/css">
+
+    <!-- Media : OVP -->
+    <script src="../../../players/jwplayer/player.jwplayer.js"></script>
+
+    <!-- Service Plugin: RAMP -->
+    <script src="../../../services/ramp/service.ramp.js"></script>
+
+    <!-- UI: Controls -->
+    <script src="../../../ui/controls/ui.controls.js"></script>
+    <link href="../../../ui/controls/ui.controls.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.controls.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: transcript -->
+    <script src="../../../ui/transcript/ui.transcript.js"></script>
+    <link href="../../../ui/transcript/ui.transcript.css" rel="stylesheet"  type="text/css">
+
+    <style>
+        #jwtarget {
+            background:  #333;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<h3>Metaplayer &raquo; JWPlayer Plugin</h3>
+
+<div id='jwtarget'></div>
+
+<div id="transcript" style="height: 100px; width: 600px">
+</div>
+
+<script type="text/javascript">
+
+    var jwp = jwplayer('jwtarget').setup({
+        height: '300',
+        width:  '600',
+        autostart   : true,
+        modes       : [{type: 'html5'}],
+        playlist    : [
+            {
+                'guid' : "ramp:52975368",
+                'file' : "../../../../media/sintel/sintel_trailer-480p.mp4"
+            },
+            {
+                guid : "ramp:52871241",
+                file : "../../../..//media/elephants_dream/elephant.mp4"
+            }
+        ],
+        image       : "",
+        volume      : 0
+    });
+
+    var player = MetaPlayer( jwp )
+            .ramp("f455a86b28160bc0682fec3662e39d3b")
+            .load();
+
+</script>
+
+</body>
+</html>

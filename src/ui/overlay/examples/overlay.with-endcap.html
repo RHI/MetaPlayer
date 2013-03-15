@@ -26,16 +26,18 @@
     <script src="../../../core/utils/util.ui.js"></script>
     <script src="../../../core/playlist/player.playlist.js"></script>
     <script src="../../../core/layout/core.layout.js"></script>
+    <script src="../../../core/metadata/core.metadata.js"></script>
+    <script src="../../../core/search/core.search.js"></script>
+    <script src="../../../core/cues/core.cues.js"></script>
+
     <link href="../../../core/layout/core.layout.css" rel="stylesheet" type="text/css">
 
     <!-- Service Plugin: RAMP -->
-    <script src="../../../services/smil/service.smil.js"></script>
+    <script src="../../../services/ramp/service.ramp.js"></script>
 
     <!-- Playback Plugin: HTML5 -->
     <script src="../../../players/html5/player.html5.js"></script>
 
-    <!-- UI : MetaQ  -->
-    <script src="../../../ui/metaq/ui.metaq.js"></script>
 
     <!-- UI: Captions -->
     <script src="../../../ui/captions/ui.captions.js"></script>
@@ -73,12 +75,10 @@ Endcap should replace overlay at video end.
 <script type="text/javascript">
 
     var player = MetaPlayer("#target")
-            .html5({ autoplay: true })
-            .ramp()
-            .metaq()
             .endcap()
             .overlay()
-            .load("ramp:/advisor:48920875");
+            .ramp("f455a86b28160bc0682fec3662e39d3b", "52871241")
+            .load();
 
     video = player.video;
 

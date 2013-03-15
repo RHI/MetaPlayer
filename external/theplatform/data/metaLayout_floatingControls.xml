@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<layout>
+	<controls>
+		<region id="tpTitleRegion">
+			<row id="tpTitleContainer" percentWidth="100">
+				<control id="tpTitle"/>
+			</row>
+		</region>
+		<region id="tpAdCountdownRegion">
+			<row id="tpAdCountdownContainer" percentWidth="100">
+				<control id="tpAdCountdown" text="Your video will resume in {remainingTime} {second|seconds}"/>
+			</row>
+		</region>
+		<region id="tpBottomFloatRegion" alpha="75">
+			<row>
+				<control id="tpPlay"/>
+				<control id="tpPrevious"/>
+				<control id="tpNext"/>
+				<control id="tpVolume"/>
+				<group percentWidth="100">
+					<control id="tpScrubber"/>
+					<spacer/>
+					<control id="tpCurrentTime"/>
+					<control id="tpTimeDivider"/>
+					<control id="tpTotalTime"/>
+					<spacer/>
+				</group>
+				<control id="tpCC"/>
+				<control id="tpBandwidth"/>
+				<control id="tpFullScreen"/>
+				<control id="tpMenu"/>
+			</row>
+		</region>
+	</controls>
+</layout>

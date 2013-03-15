@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>All Players Unit | MPF</title>
+
+    <style>
+        #video {
+            width: 300px;
+            height: 150px;
+            background:  #333;
+            position: fixed;
+            top: 10px; right: 10px;
+        }
+    </style>
+
+    <!--Dependency: jQuery-->
+    <script src="../../external/jquery/jquery-1.6.2.js" type="text/javascript"></script>
+
+    <!--Dependency: OKJS -->
+    <script src="../../external/okjs/ok.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        $( function () {
+            var unit = okjs();
+            unit.url("html5 player", "html5/unit.html5.html" );
+            unit.url("html5 adapter", "../players/html5/unit/unit.player.html5.html" );
+            unit.url("youtube adapter", "../players/youtube/unit/unit.youtube.html" );
+            unit.url("flowplayer adapter",        "../players/flowplayer/unit/unit.flowplayer.video.html" );
+            unit.url("flowplayer adapter (ipad)", "../players/flowplayer/unit/unit.flowplayer.video.ipad.html" );
+            unit.url("jwplayer adapter (html5)", "../players/jwplayer/unit/unit.html5.jwplayer.html" );
+            unit.url("jwplayer adapter (flash)", "../players/jwplayer/unit/unit.flash.jwplayer.html" );
+            unit.url("brightcove adapter", "../players/brightcove/unit/unit.brightcove.html" );
+            unit.skip("popcornjs adapter", "../players/popcorn/unit/unit.html5.popcorn.html" );
+            unit.url("theplatform adapter", "../players/theplatform/unit/unit.theplatform.html" );
+            unit.url("kaltura adapter", "../players/kaltura/unit/unit.kaltura.html" );
+            unit.skip("ovp adapter (html5)", "../players/ovp/unit/unit.html5.ovp.html" );
+            unit.skip("ovp adapter (flash)", "../players/ovp/unit/unit.flash.ovp.html" );
+            unit.start();
+        });
+    </script>
+
+
+</head>
+<body>
+
+<h3>MetaPlayer &raquo; Unit &raquo; All Players</h3>
+
+</body>
+</html>

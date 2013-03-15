@@ -10,16 +10,21 @@
             width: 600px;
             height: 300px;
             background:  #888;
-            float: left;
+        }
+        #searchbar {
+            width: 600px;
         }
         #carousel {
+            position: absolute;
             width: 300px;
-            height: 300px;
-            background:  #888;
-            margin-left: 610px;
+            height: 298px;
+            left: 620px;
+            top: 0;
             color: white;
         }
-
+        #carousel .mp-carousel-content {
+            background: inherit;
+        }
     </style>
 
     <!--Dependency: jQuery-->
@@ -30,7 +35,8 @@
     <script src="../../../../external/popcorn/popcorn.js" type="text/javascript"></script>
 
     <!--Dependency: Flowplayer-->
-    <script src="../../../../external/flowplayer/flowplayer-3.2.6.min.js"></script>
+    <script src="../../../../external/flowplayer/flowplayer-3.2.6.js"></script>
+    <script src="../../../../external/flowplayer/flowplayer.ipad-3.2.2-ramp.js"></script>
 
     <!-- Core: Ramp -->
     <script src="../../../core/metaplayer.js"></script>
@@ -52,13 +58,30 @@
     <!-- Service Plugin: RAMP -->
     <script src="../../../services/ramp/service.ramp.js"></script>
 
+    <!-- Service Plugin: metaq -->
+    <script src="../../../services/metaq/service.metaq.js"></script>
+
+    <!-- Media Plugin: html5 -->
+    <script src="../../../players/html5/player.html5.js"></script>
+
     <!-- Media Plugin: flowplayer -->
     <script src="../../../players/flowplayer/player.flowplayer.js"></script>
 
-    <!-- UI: Controls -->
+    <!-- UI: tracktip -->
+    <script src="../../../ui/tracktip/ui.tracktip.js"></script>
+    <link href="../../../ui/tracktip/theme/ui.tracktip.css" rel="stylesheet" type="text/css">
+
+    <!-- UI: controls -->
     <script src="../../../ui/controls/ui.controls.js"></script>
     <link href="../../../ui/controls/ui.controls.css" rel="stylesheet" type="text/css">
-    <link href="../../../themes/mp2/theme.controls.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: controlbar -->
+    <script src="../../../ui/controlbar/ui.controlbar.js"></script>
+    <link href="../../../ui/controlbar/theme/ui.controlbar.css" rel="stylesheet" type="text/css">
+
+    <!-- UI: controlbar -->
+    <script src="../../../ui/searchbar/ui.searchbar.js"></script>
+    <link href="../../../ui/searchbar/theme/ui.searchbar.css" rel="stylesheet" type="text/css">
 
     <!-- UI: Captions -->
     <script src="../../../ui/captions/ui.captions.js"></script>
@@ -74,22 +97,39 @@
 <h3>Metaplayer &raquo; Captions </h3>
 
 
-<div id='target'></div>
-
-<div id='carousel'>
+<div style='position: relative'>
+    <div id='target'></div>
+    <div id='searchbar'></div>
+    <div id='carousel'></div>
 </div>
 
 
 <script type="text/javascript">
-    var player = MetaPlayer('#target')
-            .flowplayer({ swfUrl: "../../../../external/flowplayer/flowplayer-3.2.7.swf"})
-            .controls({
-                renderTags: false
-            })
-            .captions()
+
+    var fp = $f( 'target',
+            {
+                src: "../../../../external/flowplayer/flowplayer-3.2.7.swf",
+                wmode: "transparent"
+            },
+            {
+                clip : {
+                    scaling : "fit",
+                    autoPlay: true
+
+                },
+                playlist : []
+            });
+
+    var player = MetaPlayer( fp )
+//            .ramp("http://publishing.ramp.com/bhg/theme/7483/mp2-playlist?e=32071721")
+            .ramp("http://publishing.ramp.com/bhg//theme/7483/mp2-playlist?e=32071492")
+            .metaq()
+            .controlbar({ annotations : "carousel"})
+            .searchbar("#searchbar", { cueType : "carousel"})
             .carousel("#carousel")
-            .ramp( "http://publishing.ramp.com/recipe//themename/ws_1.3_6724/mp2-playlist?e=52110028" )
             .load();
+
+    fp.load();
 
     player.video.autoplay = true;
 </script>

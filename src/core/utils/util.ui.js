@@ -6,7 +6,7 @@
     if( ! window.Ramp )
         window.Ramp = {};
 
-    Ramp.ui = {
+    MetaPlayer.ui = {
         /**
          * Ensures that target's parentNode is it's offsetParent, creating a wrapping div if necessary.
          *  Returned box can be used to reliably position UI elements absolutely using top,left,etc.

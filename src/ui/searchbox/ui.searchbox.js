@@ -8,14 +8,14 @@
         cssPrefix : "mp-search",
         tags : true,
         query : "",
-        seekBeforeSec : .25,
+        seekBeforeSec : 0.25,
         context : 3,
         strings : {
             'tagHeader' : "In this video:",
             'searchPlaceholder' : "Search transcript...",
             'ellipsis' : "...",
             'resultsHeader' : "Showing {{count}} {{results}} for \"{{query}}\":",
-            'results' : function (dict) { return "result" + (dict['count'] == 1 ? "" : "s")},
+            'results' : function (dict) { return "result" + (dict['count'] == 1 ? "" : "s"); },
             'clear' : "x"
         }
     };
@@ -78,7 +78,7 @@
             var t = $(this.target);
             var c = this.create();
 
-            var f= this.create('form')
+            var f= this.create('form');
             c.append(f);
 
             var ti = $('<input type="text" />');
@@ -154,7 +154,7 @@
                     .click( function () {
                         self.search(tag.term);
                     })
-                    .appendTo(cell)
+                    .appendTo(cell);
             });
         },
 
@@ -184,7 +184,7 @@
 
         onSearchResult : function (e, response) {
             this.clear();
-
+            
             if( ! response.query.length ) {
                 return;
             }
@@ -193,16 +193,14 @@
 
             this.find('close').show();
             var r = this.scrollbar.body;
-
-
-            $("<div></div>")
+            var blahblah = $("<div></div>")
                 .addClass( this.cssName("result-count") )
                 .text( this.getString("resultsHeader", {
                     count : response.results.length,
                     query : response.query.join(" ")
                 }))
                 .appendTo(r);
-
+                
             var self = this;
             this.create("close")
                 .text( this.getString("clear") )
@@ -210,7 +208,6 @@
                     self.onClose();
                 })
                 .appendTo(r);
-
 
             $.each(response.results, function (i, result){
                 var el = self.create('result');
@@ -222,19 +219,25 @@
                         .text(word.text);
                     if( word.match ){
                         offset = i;
-                        w.addClass( self.cssName('match') )
+                        w.addClass( self.cssName('match') );
                     }
                     words.push( w.get(0) );
                 });
 
+                // We don't need to trim anything if we're using cues,
+                // which provide snippets already
+                offset = response.usingCues ? 0 : offset;
+                var context = response.usingCues ? 10 : self.config.context;
 
-                var phrase = SearchBox.getPhrase(words, offset, self.config.context );
-                start = result.words[phrase.start].start;
+                var phrase = SearchBox.getPhrase(words, offset, context);
+                
+                // we just need the start of the cue if we're using cues (obviously) :)
+                start = response.usingCues ? result.start : result.words[phrase.start].start;
 
                 el.data('start', start);
 
                 var time = self.create('time')
-                    .text( Ramp.format.seconds(start) )
+                    .text( MetaPlayer.format.seconds(start) )
                     .appendTo(el);
 
                 $.each(phrase.words, function (i, word) {
@@ -253,7 +256,7 @@
 
         getString : function (name, dict) {
             var template = $.extend({}, this.config.strings, dict);
-            return MetaPlayer.format.replace( this.config.strings[name], template)
+            return MetaPlayer.format.replace( this.config.strings[name], template);
         },
 
         /* util */

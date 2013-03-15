@@ -1,0 +1,485 @@
+
+<smil xmlns:json="xalan://org.json.JSONObject">
+    <head>
+        <meta name="Broadcaster" content="SouthBySouthWest"/>
+    </head>
+    <body>
+        <seq xml:id="playlist">
+            <par xml:id="item1">
+                <video xml:id="v1" type="mp4" title="Elephant's Dream " src="http://sxsw.ramp.com/hosting/media/sxsw/1626298/ed_1024_512kb.mp4">
+                    <metadata>
+                        <meta name="rampId" content="52871241"/>
+                        <meta name="duration" content="653.696"/>
+                        <meta name="thumbnail" content="http://publishing.ramp.com/thumbnails/cached_media/0006/0006875/0006875054/images/thumb.jpg"/>
+                        <meta name="searchapi" content="http://publishing.ramp.com/sxsw/theme/7473/mp2-search?e=52871241"/>
+                        <meta name="searchterm" content="''"/>
+                        <meta name="linkURL" content="52871241/elephant-dream"/>
+                        <meta name="embedURL" content="http://publishing.ramp.com/widgets/sxsw/4240/?episode=52871241"/>
+                        <meta name="siteSearchURL" content="http://publishing.ramp.com/sxsw/search?mediatype=Video&amp;q="/>
+                        <meta name="iosURL" content="http://sxsw.ramp.com/hosting/media/sxsw/1626298/ed_1024_512kb.mp4"/>
+                        <meta name="description">Elephants Dream is the story of two strange characters exploring a capricious and seemingly infinite machine. The elder, Proog, acts as a tour-guide and protector, happily showing off the sights and dangers of the machine to his initially curious but increasingly skeptical protege Emo. As their journey unfolds we discover signs that the machine is not all Proog thinks it is, and his guiding takes on a more desperate aspect. Elephants Dream is a story about communication and fiction, made purposefully open-ended as the world’s first 3D animated “Open movie”. The film itself is released under the Creative Commons license, along with the production files used to make it (roughly 7 Gigabytes of data). The software used to make the movie is the free/open source animation suite Blender, along with other open source software, thus allowing the movie to be remade, remixed and re-purposed. 2006, Amsterdam, the Netherlands.</meta>
+                    </metadata>
+                </video>
+                <metadata xml:id="transcodes1">
+                    <meta name="ogg" content=""/>
+                    <meta name="ogg" content=""/>
+                    <meta name="vp8" content=""/>
+                </metadata>
+                <smilText>- At the left we can see-- we can see--At <clear begin="18.36s"/>the right we can see the head-snarlers. Everything is safe. <clear begin="23.58s"/>Perfectly safe. Emo? Emo. Emo! -Watch out! -Are you hurt? <clear begin="52.09s"/>-I don't think so. You? -I'm okay. Get up. Emo, <clear begin="59.42s"/>it's not safe here. Let's go. -What's next? -You'll see. <clear begin="67.89s"/>You'll see. Emo. This way. Follow me! Hurry Emo! -You're <clear begin="168.81s"/>not paying attention! -I just want to answer the phone. <clear begin="169.23s"/>-Emo, look, I mean listen. You have to learn to <clear begin="175.84s"/>listen. This is not some game. YOU, i mean, we, <clear begin="187.17s"/>we could easily die out here. Listen, listen to the <clear begin="192.23s"/>sounds of the machine. Listen to your breathing. -Well, don't <clear begin="267.35s"/>you ever get tired of this? -Tired?!? -Emo, the machine <clear begin="272.13s"/>is like clockwork. -One move out of place and you're <clear begin="277.31s"/>ground to a pulp. -But isn't it-- -Pulp, Emo! Is <clear begin="277.44s"/>that what you want, pulp? Emo, your goal in life, <clear begin="289.12s"/>pulp? Emo, close your eyes. -Why? - Now! -Okay. -Good. <clear begin="359.57s"/>What do you see at your left side, Emo? -Nothing. <clear begin="361.21s"/>-Really? -No, nothing at all. -Really. And at your right, <clear begin="368.89s"/>what do you see at your right side, Emo? -The <clear begin="373.80s"/>same Proog, exactly the same, nothing! -Great. Listen Proog! Do <clear begin="403.78s"/>you hear that! Can we go here? -There? It isn't <clear begin="403.98s"/>safe, Emo. -But -Trust me, it's not. -But maybe I <clear begin="421.24s"/>could-- -No. -But. -No! No! Any further questions, Emo? -No. <clear begin="424.59s"/>-Emo? -No. -Emo, why-- Emo. Why-- Why can't you see <clear begin="436.60s"/>the beauty of this place? The way it works. How <clear begin="441.80s"/>perfect it is. -No, Proog, I don't see. I don't <clear begin="447.71s"/>see because there's nothing there. And why should I trust <clear begin="452.73s"/>my life to something that isn't there? -Well can you <clear begin="455.64s"/>tell me that? Answer me! -Proog, you're a sick man! <clear begin="466.67s"/>-Emo. -Stay away from me! -Emo. No! Emo! It's a <clear begin="472.78s"/>trap! -Hah, it's a trap. At the left side you <clear begin="480.02s"/>can see the hanging gardens of Babylon . How's that for <clear begin="480.26s"/>a trap? -No, Emo. -At the right side you can <clear begin="480.38s"/>see, well guess what-- the Colossus of Rhodes ! -No! -The <clear begin="480.41s"/>Colossus of Rhodes and it is here just for you <clear begin="498.41s"/>Proog, just for you. It is there. I'm telling you, <clear begin="536.60s"/>Emo, it is. It is. </smilText>
+                <seq xml:id="metaqs1"/>
+                <seq xml:id="jumptags1" max="4">
+                    <ref begin="480.39s">
+                        <param name="term"><![CDATA[guess]]></param>
+                        <param name="type"><![CDATA[unk]]></param>
+                        <param name="score"><![CDATA[75.89273]]></param>
+                        <param name="origin"><![CDATA[contentcue]]></param>
+                        <param name="timestamps"><![CDATA[480.386]]></param>
+                    </ref>
+                    <ref begin="480.40s">
+                        <param name="term"><![CDATA[Colossus of Rhodes]]></param>
+                        <param name="type"><![CDATA[unk]]></param>
+                        <param name="score"><![CDATA[14.738152]]></param>
+                        <param name="origin"><![CDATA[namedentity]]></param>
+                        <param name="timestamps"><![CDATA[480.39676,480.4147]]></param>
+                    </ref>
+                    <ref begin="480.05s">
+                        <param name="term"><![CDATA[hanging gardens of Babylon]]></param>
+                        <param name="type"><![CDATA[unk]]></param>
+                        <param name="score"><![CDATA[11.053614]]></param>
+                        <param name="origin"><![CDATA[namedentity]]></param>
+                        <param name="timestamps"><![CDATA[480.0457]]></param>
+                    </ref>
+                    <ref begin="480.07s">
+                        <param name="term"><![CDATA[Babylon]]></param>
+                        <param name="type"><![CDATA[place]]></param>
+                        <param name="score"><![CDATA[7.4049644]]></param>
+                        <param name="origin"><![CDATA[namedentity]]></param>
+                        <param name="timestamps"><![CDATA[480.07233]]></param>
+                    </ref>
+                </seq>
+            </par>
+            <par xml:id="item2">
+                <video xml:id="v2" type="mp4" title="Sintel Trailer " src="http://ftp.nluug.nl/ftp/graphics/blender/apricot/trailer/sintel_trailer-480p.mp4">
+                    <metadata>
+                        <meta name="rampId" content="52975368"/>
+                        <meta name="duration" content="51.925"/>
+                        <meta name="thumbnail" content="http://publishing.ramp.com/thumbnails/cached_media/0006/0006896/0006896450/images/thumb.jpg"/>
+                        <meta name="searchapi" content="http://publishing.ramp.com/sxsw/theme/7473/mp2-search?e=52975368"/>
+                        <meta name="searchterm" content="''"/>
+                        <meta name="linkURL" content="52975368/sintel-trailer"/>
+                        <meta name="embedURL" content="http://publishing.ramp.com/widgets/sxsw/4240/?episode=52975368"/>
+                        <meta name="siteSearchURL" content="http://publishing.ramp.com/sxsw/search?mediatype=Video&amp;q="/>
+                        <meta name="iosURL" content="http://ftp.nluug.nl/ftp/graphics/blender/apricot/trailer/sintel_trailer-480p.mp4"/>
+                        <meta name="description">“Sintel” is an independently produced short film, initiated by the Blender Foundation as a means to further improve and validate the free/open source 3D creation suite Blender. With initial funding provided by 1000s of donations via the internet community, it has again proven to be a viable development model for both open 3D technology as for independent animation film. This 15 minute film has been realized in the studio of the Amsterdam Blender Institute, by an international team of artists and developers. In addition to that, several crucial technical and creative targets have been realized online, by developers and artists and teams all over the world. “Sintel” commenced in May 2009, with producer Ton Roosendaal establishing a core team consisting of Colin Levy (director), David Revoy (concept art), Martin Lodewijk (story) and Jan Morgenstern (composer). In August script writer Esther Wouda was approached as a consultant, which resulted in her taking the responsibility for the entire screenplay. Esther then worked in close cooperation with Colin, David and Ton to deliver the final script early November. Meanwhile, Colin and David realized the first storyboards. Based on a public call for artists – with over 150 respondents – the Durian artist team got established in July 2009. They first met in a pre-production week in Amsterdam in August, and all decided to join the project per October 1st. With the final movie budget still unknown, the target then still was to finish the film within 7 months, with a team of 6 artists and 2 developers. At that time the team still had the hopes to be able to realize the script in a 6-8 minute film.</meta>
+                    </metadata>
+                </video>
+                <metadata xml:id="transcodes2">
+                    <meta name="ogg" content=""/>
+                    <meta name="divx" content=""/>
+                </metadata>
+                <seq xml:id="metaqs2"/>
+                <seq xml:id="jumptags2" max="4"/>
+            </par>
+            <par xml:id="item3">
+                <video xml:id="v3" type="flv" title="PS3 Hack Becomes Open Source Tracking Device Project " src="http://www.youtube.com/watch?v=lXW2LxoRUZg&amp;feature=youtube_gdata">
+                    <metadata>
+                        <meta name="rampId" content="54002728"/>
+                        <meta name="duration" content="78.112"/>
+                        <meta name="thumbnail" content="http://publishing.ramp.com/thumbnails/cached_media/0006/0006968/0006968594/images/thumb.jpg"/>
+                        <meta name="searchapi" content="http://publishing.ramp.com/sxsw/theme/7473/mp2-search?e=54002728"/>
+                        <meta name="searchterm" content="''"/>
+                        <meta name="linkURL" content="54002728/lXW2LxoRUZg"/>
+                        <meta name="embedURL" content="http://publishing.ramp.com/widgets/sxsw/4240/?episode=54002728"/>
+                        <meta name="siteSearchURL" content="http://publishing.ramp.com/sxsw/search?mediatype=Video&amp;q="/>
+                        <meta name="iosURL" content=""/>
+                        <meta name="description">PS3 Hack Becomes Open Source Tracking Device Project What started as a tracking device for a PS3 has now become a full-fledged Kickstarter project. This open source tracking device let's you text your tech to get its coordinates. From: mashable Views: 358 19 ratings Time: 01:19 More in News &amp; ...</meta>
+                    </metadata>
+                </video>
+                <metadata xml:id="transcodes3">
+                    <meta type="video/youtube" name="youtube" content="lXW2LxoRUZg"/>
+                </metadata>
+                <seq xml:id="metaqs3"/>
+                <seq xml:id="jumptags3" max="4"/>
+            </par>
+            <par xml:id="item4">
+                <video xml:id="v4" type="flv" title="Spree Commerce brings flexible e-commerce platform to small businesses " src="http://www.youtube.com/watch?v=mFhNf8NHrCw&amp;feature=youtube_gdata">
+                    <metadata>
+                        <meta name="rampId" content="53456177"/>
+                        <meta name="duration" content="1856.134"/>
+                        <meta name="thumbnail" content="http://publishing.ramp.com/thumbnails/cached_media/0006/0006929/0006929769/images/thumb.jpg"/>
+                        <meta name="searchapi" content="http://publishing.ramp.com/sxsw/theme/7473/mp2-search?e=53456177"/>
+                        <meta name="searchterm" content="''"/>
+                        <meta name="linkURL" content="53456177/mFhNf8NHrCw"/>
+                        <meta name="embedURL" content="http://publishing.ramp.com/widgets/sxsw/4240/?episode=53456177"/>
+                        <meta name="siteSearchURL" content="http://publishing.ramp.com/sxsw/search?mediatype=Video&amp;q="/>
+                        <meta name="iosURL" content=""/>
+                        <meta name="description">Spree Commerce brings flexible e-commerce platform to small businesses Are you a small business? Do you want to sell things on your website? Spree Commerce has an easy-to-use platform for doing just that. Here the founder explains it to me or you can learn more at spreecommerce.com From: Scobleizer ...</meta>
+                    </metadata>
+                </video>
+                <metadata xml:id="transcodes4">
+                    <meta type="video/youtube" name="youtube" content="mFhNf8NHrCw"/>
+                </metadata>
+                <seq xml:id="metaqs4"/>
+                <seq xml:id="jumptags4" max="4"/>
+            </par>
+            <par xml:id="item5">
+                <video xml:id="v5" type="mp4" title="Sintel " src="http://sxsw.ramp.com/hosting/media/sxsw/1626298/sintel-1024-surround.mp4">
+                    <metadata>
+                        <meta name="rampId" content="52871540"/>
+                        <meta name="duration" content="888.043"/>
+                        <meta name="thumbnail" content="http://publishing.ramp.com/thumbnails/cached_media/0006/0006875/0006875155/images/thumb.jpg"/>
+                        <meta name="searchapi" content="http://publishing.ramp.com/sxsw/theme/7473/mp2-search?e=52871540"/>
+                        <meta name="searchterm" content="''"/>
+                        <meta name="linkURL" content="52871540/sintel"/>
+                        <meta name="embedURL" content="http://publishing.ramp.com/widgets/sxsw/4240/?episode=52871540"/>
+                        <meta name="siteSearchURL" content="http://publishing.ramp.com/sxsw/search?mediatype=Video&amp;q="/>
+                        <meta name="iosURL" content="http://sxsw.ramp.com/hosting/media/sxsw/1626298/sintel-1024-surround.mp4"/>
+                        <meta name="description">“Sintel” is an independently produced short film, initiated by the Blender Foundation as a means to further improve and validate the free/open source 3D creation suite Blender. With initial funding provided by 1000s of donations via the internet community, it has again proven to be a viable development model for both open 3D technology as for independent animation film. This 15 minute film has been realized in the studio of the Amsterdam Blender Institute, by an international team of artists and developers. In addition to that, several crucial technical and creative targets have been realized online, by developers and artists and teams all over the world</meta>
+                    </metadata>
+                </video>
+                <metadata xml:id="transcodes5">
+                    <meta name="ogg" content=""/>
+                    <meta name="vp8" content=""/>
+                </metadata>
+                <seq xml:id="metaqs5"/>
+                <seq xml:id="jumptags5" max="4"/>
+            </par>
+            <par xml:id="item6">
+                <video xml:id="v6" type="flv" title="Tube Crew Wants to Share Their Open Film and Animations with You " src="http://www.youtube.com/watch?v=ZggXjYjyuCo&amp;feature=youtube_gdata">
+                    <metadata>
+                        <meta name="rampId" content="55524435"/>
+                        <meta name="duration" content="73.282"/>
+                        <meta name="thumbnail" content="http://publishing.ramp.com/thumbnails/cached_media/0007/0007031/0007031393/images/thumb.jpg"/>
+                        <meta name="searchapi" content="http://publishing.ramp.com/sxsw/theme/7473/mp2-search?e=55524435"/>
+                        <meta name="searchterm" content="''"/>
+                        <meta name="linkURL" content="55524435/ZggXjYjyuCo"/>
+                        <meta name="embedURL" content="http://publishing.ramp.com/widgets/sxsw/4240/?episode=55524435"/>
+                        <meta name="siteSearchURL" content="http://publishing.ramp.com/sxsw/search?mediatype=Video&amp;q="/>
+                        <meta name="iosURL" content=""/>
+                        <meta name="description">Tube Crew Wants to Share Their Open Film and Animations with You Tube is an open source film, meaning its artists are making it using open software and will make the animated characters available after production too. They've has been working on the film for three years, but they need Kickstarter support finish. Mashable owned content. From: mashable Views: 127 3 ratings Time: 01:14 More in Film &amp; Animation</meta>
+                    </metadata>
+                </video>
+                <metadata xml:id="transcodes6">
+                    <meta type="video/youtube" name="youtube" content="ZggXjYjyuCo"/>
+                </metadata>
+                <seq xml:id="metaqs6"/>
+                <seq xml:id="jumptags6" max="4"/>
+            </par>
+            <par xml:id="item7">
+                <video xml:id="v7" type="flv" title="Arduino-Based Satellite Paves Way for Open-Source Space Exploration " src="http://www.youtube.com/watch?v=MVrl1MbjdmY&amp;feature=youtube_gdata">
+                    <metadata>
+                        <meta name="rampId" content="59634863"/>
+                        <meta name="duration" content="93.902"/>
+                        <meta name="thumbnail" content="http://publishing.ramp.com/thumbnails/cached_media/0007/0007369/0007369273/images/thumb.jpg"/>
+                        <meta name="searchapi" content="http://publishing.ramp.com/sxsw/theme/7473/mp2-search?e=59634863"/>
+                        <meta name="searchterm" content="''"/>
+                        <meta name="linkURL" content="59634863/MVrl1MbjdmY"/>
+                        <meta name="embedURL" content="http://publishing.ramp.com/widgets/sxsw/4240/?episode=59634863"/>
+                        <meta name="siteSearchURL" content="http://publishing.ramp.com/sxsw/search?mediatype=Video&amp;q="/>
+                        <meta name="iosURL" content=""/>
+                        <meta name="description">Arduino-Based Satellite Paves Way for Open-Source Space Exploration Creators of the ArduSat satellite are asking Kickstarter to help them get a Arduino-based space probe off the ground. The project gives researchers the chance to run their own space experiments using open source technology. From: ...</meta>
+                    </metadata>
+                </video>
+                <metadata xml:id="transcodes7">
+                    <meta type="video/youtube" name="youtube" content="MVrl1MbjdmY"/>
+                </metadata>
+                <seq xml:id="metaqs7"/>
+                <seq xml:id="jumptags7" max="4"/>
+            </par>
+            <par xml:id="item8">
+                <video xml:id="v8" type="flv" title="BugLabs new Open Source hardware, part II " src="http://www.youtube.com/watch?v=NM4QyF5TyjE&amp;feature=youtube_gdata">
+                    <metadata>
+                        <meta name="rampId" content="55944286"/>
+                        <meta name="duration" content="338.942"/>
+                        <meta name="thumbnail" content="http://publishing.ramp.com/thumbnails/cached_media/0007/0007064/0007064917/images/thumb.jpg"/>
+                        <meta name="searchapi" content="http://publishing.ramp.com/sxsw/theme/7473/mp2-search?e=55944286"/>
+                        <meta name="searchterm" content="''"/>
+                        <meta name="linkURL" content="55944286/NM4QyF5TyjE"/>
+                        <meta name="embedURL" content="http://publishing.ramp.com/widgets/sxsw/4240/?episode=55944286"/>
+                        <meta name="siteSearchURL" content="http://publishing.ramp.com/sxsw/search?mediatype=Video&amp;q="/>
+                        <meta name="iosURL" content=""/>
+                        <meta name="description">BugLabs new Open Source hardware, part II Part II of BugLabs.net's new gadget that lets you reconfigure it by plugging in new modules. Coolest gadget for people who want to play around that I've seen. Robert Scoble video blogger: Robert Scoble From: Scobleizer Views: 46 0 ratings Time: 05:39 More ...</meta>
+                    </metadata>
+                </video>
+                <metadata xml:id="transcodes8">
+                    <meta type="video/youtube" name="youtube" content="NM4QyF5TyjE"/>
+                </metadata>
+                <seq xml:id="metaqs8"/>
+                <seq xml:id="jumptags8" max="4"/>
+            </par>
+            <par xml:id="item9">
+                <video xml:id="v9" type="flv" title="Arduino-Based Satellite Paves Way for Open-Source Space Exploration " src="http://www.youtube.com/watch?v=-G2tRp5oOdg&amp;feature=youtube_gdata">
+                    <metadata>
+                        <meta name="rampId" content="59306807"/>
+                        <meta name="duration" content="93.576"/>
+                        <meta name="thumbnail" content="http://publishing.ramp.com/thumbnails/cached_media/0007/0007350/0007350264/images/thumb.jpg"/>
+                        <meta name="searchapi" content="http://publishing.ramp.com/sxsw/theme/7473/mp2-search?e=59306807"/>
+                        <meta name="searchterm" content="''"/>
+                        <meta name="linkURL" content="59306807/-G2tRp5oOdg"/>
+                        <meta name="embedURL" content="http://publishing.ramp.com/widgets/sxsw/4240/?episode=59306807"/>
+                        <meta name="siteSearchURL" content="http://publishing.ramp.com/sxsw/search?mediatype=Video&amp;q="/>
+                        <meta name="iosURL" content=""/>
+                        <meta name="description">Arduino-Based Satellite Paves Way for Open-Source Space Exploration Creators of the ArduSat satellite are asking Kickstarter to help them get a Arduino-based space probe off the ground. The project gives backers the chance to run their own space experiments using open source technology. From: ...</meta>
+                    </metadata>
+                </video>
+                <metadata xml:id="transcodes9">
+                    <meta type="video/youtube" name="youtube" content="-G2tRp5oOdg"/>
+                </metadata>
+                <seq xml:id="metaqs9"/>
+                <seq xml:id="jumptags9" max="4"/>
+            </par>
+            <par xml:id="item10">
+                <video xml:id="v10" type="flv" title="A look at DotNetNuke, .NET-based open source content management system " src="http://www.youtube.com/watch?v=lsB0whleAGs&amp;feature=youtube_gdata">
+                    <metadata>
+                        <meta name="rampId" content="58244777"/>
+                        <meta name="duration" content="843.163"/>
+                        <meta name="thumbnail" content="http://publishing.ramp.com/thumbnails/cached_media/0007/0007288/0007288987/images/thumb.jpg"/>
+                        <meta name="searchapi" content="http://publishing.ramp.com/sxsw/theme/7473/mp2-search?e=58244777"/>
+                        <meta name="searchterm" content="''"/>
+                        <meta name="linkURL" content="58244777/lsB0whleAGs"/>
+                        <meta name="embedURL" content="http://publishing.ramp.com/widgets/sxsw/4240/?episode=58244777"/>
+                        <meta name="siteSearchURL" content="http://publishing.ramp.com/sxsw/search?mediatype=Video&amp;q="/>
+                        <meta name="iosURL" content=""/>
+                        <meta name="description">A look at DotNetNuke, .NET-based open source content management system It's the leading Open Source Web Content Management Platform running on Microsoft .NET. Here we meet execs behind www.dotnetnuke.com and talk about the system, which lets companies build communities and websites, not to mention ...</meta>
+                    </metadata>
+                </video>
+                <metadata xml:id="transcodes10">
+                    <meta type="video/youtube" name="youtube" content="lsB0whleAGs"/>
+                </metadata>
+                <seq xml:id="metaqs10"/>
+                <seq xml:id="jumptags10" max="4"/>
+            </par>
+            <par xml:id="item11">
+                <video xml:id="v11" type="flv" title="Peter van Uhm: Why I chose a gun " src="http://www.youtube.com/watch?v=LjAsM1vAhW0&amp;feature=youtube_gdata">
+                    <metadata>
+                        <meta name="rampId" content="51816018"/>
+                        <meta name="duration" content="1030.966"/>
+                        <meta name="thumbnail" content="http://publishing.ramp.com/thumbnails/cached_media/0006/0006766/0006766758/images/thumb.jpg"/>
+                        <meta name="searchapi" content="http://publishing.ramp.com/sxsw/theme/7473/mp2-search?e=51816018"/>
+                        <meta name="searchterm" content="''"/>
+                        <meta name="linkURL" content="51816018/LjAsM1vAhW0"/>
+                        <meta name="embedURL" content="http://publishing.ramp.com/widgets/sxsw/4240/?episode=51816018"/>
+                        <meta name="siteSearchURL" content="http://publishing.ramp.com/sxsw/search?mediatype=Video&amp;q="/>
+                        <meta name="iosURL" content=""/>
+                        <meta name="description">Peter van Uhm: Why I chose a gun www.ted.com Peter van Uhm is the Netherlands' chief of defense, but that does not mean he is pro-war. At TEDxAmsterdam he explains how his career is one shaped by a love of peace, not a desire for bloodshed -- and why we need armies if we want peace.TEDTalks is a ...</meta>
+                    </metadata>
+                </video>
+                <metadata xml:id="transcodes11">
+                    <meta type="video/youtube" name="youtube" content="LjAsM1vAhW0"/>
+                </metadata>
+                <seq xml:id="metaqs11"/>
+                <seq xml:id="jumptags11" max="4"/>
+            </par>
+            <par xml:id="item12">
+                <video xml:id="v12" type="flv" title="Paul Conneally: Digital humanitarianism " src="http://www.youtube.com/watch?v=L9_c1j9VRwE&amp;feature=youtube_gdata">
+                    <metadata>
+                        <meta name="rampId" content="52011365"/>
+                        <meta name="duration" content="657.38"/>
+                        <meta name="thumbnail" content="http://publishing.ramp.com/thumbnails/cached_media/0006/0006783/0006783227/images/thumb.jpg"/>
+                        <meta name="searchapi" content="http://publishing.ramp.com/sxsw/theme/7473/mp2-search?e=52011365"/>
+                        <meta name="searchterm" content="''"/>
+                        <meta name="linkURL" content="52011365/L9_c1j9VRwE"/>
+                        <meta name="embedURL" content="http://publishing.ramp.com/widgets/sxsw/4240/?episode=52011365"/>
+                        <meta name="siteSearchURL" content="http://publishing.ramp.com/sxsw/search?mediatype=Video&amp;q="/>
+                        <meta name="iosURL" content=""/>
+                        <meta name="description">Paul Conneally: Digital humanitarianism www.ted.com The disastrous earthquake in Haiti taught humanitarian groups an unexpected lesson the power of mobile devices to coordinate, inform, and guide relief efforts. At TEDxRC2, Paul Conneally shows extraordinary examples of social media and other new ...</meta>
+                    </metadata>
+                </video>
+                <metadata xml:id="transcodes12">
+                    <meta type="video/youtube" name="youtube" content="L9_c1j9VRwE"/>
+                </metadata>
+                <seq xml:id="metaqs12"/>
+                <seq xml:id="jumptags12" max="4"/>
+            </par>
+            <par xml:id="item13">
+                <video xml:id="v13" type="flv" title="Dutch Designer Recycles Old Plastic to Create 3D-Printed Furniture " src="http://www.youtube.com/watch?v=9YomTTLnzqk&amp;feature=youtube_gdata">
+                    <metadata>
+                        <meta name="rampId" content="55657245"/>
+                        <meta name="duration" content="90.674"/>
+                        <meta name="thumbnail" content="http://publishing.ramp.com/thumbnails/cached_media/0007/0007040/0007040564/images/thumb.jpg"/>
+                        <meta name="searchapi" content="http://publishing.ramp.com/sxsw/theme/7473/mp2-search?e=55657245"/>
+                        <meta name="searchterm" content="''"/>
+                        <meta name="linkURL" content="55657245/9YomTTLnzqk"/>
+                        <meta name="embedURL" content="http://publishing.ramp.com/widgets/sxsw/4240/?episode=55657245"/>
+                        <meta name="siteSearchURL" content="http://publishing.ramp.com/sxsw/search?mediatype=Video&amp;q="/>
+                        <meta name="iosURL" content=""/>
+                        <meta name="description">Dutch Designer Recycles Old Plastic to Create 3D-Printed Furniture Dutch Designer Dirk Vander Kooij creates his "Endless" furniture collection entirely of recycled materials, like old refrigerators. Using a custom 3D printer, he can spin out a brand new chair in about three hours. From: mashable ...</meta>
+                    </metadata>
+                </video>
+                <metadata xml:id="transcodes13">
+                    <meta type="video/youtube" name="youtube" content="9YomTTLnzqk"/>
+                </metadata>
+                <seq xml:id="metaqs13"/>
+                <seq xml:id="jumptags13" max="4"/>
+            </par>
+            <par xml:id="item14">
+                <video xml:id="v14" type="flv" title="Mindtouch tries to reduce email load in Enterprises " src="http://www.youtube.com/watch?v=IdM4KA141NE&amp;feature=youtube_gdata">
+                    <metadata>
+                        <meta name="rampId" content="55952900"/>
+                        <meta name="duration" content="911.128"/>
+                        <meta name="thumbnail" content="http://publishing.ramp.com/thumbnails/cached_media/0007/0007065/0007065741/images/thumb.jpg"/>
+                        <meta name="searchapi" content="http://publishing.ramp.com/sxsw/theme/7473/mp2-search?e=55952900"/>
+                        <meta name="searchterm" content="''"/>
+                        <meta name="linkURL" content="55952900/IdM4KA141NE"/>
+                        <meta name="embedURL" content="http://publishing.ramp.com/widgets/sxsw/4240/?episode=55952900"/>
+                        <meta name="siteSearchURL" content="http://publishing.ramp.com/sxsw/search?mediatype=Video&amp;q="/>
+                        <meta name="iosURL" content=""/>
+                        <meta name="description">Mindtouch tries to reduce email load in Enterprises I talk with Mindtouch CEO/Founder Aaron Fulkerson about the latest from Mindtouch which combines wiki-style functionality into an Enterprise dashboard. Really useful stuff and open source too. Used by many companies around the world. Fast Company ...</meta>
+                    </metadata>
+                </video>
+                <metadata xml:id="transcodes14">
+                    <meta type="video/youtube" name="youtube" content="IdM4KA141NE"/>
+                </metadata>
+                <seq xml:id="metaqs14"/>
+                <seq xml:id="jumptags14" max="4"/>
+            </par>
+            <par xml:id="item15">
+                <video xml:id="v15" type="flv" title="BugLabs new Open Source hardware, part I " src="http://www.youtube.com/watch?v=jPHE-fP2WHQ&amp;feature=youtube_gdata">
+                    <metadata>
+                        <meta name="rampId" content="55945976"/>
+                        <meta name="duration" content="1067.77"/>
+                        <meta name="thumbnail" content="http://publishing.ramp.com/thumbnails/cached_media/0007/0007065/0007065120/images/thumb.jpg"/>
+                        <meta name="searchapi" content="http://publishing.ramp.com/sxsw/theme/7473/mp2-search?e=55945976"/>
+                        <meta name="searchterm" content="''"/>
+                        <meta name="linkURL" content="55945976/jPHE-fP2WHQ"/>
+                        <meta name="embedURL" content="http://publishing.ramp.com/widgets/sxsw/4240/?episode=55945976"/>
+                        <meta name="siteSearchURL" content="http://publishing.ramp.com/sxsw/search?mediatype=Video&amp;q="/>
+                        <meta name="iosURL" content=""/>
+                        <meta name="description">BugLabs new Open Source hardware, part I The first part of BugLabs.net's new open source gadget. Really hackable and reconfigurable. This is one of the coolest things I've seen this year. Robert Scoble video blogger: Robert Scoble From: Scobleizer Views: 89 4 ratings Time: 17:48 More in Science &amp; ...</meta>
+                    </metadata>
+                </video>
+                <metadata xml:id="transcodes15">
+                    <meta type="video/youtube" name="youtube" content="jPHE-fP2WHQ"/>
+                </metadata>
+                <seq xml:id="metaqs15"/>
+                <seq xml:id="jumptags15" max="4"/>
+            </par>
+            <par xml:id="item16">
+                <video xml:id="v16" type="flv" title="How To: Browse your Instagram feed on your iPad " src="http://www.youtube.com/watch?v=yFL_fHXuFws&amp;feature=youtube_gdata">
+                    <metadata>
+                        <meta name="rampId" content="54148448"/>
+                        <meta name="duration" content="167.323"/>
+                        <meta name="thumbnail" content="http://publishing.ramp.com/thumbnails/cached_media/0006/0006972/0006972515/images/thumb.jpg"/>
+                        <meta name="searchapi" content="http://publishing.ramp.com/sxsw/theme/7473/mp2-search?e=54148448"/>
+                        <meta name="searchterm" content="''"/>
+                        <meta name="linkURL" content="54148448/yFL_fHXuFws"/>
+                        <meta name="embedURL" content="http://publishing.ramp.com/widgets/sxsw/4240/?episode=54148448"/>
+                        <meta name="siteSearchURL" content="http://publishing.ramp.com/sxsw/search?mediatype=Video&amp;q="/>
+                        <meta name="iosURL" content=""/>
+                        <meta name="description">How To: Browse your Instagram feed on your iPad You can easily browse your Instagram feed on your iPad, using InstaPad. From: CNETTV Views: 4663 118 ratings Time: 02:48 More in Science &amp; Technology</meta>
+                    </metadata>
+                </video>
+                <metadata xml:id="transcodes16">
+                    <meta type="video/youtube" name="youtube" content="yFL_fHXuFws"/>
+                </metadata>
+                <seq xml:id="metaqs16"/>
+                <seq xml:id="jumptags16" max="4"/>
+            </par>
+            <par xml:id="item17">
+                <video xml:id="v17" type="flv" title="The Flying Car is Here, And There is Competition " src="http://www.youtube.com/watch?v=W7oTFCTdiJw&amp;feature=youtube_gdata">
+                    <metadata>
+                        <meta name="rampId" content="54054308"/>
+                        <meta name="duration" content="78.762"/>
+                        <meta name="thumbnail" content="http://publishing.ramp.com/thumbnails/cached_media/0006/0006971/0006971418/images/thumb.jpg"/>
+                        <meta name="searchapi" content="http://publishing.ramp.com/sxsw/theme/7473/mp2-search?e=54054308"/>
+                        <meta name="searchterm" content="''"/>
+                        <meta name="linkURL" content="54054308/W7oTFCTdiJw"/>
+                        <meta name="embedURL" content="http://publishing.ramp.com/widgets/sxsw/4240/?episode=54054308"/>
+                        <meta name="siteSearchURL" content="http://publishing.ramp.com/sxsw/search?mediatype=Video&amp;q="/>
+                        <meta name="iosURL" content=""/>
+                        <meta name="description">The Flying Car is Here, And There is Competition Dutch company's PAL-V has successfully tested its PAL-V 1, a flying gyrocopter car. And American company Terrafugia's Transition will appear at this the New York International Auto Show Friday. Which model would you choose? From: mashable Views: 717 ...</meta>
+                    </metadata>
+                </video>
+                <metadata xml:id="transcodes17">
+                    <meta type="video/youtube" name="youtube" content="W7oTFCTdiJw"/>
+                </metadata>
+                <seq xml:id="metaqs17"/>
+                <seq xml:id="jumptags17" max="4"/>
+            </par>
+            <par xml:id="item18">
+                <video xml:id="v18" type="flv" title="Stussy Takes to Facebook to Reveal Its New Clothing Line and a Little Bit More " src="http://www.youtube.com/watch?v=Hoh3fP1D5ks&amp;feature=youtube_gdata">
+                    <metadata>
+                        <meta name="rampId" content="55043731"/>
+                        <meta name="duration" content="90.976"/>
+                        <meta name="thumbnail" content="http://publishing.ramp.com/thumbnails/cached_media/0006/0006986/0006986263/images/thumb.jpg"/>
+                        <meta name="searchapi" content="http://publishing.ramp.com/sxsw/theme/7473/mp2-search?e=55043731"/>
+                        <meta name="searchterm" content="''"/>
+                        <meta name="linkURL" content="55043731/Hoh3fP1D5ks"/>
+                        <meta name="embedURL" content="http://publishing.ramp.com/widgets/sxsw/4240/?episode=55043731"/>
+                        <meta name="siteSearchURL" content="http://publishing.ramp.com/sxsw/search?mediatype=Video&amp;q="/>
+                        <meta name="iosURL" content=""/>
+                        <meta name="description">Stussy Takes to Facebook to Reveal Its New Clothing Line and a Little Bit More The Amsterdam fashionistas at Stϋssy are re-launching their Amsterdam Facebook page with a viral and clever social media campaign called "Strip for Likes." The tagline: "Like to see less, and share to undress." From: ...</meta>
+                    </metadata>
+                </video>
+                <metadata xml:id="transcodes18">
+                    <meta type="video/youtube" name="youtube" content="Hoh3fP1D5ks"/>
+                </metadata>
+                <seq xml:id="metaqs18"/>
+                <seq xml:id="jumptags18" max="4"/>
+            </par>
+            <par xml:id="item19">
+                <video xml:id="v19" type="flv" title="BugLabs new Open Source hardware, part III " src="http://www.youtube.com/watch?v=j2LtsWwTKl8&amp;feature=youtube_gdata">
+                    <metadata>
+                        <meta name="rampId" content="55945975"/>
+                        <meta name="duration" content="117.447"/>
+                        <meta name="thumbnail" content="http://publishing.ramp.com/thumbnails/cached_media/0007/0007065/0007065088/images/thumb.jpg"/>
+                        <meta name="searchapi" content="http://publishing.ramp.com/sxsw/theme/7473/mp2-search?e=55945975"/>
+                        <meta name="searchterm" content="''"/>
+                        <meta name="linkURL" content="55945975/j2LtsWwTKl8"/>
+                        <meta name="embedURL" content="http://publishing.ramp.com/widgets/sxsw/4240/?episode=55945975"/>
+                        <meta name="siteSearchURL" content="http://publishing.ramp.com/sxsw/search?mediatype=Video&amp;q="/>
+                        <meta name="iosURL" content=""/>
+                        <meta name="description">BugLabs new Open Source hardware, part III BugLabs.net's new "reconfigurable" gadget. Robert Scoble Video Blogger: Robert Scoble From: Scobleizer Views: 32 0 ratings Time: 01:58 More in Science &amp; Technology</meta>
+                    </metadata>
+                </video>
+                <metadata xml:id="transcodes19">
+                    <meta type="video/youtube" name="youtube" content="j2LtsWwTKl8"/>
+                </metadata>
+                <seq xml:id="metaqs19"/>
+                <seq xml:id="jumptags19" max="4"/>
+            </par>
+            <par xml:id="item20">
+                <video xml:id="v20" type="flv" title="Elizabeth Gilbert on THE PAUL HOLDENGRABER SHOW " src="http://www.youtube.com/watch?v=C6TQNG0eQEc&amp;feature=youtube_gdata">
+                    <metadata>
+                        <meta name="rampId" content="51818361"/>
+                        <meta name="duration" content="1211.803"/>
+                        <meta name="thumbnail" content="http://publishing.ramp.com/thumbnails/cached_media/0006/0006767/0006767085/images/thumb.jpg"/>
+                        <meta name="searchapi" content="http://publishing.ramp.com/sxsw/theme/7473/mp2-search?e=51818361"/>
+                        <meta name="searchterm" content="''"/>
+                        <meta name="linkURL" content="51818361/C6TQNG0eQEc"/>
+                        <meta name="embedURL" content="http://publishing.ramp.com/widgets/sxsw/4240/?episode=51818361"/>
+                        <meta name="siteSearchURL" content="http://publishing.ramp.com/sxsw/search?mediatype=Video&amp;q="/>
+                        <meta name="iosURL" content=""/>
+                        <meta name="description">Elizabeth Gilbert on THE PAUL HOLDENGRABER SHOW Elizabeth Gilbert on THE PAUL HOLDENGRABER SHOW From: IntelligentChannel Views: 8178 34 ratings Time: 20:12 More in Education</meta>
+                    </metadata>
+                </video>
+                <metadata xml:id="transcodes20">
+                    <meta type="video/youtube" name="youtube" content="C6TQNG0eQEc"/>
+                </metadata>
+                <seq xml:id="metaqs20"/>
+                <seq xml:id="jumptags20" max="4"/>
+            </par>
+            <par xml:id="item21">
+                <video xml:id="v21" type="flv" title="This 'Superbus' Seats 23, Reaches Speeds Up to 150 MPH " src="http://www.youtube.com/watch?v=z4IJhRUGnqw&amp;feature=youtube_gdata">
+                    <metadata>
+                        <meta name="rampId" content="58117807"/>
+                        <meta name="duration" content="53.615"/>
+                        <meta name="thumbnail" content="http://publishing.ramp.com/thumbnails/cached_media/0007/0007282/0007282039/images/thumb.jpg"/>
+                        <meta name="searchapi" content="http://publishing.ramp.com/sxsw/theme/7473/mp2-search?e=58117807"/>
+                        <meta name="searchterm" content="''"/>
+                        <meta name="linkURL" content="58117807/z4IJhRUGnqw"/>
+                        <meta name="embedURL" content="http://publishing.ramp.com/widgets/sxsw/4240/?episode=58117807"/>
+                        <meta name="siteSearchURL" content="http://publishing.ramp.com/sxsw/search?mediatype=Video&amp;q="/>
+                        <meta name="iosURL" content=""/>
+                        <meta name="description">This 'Superbus' Seats 23, Reaches Speeds Up to 150 MPH Designed by a team from Delft University of Technology in the Netherlands, this luxury vehicle, dubbed the "Superbus", can carry up to 23 passengers and reach speeds of 250 kilometers or 150 miles per hour. From: mashable Views: 389 22 ratings ...</meta>
+                    </metadata>
+                </video>
+                <metadata xml:id="transcodes21">
+                    <meta type="video/youtube" name="youtube" content="z4IJhRUGnqw"/>
+                </metadata>
+                <seq xml:id="metaqs21"/>
+                <seq xml:id="jumptags21" max="4"/>
+            </par>
+        </seq>
+    </body>
+</smil>

@@ -1,5 +1,3 @@
-
-
 (function () {
 
     var $ = jQuery;
@@ -7,11 +5,40 @@
 
     var defaults = {
         duplicates: false,
+        refocus: true,
         cssPrefix : "mp-carousel",
         slideDurationMs : 750,
         renderAnnotations : true
     };
 
+    /**
+     * Carousel is a PopcornJS plugin for rendering MetaQ carousel events. The UI is rendered
+     * as a window with sliding panels, controled through a tab control consisting of dots.
+     * @name UI.Carousel
+     * @class The MetaPlayer carousel widget and plugin for PopcornJS
+     * @constructor
+     * @param {Element} id The DOM target to which the carousel will be added.
+     * @param {Object} [options]
+     * @param {Boolean} [options.duplicates=false] If true, tile out duplicates rather than consolidating them into
+     * one card.
+     * @param {Boolean} [options.renderAnnotations=true] If the MetaPlayer controlbar is present, will render
+     * timeline annotations indication when Carousel events will fire.
+     * @param {Number} [options.slideDurationMs=750] The animation duration, in msec.
+     * @param {Boolean} [options.refocus=true] If duplicates are consolidated (disable), refocus the single card on
+     * subsequent events.
+     * @example
+     * # with default options:
+     * var mpf = MetaPlayer(video)
+     *     .ramp("http://api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440")
+     *     .carousel("#mycarousel", {
+     *          duplicates: false,
+     *          slideDurationMS: 750,
+     *          renderAnnotations: true
+     *     })
+     *     .load();
+     * @see MetaPlayer#carousel
+     * @see Popcorn#carousel
+     */
     var Carousel = function (id, options) {
 
         // return any previous instance for this player
@@ -36,6 +63,21 @@
         return new Carousel(target, options);
     };
 
+    /**
+     * @name MetaPlayer#carousel
+     * @function
+     * @description
+     * Creates a {@link UI.Carousel} instance with the given target and options.
+     * @param {Element} id The DOM or jQuery element to which the carousel will be added.
+     * @param {Object} [options]
+     * @example
+     * var mpf = MetaPlayer(video)
+     *     .ramp("http://api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440")
+     *     .carousel("#mycarousel")
+     *     .load();
+     * @see UI.Carousel
+     * @requires  metaplayer-complete.js
+     */
     MetaPlayer.addPlugin("carousel", function (target, options){
         var popcorn = this.popcorn;
         this.carousel = Carousel(target, options);
@@ -55,6 +97,8 @@
             this.scroller = $("<div></div>").addClass( this.cssName('scroller') ).appendTo(this.target);
             this.navbar = $("<div></div>").addClass( this.cssName('navbar') ).appendTo(this.target);
             this._uniques = {};
+            this._autoscroll = true;
+
 
             this.target.addClass( this.cssName() );
             this.render();
@@ -62,6 +106,13 @@
             var self = this;
             var nav = this.find( this.cssName('nav') ).click( function (e) {
                 self._navClick(e);
+            });
+
+            this.target.bind("mouseenter", function (e){
+                self._autoscroll = false;
+            });
+            this.target.bind("mouseleave", function (e){
+                self._autoscroll = true;
             });
 
             this.scroller.bind("touchstart", function (e) {
@@ -155,7 +206,9 @@
             var id = options.url || options.html;
 
             // render annotations if asked
-            if( this.config.renderAnnotations && this.player && this.player.controls ){
+            if( this.config.renderAnnotations && this.player
+                && this.player.controls
+                && this.player.controls.addAnnotation ){
                 this.player.controls.addAnnotation(options.start, null, options.topic || '', 'metaq');
             }
 
@@ -163,6 +216,7 @@
             if(! this.config.duplicates ){
                 if( this._uniques[ id ] != null ){
                     options.index = this._uniques[ id ];
+                    options.duplicate = true;
                     return;
                 }
                 this._uniques[ id ] = options.index;
@@ -170,7 +224,6 @@
 
             var card = $("<div></div>")
                 .addClass( this.cssName("content"))
-                .html(options.html || '')
                 .appendTo(this.scroller);
 
 
@@ -183,15 +236,36 @@
                 })
                 .appendTo( this.find('navbar')  );
 
+            if( options.html) {
+                if( options.html.match(/^http\:\/\//) ) {
+                    card.html('');
+                    $("<div></div>")
+                        .addClass( this.cssName('loading') )
+                        .appendTo(card);
+
+                    $.ajax(options.html, {
+                        dataType : "text",
+                        timeout : 15000,
+                        error : function (jqXHR, textStatus, errorThrown) {
+                            if (status == "error")
+                                card.empty().addClass( self.cssName("error") );
+                        },
+                        success : function (response, textStatus, jqXHR) {
+                            card.html(response);
+                        }
+                    });
+                }
+                else {
+                    card.html(options.html || '')
+                }
+            }
             if( options.url ) {
-                $("<div></div>")
+                var frame = $("<iframe></iframe>")
+                    .attr("frameborder", "0")
                     .addClass( this.cssName('loading') )
                     .appendTo(card);
 
-                card.load( options.url, function(response, status, xhr) {
-                    if (status == "error")
-                        card.empty().addClass( self.cssName("error") );
-                });
+                frame.attr('src', options.url);
             }
 
 
@@ -200,6 +274,12 @@
         },
 
         focus : function (options) {
+            if(! this._autoscroll )
+                   return;
+
+            if( options.duplicate && ! this.config.refocus )
+                return;
+
             this.scrollTo( options.index );
         },
 
@@ -222,6 +302,37 @@
     };
 
     if( Popcorn ) {
+        /**
+         * Schedules a carousel card to be rendered and focused at a given time.
+         * @name Popcorn#carousel
+         * @function
+         * @param {Object} config
+         * @param {Element} config.target The target element for the carousel
+         * @param {String} config.topic The tooltip to be used on the navigation dot
+         * @param {String} [config.html] The HTML content of the panel
+         * @param {String} [config.url] An alternate to <code>html</code, and Ajax url for HTML content.
+         * @param {Number} config.start Start time text, in seconds.
+         * @example
+         *  var pop = Popcorn(video);
+         *
+         *  # optional configuration step
+         *  MetaPlayer.carousel("#carousel", {
+         *          duplicates: false,
+         *  });
+         *
+         *  pop.carousel({
+         *      target: "#carousel"
+         *      topic : "one!"
+         *      html : "<b>first card</b>",
+         *      start: 1
+         *  });
+         *  pop.carousel({
+         *      target: "#carousel"
+         *      topic : "two!"
+         *      url : /two.html",
+         *      start: 10,
+         *  });
+         */
         Popcorn.plugin( "carousel" , {
             _setup: function( options ) {
                 Carousel(options.target).setup(options)

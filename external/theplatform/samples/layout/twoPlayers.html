@@ -1,0 +1,244 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:tp="http://player.theplatform.com/" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-language" content="en" />
+	<title>PDK :: Two Players</title>
+
+	<!-- This is the site stylesheet and doesn't care about the PDK -->
+	<link rel="stylesheet" href="../css/twoPlayers.css" type="text/css" media="screen" />
+
+	<script type="text/javascript" src="../../pdk/tpPdk.js"></script> 
+
+	<!-- PDK Glass skin css -->
+	<link rel="stylesheet" href="../../pdk/skins/glass/main.css" type="text/css" media="screen" />
+
+</head>
+<body>
+	<div class="play-video">
+		<div class="container">
+			<div id="info" class="tpClipInfo"
+				tp:scopes="primary"
+				tp:showCopyright="false"
+				tp:showAuthor="false"
+				tp:backgroundColor="0x000000"
+				tp:titleColor="0xFFFFFF"
+				tp:descriptionColor="0xFFFFFF">
+			</div>
+			<div id="player" class="tpPlayer"
+				tp:scopes="primary"
+				tp:fp.bgcolor="0x131313"
+				tp:wmode="opaque"
+				tp:logLevel="warn"
+				tp:allowFullScreen="true"
+				tp:plugin0="type=adcomponent|URL=../../pdk/swf/SMIL.swf|priority=3"
+				tp:emailServiceURL="http://player.theplatform.com/m/3JHsmB/demo/select/{releasePid}"
+				tp:playerURL="http://player.theplatform.com/m/3JHsmB/demo/select/{releasePid}"
+				tp:embeddedPlayerHTML="&lt;embed src=&quot;http://player.theplatform.com/m/3JHsmB/demo/embed/select/{releasePid}&quot; width=&quot;412&quot; height=&quot;329&quot; type=&quot;application/x-shockwave-flash&quot; allowFullScreen=&quot;true&quot; bgcolor=&quot;#131313&quot; /&gt;"
+				tp:RSSURL="http://feed.theplatform.com/f/3JHsmB/TpW4aioBvs6N?form=rss"
+				tp:backgroundColor="0x131313"
+				tp:controlBackgroundColor="0x131313"
+				tp:controlColor="0xBEBEBE"
+				tp:controlFrameColor="0x545759"
+				tp:controlHoverColor="0xBEBEBE"
+				tp:controlSelectedColor="0x00CCFF"
+				tp:frameColor="0x545759"
+				tp:pageBackgroundColor="0x131313"
+				tp:playProgressColor="0x00CCFF"
+				tp:scrubberColor="0xBEBEBE"
+				tp:scrubberFrameColor="0x00CCFF"
+				tp:scrubTrackColor="0xBEBEBE"
+				tp:textBackgroundColor="0x383838"
+				tp:textColor="0xBEBEBE"
+				tp:loadProgressColor="0x5D9070"
+				tp:layoutUrl="../../data/metaLayout_glass_lite.xml">
+			</div>
+			<div id="search" class="tpSearch"
+				tp:scopes="primary"
+				tp:backgroundColor = "0x131313"
+				tp:controlBackgroundColor = "0x242424"
+				tp:controlColor = "0xBEBEBE"
+				tp:controlFrameColor = "0x545759"
+				tp:controlFrameHoverColor = "0xBEBEBE"
+				tp:controlFrameSelectedColor = "0x00CCFF"
+				tp:controlHoverColor = "0xBEBEBE"
+				tp:controlSelectedColor = "0x00CCFF"
+				tp:editBackgroundColor = "0x131313"
+				tp:editColor = "0xBEBEBE"
+				tp:frameColor = "0x545759"
+				tp:labelColor = "0xBEBEBE">
+			</div>
+			<div id="releaselist" class="tpReleaseList"
+				tp:scopes="primary"
+				tp:thumbnailWidth="90"
+				tp:thumbnailHeight="90"
+				tp:columns="2"
+				tp:itemsPerPage="8"
+				tp:allowScrolling="false"
+				tp:showThumbnail="true"
+				tp:showTitle="true"
+				tp:showDescription="false"
+				tp:showLength="false"
+				tp:backgroundColor="0x131313"
+				tp:frameColor="0xFF0000"
+				tp:itemBackgroundColor="0x383838"
+				tp:itemFrameColor="0xFF0000"
+				tp:itemShineSelectedColor="0xFF0000"
+				tp:textBackgroundColor="0x383838"
+				tp:textColor="0xDFDFDF"
+				tp:textFrameColor="0x383838"
+				tp:textHighlightHoverColor="0x00CCFF"
+				tp:textHighlightSelectedColor="0xFFFFFF"
+				tp:textHoverColor="0xDFDFDF"
+				tp:textSelectedColor="0xDFDFDF"
+				tp:thumbnailBackgroundColor="0x242424"
+				tp:thumbnailFrameColor="0x383838"
+				tp:thumbnailHighlightHoverColor="0x00CCFF"
+				tp:thumbnailHighlightSelectedColor="0xFFFFFF">
+			</div>
+		</div>
+		<div id="message">
+			This Player is playing our H264 demo feed.
+		</div>
+	</div>
+	<div id="releaseModel" class="tpReleaseModel"
+		tp:scopes="primary"
+		tp:startIndex="1"
+		tp:endIndex="8">
+	</div>
+	<div class="play-video">
+		<div class="container">
+			<div id="info2" class="tpClipInfo"
+				tp:scopes="secondary"
+				tp:showCopyright="false"
+				tp:showAuthor="false"
+				tp:backgroundColor="0x000000"
+				tp:titleColor="0xFFFFFF"
+				tp:descriptionColor="0xFFFFFF">
+			</div>
+			<div id="player2" class="tpPlayer"
+				tp:scopes="secondary"
+				tp:fp.bgcolor="0x131313"
+				tp:wmode="opaque"
+				tp:plugin1="type=Format|URL=../../pdk/swf/F4mParser.swf|priority=5|hosts=stgzeri01.qa.testlab.com"
+				tp:plugin2="type=Format|URL=../../pdk/swf/adobeHttpDynamicStreaming.swf|priority=6|hosts=stgzeri01.qa.testlab.com"
+				tp:backgroundColor="0x131313"
+				tp:controlBackgroundColor="0x131313"
+				tp:controlColor="0xBEBEBE"
+				tp:controlFrameColor="0x545759"
+				tp:controlHoverColor="0xBEBEBE"
+				tp:controlSelectedColor="0x00CCFF"
+				tp:frameColor="0x545759"
+				tp:pageBackgroundColor="0x131313"
+				tp:playProgressColor="0x00CCFF"
+				tp:scrubberColor="0xBEBEBE"
+				tp:scrubberFrameColor="0x00CCFF"
+				tp:scrubTrackColor="0xBEBEBE"
+				tp:textBackgroundColor="0x383838"
+				tp:textColor="0xBEBEBE"
+				tp:loadProgressColor="0x5D9070"
+				tp:layoutUrl="../../data/metaLayout_glass_lite.xml">
+			</div>     
+			<div id="search2" class="tpSearch"		
+				tp:scopes="secondary"
+				tp:backgroundColor = "0x131313"
+				tp:controlBackgroundColor = "0x242424"
+				tp:controlColor = "0xBEBEBE"
+				tp:controlFrameColor = "0x545759"
+				tp:controlFrameHoverColor = "0xBEBEBE"
+				tp:controlFrameSelectedColor = "0x00CCFF"
+				tp:controlHoverColor = "0xBEBEBE"
+				tp:controlSelectedColor = "0x00CCFF"
+				tp:editBackgroundColor = "0x131313"
+				tp:editColor = "0xBEBEBE"
+				tp:frameColor = "0x545759"
+				tp:labelColor = "0xBEBEBE">
+			</div>
+			<div id="releaselist2" class="tpReleaseList"
+				tp:scopes="secondary"
+				tp:thumbnailWidth="90"
+				tp:thumbnailHeight="90"
+				tp:columns="2"
+				tp:playAll="true"
+				tp:itemsPerPage="8"
+				tp:allowScrolling="false"
+				tp:showThumbnail="true"
+				tp:showTitle="true"
+				tp:showDescription="false"
+				tp:showLength="false"
+				tp:backgroundColor="0x131313"
+				tp:frameColor="0xFF0000"
+				tp:itemBackgroundColor="0x383838"
+				tp:itemFrameColor="0xFF0000"
+				tp:itemShineSelectedColor="0xFF0000"
+				tp:textBackgroundColor="0x383838"
+				tp:textColor="0xDFDFDF"
+				tp:textFrameColor="0x383838"
+				tp:textHighlightHoverColor="0x00CCFF"
+				tp:textHighlightSelectedColor="0xFFFFFF"
+				tp:textHoverColor="0xDFDFDF"
+				tp:textSelectedColor="0xDFDFDF"
+				tp:thumbnailBackgroundColor="0x242424"
+				tp:thumbnailFrameColor="0x383838"
+				tp:thumbnailHighlightHoverColor="0x00CCFF"
+				tp:thumbnailHighlightSelectedColor="0xFFFFFF">
+			</div>
+		</div>
+		<div id="message2">
+			No feed was chosen for this Player... there must have been an error.
+		</div>
+	</div>	
+	<div id="releaseModel2" class="tpReleaseModel"
+		tp:scopes="secondary"
+		tp:startIndex="1"
+		tp:endIndex="8">
+	</div>
+	
+	<script type="text/javascript">
+		var video = document.createElement("video");
+   		var hasFlash = $pdk.env.Detect.getInstance().hasFlash();
+		var hasAppleLiveStreaming = (video && video.canPlayType && video.canPlayType("audio/x-mpegurl"));
+
+		var rm1 = new ReleaseModel("releaseModel");
+		var rm2 = new ReleaseModel("releaseModel2");
+		var player2 = new Player("player2");
+		
+		var m2 = document.getElementById("message2");
+
+		if (!hasFlash && hasAppleLiveStreaming)
+		{
+			// h264 && m3u
+			rm1.feedsServiceUrl = "http://feed.theplatform.com/f/3JHsmB/TpW4aioBvs6N";
+			rm2.feedsServiceUrl = "http://feed.theplatform.com/f/3JHsmB/N5phhThIiu0q";
+			rm2.params = "byContent=" + escape("byFormat=M3U");
+			
+			// apple live streaming requires html5 player
+			player2.runtime="html5";
+			
+			m2.innerHTML = "This Player is playing our Apple HTTP Live Streaming demo feed.";
+		}
+		else if (hasFlash)
+		{
+			// h264 && zeri
+			rm1.feedsServiceUrl = "http://feed.theplatform.com/f/3JHsmB/TpW4aioBvs6N";
+			rm2.feedsServiceUrl = "http://feed.theplatform.com/f/3JHsmB/b7qlFMuS2cjk";
+			rm2.params = "byContent=" + escape("byFormat=F4M");
+			m2.innerHTML = "This Player is playing our Adobe HTTP Dynamic Streaming (Zeri) demo feed.";
+		}
+		else
+		{
+			// h246 && h246
+			rm1.feedsServiceUrl = "http://feed.theplatform.com/f/3JHsmB/TpW4aioBvs6N";
+			rm2.feedsServiceUrl = "http://feed.theplatform.com/f/3JHsmB/pjb5l27K_bp6";
+			m2.innerHTML = "This Player is playing our Alternative H264 demo feed.";
+		}
+		
+		rm1.bind();
+		rm2.bind();
+		player2.bind();
+	</script>
+
+	<div style="clear: both"></div>
+</body>
+</html>

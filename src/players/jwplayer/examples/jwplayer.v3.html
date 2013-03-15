@@ -1,0 +1,157 @@
+<!doctype html>
+<html>
+<head>
+
+    <title>JWPlayer with v3 UI< | MetaPlayer</title>
+
+    <style>
+
+        .container {
+            position: relative;
+        }
+        .metaplayer {
+            width: 600px;
+            height: 300px;
+            outline: 1px solid red;
+        }
+        #transcript {
+            margin-top: 10px;
+            outline: 1px solid black;
+            width: 600px;
+            height: 100px;
+        }
+
+        #searchbar {
+            outline: 1px solid black;
+            width: 600px;
+        }
+    </style>
+    <!--Dependency: jQuery-->
+    <script src="../../../../external/jquery/jquery-1.7.1.js" type="text/javascript"></script>
+
+    <script src="../../../../external/jquery/jquery.iecors.js" type="text/javascript"></script>
+
+    <!--Dependency: JwPlayer -->
+    <script src="../../../../external/jwplayer/jwplayer.js"></script>
+
+    <!--Dependency: Popcorn -->
+    <script src="../../../../external/popcorn/popcorn.js"></script>
+
+
+    <!-- Core: Ramp -->
+    <script src="../../../core/metaplayer.js"></script>
+    <script src="../../../core/utils/util.event.js"></script>
+    <script src="../../../core/utils/util.proxy.js"></script>
+    <script src="../../../core/utils/util.script.js"></script>
+    <script src="../../../core/utils/util.timer.js"></script>
+    <script src="../../../core/utils/util.format.js"></script>
+    <script src="../../../core/utils/util.ui.js"></script>
+    <script src="../../../core/utils/util.scrollbar.js"></script>
+    <script src="../../../core/playlist/player.playlist.js"></script>
+    <script src="../../../core/metadata/core.metadata.js"></script>
+    <script src="../../../core/search/core.search.js"></script>
+    <script src="../../../core/cues/core.cues.js"></script>
+    <script src="../../../services/ramp/service.ramp.js"></script>
+
+    <!-- Core: Layout -->
+    <script src="../../../core/layout/core.layout.js"></script>
+    <link href="../../../core/layout/core.layout.css" rel="stylesheet" type="text/css">
+
+    <!-- Media : html5 -->
+    <script src="../../../players/html5/player.html5.js"></script>
+
+    <!-- Media : OVP -->
+    <script src="../../../players/jwplayer/player.jwplayer.js"></script>
+
+    <!-- UI: Controls -->
+    <script src="../../../ui/controlbar/ui.controlbar.js"></script>
+    <link href="../../../ui/controlbar/theme/ui.controlbar.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Captions -->
+    <script src="../../../ui/captions/ui.captions.js"></script>
+    <link href="../../../ui/captions/ui.captions.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.captions.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Overlay -->
+    <script src="../../../ui/overlay/ui.overlay.js"></script>
+    <link href="../../../ui/overlay/ui.overlay.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.overlay.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Endcap -->
+    <script src="../../../ui/endcap/ui.endcap.js"></script>
+    <link href="../../../ui/endcap/ui.endcap.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.endcap.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: captionconfig -->
+    <script src="../../../ui/captionconfig/ui.captionconfig.js"></script>
+    <link href="../../../ui/captionconfig/theme/ui.captionconfig.css" rel="stylesheet"  type="text/css">
+
+    <!-- services: srt -->
+    <script src="../../../services/srt/service.srt.js"></script>
+
+    <!-- services: mrss -->
+    <script src="../../../services/mrss/service.mrss.js"></script>
+
+    <!-- UI: Searchbox -->
+    <script src="../../../ui/searchbar/ui.searchbar.js"></script>
+    <link href="../../../ui/searchbar/theme/ui.searchbar.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Transcript -->
+    <script src="../../../ui/transcript/ui.transcript.js"></script>
+    <link href="../../../ui/transcript/ui.transcript.css" rel="stylesheet"  type="text/css">
+
+    <script type="text/javascript">
+        var jwp, video, player;
+        $(function () {
+
+            jwp = jwplayer('target').setup({
+                controls: false, // v6
+                controlbar  : "none", //v5
+                width: "600",
+                height: "300",
+                autostart   : true,
+                icons      : false, // disable a big play button on the middle of screen
+                plugins: { viral: { onpause: false, oncomplete: false, allowmenu: false } }, // disable all viral features.
+                flashplayer : "../../external/jwplayer/player.swf",
+                file        : "../../../../external/jwplayer/blank.mp4"
+
+            });
+
+            jwp.onReady(function() {
+                video = MetaPlayer.jwplayer( jwp );
+                video.autoplay = true;
+
+                player = MetaPlayer(video)
+                        .controlbar({ fullscreen : true })
+                        .captionconfig()
+                        .transcript("#transcript")
+                        .searchbar("#searchbar")
+                        .mrss("http://api.ramp.com/v1/mp2/playlist/?format=mrss&apikey=0bb282f7f637045f1b7731f713c08ab5&e=52871241")
+                        .mrss("data/test.mrss.xml")
+                        .ramp("http://api.ramp.com/v1/mp2/playlist?guid=886A3B85-D96B-D274-8525-7A8C005BFBBE&apikey=ecb7201e8732cf996d6826709bcddfbb")
+                        .srt()
+                        .load();
+            });
+
+        })
+    </script>
+
+
+</head>
+<body>
+
+<h3>MetaPlayer &raquo; Examples &raquo; JWPlayer with v3 UI</h3>
+
+<div class="container">
+
+    <div class="metaplayer">
+        <div id='target'></div>
+    </div>
+
+    <div id='searchbar'></div>
+
+    <div id='transcript'></div>
+</div>
+
+</body>
+</html>

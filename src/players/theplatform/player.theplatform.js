@@ -11,24 +11,28 @@
         }
     };
 
-    var ThePlatformPlayer = function(theplatform, options) {
-        this.config = $.extend(true, {}, defaults, options);
+    var ThePlatformPlayer = function( element ) {
+
+        if ( !( this instanceof ThePlatformPlayer ) ) {
+            return new ThePlatformPlayer( element );
+        }
 
         /* HTML5 specific attributes */
-        
-        // Display 
+
+        // Display
         this._src = "";
         //this.poster = ""; Is this supported?
         //this.controls = false;  Is this supported?
         //this.videoWidth = 640;  Supported?
         //this.videoHeight = 480; Supported?
 
-        // Playback 
+        // Playback
         this._currentTime = 0;
-        this._duration = NaN;
+        //this._duration = NaN;
         this._paused = true;
         this._ended = false;
-        this._autoplay = true;
+        this._autoplay = false;
+        this._preload = "none";
         this._loop = false;
         this._autobuffer = true;
         this._seeking = false;
@@ -38,82 +42,57 @@
         //this.buffered = {}; Supported?
         //this.played = {}; Supported?
 
-        // Ot_her Player Attributes
+        // Other Player Attributes
         this._volume = 1;
-        this._muted = false; 
+        this._muted = false;
         this._readyState = 0;
         //this.networkState;
         //this.error;
 
-        // Grab config parameters
-        this._autobuffer = this.config.autobuffer;
-        this._autoplay = this.config.autoplay;
-        this._preload = this.config.preload;
-        this._loop = this.config.loop;
+        this._seekingWhilePaused = false;
+        this._seekingWhilePausedTime = NaN;
 
-        MetaPlayer.dispatcher( this );
-
-        this.theplatform = theplatform;
-        this.tpController = theplatform.controller;
+        this.dispatcher = MetaPlayer.dispatcher( this );
+        this.video = MetaPlayer.proxy.proxyPlayer(this, $('#' +element).get(0) );
 
         this.addListeners();
 
-        this.video = MetaPlayer.proxy.proxyPlayer(this);
-        
+         $(element).css({
+             width: "100%",
+             height: "100%"
+         });
     };
 
-    MetaPlayer.addPlayer("theplatform", function (theplatform, options) {
-
-        // single arg form 
-        if ( ! options && theplatform instanceof Object) {
-            options = theplatform;
-            theplatform = null;
-        }
-
-        if ( ! options ) {
-            options = {};
-        }
-
-
-        if (! this.video) {
-            var tp = new ThePlatformPlayer(theplatform, options);
-            this.video = tp.video;  
-            this.theplatform = bc;            
-        }
-        
-    });
-
-    MetaPlayer.theplatform = function (theplatform, options) {
-        var tp = new ThePlatformPlayer(theplatform, options);
+    MetaPlayer.theplatform = function ( element ) {
+        var tp = ThePlatformPlayer( element );
         return tp.video;
-    }
+    };
 
     ThePlatformPlayer.prototype =  {
-        
+
         init : function() {
 
         },
 
         isReady : function() {
-            return this.theplatform && this.theplatform.controller;
+            return tpController;
         },
 
-        addListeners : function() { 
-            var tpc = this.tpController;
+        addListeners : function() {
+            var tpc = tpController;
             var self = this;
+
 
             tpc.addEventListener("OnMediaPause", function(e) {
                 self.onMediaPause(e);
             });
 
-            tpc.addEventListener("OnMediaUnpause", function(e) {    
+            tpc.addEventListener("OnMediaUnpause", function(e) {
                 self.onMediaUnpause(e);
             });
 
-            // misleading event - documentation mentions firing when playack is resumed
-            // after buffering
-            tpc.addEventListener("OnMediaPlay", function(e) { 
-                self.onMediaPlay(e);
+            tpc.addEventListener("OnMediaStart", function(e) {
+                self.onMediaStart(e);
             });
 
             tpc.addEventListener("OnReleaseStart", function(e) {
@@ -124,111 +103,180 @@
                 self.onReleaseStart(e);
             });
 
-            tpc.addEventListener("OnSetRelease", function(e) { 
+            tpc.addEventListener("OnLoadReleaseUrl", function(e) {
                 self.onMediaChange(e);
-            });            
+            });
 
-            tpc.addEventListener("OnSetReleaseUrl", function(e) { 
+            tpc.addEventListener("OnSetReleaseUrl", function(e) {
                 self.onMediaChange(e);
-            });            
+            });
 
-            tpc.addEventListener("OnLoadRelease", function(e) { 
-                self.onMediaChange(e);
-            });            
-
-            tpc.addEventListener("OnLoadReleaseUrl", function(e) { 
-                self.onMediaChange(e);
-            });            
-
-            tpc.addEventListener("OnMediaEnd", function(e) { 
+            tpc.addEventListener("OnMediaEnd", function(e) {
                 self.onMediaEnd(e);
-            });            
+            });
 
-            tpc.addEventListener("OnMediaError", function(e) { 
+            tpc.addEventListener("OnMediaError", function(e) {
                 self.onMediaError(e);
-            });            
+            });
 
-            tpc.addEventListener("OnMediaPlaying", function(e) { 
+            tpc.addEventListener("OnMediaPlaying", function(e) {
                 self.onMediaPlaying(e);
-            });            
+            });
 
-            tpc.addEventListener("OnMediaSeek", function(e) { 
+            tpc.addEventListener("OnMediaSeek", function(e) {
                 self.onMediaSeek(e);
-            });            
+            });
 
-        
         },
 
-        onReleaseStart : function(e) {  
-            this._ended = false;
-            this.dispatch("play");
-            this.dispatch("playing");
-            this._paused = false;
+        /* Event Handlers */
+
+        onReleaseStart : function(e) {
+           // if (!this._seekingWhilePaused) {
+                this._ended = false;
+                this._paused = false;
+                this.dispatch("play");
+                this.dispatch("playing");
+            // }
+        },
+
+        onMediaStart : function(e) {
+            if (e.data.baseClip.isAd) {
+                this.dispatch('adstart');
+                return;
+            }
+
+            // if (this._seekingWhilePaused) {
+
+            //     var self = this;
+            //     setTimeout(function() {
+            //         tpController.seekToPosition(self._seekingWhilePausedTime);
+            //     }, 50);
+            // }
+
+            this._currentTime = 0;
+            this.onMediaDuration(e);
+        },
+
+        onMediaDuration : function (e) {
+            if (typeof e.data == "object") {
+                this._duration = e.data.length || e.data.duration;
+                this._src = e.data.url;
+                this.dispatch('durationchange', this._duration);
+            }
         },
 
         onMediaChange : function(e) {
-            if ( this._autoplay ) {
-                this._paused = false;
+            if ( this._readyState < 4) {
+                this._readyState = 4;
+                this.dispatch("loadstart");
+                this.dispatch("canplay");
             }
-            else {
-                this._paused = true;
-            }
-            
-            if (typeof e.data == "object") {
-                this._duration = e.data.length;
-            }
-            this.dispatch('durationchange');
             this.dispatch('loadedmetadata');
-
+            this.dispatch('loadstart');
+            this.dispatch('canplay');
             this.dispatch('loadeddata');
+
+            // // we can only get media duration after pressing play
+            // if ( !this._autoplay ) {
+            //     tpController.clickPlayButton();
+            //     this._playToGetDuration = true;
+            // }
+
+            this.dispatch('trackchange', e.data);
         },
 
-        onMediaEnd : function(e) {            
+        onMediaEnd : function(e) {
+            if (e.data.baseClip.isAd) {
+                this.dispatch('adstop');
+                return;
+            }
+            this._paused = true;
             this._ended = true;
             this._duration = NaN;
+            this._currentTime = 0;
             this.dispatch("ended");
         },
 
         onMediaError : function(e) {
             this.dispatch("error");
         },
-        
+
         onMediaPlaying : function(e) {
-            this._currentTime = e.data.currentTime;
+            if (!this._seekingWhilePaused) {
+                this._currentTime = e.data.currentTime * 0.001;
+            }
+
+            // TODO: Make this smarter for cases where we're not overlaying anything on the video
+            if ($('video').length > 0) {
+                $('video').get(0).controls = false;
+            }
+
             this.dispatch("timeupdate");
+            this.dispatch("playing");
+
+            // if ( this._playToGetDuration ) {
+            //     delete this._playToGetDuration;
+            //     tpController.pause(true);
+            // }
         },
 
         onMediaSeek : function(e) {
+            this._currentTime = e.data.end.currentTime * 0.001;
             this._seeking = false;
+            if ( !this._paused ) {
+                setTimeout(function() {
+                    tpController.pause(false);
+                    tpController.clickPlayButton();
+                }, 1000);
+            }
             this.dispatch("seeked");
             this.dispatch("timeupdate");
-            this._currentTime = e.data.end.currentTime;
+            
+            // if (this._seekingWhilePaused) {
+                
+            //     var self = this;
+            //     setTimeout(function() {
+            //         tpController.pause(true);
+            //     }, 50);
+            // }
         },
 
         onMediaPause : function(e) {
+            // if (this._seekingWhilePaused) {
+            //     this._seekingWhilePaused = false;
+            //     this._seekingWhilePausedTime = NaN;
+            // }
             this._paused = true;
             this._ended = false;
             this.dispatch("pause");
-           
+            
         },
 
-        onMediaUnpause : function(e) {  
+        onMediaUnpause : function(e) {
             this._paused = false;
             this._ended = false;
             this.dispatch("play");
             this.dispatch("playing");
+
+            if (this._seekingWhilePaused) {
+                var self = this;
+                setTimeout(function() {
+                    tpController.seekToPosition(self._seekingWhilePausedTime);
+                }, 50);
+                
+            }
             
         },
 
-        startVideo : function() {   
-            if ( ! this.isReady()) {
-                return;
-            }
+        /* --------------------------------- */
+
+        startVideo : function() {
 
             this._ended = false;
 
             if ( this._muted ) {
-                this.tpController.mute(this._muted);
+                tpController.mute(this._muted);
             }
 
             var src = this._src;
@@ -237,41 +285,41 @@
                 return;
             }
             
-            if ( this._readyState < 4) {
-                this._readyState = 4;
-                this.dispatch("loadstart");
-                this.dispatch("canplay");
+            if (this._autoplay) {
+                tpController.setReleaseURL(src);
             }
-
-            // TODO: Pull out ID if URL passed for SRC
-
-            if (this._autoplay) {                
-                // TODO: Implement URL / ID load - like YouTube Player
-                this.tpController.setReleaseURL(src);
-            }
-            else if (this._preload) {                
+            else if (this._preload != "none") {
                 this.load();
             }
+
+            // if ( this._readyState < 4) {
+            //     this._readyState = 4;
+            //     this.dispatch("loadstart");
+            //     this.dispatch("canplay");
+            // }
 
 
         },
 
-        doSeek : function(time) {    
+        seekWhilePaused : function() {
+            tpController.clickPlayButton();
+            tpController.pause(false);
+        },
+
+        doSeek : function(time) {
             this._seeking = true;
-            this.dispatch("seeking");    
-            this.tpController.seekToPosition(time);
+            this.dispatch("seeking");
+
             this._currentTime = time;
 
-            /// temp to get through the unit test because seek is not 
-            // available until the video has begun playing
-            // will remove this later
-            var self = this;
-            setTimeout(function() {
-                self._seeking = false;
-                self.dispatch("seeked");
-                self.dispatch("timeupdate");
-    
-            })
+            // if (!this._ended && this._paused) {
+            //     this._seekingWhilePaused = true;
+            //     this._seekingWhilePausedTime = time;
+            //     this.seekWhilePaused();
+            // }
+            // else {
+                tpController.seekToPosition(time * 1000);
+            // }
         },
 
         /* Media Interface */
@@ -279,39 +327,41 @@
         load : function() {
             this._preload = true;
 
-            if ( ! this.isReady() ) {
-                return;
-            }
-
-            // TODO: Needs URL and ID Support - like YouTube Player
-            this.tpController.loadReleaseURL(this._src);
+            tpController.loadReleaseURL(this._src);
 
         },
 
         play : function() {
+            this._seekingWhilePaused = false;
+            this._seekingWhilePausedTime = NaN;
             this._autoplay = true;
-            if ( ! this.isReady() ) {
 
+            if ( this._preload == "none" ) {
+                this._preload = "auto";
+                this.startVideo();
                 return;
             }
 
-            if (this._paused) {
-                 this.tpController.pause(!this._paused);
-            }
-            this.tpController.clickPlayButton();
-        
+            var self = this;
 
+            if (this._paused) {
+                setTimeout(function() {
+                    tpController.pause(false);
+                }, 500);
+            }
+
+            if (this._paused && this._currentTime == 0) {
+                tpController.clickPlayButton();
+            }
+
+            this._paused = false;
         },
 
         pause : function() {
-            if ( ! this.isReady() ) {
-                return;
-            }
-
-            this.tpController.pause(!this._paused);
+            tpController.pause(!this._paused);
         },
 
-        canPlayType : function() {
+        canPlayType : function( type ) {
             return Boolean  ( type.match(/\/theplatform$/ ) );
         },
 
@@ -319,61 +369,46 @@
             return this._paused;
         },
 
-        duration : function() {                     
-            return this._duration;
+        duration : function() {
+            return this._duration * 0.001;
         },
 
-        seeking : function() {  
+        seeking : function() {
             return this._seeking;
         },
 
-        ended : function() { 
-            if ( ! this.isReady() ) {
-                return false;
-            }                        
+        ended : function() {
             return this._ended;
         },
 
         currentTime: function(val) {
-            if (! this.isReady() ) {
-                return 0;
-            }
-            if ( val != undefined ) {
+            if ( val !== undefined ) {
                 this._ended = false;
-                this.doSeek(val * 1000);
+                this.doSeek(val);
             }
-            return this._currentTime * .001;
+            return this._currentTime;
         },
 
         muted : function( val ) {
-            if ( val != null ) {
+            if ( val !== undefined ) {
                 this._muted = val;
-                if ( ! this.isReady() ) {
-                    return val;
-                }
-                // CHANGE ***********
-                if ( val ) {
-                    //mute 
-                }
-                else {
-                    //unmute 
-                }
+
+                tpController.mute(this._muted);
+
                 this.dispatch("volumechange");
                 return val;
             }
             return this._muted;
         },
 
-        volume : function( val ) {   
-            if ( val != null ) {
-                if (val < 1 ) {
+        volume : function( val ) {
+            if ( val !== undefined ) {
+                this._volume = val;
+
+                if (this._volume <= 1) {
                     val = val * 100;
                 }
-                this._volume = val;
-                if ( ! this.isReady() ) {
-                    return val;
-                }
-                this.tpController.setVolume(val);
+                tpController.setVolume(val);
                 this.dispatch("volumechange");
             }
             return this._volume;
@@ -391,6 +426,6 @@
             return this._readyState;
         }
 
-    }
+    };
 
 })();

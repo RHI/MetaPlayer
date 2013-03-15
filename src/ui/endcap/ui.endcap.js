@@ -21,6 +21,8 @@
         this.config = $.extend({}, defaults, options);
         this.player = player;
 
+        this.countdownEnabled = (this.config.countDownSec > 0);
+
         // used to find our templates
         this.baseUrl = MetaPlayer.script.base("(metaplayer|ui).endcap.js");
 
@@ -52,14 +54,15 @@
             var metadata = this.player.metadata;
             var playlist = this.player.playlist;
 
-            metadata.listen(MetaPlayer.MetaData.DATA, this.onTrackChange, this);
-            playlist.listen("playlistchange", this.onTrackChange, this);
+            metadata.addEventListener(MetaPlayer.MetaData.DATA, function (e) {
+                self.onMetaData(e);
+            });
 
-            $(video).bind('play playing seeked loadstart', function () {
+            $(video).bind('play playing seeked loadstart', function (e) {
                 self.onPlaying();
             });
 
-            $(video).bind('ended', function () {
+            $(video).bind('ended', function (e) {
                 self.onEnded();
             });
 
@@ -88,9 +91,9 @@
                 }
             });
 
-            playlist.advance = false;
+            playlist.autoAdvance = false;
 
-            this.countdown = Ramp.timer(1000, this.config.countDownSec);
+            this.countdown = MetaPlayer.timer(1000, this.config.countDownSec);
             this.countdown.listen('time', this.onCountdownTick, this);
             this.countdown.listen('complete', this.onCountdownDone, this);
 
@@ -114,9 +117,15 @@
         },
 
         onEnded : function () {
+            if( this.player.video.ad )
+                return;
+            this.toggle(true);
+            if( ! this.countdownEnabled ) {
+                this.find('countdown').text('');
+                return;
+            }
             this.countdown.start();
             var count = this.find('countdown').text( this.config.countDownSec );
-            this.toggle(true);
         },
 
         onPlaying : function () {
@@ -136,15 +145,16 @@
             }
 
             if( bool )
-                el.show().animate({ opacity: 1}, this.config.fadeMs);
+                el.show().animate({ opacity: 1}, this.config.fadeMs, function (){
+                    $(this).show();
+                });
             else
                 el.animate({ opacity: 0 }, this.config.fadeMs, function (){
                     $(this).hide();
                 });
         },
 
-        onTrackChange : function (e) {
-
+        onMetaData : function (e) {
             var data = this.player.metadata.getData();
             if( ! data )
                 return;
@@ -159,9 +169,14 @@
 
             this.find('next').hide();
 
-            var nextup = this.player.playlist.nextTrack();
-            if( nextup )
-                this.player.metadata.load( nextup, this.onNextData, this )
+            var pl = this.player.playlist;
+
+            var nextTrack = pl.getItem( pl.getIndex() + 1 );
+
+            if(! nextTrack )
+                return;
+
+            this.player.metadata.load(nextTrack, this.onNextData, this )
         },
 
         onNextData : function (data) {

@@ -4,33 +4,48 @@
 
     var defaults = {
         msQuotes : true,
-        serviceUri : "/device/services/mp2-playlist?e="
+        rampHost : "http://api.ramp.com/v1/mp2/playlist/",
+        retries : 3,
+        retryDelayMSec : 4000
     };
 
     var RampService = function (player, url, options) {
-        this.config = $.extend({}, defaults);
+        this.config = $.extend({}, defaults, options);
         this.dispatcher = MetaPlayer.dispatcher(this);
         this.player = player;
         this._currentUrl = null;
+        this.rampHost = this.config.rampHost;
+        this._retries = 0;
         this.player.listen( MetaPlayer.READY, this.onReady, this);
     };
 
-    MetaPlayer.addPlugin("ramp", function (url, options) {
+    MetaPlayer.addPlugin("ramp", function (apikey, rampId, options) {
         if(! this._ramp )
-            this._ramp =  new RampService(this, url);
+            this._ramp =  new RampService(this, apikey, rampId, options);
 
         var ramp = this._ramp;
 
-        if( url ) {
-            if(! this.ready )
-                ramp._currentUrl = url;
+        // if they pass in a url...
+        if( apikey && apikey.match("/") ){
+            // if passed in a template url
+            if( apikey.match(/[\?\&]e=$/) ){
+                ramp.rampHost = apikey;
+            }
+            // else passed in a playlist url
+            else if(! this.ready )
+                ramp._currentUrl = apikey;
             else
-                ramp.load( url , true);
+                ramp.load( apikey , true);
         }
-
-        if( options )
-            ramp.config = $.extend(ramp.config, options);
-
+        // if they pass in an api token
+        else if( apikey ) {
+            ramp.apiKey = apikey;
+            if( rampId ) {
+                if(! rampId.match(/^ramp:/) )
+                    rampId = "ramp:" + rampId;
+                ramp._currentUrl = rampId
+            }
+        }
         return this;
     });
 
@@ -49,15 +64,19 @@
 
         onMetaDataLoad : function (e) {
             var data = e.data;
+            var uri;
             if(data.ramp && data.ramp.serviceURL ){
-                this.load(data.ramp.serviceURL );
-                // let others know we're on it.
-                e.stopPropagation();
+                uri = data.ramp.serviceURL
+            }
+            else if( e.uri.match(/^ramp:/) ){
+                uri = e.uri;
+            }
+            if( uri ) {
+                this.load(uri);
+                e.stopPropagation(); // let others know we're on it.
                 e.preventDefault();
             }
-            else {
-            // fall through to noop if not recognized
-            }
+            // else fall through to noop if not recognized
         },
 
         onDestroy : function () {
@@ -73,7 +92,25 @@
             var url = uri;
             if( typeof uri == "string" &&  uri.match(/^ramp\:/) ) {
                 var parts = this.parseUrl(uri);
-                url = parts.rampHost + this.config.serviceUri + parts.rampId;
+
+                // ex.   ramp://publishing.ramp.com/:12345
+                if( parts.apiKey && parts.apiKey.match('/') ){
+                    url = parts.apiKey + parts.rampId;
+                }
+                // ex.   ramp:QWER1234ASDF2345:12345
+                // ex.   ramp:12345  w/ ramp("QWER1234ASDF2345")
+                else if( parts.apiKey || this.apiKey ){
+                    parts.apiKey = this.apiKey;
+                    url = this.rampHost + "?apikey="
+                        + encodeURIComponent(parts.apiKey)
+                        + "&e="
+                        + encodeURIComponent(parts.rampId)
+                }
+                // ex.   ramp:12345  w/ ramp("http://publishing.ramp.com/foo/mp2-playlist/e=")
+                else if( this.rampHost ) {
+                    url  = this.rampHost + parts.rampId
+                }
+
             }
 
             var params = {
@@ -85,18 +122,30 @@
                 context: this,
                 data : params,
                 error : function (jqXHR, textStatus, errorThrown) {
-                    var e = this.createEvent();
-                    e.initEvent(textStatus, false, true);
-                    e.message = errorThrown;
-                    this.dispatchEvent(e);
+                    if( this._retries <  this.config.retries ) {
+                        setTimeout( this.bind( function (e) {
+                            this.load(uri, isPlaylist);
+                        }), this.config.retryDelayMSec * this._retries); // increase delay with each retry
+                        this._retries++;
+                        this.player.warn( "ServiceAjaxError", jqXHR.status + " " + textStatus + " "+ uri +" attempt #" + this._retries);
+                        return;
+                    }
+
+                    this.player.error( "ServiceAjaxError",  jqXHR.status + " " + textStatus + " "+ uri +"  attempt #" + this._retries);
+                    this._retries = 0;
                 },
                 success : function (response, textStatus, jqXHR) {
+                    this._retries = 0;
                     var items = this.parse(response, url);
                     if( items.length )
                         this.setItems(items, isPlaylist);
+                    else {
+                        this.player.warn( "ServiceParseError", "Invalid Playlist ["+ uri +"]")
+                    }
                 }
             });
         },
+
 
         setItems : function (items, isPlaylist) {
             var metadata = this.player.metadata;
@@ -106,14 +155,13 @@
             // first item contains full info
             var first = items[0];
             var guid = first.metadata.guid;
-            if( isPlaylist )
-                metadata.setFocusUri(guid);
-            metadata.setData( first.metadata, guid, true );
+
             cues.setCueLists( first.cues, guid  );
+            metadata.setData( first.metadata, guid, true );
 
             // subsequent items contain metadata only, no transcodes, tags, etc.
             // they require another lookup when played, so disable caching by metadata
-            if( playlist && isPlaylist ) {
+            if( playlist  ) {
                 var self = this;
                 // add stub metadata
                 $.each(items.slice(1), function (i, item) {
@@ -121,10 +169,15 @@
                 });
 
                 // queue the uris
-                playlist.empty();
-                playlist.queue( $.map(items, function (item) {
-                    return item.metadata.guid;
-                }));
+                if( isPlaylist ) {
+                    playlist.setPlaylist( $.map(items, function (item) {
+                        return item.metadata.guid;
+                    }));
+                }
+            }
+            else {
+                // only trigger a DATA event if not playing video
+                metadata.load(guid);
             }
         },
 
@@ -151,8 +204,27 @@
             item.metadata.title = video.attr('title');
             item.metadata.description = video.find('metadata meta[name=description]').text();
             item.metadata.thumbnail = video.find('metadata meta[name=thumbnail]').attr('content');
-            item.metadata.guid = video.find('metadata meta[name=rampId]').attr('content');
+            item.metadata.guid = "ramp:" + video.find('metadata meta[name=rampId]').attr('content');
             item.metadata.link = video.find('metadata meta[name=linkURL]').attr('content');
+
+            item.metadata.subTitles = [];
+            video.find('metadata meta[name=subTitle]').each( function (i, node){
+                var track = $(node);
+                item.metadata.subTitles.push({
+                        type : track.attr('content'),
+                        href : track.text()
+                    });
+            });
+            item.metadata.subTitle = item.metadata.subTitles[0];
+
+            item.metadata.cueTracks = [];
+            video.find('metadata meta[name=cueTrack]').each( function (i, node){
+                var track = $(node);
+                    item.metadata.cueTracks.push({
+                        type : track.attr('content'),
+                        href : track.text()
+                    });
+            });
 
             // other metadata
             item.metadata.ramp = {
@@ -190,6 +262,7 @@
 
             // jump tags
             item.metadata.ramp.tags = [];
+            item.cues.tags = [];
             var jumptags = $(node).find("seq[xml\\:id^=jumptags]");
             jumptags.find('ref').each(function (i, jump){
                 var tag = {};
@@ -200,20 +273,39 @@
                 if( tag.timestamps )
                     tag.timestamps = tag.timestamps.split(',');
                 item.metadata.ramp.tags.push(tag);
+
+                $.each(tag.timestamps, function(i, time){
+                    var event = {
+                        term : tag.term,
+                        start: parseFloat(time)
+                    };
+                    item.cues.tags.push(event);
+                });
             });
 
             // event tracks / MetaQ
-            item.cues = {};
             var metaqs = $(node).find("seq[xml\\:id^=metaqs]");
             metaqs.find('ref').each(function (i, metaq){
                 var event = {};
+
+                // handle mp2-style cues, which are collapsed into one cue entry
+                if( $(metaq).find('param[name="origin"]').text() == "metaq" ) {
+                    self.parseMp2Cues(item.cues, metaq);
+                    return;
+                }
+
                 $(metaq).find('param').each( function (i, val) {
                     var param = $(val);
                     var name =  param.attr('name');
                     var text =  self.deSmart( param.text() );
-                    if( name == "code" ) {
-                        var code = $.parseJSON( text );
-                        $.extend(true, event, code);
+                    if( name == "code"  ) {
+                        try {
+                            var code = $.parseJSON( text );
+                            $.extend(true, event, code);
+                        }
+                        catch (e){
+                            event.code = text;
+                        }
                     }
                     else
                         event[ name ] = text;
@@ -229,6 +321,39 @@
             var smilText = $(node).find("smilText");
             item.cues.captions = this.parseCaptions(smilText);
             return item;
+        },
+
+        parseMp2Cues : function  (cues, metaq){
+            var self = this;
+            var mq = $(metaq);
+            var event = {};
+
+            event.term = mq.find('param[name=term]').text();
+
+            var plugin = mq.find('param[name=id]').text();
+            if( plugin == "timeline-q")
+                event.plugin = "timeQ";
+            else if( plugin == "adhoc-js")
+                event.plugin = "script";
+
+
+            $(metaq).find('param').each( function (i, val) {
+                var param = $(val);
+                var name =  param.attr('name');
+                event[ name ] = self.deSmart( param.text() );
+            });
+
+            var timestamps = event.timestamps || '';
+            delete event.timestamps;
+
+            if( ! cues[event.plugin] )
+                cues[event.plugin] = [];
+
+            $.each(timestamps.split(','), function (i, val){
+                var e = $.extend({}, event);
+                e.start = parseFloat(val);
+                cues[event.plugin].push(e);
+            });
         },
 
         parseCaptions : function (xml) {
@@ -342,9 +467,12 @@
                 obj = {};
             if( parts[0] !== "ramp" )
                 obj.url = url;
-            else {
-                obj.rampHost = parts[1];
+            else if( parts.length == 3 ){
+                obj.apiKey = parts[1];
                 obj.rampId = parts[2];
+            }
+            else {
+                obj.rampId = parts[1];
             }
             return obj;
         },
@@ -369,11 +497,16 @@
 
             // none of these seem to work on ipad4
             if( ext == "m3u8" )
-            // return  "application.vnd.apple.mpegurl";
-            // return  "vnd.apple.mpegURL";
                 return  "application/application.vnd.apple.mpegurl";
 
-            return "video/"+ext;
+            return "video/"+ext.toLowerCase();
+        },
+
+        bind : function ( callback ) {
+            var self = this;
+            return function () {
+                callback.apply(self, arguments);
+            }
         }
     };
 

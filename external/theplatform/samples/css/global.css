@@ -1,0 +1,51 @@
+.container {
+	background: url(../../images/tile.jpg);
+	background-repeat: repeat-y;
+}
+
+#header {
+	width: 790px;
+	height: 80px;
+	color: #666;
+	font-size: 14px;
+	margin: 0 0 5px 0;
+}   
+
+#header * {
+	vertical-align: middle;
+}
+
+#header h1 {
+	padding-top: 4px;
+}
+
+#header .pdk-logo {
+	float: left;
+	margin-right: 10px;
+}
+
+#header .tp-logo {
+	float: right;
+}
+
+#header a img {
+	border: 0px;
+}
+
+h1 {
+	font-size: 14px;
+	margin: 2px;
+	padding: 0;
+}
+
+h2 {
+	font-size: 12px;
+	margin: 2px;
+	padding: 0;
+}
+
+h3 {
+	font-size: 11px;
+	margin: 2px;
+	padding: 0;
+}

@@ -1,0 +1,8 @@
+<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/" >
+    <channel>
+        <title>Example Deferred Content URL Resolution</title>
+        <item>
+            <media:content url="http://localhost/mpf/media/elephants_dream/elephant.mp4" />
+        </item>
+    </channel>
+</rss>

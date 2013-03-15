@@ -1,0 +1,66 @@
+@import url("global.css");
+
+html {
+	background: #BEC7D8;
+	font-family: helvetica;
+}
+
+body {
+	margin: 5px;
+}
+
+#info {
+	float: left;
+	width: 308px;
+	height: 344px;	
+	margin: 0 5px 0 0;
+}
+
+#player {
+	float: left;
+	width: 400px;
+	height: 344px;
+	margin: 0 5px 5px 0;
+}
+
+#categorylist {
+	float: left;
+	width: 400px;
+	height: 27px;
+	position: relative;
+	z-index: 5;
+	margin: 0 0 5px 0;
+	overflow: visible !important;
+    overflow: hidden;
+    
+}
+
+#search {
+	float: left;
+	width: 400px;
+	height: 31px;
+	display: inline;
+	position: relative;
+	z-index: 20;
+}
+
+#releaselist {
+	margin: -31px 0 0 0;
+	float: left;
+	width: 400px;
+	height: 202px;
+	position: relative;
+	z-index: 10;
+}
+
+.releaseListItemSelected a {
+
+line-height:14px;
+
+}
+
+.releaseListItem a {
+
+line-height:14px;
+
+}

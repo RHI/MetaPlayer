@@ -1,0 +1,208 @@
+.mpf-controlbar {
+    position: relative;
+    top: 0;
+    left: 0;
+}
+.mpf-controlbar-panel {
+    position: relative;
+    overflow: hidden;
+    top: 0; left: 0;
+    width: 100%;
+    height: 29px;
+    line-height: 29px;
+    border-top: 1px solid #565a5f;
+    font-family: Arial;
+    font-size: 15px;
+    background: #424549;
+    background: -webkit-gradient(linear, left top, left bottom, from(#424549), to(#2e3034)); /* for webkit browsers */
+    background: -moz-linear-gradient(top,  #424549,  #2e3034); /* for firefox 3.6+ */
+}
+
+.mpf-controlbar-panel-right,
+.mpf-controlbar-panel-left {
+    position: absolute;;
+    top: 0;
+    height: 100%;
+    padding-left: 10px;
+}
+
+.mpf-controlbar-panel-left {
+    left: 0;
+}
+.mpf-controlbar-panel-right {
+    right: 0;
+}
+
+.mpf-controlbar-play,
+.mpf-controlbar-pause,
+.mpf-controlbar-back,
+.mpf-controlbar-clock,
+.mpf-controlbar-cc,
+.mpf-controlbar-volume,
+.mpf-controlbar-volumebar,
+.mpf-controlbar-fullscreen
+ {
+    margin-right: 10px;
+    width: 20px;
+    height: 29px;
+    display: inline-block;
+    float: left;
+    cursor: pointer;
+}
+
+.mpf-controlbar-back {
+    background: url("controlbar/back-15sec.png") no-repeat 0 6px;
+    width: 27px;
+}
+.mpf-controlbar-cc {
+    background: url("controlbar/CC-button.png") no-repeat 0 6px;
+    width: 20px;
+}
+.mpf-controlbar-cc-off {
+    background: url("controlbar/CC-disabled-button.png") no-repeat 0 6px;
+    width: 20px;
+}
+.mpf-controlbar-fullscreen {
+    background: url("controlbar/fullscreen-button.png") no-repeat 0 6px;
+    width: 14px;
+}
+.mpf-controlbar-play {
+    width: 16px;
+    background: url("controlbar/play-button.png") no-repeat 0 6px;
+}
+.mpf-controlbar-pause {
+    width: 16px;
+    background: url("controlbar/pause-button.png") no-repeat 0 6px;
+    display: none;
+}
+
+.mpf-controlbar-volume {
+    width: 19px;
+}
+.mpf-controlbar-muted,
+.mpf-controlbar-volume-0 {
+    background: url("controlbar/volume-0-button.png") no-repeat 0 6px;
+}
+.mpf-controlbar-volume-1 {
+    background: url("controlbar/volume-1-button.png") no-repeat 0 6px;
+}
+.mpf-controlbar-volume-2 {
+    background: url("controlbar/volume-2-button.png") no-repeat 0 6px;
+}
+.mpf-controlbar-unmuted,
+.mpf-controlbar-volume-3 {
+    background: url("controlbar/volume-3-button.png") no-repeat 0 6px;
+}
+
+.mpf-controlbar-volumebar {
+    background: url("controlbar/volume-bars-none.png") no-repeat 0 6px;
+    width: 37px;
+    height: 29px;
+}
+.mpf-controlbar-volumebar-fill {
+    width: 64%;
+    height: 29px;
+    background: url("controlbar/volume-bars-full.png") no-repeat 0 6px;
+}
+.mpf-controlbar-clock {
+    font-size: 12px;
+    height: 29px;
+    color: #929292;
+    cursor: default;
+}
+.mpf-controlbar-time,
+.mpf-controlbar-time-spacer,
+.mpf-controlbar-duration {
+    display: inline;
+    vertical-align: middle;
+}
+.mpf-controlbar-time {
+    color: #ffffff;
+}
+
+/* track */
+
+.mpf-controlbar-track {
+    position: relative;
+    top: 0; left: 0;
+    width: 100%;
+    height: 7px;
+    background: #191919;
+    z-index: 1000;
+    cursor: pointer;
+    background-image: url("controlbar/timeline-load.png");
+    background-repeat: repeat-x;
+}
+/*.mp-fullscreen .mpf-controlbar-track  {*/
+    /*height: 14px !important;*/
+    /*background-size: cover;*/
+/*}*/
+/*.mp-fullscreen .mpf-controlbar-track-fill {*/
+    /*background:  url("controlbar/timeline-play.png") repeat-x;*/
+    /*background-size: cover;*/
+/*}*/
+/*.mp-fullscreen .mpf-controlbar-track-knob {*/
+    /*display: none;*/
+/*}*/
+
+
+.mpf-controlbar-track-fill {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    width: 0%;
+    background:  url("controlbar/timeline-play.png") repeat-x;
+    cursor: pointer;
+
+}
+.mpf-controlbar-track-buffer {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    width: 0%;
+    background:  url("controlbar/timeline-load.png") repeat-x;
+    cursor: pointer;
+}
+
+.mpf-controlbar-track-knob {
+    position: absolute;
+    top: -4px;
+    right: -7px;
+    background: url("controlbar/timeline-handle.png") no-repeat;
+    height: 14px;
+    width: 14px;
+    cursor: pointer;
+    opacity: 0;
+    z-index: 10;
+}
+
+.mpf-controlbar-track-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    width: 100%;
+}
+.mpf-controlbar-track-marker,
+.mpf-controlbar-track-result {
+    /*-  Q markers: 2x7 px, #0064cb*/
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 2px;
+    background: #0064cb;
+    cursor: pointer;
+}
+.mpf-controlbar-track-marker-search {
+    background: white;
+}
+
+
+.mpf-controlbar-track-result {
+    background: #ffffff;
+}
+
+
+
+
+

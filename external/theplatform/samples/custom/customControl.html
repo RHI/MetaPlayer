@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:tp="http://player.theplatform.com/" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-language" content="en" />
+	<title>PDK ::  Custom / Custom Control</title>
+
+	<!-- ********************************************************* -->
+	<!-- This is the public URL for the sample video on this page. -->
+	<!-- The player will automatically use this link for its source -->
+	<!-- video without having to explicitly declare it in the component configuration. -->
+	<!-- ********************************************************* -->
+	<link rel="alternate" href="http://link.theplatform.com/s/3JHsmB/_zyip9ah4U6YAm1Gi_kyZlRNxKOmvDbE" type="application/smil" />
+
+	<!-- This is the site stylesheet and doesn't care about the PDK -->
+	<link rel="stylesheet" href="../css/video.css" type="text/css" media="screen" />
+	<!-- temp css -->
+	<style type="text/css">
+	
+		#play-video {
+			float: left;
+			width: 480px;
+		}
+		
+		#event-time {
+			float: left;
+			margin: 5px 0 0 0;
+		}
+		
+	</style>
+	
+	<script type="text/javascript" src="../../pdk/tpPdk.js"></script> 
+</head>
+<body onLoad="setupListener()">
+<div id="play-video">
+	<!--
+	// Use a custom layout that contains our custom control ID, and also add the plug-in
+	// that implements the control. Note this plug-in will attempt to remove the "Link" 
+	// and "Email" buttons if it finds them in the control layout. The plug-in will also 
+	// try to add the control if it isn't specified in the layout.
+	-->
+	<div id="player" class="tpPlayer"
+		tp:fp.bgcolor="0x131313"
+		tp:wmode="opaque"
+		tp:plugin0="type=control|URL=../../pdk/swf/sampleControlPlugIn.swf|scale=false|blink=true"
+        tp:emailServiceURL="http://player.theplatform.com/m/3JHsmB/demo/select/{releasePid}"
+        tp:playerURL="http://player.theplatform.com/m/3JHsmB/demo/select/{releasePid}"
+        tp:embeddedPlayerHTML="&lt;embed src=&quot;http://player.theplatform.com/m/3JHsmB/demo/embed/select/{releasePid}&quot; width=&quot;412&quot; height=&quot;329&quot; type=&quot;application/x-shockwave-flash&quot; allowFullScreen=&quot;true&quot; bgcolor=&quot;#131313&quot; /&gt;"
+        tp:RSSURL="http://feed.theplatform.com/f/3JHsmB/TpW4aioBvs6N?form=rss"
+		tp:layoutUrl="../../data/metaLayout_glass.xml">
+	</div>
+	<div id="event-time">The custom button has not yet been clicked.</div>		
+</div>
+<script type="text/javascript">
+
+function setupListener()
+{
+	if (!$pdk.controller)
+	{
+		// The controller may not be ready at onLoad,
+		// so we'll keep trying until it is.
+		window.setTimeout(setupListener, 50);
+		return;
+	}
+
+	// Next, add event handling methods.
+	$pdk.controller.addEventListener("OnCustomEvent", "onCustomEventHandler");
+}
+
+function onCustomEventHandler(evt)
+{
+	var el = document.getElementById("event-time");
+	var d = new Date();
+
+	el.innerHTML = "Button clicked (" + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() + "). Payload: " + evt.data;
+}
+</script>
+
+<!--
+That's it. We're done. Open the host page in the browser and start watching videos.
+-->
+
+</body>
+</html>

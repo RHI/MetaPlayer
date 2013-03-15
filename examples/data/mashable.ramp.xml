@@ -1,0 +1,50 @@
+
+<smil>
+    <head>
+        <meta name="Broadcaster" content="SouthBySouthWest"/>
+    </head>
+    <body>
+        <seq xml:id="playlist">
+            <par xmlns:json="xalan://org.json.JSONObject" xml:id="item1">
+                <video xml:id="v1" type="flv" title="Facebook's First Real-Money Gambling App Launched in UK " src="http://www.youtube.com/watch?v=OTACabrc_mU&amp;feature=youtube_gdata">
+                    <metadata>
+                        <meta name="rampId" content="61078845"/>
+                        <meta name="duration" content="78.437"/>
+                        <meta name="thumbnail" content="http://cdnapi.ramp.com/thumbnails/cached_media/0007/0007534/0007534985/images/thumb.jpg"/>
+                        <meta name="searchapi" content="http://cdnapi.ramp.com/sxsw/device/services/mp2-search?e=61078845"/>
+                        <meta name="searchterm" content="''"/>
+                        <meta name="linkURL" content="http://cdnapi.ramp.com/sxsw/v/61078845/OTACabrc_mU"/>
+                        <meta name="embedURL" content="http://cdnapi.ramp.com/widgets/sxsw/4240/?episode=61078845"/>
+                        <meta name="siteSearchURL" content="http://cdnapi.ramp.com/sxsw/search?mediatype=Video&amp;q="/>
+                        <meta name="iosURL" content=""/>
+                        <meta name="description">Facebook's First Real-Money Gambling App Launched in UK Bingo Friendzy is an app that allows players to compete in a series of bingo and slots games. It will be the first Facebook game to ditch Facebook credits and use real money instead. It will only be available to players over 18 in the UK. ...</meta>
+                    </metadata>
+                </video>
+                <metadata xml:id="transcodes1">
+                    <meta type="video/youtube" name="youtube" content="OTACabrc_mU"/>
+                </metadata>
+                <smilText>From Mashable II'm Adam Falk FaceBook is going all in <clear begin="6.13s"/>with -- real cash game AKA online gambling . They've -- <clear begin="9.70s"/>friends -- is an app that allows players to that <clear begin="11.68s"/>and compete in a series of bingo and slots games <clear begin="14.29s"/>it will be the first FaceBook game -- -- -- <clear begin="16.52s"/>-- credits and -- real money instead. The game was <clear begin="19.24s"/>created by UK developer Gamesys says it will only be <clear begin="21.72s"/>available players over eighteen and in the UK. Facebook head <clear begin="25.18s"/>of game for Europe explained that this -- the Financial <clear begin="27.61s"/>Times gambling is very popular and well regulated in the <clear begin="31.50s"/>-- For millions of bigger users it's already a social <clear begin="33.96s"/>experience so it makes sense for us to offer that <clear begin="36.34s"/>as well but despite the age requirement fingerprints he looks <clear begin="39.23s"/>like it was designed to attract preteen gamblers. Those money <clear begin="42.38s"/>grabbing creditors are half Angry Birds have for -- Plaza <clear begin="45.72s"/>or partly how to register with an email and physical <clear begin="48.42s"/>address rather than their easily -- FaceBook accounts so sorry <clear begin="52.09s"/>third general -- chance stick wind farmville Oh with all <clear begin="54.93s"/>the restrictions wise as part betting on gambling many in <clear begin="58.16s"/>the tech media are saying it's because of headlines like <clear begin="60.74s"/>this one. FaceBook currencies so called real money games as <clear begin="64.11s"/>a way to boost its revenue. Which are repealed mostly <clear begin="66.51s"/>comes from display and -- -- likely won't be the <clear begin="69.86s"/>last gambling and -- last month or at least real <clear begin="72.70s"/>cast games in thirteen. -- -- </smilText>
+            </par>
+            <par xmlns:json="xalan://org.json.JSONObject" xml:id="item2">
+                <video xml:id="v2" type="flv" title="How to delete Facebook activity using iPhone, Android app - CNET How to " src="http://www.youtube.com/watch?v=D853qwpmyJI&amp;feature=youtube_gdata">
+                    <metadata>
+                        <meta name="rampId" content="59712198"/>
+                        <meta name="duration" content="115.937"/>
+                        <meta name="thumbnail" content="http://cdnapi.ramp.com/thumbnails/cached_media/0007/0007373/0007373383/images/thumb.jpg"/>
+                        <meta name="searchapi" content="http://cdnapi.ramp.com/sxsw/device/services/mp2-search?e=59712198"/>
+                        <meta name="searchterm" content="''"/>
+                        <meta name="linkURL" content="http://cdnapi.ramp.com/sxsw/v/59712198/D853qwpmyJI"/>
+                        <meta name="embedURL" content="http://cdnapi.ramp.com/widgets/sxsw/4240/?episode=59712198"/>
+                        <meta name="siteSearchURL" content="http://cdnapi.ramp.com/sxsw/search?mediatype=Video&amp;q="/>
+                        <meta name="iosURL" content=""/>
+                        <meta name="description">How to delete Facebook activity using iPhone, Android app - CNET How to howto.cnet.com You can now delete unwanted posts from your Facebook Activity Log using the Android or iPhone app. Here's how! From: CNETTV Views: 5034 137 ratings Time: 01:56 More in Science &amp; Technology</meta>
+                    </metadata>
+                </video>
+                <metadata xml:id="transcodes2">
+                    <meta type="video/youtube" name="youtube" content="D853qwpmyJI"/>
+                </metadata>
+            </par>
+
+        </seq>
+    </body>
+</smil>

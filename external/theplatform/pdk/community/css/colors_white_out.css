@@ -1,0 +1,172 @@
+/*
+ * White Out color scheme
+ */
+
+/* Profile ------------------------------------------------------------------ */
+
+.communityManagerProfileWidget {
+	border-color: #E0E0E0;
+	background-color: #F0F0F0;
+}
+.communityManagerProfileWidget .profileTitle {
+	font-family: verdana, sans-serif;
+	color: #666666;
+}
+#profileSignInForm .signingIn {
+	background: url(../images/loading16x16.gif) 0px 0px no-repeat;
+}
+.communityManagerProfileOpen .communityManagerProfile {
+	border-top-color: #E0E0E0;
+	border-left-color: #E0E0E0;
+	background-color: #F0F0F0;
+}
+.communityManagerProfileView {
+	border-color: #E0E0E0;
+	background-color: #F0F0F0;
+}
+.communityManagerAvatar {
+	border-color: #E0E0E0;
+}
+.communityManagerProfileView input,
+.communityManagerProfileView label,
+.communityManagerProfileWidget input,
+.communityManagerProfileWidget label {
+	font-family: verdana, sans-serif;
+	color: #666666;
+}
+.communityManagerProfileView input,
+.communityManagerProfileWidget input {
+	background-color: #F8F8F8;
+  	border-color: #E0E0E0;
+}
+.communityManagerSignInLink,
+.communityManagerCancelSignInLink,
+.communityManagerProfileLink,
+.communityManagerSignOutLink,
+.communityManagerProfileSave,
+.communityManagerProfileCancel {
+	font-family: verdana, sans-serif;
+	color: #666666;
+}
+.communityManagerSignInLink:hover,
+.communityManagerCancelSignInLink:hover,
+.communityManagerProfileLink:hover,
+.communityManagerSignOutLink:hover,
+.communityManagerProfileSave:hover,
+.communityManagerProfileCancel:hover {
+	color: #333333;
+}
+.communityManagerSignInLink:active,
+.communityManagerCancelSignInLink:active,
+.communityManagerProfileLink:active,
+.communityManagerSignOutLink:active,
+.communityManagerProfileSave:active,
+.communityManagerProfileCancel:active {
+	color: #48697C;
+}
+.communityManagerSignInError {
+	font-family: verdana, sans-serif;
+	color: #48697C;
+}
+
+/* Ratings ------------------------------------------------------------------ */
+
+.communityManagerRatingWidget {
+	border-color: #E0E0E0;
+	background-color: #F0F0F0;
+}
+.communityManagerRatingWidget .cmTextSpace {
+	font-family: verdana, sans-serif;
+	color: #666666;
+}
+.communityManagerRatingWidget .cmStarSet .darkStar {
+	background: url(../images/star_dark_pale.png) 0px 0px no-repeat;
+}
+.communityManagerRatingWidget .cmStarSet .star {
+	background: url(../images/star.png) 0px 0px no-repeat;
+}
+.communityManagerRatingWidget .cmStarSet .halfStar {
+	background: url(../images/star_half_pale.png) 0px 0px no-repeat;
+}
+.communityManagerRatingWidget .cmStarSet .brightStar {
+	background: url(../images/star_bright.png) 0px 0px no-repeat;
+}
+
+/* Favorites ---------------------------------------------------------------- */
+
+.communityManagerRatingWidget .removeFromFavorites {
+	background: url(../images/heart_minus.png) 0px 0px no-repeat;
+}
+.communityManagerRatingWidget .addToFavorites {
+	background: url(../images/heart_add.png) 0px 0px no-repeat;
+}
+
+/* Tags --------------------------------------------------------------------- */
+
+.communityManagerTagWidget 
+{
+	font-family: Verdana, Sans-Serif;
+	color: #666666;
+	border-color: #E0E0E0;
+	background-color: #F0F0F0;
+}
+.addTagsField {
+	font-family: verdana, sans-serif;
+	color: #666666;
+	background-color: #F8F8F8;
+  	border-color: #E0E0E0;
+}
+.communityManagerTagWidget .lessTagsLink:hover,
+.communityManagerTagWidget .moreTagsLink:hover,
+.deleteTagLink:hover,
+.addTagsLink:hover,
+.addTagLink:hover,
+.doneTaggingLink:hover {
+	color: #333333;
+}
+
+/* Comments ----------------------------------------------------------------- */
+
+.communityManagerCommentsWidget {
+	font-family: Verdana, Sans-Serif;
+	color: #666666;
+	border-color: #E0E0E0;
+	background-color: #F0F0F0;
+}
+.communityManagerCommentHeader {
+	border-top-color: #D6D6D6;
+}
+.communityManagerCommentUserName,
+.communityManagerCommentsWidget .lessCommentsLink,
+.communityManagerCommentsWidget .moreCommentsLink
+.communityManagerCommentsWidget .commentDeleteLink  {
+	color: #666666;
+}
+.communityManagerCommentHeader a:hover,
+.communityManagerCommentsWidget .lessCommentsLink:hover,
+.communityManagerCommentsWidget .moreCommentsLink:hover,
+.communityManagerCommentsWidget .commentDeleteLink:hover {
+	color: #333333;
+}
+.communityManagerCommentsFormHeader {
+	border-top-color: #D6D6D6;
+}
+.communityManagerCommentsWidget .commentAvatar {
+	border-color: #E0E0E0;
+}
+.communityManagerCommentsFormInput,
+.communityManagerCommentsFormTextArea {
+  	font-family: verdana, sans-serif;
+	border-color: #E0E0E0;
+  	color: #666666;
+	background-color: #F8F8F8;
+}
+.communityManagerCommentsFormButton {
+  	font-family: verdana, sans-serif;
+  	color: #666666;
+  	background-color: #F0F0F0;
+  	border-color: #E0E0E0;
+}
+.communityManagerCommentsFormButton:hover {
+	color: #333333;
+}

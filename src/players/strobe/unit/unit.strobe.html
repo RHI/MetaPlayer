@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:tp="http://player.theplatform.com/" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-language" content="en" />
+    <title>Strobe Video Only</title>
+
+    <!-- Dependency: jQuery -->
+    <script src="../../../../external/jquery/jquery-1.6.2.js" type="text/javascript"></script>
+
+    <!--Dependency: OKJS -->
+    <script src="../../../../external/okjs/ok.js" type="text/javascript"></script>
+
+    <!-- swfobject -->
+    <script type="text/javascript" src="../../../../external/swfobject/swfobject.js"></script>
+
+    <!-- Unit : Player API -->
+    <script src="../../../unit/html5/unit.html5.js" type="text/javascript"></script>
+
+    <!-- Core: Ramp -->
+    <script src="../../../core/metaplayer.js"></script>
+    <script src="../../../core/utils/util.event.js"></script>
+    <script src="../../../core/utils/util.proxy.js"></script>
+    <script src="../../../core/utils/util.script.js"></script>
+    <script src="../../../core/utils/util.timer.js"></script>
+    <script src="../../../core/utils/util.format.js"></script>
+    <script src="../../../core/utils/util.ui.js"></script>
+    <script src="../../../core/playlist/player.playlist.js"></script>
+    <script src="../../../core/layout/core.layout.js"></script>
+    <script src="../../../core/metadata/core.metadata.js"></script>
+    <script src="../../../core/search/core.search.js"></script>
+    <script src="../../../core/cues/core.cues.js"></script>
+
+    <!-- Media : html5 -->
+    <script src="../../../players/html5/player.html5.js"></script>
+
+    <!-- Service Plugin: RAMP -->
+    <script src="../../../services/ramp/service.ramp.js"></script>
+
+    <!-- Media: thePlatform -->
+    <script src="../../../players/strobe/player.strobe.js"></script>
+
+    <style>
+
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="metaplayer">
+        <div class="mp-stage">
+            <div id="strobeMediaPlayback">
+
+            </div>
+        </div>
+    </div>
+
+<script>
+    var harness, video, player, parameters,
+        init = false;
+
+    $( function () {
+
+        var unit = okjs({
+            exceptions: 1,
+            verbose: true
+        });
+
+        harness = PlayerUnit( unit );
+    
+        parameters = {
+            //src: "http://mediapm.edgesuite.net/osmf/content/test/manifest-files/dynamic_Streaming.f4m",
+            autoPlay: false,
+            controlBarAutoHide: false,
+            javascriptCallbackFunction: "onJavaScriptBridgeCreated"
+        };
+
+        // Embed the player SWF:
+        swfobject.embedSWF
+            ( "../../../../external/strobe/StrobeMediaPlayback.swf"
+            , "strobeMediaPlayback"
+            , 320
+            , 240
+            , "10.1.0" 
+            , "../../../../external/strobe/expressInstall.swf"
+            , parameters
+            , { allowFullScreen: "true", wmode: "opaque" }
+            , { name: "strobeMediaPlayback" }
+        );
+
+        window.onJavaScriptBridgeCreated = function( id ) {
+            if (!init) {
+                init = true;
+                unit.test("ramp setup", function() {
+                    //ramp services
+                    video = MetaPlayer.strobemediaplayback( id, "onJavaScriptBridgeCreated" );
+                    video.autoplay = false;
+                    video.preload = "none";
+                    harness.media = video;
+
+                    video.src = 'http://mediapm.edgesuite.net/osmf/content/test/manifest-files/dynamic_Streaming.f4m';
+                });
+                harness.addTests();
+                unit.start();
+            }
+        }
+    });
+</script>
+
+</body>
+</html>

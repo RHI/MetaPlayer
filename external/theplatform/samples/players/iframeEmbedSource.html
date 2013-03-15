@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:tp="http://player.theplatform.com/" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-language" content="en" />
+	<!-- If you'll be embedding a standalone player, set a preferred format
+	     to prevent browsers from attempting to natively play a format they
+		 don't support. -->
+	<meta name="tp:preferredRuntimes" content="HTML5,Flash" /> 
+	<meta name="tp:preferredFormats" content="mpeg4" />
+	
+	<title>PDK :: players / iframe Embed Source</title>
+
+	<!-- This is the site stylesheet and doesn't care about the PDK -->
+	<link rel="stylesheet" href="../css/embed.css" type="text/css" media="screen" />
+	
+	<!-- Include the PDK JavaScript to load the PDK's code. -->
+	<script type="text/javascript" src="../../pdk/tpPdk.js"></script> 	
+
+</head>
+<body>
+	<div id="player"></div>
+	
+	<script type="text/javascript">
+		var player = new Player("player");
+
+		var pid = document.location.href;
+		
+		// Grab the pid from the URL used to retrieve this page. 
+		pid = (pid.indexOf("?") >= 0 ? pid.split("?")[1] : null);
+		pid = (pid && pid.indexOf("&") >= 0 ? pid.split("&")[0] : pid);
+		pid = (pid && pid.indexOf("=") >= 0 ? pid.split("=")[1] : pid);
+		
+		var releaseUrl = "";
+		
+		if (pid && pid.indexOf("/") >= 0)
+			releaseUrl = "http://link.theplatform.com/s/" + pid;
+		else
+			releaseUrl = "http://release.theplatform.com/content.select?pid=" + pid;
+			
+		player.releaseUrl = releaseUrl;
+		
+		player.fp.bgcolor = "0x131313";
+		player.fp.wmode = "opaque";
+		player.logLevel = "warn";
+		player.autoPlay = "false"
+		player.allowFullScreen = "true";
+		player.skinUrl = "../../pdk/swf/skinCinematic.swf";
+		player.plugin0 = "type=adcomponent|URL=../../pdk/swf/SMIL.swf|priority=3";
+		player.emailServiceURL = "http://player.theplatform.com/m/3JHsmB/demo/select/{releasePid}";
+		player.playerURL = "http://player.theplatform.com/m/3JHsmB/demo/select/{releasePid}";
+		// Copy the supplied pid so it can be reused on an embed. 
+		player.embeddedPlayerHTML = "<iframe id=\"embed\" src=\"" + document.location.hostname + "/iframeEmbedSource.html?pid=" + releaseUrl + "\" frameborder=\"0\"></iframe>";
+		player.RSSURL = "http://feed.theplatform.com/f/3JHsmB/TpW4aioBvs6N?form=rss";
+		player.backgroundColor = "0x131313";
+		player.controlBackgroundColor = "0x131313";
+		player.controlColor = "0xBEBEBE";
+		player.controlFrameColor = "0x545759";
+		player.controlHoverColor = "0xBEBEBE";
+		player.controlSelectedColor = "0x00CCFF";
+		player.frameColor = "0x545759";
+		player.pageBackgroundColor = "0x131313";
+		player.playProgressColor = "0x00CCFF";
+		player.scrubberColor = "0xBEBEBE";
+		player.scrubberFrameColor = "0x00CCFF";
+		player.scrubTrackColor = "0xBEBEBE";
+		player.textBackgroundColor = "0x383838";
+		player.textColor = "0xBEBEBE";
+		player.loadProgressColor = "0x5D9070";
+		player.layoutUrl = "../../data/metaLayout.xml";
+		player.bind();
+	</script>
+</body>
+</html>

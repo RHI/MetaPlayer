@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>JWPlayer Playlist Unit  | MPF</title>
+
+    <style>
+        #target {
+            width: 300px;
+            height: 150px;
+            background:  #333;
+            position: fixed;
+            top: 10px; right: 10px;
+        }
+    </style>
+
+    <!--Dependency: JwPlayer -->
+    <script src="../../../../external/jwplayer/jwplayer.js"></script>
+
+    <!--Dependency: jQuery-->
+    <script src="../../../../external/jquery/jquery-1.6.2.js" type="text/javascript"></script>
+
+    <!--Dependency: OKJS -->
+    <script src="../../../../external/okjs/ok.js" type="text/javascript"></script>
+
+    <!-- Unit : Player API -->
+    <script src="../../../unit/playlist/unit.playlist.js" type="text/javascript"></script>
+
+    <!-- Core: Ramp -->
+    <script src="../../../core/metaplayer.js"></script>
+    <script src="../../../core/utils/util.event.js"></script>
+    <script src="../../../core/utils/util.proxy.js"></script>
+    <script src="../../../core/utils/util.script.js"></script>
+    <script src="../../../core/utils/util.timer.js"></script>
+    <script src="../../../core/utils/util.format.js"></script>
+    <script src="../../../core/utils/util.ui.js"></script>
+    <script src="../../../core/playlist/player.playlist.js"></script>
+    <script src="../../../core/layout/core.layout.js"></script>
+    <script src="../../../core/metadata/core.metadata.js"></script>
+    <script src="../../../core/search/core.search.js"></script>
+    <script src="../../../core/cues/core.cues.js"></script>
+    <link href="../../../core/layout/core.layout.css" rel="stylesheet" type="text/css">
+
+    <!-- Service Plugin: RAMP -->
+    <script src="../../../services/ramp/service.ramp.js"></script>
+
+    <!-- Media Plugin: HTML5 -->
+    <script src="../../../players/html5/player.html5.js"></script>
+
+    <!-- Media Plugin: jwplayer -->
+    <script src="../../../players/jwplayer/player.jwplayer.js"></script>
+
+    <script type="text/javascript">
+        var unit, jwp, video, mp;
+
+        $(function () {
+
+            unit = okjs({exceptions: 1});
+
+            var items = [
+                {
+                    guid : "ramp:52975368",
+                    url : "../../../../media/sintel/sintel_trailer-480p.mp4"
+                },
+                {
+                    guid : "ramp:52871241",
+                    url : "../../../..//media/elephants_dream/elephant.mp4"
+                }
+            ];
+
+            unit.test("playlist test", function () {
+
+                jwp = jwplayer('jwtarget').setup({
+                    height: '150',
+                    width:  '300',
+                    autostart   : false,
+                    autobuffer   : false,
+                    'viral.onpause' : false,
+                    'viral.oncomplete' : false,
+                    'viral.allowmenu' : false,
+                    flashplayer: '../../../../external/jwplayer/player.swf',
+                    playlist    : [
+                        {
+                            'guid' : "ramp:52975368",
+                            'file' : "../../../../media/sintel/sintel_trailer-480p.mp4"
+                        },
+                        {
+                            guid : "ramp:52871241",
+                            file : "../../../..//media/elephants_dream/elephant.mp4"
+                        }
+                    ],
+                    image       : "",
+                    volume      : 0
+                });
+
+                mp = MetaPlayer(jwp)
+                        .ramp("f455a86b28160bc0682fec3662e39d3b")
+                        .load();
+
+                unit.event("playlist change", mp.video, "playlistchange");
+                unit.event("track change", mp.video, "trackchange");
+
+                video = mp.video;
+                TestPLaylist(unit, video, items);
+            });
+            unit.start();
+        });
+    </script>
+</head>
+<body>
+
+<h3>Unit Test &raquo;MetaPlayer &raquo; JWPlayer Playlist</h3>
+
+<div id='target'>
+    <div id='jwtarget'></div>
+</div>
+
+</body>
+</html>

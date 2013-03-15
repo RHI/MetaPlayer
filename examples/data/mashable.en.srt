@@ -1,0 +1,99 @@
+1
+00:00:03,289 --> 00:00:06,429
+rational I'm out of it started with a robbery a 
+
+2
+00:00:06,429 --> 00:00:09,979
+PS3 swiped from his nephew and never returned and now 
+
+3
+00:00:09,979 --> 00:00:12,509
+-- just has a kick starter project for an open 
+
+4
+00:00:12,509 --> 00:00:16,079
+source tracking device. With 54 days ago he's about 2000 
+
+5
+00:00:16,079 --> 00:00:18,719
+dollars away from being fully -- it first developed is 
+
+6
+00:00:18,719 --> 00:00:21,299
+a video game console tracker for the PS3 -- we 
+
+7
+00:00:21,299 --> 00:00:24,569
+-- base system has gone from that's. To this. The 
+
+8
+00:00:24,569 --> 00:00:27,469
+smaller board is what churches is seeking funding to produce 
+
+9
+00:00:27,469 --> 00:00:30,609
+on board he placed -- GPS cell phone chip connections 
+
+10
+00:00:30,609 --> 00:00:33,889
+for a lithium polymer battery. And a few other essentials 
+
+11
+00:00:33,889 --> 00:00:36,419
+when combined with an antenna and a battery those things 
+
+12
+00:00:36,419 --> 00:00:39,899
+are tracking taxing machine so -- PS Bristol and you 
+
+13
+00:00:39,899 --> 00:00:42,179
+her press coordinate by sending a text to the board 
+
+14
+00:00:42,179 --> 00:00:44,674
+that would respond with a link to Google map. That 
+
+15
+00:00:44,674 --> 00:00:47,419
+in -- event of course be turned over to authorities 
+
+16
+00:00:47,419 --> 00:00:49,929
+or if you're feeling brave you can also program the 
+
+17
+00:00:49,929 --> 00:00:52,249
+device to tell you how fast and in what direction 
+
+18
+00:00:52,249 --> 00:00:54,729
+it's moving. Sucking out just in case you wanted to 
+
+19
+00:00:54,729 --> 00:00:57,829
+be involved in high speed high tech chase really go 
+
+20
+00:00:57,829 --> 00:01:00,579
+as -- explains this device can be almost anything you 
+
+21
+00:01:00,579 --> 00:01:03,859
+want. This project is all open source so you'll have 
+
+22
+00:01:03,859 --> 00:01:07,389
+full access to all the code. And his dramatics to 
+
+23
+00:01:07,389 --> 00:01:10,269
+you can program the device to do whatever you wanted 
+
+24
+00:01:10,269 --> 00:01:13,039
+to do to back it residents kick start page and 
+
+25
+00:01:13,039 --> 00:01:14,914
+happy -- For national out of. 

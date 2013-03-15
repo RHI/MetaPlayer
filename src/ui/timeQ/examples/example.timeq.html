@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+
+    <title>Script Plugin | MPF</title>
+
+    <style>
+        #target {
+            width: 600px;
+            height: 300px;
+            background:  #333;
+        }
+        #target object {
+            height: 100%;
+            width: 100%;
+        }
+        .mpf-timeq {
+            background: red;
+            color: white;
+            font-size: 24px;
+            border-radius: 4px;
+            text-align: center;
+            padding: 2px 10px;
+            width: 300px;
+        }
+    </style>
+
+    <!--Dependency: jQuery-->
+    <script src="../../../../external/jquery/jquery-1.7.1.js" type="text/javascript"></script>
+
+    <!--Dependency: popcorn-->
+    <script src="../../../../external/popcorn/popcorn.js" type="text/javascript"></script>
+
+
+    <!-- Service Plugin: RAMP -->
+    <script src="../../../ui/timeQ/ui.timeQ.js"></script>
+    <script src="../../../ui/timeQ/ui.timeQ.js"></script>
+
+</head>
+<body>
+
+<h3>MetaPlayer &raquo; Script Plugin</h3>
+
+<!--make sure we are page relative, not offset parent relative-->
+<div style="left: 100px; top: 100px; position: absolute;">
+
+    <video id="target" controls="controls" >
+        <source src="http://media.w3.org/2010/05/sintel/trailer.mp4" type="video/mp4">
+        <source src="http://media.w3.org/2010/05/sintel/trailer.ogv" type="video/ogg">
+    </video>
+
+</div>
+
+
+<script type="text/javascript">
+
+    var popc = Popcorn( "#target"  );
+
+    popc.timeQ({
+        start: 0,
+        code : "foo<br>bar"
+    });
+
+    Popcorn.TimeQ(popc, {
+        left: 40,
+        right: 100
+    });
+
+    popc.timeQ({
+        start: 10,
+        code : "bar"
+    });
+
+    popc.timeQ({
+        start: 17,
+        code : "bat"
+    });
+
+    popc.timeQ({
+        start: 45,
+        code : "pre-end"
+    });
+
+    popc.timeQ({
+        start: 50,
+        code : "end"
+    });
+
+    popc.media.play();
+
+</script>
+
+</body>
+</html>

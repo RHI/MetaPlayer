@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:tp="http://player.theplatform.com/" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-language" content="en" />
+    <title>ramp - thePlatform integration</title>
+
+    <!-- ********************************************************* -->
+    <!-- This is the public URL for the sample video on this page. -->
+    <!-- The player will automatically use this link for its source -->
+    <!-- video without having to explicitly declare it in the component configuration. -->
+    <!-- ********************************************************* -->
+    <!--<link rel="alternate" href="http://link.theplatform.com/s/3JHsmB/_zyip9ah4U6YAm1Gi_kyZlRNxKOmvDbE" type="application/smil+xml" />-->
+
+    <!-- This is the site stylesheet and doesn't care about the PDK -->
+    <link rel="stylesheet" href="../../../../external/theplatform/samples/css/video.css" type="text/css" media="screen" />
+
+    <!-- Dependency: jQuery -->
+    <script src="../../../../external/jquery/jquery-1.6.2.js" type="text/javascript"></script>
+    <script src="../../../../external/jquery/jquery-ui-1.8.17..min.js" type="text/javascript"></script>
+
+    <!--Dependency: Popcorn -->
+    <script src="../../../../external/popcorn/popcorn.js" type="text/javascript"></script>
+
+    <!-- Core: Ramp -->
+    <script src="../../../core/metaplayer.js"></script>
+    <script src="../../../core/utils/util.event.js"></script>
+    <script src="../../../core/utils/util.proxy.js"></script>
+    <script src="../../../core/utils/util.script.js"></script>
+    <script src="../../../core/utils/util.timer.js"></script>
+    <script src="../../../core/utils/util.format.js"></script>
+    <script src="../../../core/utils/util.scrollbar.js"></script>
+    <script src="../../../core/utils/util.ui.js"></script>
+    <script src="../../../core/playlist/player.playlist.js"></script>
+    <script src="../../../core/layout/core.layout.js"></script>
+    <script src="../../../core/metadata/core.metadata.js"></script>
+    <script src="../../../core/search/core.search.js"></script>
+    <script src="../../../core/cues/core.cues.js"></script>
+
+    <link href="../../../core/layout/core.layout.css" rel="stylesheet" type="text/css"> 
+    
+    <!-- Media : html5 -->
+    <script src="../../../players/html5/player.html5.js"></script>
+
+    <!-- Media: thePlatform -->
+    <script src="../../../players/theplatform/player.theplatform.js"></script>
+
+    <!-- Service Plugin: RAMP -->
+    <script src="../../../services/ramp/service.ramp.js"></script>
+    
+    <!-- UI: Searchbox -->
+    <script src="../../../ui/searchbar/ui.searchbar.js"></script>
+    <link href="../../../ui/searchbar/theme/ui.searchbar.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Framefeed -->
+    <script src="../../../ui/framefeed/ui.framefeed.js"></script>
+    <link href="../../../ui/framefeed/ui.framefeed.css" rel="stylesheet"  type="text/css">
+
+
+    <!-- UI: Captions -->
+    <script src="../../../ui/captions/ui.captions.js"></script>
+    <link href="../../../ui/captions/ui.captions.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.captions.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Social -->
+    <script src="../../../ui/social/ui.social.js"></script>
+    <link href="../../../ui/social/ui.social.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Social -->
+    <script src="../../../ui/transcript/ui.transcript.js"></script>
+    <link href="../../../ui/transcript/ui.transcript.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Embed -->
+    <script src="../../../ui/embed/ui.embed.js"></script>
+    <link href="../../../ui/embed/ui.embed.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.embed.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Controlbar -->
+    <script src="../../../ui/controlbar/ui.controlbar.js"></script>
+    <link href="../../../ui/controlbar/theme/ui.controlbar.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Overlay -->
+    <script src="../../../ui/overlay/ui.overlay.js"></script>
+    <link href="../../../ui/overlay/ui.overlay.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.overlay.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: Endcap -->
+    <script src="../../../ui/endcap/ui.endcap.js"></script>
+    <link href="../../../ui/endcap/ui.endcap.css" rel="stylesheet"  type="text/css">
+    <link href="../../../themes/mp2/theme.endcap.css" rel="stylesheet"  type="text/css">
+
+    <!-- thePlatform PDK -->
+    <script type="text/javascript" src="../../../../external/theplatform/pdk/tpPdk.js"></script> 
+
+</head>
+
+<body>
+
+<!-- Sample Control Buttons -->
+video.src = <button onclick="video.src = ''"></button>
+<button onclick="video.src = '';"></button>
+
+<br><br>
+
+<button onClick="video.load()">video.load()</button>
+<button onclick="video.play()">video.play()</button>
+<button onclick="video.pause()">video.pause()</button>
+<button onclick="video.currentTime += 2;">video.currentTime += 2</button>
+
+<br><br>
+
+<style> 
+
+.metaplayer { width: 480px; height: 360px; }
+
+#metaplayer-search { width: 480px; }
+
+#metaplayer-transcript { width: 480px; height: 200px; font-size: 11px; border: 1px solid #d0d0d0;}
+
+</style>
+
+
+<div class="metaplayer">
+    <div class="mp-stage">
+        <div id="player" class="tpPlayer"
+                tp:fp.bgcolor="0x131313"
+                tp:wmode="opaque"
+                tp:logLevel="warn"
+                tp:allowFullScreen="true"
+                tp:skinUrl="../../../../external/theplatform/pdk/swf/skinCinematic.swf"
+                tp:plugin1="type=adcomponent|URL=../../../../external/theplatform/pdk/swf/SMIL.swf|priority=3"
+                tp:plugin2="type=Format|URL=../../../../external/theplatform/pdk/swf/adobeHttpDynamicStreaming.swf|priority=4|hosts=stgzeri01.qa.testlab.com"
+                tp:backgroundColor="0x131313"
+                tp:controlBackgroundColor="0x131313"
+                tp:controlColor="0xBEBEBE"
+                tp:controlFrameColor="0x545759"
+                tp:controlHoverColor="0xBEBEBE"
+                tp:controlSelectedColor="0x00CCFF"
+                tp:frameColor="0x545759"
+                tp:pageBackgroundColor="0x131313"
+                tp:playProgressColor="0x00CCFF"
+                tp:scrubberColor="0xBEBEBE"
+                tp:scrubberFrameColor="0x00CCFF"
+                tp:scrubTrackColor="0xBEBEBE"
+                tp:textBackgroundColor="0x383838"
+                tp:textColor="0xBEBEBE"
+                tp:loadProgressColor="0x5D9070"
+                tp:layoutUrl="../../../../external/theplatform/data/metaLayout.xml">
+        </div>   
+    </div>
+</div>
+
+<div id="metaplayer-search">
+</div>
+
+<div id="metaplayer-transcript">
+</div>
+
+
+<script>
+    var video, player, tpPlayer;
+
+    var config = { 
+        autoplay: false,
+        preload: true
+    };
+
+    tpPlayer = new Player("player");
+    tpPlayer.bind('player');
+
+    tpController.addEventListener("OnPlayerLoaded", function(e) { 
+
+        video = MetaPlayer.theplatform( "player" );
+        player = MetaPlayer( video, { layout: { adoptVideo: false } }  )        
+        //.overlay()
+        //.endcap()
+        .transcript("#metaplayer-transcript")
+        //.captions()
+        .controlbar()
+        .searchbar("#metaplayer-search")
+        .ramp("http://publishing.ramp.com/mpx/theme/6883/mp2-playlist?e=54741794")
+        .load(); 
+
+        video.src = 'http://link.theplatform.com/s/qhDAEC/_LblyYy7CMMu';
+
+    });
+    
+
+
+</script>
+
+</body>
+</html>

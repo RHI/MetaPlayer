@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:tp="http://player.theplatform.com/" xml:lang="en" lang="en">
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-language" content="en" />
+
+	<title>PDK :: Sample Video Proxy PlugIn</title>
+
+	<!-- ************************************************* -->
+	<!-- This is the feed URL for the videos on this page. -->
+	<!-- The PDK will automatically use this feed in the release list -->
+	<!-- without having to explicitly define it in the component configuration.-->
+	<!-- ************************************************* -->
+	<link rel="alternate" href="http://feed.theplatform.com/f/3JHsmB/II6hqWa5SKM_?form=rss" type="application/rss+xml" />
+	
+	<!-- the stylesheet for this sample page, contains size and layout styles-->
+	<link rel="stylesheet" href="../css/tablet.css" type="text/css" media="screen" />
+
+	<script type="text/javascript" src="../../pdk/tpPdk.js"></script> 
+
+	<!-- PDK Glass skin css -->
+	<link rel="stylesheet" href="../../pdk/skins/glass/main.css" type="text/css" media="screen" />
+
+</head>
+
+<body>
+	<div id="player" class="tpPlayer"
+		tp:plugin1="type=ads|url=../../pdk/js/plugins/tpSampleVideoProxyPlugIn.js|priority=1"
+
+		tp:autoplay = "false"
+		tp:backgroundColor = "0x131313"
+		tp:controlBackgroundColor = "0x131313"
+		tp:controlColor = "0xF2F2F2"
+		tp:controlFrameColor = "0xE0E0E0"
+		tp:controlHoverColor = "0xFFFFFF"
+		tp:controlSelectedColor = "0x00CCFF"
+		tp:frameColor = "0xE0E0E0"
+		tp:loadProgressColor = "0x7C7C7C"
+		tp:pageBackgroundColor = "0x131313"
+		tp:playProgressColor = "0xE0E0E0"
+		tp:scrubTrackColor = "0x131313"
+		tp:scrubberColor = "0xF2F2F2"
+		tp:scrubberFrameColor = "0xF2F2F2"
+		tp:textBackgroundColor = "0x383838"
+		tp:textColor = "0xF2F2F2">
+	</div>     
+
+	<div id="info" class="tpClipInfo"
+		tp:backgroundColor = "0xFFFFFF"
+		tp:bannerAlignment = "top"
+		tp:bannerRegions = ""
+		tp:descriptionColor = "0xF2F2F2"
+		tp:frameColor = "0xFFFFFF"
+		tp:titleColor = "0xF2F2F2">
+	</div>
+		
+	<div id="browse-video">
+
+		<div id="navigation" class="tpNavigation"
+			tp:backgroundColor = "0x131313"
+			tp:frameColor = "0x545759"				
+			tp:controlBackgroundColor = "0xFF0000"
+			tp:controlColor= "0xF2F2F2"
+			tp:controlFrameColor= "0xFF0000"
+			tp:controlFrameHoverColor = "0xFF0000"
+			tp:controlFrameSelectedColor = "0xFF0000"
+			tp:controlHoverColor = "0xFFFFFF"
+			tp:controlSelectedColor = "0x00CCFF"
+			tp:infoColor = "0xFFFFFF">
+		</div>
+
+		<div id="releaselist" class="tpReleaseList"
+			tp:playAll = "false"
+			tp:autoPlay = "false"
+			tp:allowScrolling = "false"
+			tp:animation = "slideHorizontal"
+			tp:backgroundColor = "0x131313"
+			tp:columns = "2"
+			tp:frameColor = "0x383838"
+			tp:itemBackgroundColor = "0x383838"
+			tp:itemFrameColor = "0x383838"
+			tp:itemShineSelectedColor = "0x383838"
+			tp:itemsPerPage = "4"
+			tp:textBackgroundColor = "0x383838"
+			tp:textColor = "0xDFDFDF"
+			tp:textFrameColor = "0x383838"
+			tp:textHighlightHoverColor = "0x00CCFF"
+			tp:textHighlightSelectedColor = "0xFFFFFF"
+			tp:textHoverColor = "0xDFDFDF"
+			tp:textSelectedColor = "0xDFDFDF"
+			tp:thumbnailBackgroundColor = "0x242424"
+			tp:thumbnailFrameColor = "0x383838"
+			tp:thumbnailHeight = "75"
+			tp:thumbnailHighlightHoverColor = "0x00CCFF"
+			tp:thumbnailHighlightSelectedColor = "0xFFFFFF"
+			tp:thumbnailWidth = "100"
+			tp:showAirdate = "false"
+			tp:showAuthor = "false"
+			tp:showBitrate = "false"
+			tp:showDescription = "true"
+			tp:showFormat = "false"
+			tp:showLength = "true"
+			tp:showThumbnail = "true"
+			tp:showTitle = "true">
+		</div>
+
+	</div>  
+	
+	<div style="clear: both"></div>
+
+</body>
+
+</html>

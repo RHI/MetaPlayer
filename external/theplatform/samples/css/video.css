@@ -1,0 +1,16 @@
+@import url("global.css");
+
+html {
+	background: #FFF;
+	font-family: helvetica;
+}
+
+body {
+	margin: 5px;
+}
+
+#player {
+	float: left;
+	width: 480px;
+	height: 360px;
+}

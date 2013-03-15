@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+
+    <title>RAMP Plugin | MPF</title>
+
+    <style>
+        #video {
+            width: 600px;
+            height: 300px;
+            background:  #333;
+        }
+    </style>
+
+    <!--Dependency: jQuery-->
+    <script src="../../../../external/jquery/jquery-1.7.1.js" type="text/javascript"></script>
+
+    <!-- json2html-->
+    <script src="../../../../external/json2html/json2html.js" type="text/javascript"></script>
+    <link href="../../../../external/json2html/json2html.css" rel="stylesheet" type="text/css">
+
+    <!-- Core: Ramp -->
+    <script src="../../../core/metaplayer.js"></script>
+    <script src="../../../core/utils/util.event.js"></script>
+    <script src="../../../core/utils/util.proxy.js"></script>
+    <script src="../../../core/utils/util.script.js"></script>
+    <script src="../../../core/utils/util.timer.js"></script>
+    <script src="../../../core/utils/util.format.js"></script>
+    <script src="../../../core/utils/util.ui.js"></script>
+    <script src="../../../core/playlist/player.playlist.js"></script>
+    <script src="../../../core/layout/core.layout.js"></script>
+    <script src="../../../core/metadata/core.metadata.js"></script>
+    <script src="../../../core/search/core.search.js"></script>
+    <script src="../../../core/cues/core.cues.js"></script>
+
+    <!-- Media Plugin: HTML5 -->
+    <script src="../../../players/html5/player.html5.js"></script>
+
+    <!-- Service Plugin: RAMP -->
+    <script src="../../../services/ramp/service.ramp.js"></script>
+
+</head>
+<body>
+
+<h3>MetaPlayer &raquo; RAMP</h3>
+
+<script type="text/javascript">
+    MetaPlayer.DEBUG="event";
+
+    var mpf =  MetaPlayer()
+            .ramp("data/smrk.sample-inline.xml")
+            .load();
+
+    mpf.cues.listen( "cues", function (e) {
+        var json = JSON.stringify( mpf.cues.getCueLists(), null, "   ");
+        $("#dump").text( json )
+    });
+
+</script>
+
+
+<div id="dump" style="white-space: pre; font-size: 10px; font-family: monospace;">
+</div>
+
+
+</body>
+</html>

@@ -1,0 +1,297 @@
+/*
+ * This stylesheet controls positioning and font sizes.
+ */
+
+/* Profile ------------------------------------------------------------------ */
+
+.communityManagerProfileWidget {
+	z-index: 1;
+	border-style: solid;
+	border-width: 1px;
+}
+.communityManagerProfileWidget .profileTitle {
+	float: left;
+	font-size: 11pt;
+	font-weight: bold;
+	margin-top: 3px;
+	margin-left: 3px;
+}
+.communityManagerProfileOpen .communityManagerProfile {
+	border-top-style: solid;
+	border-top-width: 1px;
+	border-left-style: solid;
+	border-left-width: 1px;
+	position: relative;
+	top: -1px;
+}
+.communityManagerMyAvatar {
+	margin-bottom: 8px !important;
+}
+.communityManagerProfileView {
+	border-style: solid;
+	border-width: 1px;
+	position: absolute;
+	width: 270px;
+	padding: 10px 10px;
+	right: -1px;
+	z-index: 2;
+}
+.communityManagerProfileCancel {
+	margin-left: 7px;
+}
+.communityManagerAvatar {
+	width: 48px;
+	height: 48px;
+	border-style: solid;
+	border-width: 1px;
+	float: left;
+}
+.communityManagerProfileView form {
+	float: right;
+}
+.communityManagerProfileView input,
+.communityManagerProfileView label {
+	display: block;
+	font-size: 8pt
+}
+.communityManagerProfileView input {
+	margin-bottom: 5px;
+	width: 208px;
+  	border-style: solid;
+  	border-width: 1px;
+}
+.communityManagerProfileView label {
+	margin-bottom: 3px;
+}
+.communityManagerProfileWidget .communityManagerProfile {
+	float: right;
+	display: inline;
+	padding: 0px 5px 0px 0px;
+}
+.communityManagerProfileWidget label {
+	font-size: 8pt;
+	margin-right: 5px;
+}
+#profileSignInForm .signInStatus  {
+	display: none !important;
+}
+#profileSignInForm .signingIn {
+	display: inline !important;
+	float: left;
+	height: 16px;
+	width: 20px;	
+}
+.communityManagerSignInField {
+	font-size: 8pt;
+	margin-right: 5px;
+  	border-style: solid;
+  	border-width: 1px;
+  	width: 100px;
+}
+.communityManagerSignInLink,
+.communityManagerCancelSignInLink,
+.communityManagerProfileLink,
+.communityManagerSignOutLink,
+.communityManagerProfileSave,
+.communityManagerProfileCancel {
+	font-size: 8pt;
+	text-decoration: underline;
+	cursor: pointer;
+}
+.communityManagerSignInLink {
+	margin-right: 5px;
+}
+.communityManagerProfileLink {
+	margin-right: 7px;
+}
+.communityManagerSignOutLink {
+	font-weight: normal !important;
+}
+.communityManagerSignInError {
+	font-size: 8pt;	
+}
+#profileSignInForm  {
+	margin: 0px;
+	padding: 0px;
+}
+#profileForm  {
+	margin: 0px;
+	padding: 0px;
+}
+
+/* Ratings ------------------------------------------------------------------ */
+
+.communityManagerRatingWidget {
+	height: 20px;
+	border-style: solid;
+	border-width: 1px;
+}
+.communityManagerRatingWidget .cmStarSet {
+	margin: 2px;
+	padding: 0px;	
+}
+.communityManagerRatingWidget .cmStarSet span {
+	float: left;
+	height: 16px;
+	width: 16px;
+	text-indent: -1000px;	
+}
+.communityManagerRatingWidget .cmStarSet {
+	cursor: pointer;
+}	
+.communityManagerRatingWidget .cmTextSpace {
+	font-size: 8pt;
+	padding: 1px 0px 0px 85px;
+}
+
+/* Favorites ---------------------------------------------------------------- */
+
+#communityManagerFavoriteIcon {
+	float: right;
+	margin: 2px;
+	height: 16px;
+	width: 16px;
+	position: relative;
+	top: -16px;
+	cursor: pointer;
+}
+
+/* Comments ----------------------------------------------------------------- */
+
+.communityManagerCommentsWidget {
+	font-size: 8pt;
+	border-style: solid;
+	border-width: 1px;	
+}
+.communityManagerCommentsWidgetHeader {
+	font-size: 8pt;
+	font-style: italic;
+	padding: 4px;
+}
+.communityManagerCommentsWidgetHeader .hasComments {
+	font-weight: bold;
+}	
+.communityManagerCommentsPage {
+	padding: 0px;
+	margin-top: 0px;
+	margin-left: 0px;
+}
+.commentsExpanded .communityManagerCommentsPage .additionalComment {
+	display: block;
+}
+.communityManagerCommentsPage .additionalComment {
+	display: none;
+}
+.communityManagerComment {
+	padding: 4px;
+	min-height: 58px;
+	height: auto !important;
+	height: 58px;
+}
+.communityManagerCommentHeader {
+	border-top-style: solid;
+	border-top-width: 1px;
+	padding-top: 8px;
+}
+.communityManagerCommentsWidget .commentAvatar {
+	float: left;
+	height: 48px;
+	width: 48px;
+	border-style: solid;
+	border-width: 1px;
+	margin: 0px 5px 0px 0px;
+}
+.communityManagerCommentText {
+	padding-top: 8px;
+    overflow: hidden;
+}
+.communityManagerCommentUserName {
+	font-weight: bold;
+}
+.communityManagerCommentsPaging {
+	text-align: right;
+	padding: 4px;
+}
+.communityManagerCommentsWidget .commentCommands {
+	float: right;
+}
+.communityManagerCommentsWidget .lessCommentsLink,
+.communityManagerCommentsWidget .moreCommentsLink,
+.communityManagerCommentsWidget .commentDeleteLink {
+	cursor: pointer;
+	text-decoration: underline;
+}
+.communityManagerCommentsWidget .moreCommentsLink {
+	display: inline !important;
+}
+.communityManagerCommentsWidget .lessCommentsLink {
+	display: none !important;
+}
+.noAdditionalComments .communityManagerCommentsPaging {
+	display: none !important;
+}
+.commentsExpanded .moreCommentsLink {
+	display: none !important;
+}
+.commentsExpanded .lessCommentsLink {
+	display: inline !important;
+}
+.moreCommentsLink {
+	display: none !important;
+}
+.lessCommentsLink {
+	display: none !important;
+}
+.communityManagerCommentsForm {
+	padding: 4px;	
+}
+.communityManagerCommentsForm form {
+	margin: 0px;
+}
+.communityManagerCommentsFormHeader {
+	border-top-style: solid;
+	border-top-width: 1px;
+	padding-top: 4px;
+	font-size: 8pt;
+	font-style: italic;
+	font-weight: bold;
+}
+.communityManagerCommentsFormLabel {
+	padding-top: 8px;
+	padding-bottom: 8px;
+}
+.communityManagerCommentsFormInput,
+.communityManagerCommentsFormTextArea {
+	border-style: solid;
+	border-width: 1px;
+  	font-size: 8pt;
+	width: 99%;
+}
+.communityManagerCommentsFormTextArea {
+	height: 100px;
+	overflow: auto;
+}
+.communityManagerCommentsFormButton {
+  	font-size: 8pt;
+  	font-weight: bold;
+  	font-style: italic;
+	border-style: solid;
+	border-width: 1px;
+  	width: 110px;
+}
+
+/* helpers ------------------------------------------------------------------ */
+
+.clearfix: after {
+	content: ".";
+	display: block;
+	clear: both;
+	visibility: hidden;
+	height: 0;
+}
+.clearfix {
+	display: inline-block;
+}
+* html .clearfix {
+	height: 1%;
+}

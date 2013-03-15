@@ -1,0 +1,680 @@
+#relatedItemsDiv {
+position: relative;
+width: 100%;
+height: 20%;
+text-align: left;
+bottom: 0;
+overflow: hidden;
+}
+
+.cardOvelay {
+text-align: center;
+float: left;
+}
+
+.releaseListItem .releaseListThumbImage {
+margin: 0px;
+padding: 0px;
+border: 0px;
+float: left;
+}
+
+.releaseListItem .releaseListThumbDiv {
+	margin-right: 5px;
+	border-right: 1px solid #383838;	
+}
+
+
+
+.releaseListItemSelected a {
+	text-decoration: none;
+	color: white;
+	height:100%;
+	width:100%;
+/*	height: 108px;
+	width: 370px;*/
+	display: block;
+	border: 1px solid #FFFFFF;
+	line-height:13px;
+	overflow:hidden;
+}
+
+.releaseListItemSelected .releaseListThumbImage{
+	margin: 0px;
+	padding: 0px;
+	border: 0px;
+	float: left;
+/*	width: 144px;
+	height: 108px;*/
+
+}
+
+.releaseListItemSelected .releaseListThumbDiv {
+	margin-right: 5px;
+	border-right: 1px solid #FFFFFF;	
+}
+
+.releaseListLength {
+	font-size:12px;
+
+}
+
+.releaseListDescription {
+	font-size:12px;
+	white-space: pre-wrap; /* css-3 */
+    white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+    white-space: -pre-wrap; /* Opera 4-6 */
+    white-space: -o-pre-wrap; /* Opera 7 */
+	word-wrap: break-all;
+	margin-top:5px;
+}
+
+.releaseListItem a {
+text-decoration: none;
+color: white;
+height:100%;
+width:100%;
+/*height: 108px;
+width: 370px;*/
+display: block;
+border: 1px solid #383838;
+line-height:13px;
+overflow:hidden;
+
+}
+
+.releaseListItem a:hover {
+	border: 1px solid #00CCFF;
+}
+
+.releaseListItem a:hover .releaseListThumbDiv{
+	border-right: 1px solid #00CCFF;
+}
+
+.releaseListThumbDiv {
+	/*this doesn't seem to work for IE*/
+	background-color:#242424;
+	display:table-cell;
+/*	height:100%;*/
+	vertical-align:middle;
+}
+
+.releaseListItemHolder {
+	float:left;
+}
+
+
+.releaseListTitle {
+
+}
+
+.releaseListTextHolder {
+	position:relative;
+	height:90%;
+/*	width:;*/
+	padding: 0 0 0 5px;
+
+	margin-top: 3px;
+	margin-bottom:3px;
+	margin-left:3px;
+	margin-right:3px;
+	overflow:hidden;
+}
+
+.releaseListText {
+/*	margin: 5px;*/
+/*	white-space: nowrap;*/
+	white-space: pre-wrap; /* css-3 */
+    white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+    white-space: -pre-wrap; /* Opera 4-6 */
+    white-space: -o-pre-wrap; /* Opera 7 */
+	word-wrap: break-all;
+
+	margin-top: 3px;
+
+	position:relative;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	-o-text-overflow: ellipsis;	/* required for Opera */
+	-ms-text-overflow: ellipsis;	/* required for IE8, allegedly */
+/*	-moz-binding: url('ellipsis.xml#ellipsis'); */
+	padding: 0px 0px 5px 0px;
+
+/*	margin-bottom:3px;*/
+	
+	
+}
+
+
+
+/* This is because safari/quicktime on windows sticks in next/back buttons */
+
+audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-seek-back-button {
+-webkit-appearance: media-seek-back-button;
+position: absolute;
+top: 0;
+right: 16px;
+width: 17px;
+height: 16px;
+display: none;
+}
+
+
+
+
+
+audio::-webkit-media-controls-seek-forward-button, video::-webkit-media-controls-seek-forward-button {
+-webkit-appearance: media-seek-forward-button;
+position: absolute;
+top: 0;
+right: 0;
+width: 17px;
+height: 16px;
+display: none;
+}
+
+
+
+
+
+
+
+
+
+.relatedItems {
+width: 100%;
+height: 20%;
+overflow: hidden;
+margin: 0 auto;
+text-align: center;
+}
+
+
+
+.relatedItemsContainer {
+margin: 0 auto;
+text-align: center;
+}
+
+
+
+.relatedItemsInnerDiv {
+overflow: hidden;
+margin: 0 auto;
+text-align: center;
+float: left;
+}
+
+
+
+.relatedItemsList {
+width: 100%;
+overflow: hidden;
+list-style-type: none;
+
+
+
+
+
+    /*display:inline;*/
+
+    
+
+   /*float:left;*/
+
+    text-align:center;
+margin: 2px auto;
+padding: 0 4px 0 0;
+
+
+
+    /*float:left;*/
+}
+
+
+
+
+
+
+
+.relatedItemsList li {
+display: inline-block;
+
+    /*display:inline-block;*/
+
+    /*margin:0 0 0 0;*/
+
+    padding:2px;
+text-align: center;
+border: none;
+}
+
+
+
+.relatedItemWrap {
+display: inline-block;
+text-align: center;
+border: 1px solid transparent;
+position: relative;
+}
+
+
+
+.relatedItemsHoverLabel {
+position: relative;
+}
+
+
+
+.relatedItemThumb {
+border: none;
+}
+
+
+
+.relatedItemThumbHover {
+border: 2px;
+}
+
+
+
+
+
+.relatedItemsHeader {
+position: relative;
+
+    margin-top=4px;
+}
+
+
+
+
+
+.relatedItemsButtonContainer {
+float: left;
+position: absolute;
+
+    /*height:100%;*/
+
+    top:13px;
+}
+
+
+
+.relatedItemsRightHeaderSpan {
+float: right;
+}
+
+
+
+.relatedItem {
+bottom: 0;
+display: inline-block;
+}
+
+
+
+.relatedItemPreviousButton {
+display: inline;
+
+    /*position:relative;*/
+
+    padding:2px;
+text-align: center;
+height: auto;
+width: auto;
+margin: 0 0 0 0;
+border: none;
+}
+
+
+
+img {
+border-style: none;
+}
+
+
+
+.relatedItemNextButton {
+display: inline;
+
+    /*position:relative;*/
+       height:auto;
+width: auto;
+border: none;
+margin: 0 0 0 0;
+}
+
+
+.tpHeader, .tpPlayer, .tpClipInfo, .tpCategoryList, .tpSearch, .tpNavigation, .tpReleaseList, .tpReady {
+	position: relative;
+	font-family: helvetica;
+}
+
+.tpHeader *, .tpPlayer *, .tpClipInfo *, .tpCategoryList *, .tpSearch *, .tpNavigation *, .tpReleaseList * {
+/*	display: none;*/
+}
+
+.tpHeader a, .tpPlayer a, .tpClipInfo a, .tpCategoryList a, .tpSearch a, .tpNavigation a, .tpReleaseList a {
+	text-decoration: none;
+	color: #ddd;
+}
+
+.tpHeader p, .tpPlayer p, .tpClipInfo p, .tpCategoryList p, .tpSearch p, .tpNavigation p, .tpReleaseList p {
+	margin: 5px 0px 5px 0px;
+}
+
+.tpHeader input, .tpPlayer input, .tpClipInfo input, .tpCategoryList input, .tpSearch input, .tpNavigation input, .tpReleaseList input {
+	margin: 0px;
+	height: 15px;
+
+}
+
+.tpHeader {
+	line-height: 100%;
+	text-align: center;
+	font-size: 48px;
+	text-indent: -5000px;
+	overflow: hidden;
+}
+
+.tpClipInfo {
+	overflow: hidden;
+	position: relative;
+}
+
+.tpClipInfo > * {
+	margin: 5px;
+	position: relative;
+}
+
+.tpClipInfo > object {
+	margin: 0;
+}
+
+.tpClipInfo .clipInfoTitle {
+	margin-left: 1px;
+	margin-right: 1px;
+	margin-top: 1px;
+	margin-bottom: 5px;
+	font-family: helvetica;
+	font-weight: 800;
+	font-size: 15px;
+	text-align: left;
+}
+
+.tpClipInfo .clipInfoCopyright{
+	margin-left: 1px;
+	margin-right: 1px;
+	margin-top: 1px;
+	margin-bottom: 1px;
+	font-size:11px;
+	position:absolute;
+	bottom: 0px;
+}
+
+.tpClipInfo .clipInfoDescription {
+	margin-left: 1px;
+	margin-right: 1px;
+	margin-top:0px;
+	margin-bottom:1px;
+	font-family: helvetica;
+	font-size: 13px;
+}
+
+
+.tpClipInfo .tpTitle {
+	margin: 0;
+	padding: 0;
+	font-size: 14px;
+}
+
+.tpClipInfo .tpMetadata {
+}
+
+.tpClipInfo .clipInfo {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	width: auto;
+	height: auto;
+}
+
+.tpClipInfo .clipInfoCopyright {
+	position: absolute;
+	bottom: 4px;
+}
+
+.tpDescription {
+	position: relative;
+	z-index: 99;
+}
+
+.tpClipInfo .tpCopyright {
+	position: absolute;
+	left: 0px;
+	bottom: 0px;
+	margin: 5px;
+	margin-bottom: 0px;
+	padding-bottom: 5px;
+	padding-top: 5px;
+	width: 100%;
+	font-size: 11px;
+	z-index: 100;
+}
+
+.tpNavigation {
+	text-align: center;
+	display: box;
+}
+
+.tpNavigation > * { 
+	position: relative;
+}
+
+.tpNavigation .tpPreviousRange {
+
+}
+
+.tpNavigation .tpNextRange {
+
+}
+
+.tpNavigation .tpRangeInfo {
+
+}
+
+.tpNavigation .tpPageInfo {
+
+}
+
+.tpNavigation .tpPageLinks {
+
+}
+
+.tpNavigation .tpPageLinks .tpPageLink {
+
+}
+
+.tpCategoryListExpanded {
+        z-index: 10000 !important;
+}
+
+.tpCategoryList ul {
+	list-style: none;
+	margin: 0;
+	text-indent: 0;
+	padding: 3px 0px 3px 0px;
+}
+
+.tpCategoryList ul li {
+	margin-left: 0;
+	padding: 0;
+}
+
+.tpCategoryList ul li a {
+	display: block;
+	padding: 2px 5px 2px 5px;
+	border-bottom: 1px solid #545759;
+	font-size: 12px;
+}
+
+.tpReleaseList {
+    position: relative;
+	overflow: hidden;
+}
+
+.tpRelease, .tpReleaseSelected {
+	float: left;
+	overflow: hidden;
+	position: relative;
+}
+
+.tpRelease .tpThumbnail {
+	float: left;
+	margin: 5px;
+	top: 0;
+	left: 0;
+	bottom: 0;
+}
+
+.tpRelease .tpMetadata {
+	float: right;
+	margin: 5px;
+	margin-left: auto;
+	top: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.tpReleaseList .releaseListPlay {
+	position:absolute;
+	right:10px;
+	bottom:4px;	
+	height:25px;
+	width:25px;
+}
+
+.tpReleaseList .releaseListThumb {
+	float:left;
+	position:relative;
+	height:100%;
+	overflow:hidden;
+}
+
+
+.tpReleaseList .releaseListItem {
+	float: left;
+	margin: 0px;
+	margin-top: 0px;
+	font-size: 13px;
+	font-family: "Myriad Pro", arial;
+	overflow: hidden;
+	margin: 5px;
+}
+
+.tpReleaseList .releaseListItemSelected {
+	float: left;
+	margin: 0px;
+	margin-top: 0px;
+	font-size: 13px;
+	font-family: "Myriad Pro", arial;
+	overflow: hidden;
+	margin: 5px;
+}
+
+
+.tpReleaseList .releaseListItem {
+	float: left;
+	margin: 0px;
+	margin-top: 0px;
+	font-size: 13px;
+	font-family: "Myriad Pro", arial;
+	overflow: hidden;
+	margin: 5px;
+}
+
+.releaseListItemSelected {
+	float: left;
+	margin: 0px;
+	margin-top: 0px;
+	font-size: 13px;
+	font-family: "Myriad Pro", arial;
+	overflow: hidden;
+	margin: 5px;
+}
+
+
+.tpBackground {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 0;
+}
+
+.tpHtmlContainer {
+	border: 1px solid #545759;
+	width: 100%;
+	height: 100%;
+}
+
+.tpFlashContainer {
+}
+
+.tpFlashContainer object {
+	margin: 0;
+}
+
+.tpPlayer .player {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: 5px;
+
+}
+
+.tpPlayer a.overlayPlayButton {
+	width: 100px;
+	height: 100px;
+	font-size: 72px;
+	text-decoration: none;
+	color: white;
+	background: url('../images/playOverlay.png');
+}
+
+.tpPlayer .loadingIndicator, .tpReleaseList .loadingIndicator {
+	width: 98px;
+	height: 20px;
+	margin-left: -50px;
+	margin-top: -10px;
+	border: 1px solid white;
+	color: white;
+	font-size: 10px;
+	line-height: 18px;
+	background: black;
+	font-family: helvetica;
+	text-align: center;
+}
+
+.tpPlayer .error {
+	width: 100%;
+	height: 100%;
+	background-color: red;
+	opacity: 0.25;
+}
+
+
+.tpPlayer {
+    overflow:hidden;
+}
+
+.tpReady {
+        text-indent: 0;
+}
+

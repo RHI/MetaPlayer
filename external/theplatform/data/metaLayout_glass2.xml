@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<controls>
+	<region id="tpTitleRegion">
+		<row id="tpTitleContainer">
+			<control id="tpTitle"/>
+		</row>
+	</region>
+	<region id="tpAdCountdownRegion">
+		<row id="tpAdCountdownContainer">
+			<control id="tpAdCountdown"/>
+		</row>
+	</region>
+	<region id="tpBottomRegion">
+		<row>
+			<control id="tpPlay"/>
+			<control id="tpPrevious"/>
+			<control id="tpNext"/>
+			<control id="tpVolume"/>
+			<group percentWidth="100">
+				<control id="tpScrubber"/>
+			</group>
+			<group>
+				<spacer/>
+				<control id="tpCurrentTime"/>
+				<control id="tpTimeDivider"/>
+				<control id="tpTotalTime"/>
+				<spacer/>
+			</group>
+			<control id="tpCC"/>
+			<control id="tpBandwidth"/>
+			<control id="tpFullScreen"/>
+			<control id="tpMenu"/>
+		</row>
+	</region>
+</controls>

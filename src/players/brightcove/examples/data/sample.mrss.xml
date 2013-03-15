@@ -1,0 +1,32 @@
+<rss xmlns:mpf="http://developer.ramp.com/mrss" xmlns:media="http://search.yahoo.com/mrss/" version="2.0">
+    <channel>
+        <item>
+            <title>Elephant's Dream</title>
+            <description><![CDATA[Elephants Dream is the story of two strange characters exploring a capricious and seemingly infinite machine. The elder, Proog, acts as a tour-guide and protector, happily showing off the sights and dangers of the machine to his initially curious but increasingly skeptical protege Emo. As their journey unfolds we discover signs that the machine is not all Proog thinks it is, and his guiding takes on a more desperate aspect. Elephants Dream is a story about communication and fiction, made purposefully open-ended as the world’s first 3D animated “Open movie”. The film itself is released under the Creative Commons license, along with the production files used to make it (roughly 7 Gigabytes of data). The software used to make the movie is the free/open source animation suite Blender, along with other open source software, thus allowing the movie to be remade, remixed and re-purposed. 2006, Amsterdam, the Netherlands.]]></description>
+            <pubDate>Wed, 7 Mar 2012</pubDate>
+            <guid>elephant-dream</guid>
+            <source url="http://sxsw.ramp.com/hosting/feed/1626298/rss.xml">Transcoded Uploads</source>
+            <media:group>
+                <media:thumbnail url="http://publishing.ramp.com/thumbnails/cached_media/0006/0006875/0006875054/images/thumb.jpg"/>
+                <media:thumbnail url=""/>
+                <media:description>Elephants Dream is the story of two strange characters exploring a capricious and seemingly infinite machine. The elder, Proog, acts as a tour-guide and protector, happily showing off the sights and dangers of the machine to his initially curious but increasingly skeptical protege Emo. As their journey unfolds we discover signs that the machine is not all Proog thinks it is, and his guiding takes on a more desperate aspect. Elephants Dream is a story about communication and fiction, made purposefully open-ended as the world’s first 3D animated “Open movie”. The film itself is released under the Creative Commons license, along with the production files used to make it (roughly 7 Gigabytes of data). The software used to make the movie is the free/open source animation suite Blender, along with other open source software, thus allowing the movie to be remade, remixed and re-purposed. 2006, Amsterdam, the Netherlands.</media:description>
+                <media:title>Elephant's Dream</media:title>
+                <media:content url="1531130529001" type="video/brightcove" duration="653.696"/>
+                <media:subTitle type="application/x-subrip" lang="en-us" href="http://api.ramp.com/v1/subtitles?format=subrip&amp;id=52871241&amp;apikey=0bb282f7f637045f1b7731f713c08ab5"/>
+            </media:group>
+            <mpf:attributes>
+                <mpf:attribute name="ramp.rampId" >52871241</mpf:attribute>
+                <mpf:attribute name="ramp.thumbnail" >http://publishing.ramp.com/thumbnails/cached_media/0006/0006875/0006875054/images/thumb.jpg</mpf:attribute>
+                <mpf:attribute name="ramp.searchapi" >http://publishing.ramp.com/sxsw/theme/7473/mp2-search?e=52871241</mpf:attribute>
+                <mpf:attribute name="ramp.searchterm" >''</mpf:attribute>
+                <mpf:attribute name="ramp.linkURL" >52871241/elephant-dream</mpf:attribute>
+                <mpf:attribute name="ramp.embedURL" >http://publishing.ramp.com/widgets/sxsw/4240/?episode=52871241</mpf:attribute>
+                <mpf:attribute name="ramp.siteSearchURL" >http://publishing.ramp.com/sxsw/search?mediatype=Video&amp;q=</mpf:attribute>
+                <mpf:attribute name="mpf.timedThumbnailRoot">http://publishing.ramp.com/thumbnails/cached_media/0006/0006875/0006875054/images/</mpf:attribute>
+                <mpf:attribute name="mpf.timedThumbnailRate">10</mpf:attribute>
+                <mpf:attribute name="mpf.timedThumbnailExt">jpg</mpf:attribute>
+                <mpf:attribute name="mpf.timedThumbnailMax">650</mpf:attribute>
+            </mpf:attributes>
+        </item>
+    </channel>
+</rss>

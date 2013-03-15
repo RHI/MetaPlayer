@@ -1,0 +1,89 @@
+@import url("global.css");
+
+body {
+	margin: 5px;
+}
+
+#profile {
+	width: 788px;
+	height: 25px;	
+	float: left;
+	margin: 0 0 5px 0;
+}
+
+#community-video {
+	float: left;
+	width: 483px;
+	margin: 0 5px 0 0;
+}
+
+#browse-video {
+	float: left;
+	width: 302px;
+}
+
+#search-video {
+	float: left;
+	width: 302px;
+}
+
+#info {
+	float: left;
+	height: 252px;
+	width: 302px;	
+	margin: 0 0 5px 0;
+	z-index: -1;
+}
+
+#player {
+	float: left;
+	width: 483px;
+	height: 290px;
+	margin-bottom: 5px;
+}
+
+#ratings {
+	clear: both;
+}
+
+#comments {
+	margin-top: 5px;
+}
+
+#categorylist {
+	float: left;
+	height: 22px;
+	width: 302px;
+	position: relative;
+	margin: 0 0 5px 0;
+	z-index: 10;
+	overflow: visible !important;
+	overflow: hidden;
+}
+
+#search {
+	float: left;
+	height: 20px;
+	width: 152px;
+	position: relative;
+	display: inline;
+	z-index: 20;
+}
+
+#navigation {  
+	height: 20px;
+	width: 151px;
+	float: left;
+	position: relative;
+	margin: 0 0 0 -1px;
+	z-index: 20;
+}
+
+#releaselist {
+	float: left;
+	height: 286px;
+	width: 302px;
+	position: relative;	
+	margin: -1px 0 0 0;
+	z-index: 20;
+}

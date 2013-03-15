@@ -1,0 +1,281 @@
+.tpClipInfo .tpBackground {
+	display: none;
+}
+
+.tpPlayer .tpBackground {
+	display: none;
+}
+
+.tpPlayer .player {
+	margin: 0;
+}
+
+.tpNavigation {
+	text-align: center;
+	display: box;
+/*	border:1px solid #575757;
+	padding-top:5px;
+	margin-left:3px;
+	margin-right:-33px;*/
+/*	opacity:0.5;
+	filter:alpha(opacity=50);*/
+	/* Fallback for web browsers that doesn't support RGBa */
+	position:relative;
+	z-index:100;
+	
+	background: rgb(19, 19, 19) transparent;
+	/* RGBa with 0.6 opacity */
+	background: rgba(19,19,19, 0.5);
+	/* For IE 5.5 - 7*/
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#7F131313, endColorstr=#7F131313);
+	/* For IE 8*/
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#7F131313, endColorstr=#7F131313)";
+}
+
+.tpNavigation .tpPageLinks {
+	
+	display:inline-block;
+	*display:inline;
+	
+}
+
+.tpReleaseList .tpBackground {
+	display: none;
+}
+
+.tpNavigation .tpBackground {
+	position:absolute;
+	left:0px;
+	top:0px;
+	
+	width:100%;
+	height:100%;
+	
+	opacity:0.5;
+	filter:alpha(opacity=50);
+}
+
+.tpNavigation .tpPreviousRange {
+
+	position:absolute;
+	left:0px;
+/*	padding-top:2px;*/
+
+	margin-left:3px;
+	height: 16px;
+	width: 16px;
+/*	float:left;*/
+}
+
+.tpNavigation .tpPreviousRange.tpDisabled {
+	cursor:default;
+	opacity:0.5;
+	filter:alpha(opacity=50);
+}
+
+.tpNavigation .tpPreviousRange span {
+
+	background-image: url('images/NavigationIconPrevious.png');
+	background-repeat:no-repeat;
+/*	background-attachment:fixed;*/
+	background-position:center;
+	height: 15px;
+	width: 15px;
+	cursor:pointer;
+	text-indent:-3000px;
+
+	/*this is only wanted in IE 7 and below*/
+	*font-size:0;
+	*line-height:0;
+	*text-transform: capitalize;
+	*text-indent:0px;
+
+
+
+	display:inline-block;
+	overflow:hidden;
+
+}
+
+.tpNavigation .tpPreviousRange.tpDisabled span {
+
+	background-image: url('images/NavigationIconPrevious.png');
+	background-repeat:no-repeat;
+/*	background-attachment:fixed;*/
+	background-position:center;
+	height: 15px;
+	width: 15px;
+
+	text-indent:-3000px;
+
+	cursor:default;
+	/*this is only wanted in IE 7 and below*/
+	*font-size:0;
+	*line-height:0;
+	*text-transform: capitalize;
+	*text-indent:0px;
+
+
+
+	display:inline-block;
+	overflow:hidden;
+
+}
+
+.tpNavigation .tpNextRange.tpDisabled {
+	cursor:default;
+	opacity:0.5;
+	filter:alpha(opacity=50);
+}
+
+.tpNavigation .tpNextRange span {
+	background-image:url('images/NavigationIconNext.png');
+	background-repeat:no-repeat;
+/*	background-attachment:fixed;*/
+	background-position:center;
+	height: 15px;
+	width: 15px;
+
+	text-indent:-3000px;
+
+	cursor:pointer;
+
+	/*this is only wanted in IE 7 and below*/
+	*padding: -15px -15px 0 0;
+	*line-height:0;
+	*text-transform: capitalize;
+	*text-indent:0px;
+
+
+	display:inline-block;
+	overflow:hidden;
+}
+
+.tpNavigation .tpNextRange.tpDisabled span {
+	background-image:url('images/NavigationIconNext.png');
+	background-repeat:no-repeat;
+/*	background-attachment:fixed;*/
+	background-position:center;
+	height: 15px;
+	width: 15px;
+	cursor:default;
+	
+	text-indent:-3000px;
+	/*this is only wanted in IE 7 and below*/
+	*padding: -15px -15px 0 0;
+	*line-height:0;
+	*text-transform: capitalize;
+	*text-indent:0px;
+
+
+	display:inline-block;
+	overflow:hidden;
+}
+
+.tpNavigation .tpPreviousRange.tpDisabled span:active {
+	background-image:url('images/NavigationIconPrevious.png');
+	background-repeat:no-repeat;
+/*	background-attachment:fixed;*/
+	background-position:center;
+	height: 15px;
+	width: 15px;
+
+	text-indent:-3000px;
+
+	/*this is only wanted in IE 7 and below*/
+	*line-height:0;
+	*text-transform: capitalize;
+	*text-indent:0px;
+
+
+	display:inline-block;
+	overflow:hidden;
+}
+
+.tpNavigation .tpNextRange.tpDisabled span:active {
+	background-image:url('images/NavigationIconNext.png');
+	background-repeat:no-repeat;
+/*	background-attachment:fixed;*/
+	background-position:center;
+	height: 15px;
+	width: 15px;
+
+	text-indent:-3000px;
+
+	/*this is only wanted in IE 7 and below*/
+	*line-height:0;
+	*text-transform: capitalize;
+	*text-indent:0px;
+
+
+	display:inline-block;
+	overflow:hidden;
+}
+
+.tpNavigation .tpPreviousRange span:active {
+		background-image:url('images/NavigationIconPreviousSelected.png');
+		background-repeat:no-repeat;
+		background-position:center;
+		height: 15px;
+		width: 15px;
+		text-indent:-3000px;
+		/*this is only wanted in IE 7 and below*/
+		*line-height:0;
+		*text-transform: capitalize;
+		*text-indent:0px;
+		display:inline-block;
+		overflow:hidden;
+}
+
+.tpNavigation .tpNextRange span:active {
+		background-image:url('images/NavigationIconNextSelected.png');
+		background-repeat:no-repeat;
+		background-position:center;
+		height: 15px;
+		width: 15px;
+		text-indent:-3000px;
+		/*this is only wanted in IE 7 and below*/
+		*font-size:0;
+		*line-height:0;
+		*text-transform: capitalize;
+		*text-indent:0px;
+		display:inline-block;
+		overflow:hidden;		
+}
+
+.tpNavigation .tpNextRange {
+	position:absolute;
+	right:0px;	
+/*	padding-top:2px;*/
+	margin-right:3px;
+	height: 16px;
+	width: 16px;
+	float:right;
+}
+
+.tpNavigation .tpRangeInfo {
+
+	display:inline-block;
+	*display:inline;
+	zoom:1;
+	height:15px;
+	font-size:14px;
+	color:#FFFFFF;
+
+}
+
+.tpNavigation .tpPageInfo {
+
+}
+
+.tpNavigation .tpPageLinks {
+
+}
+
+.tpNavigation .tpPageLinks .tpPageLink {
+
+} 
+
+.tpReleaseList {
+	z-index:101;
+}

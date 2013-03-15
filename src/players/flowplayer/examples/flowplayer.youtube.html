@@ -83,16 +83,6 @@
 <h3>Metaplayer &raquo; Flowplayer Plugin</h3>
 
 <div id='video'></div>
-<script type="text/javascript">
-window.mdp = {};
-if( ! mdp.videoPlayer )
-    mdp.videoPlayer = { video : {} };
-    mdp.videoPlayer.sb = "recipecom";
-    mdp.videoPlayer.channel = "videohome";
-    mdp.videoPlayer.kw = "breakfastsandwich";
-    mdp.videoPlayer.video.id = "52692564";
-    mdp.videoPlayer.extraAdParams = "";
-</script>
 
 <script type="text/javascript">
 
@@ -106,65 +96,6 @@ if( ! mdp.videoPlayer )
                 plugins : {
                     youtube : {
                         url : "../../../../external/flowplayer/flowplayer.youtube-3.2.7-ramp.swf"
-                    },
-
-                    ova: {
-                        //url: "http://www.recipe.com/bhg/files/videoplayer/flowplayer/ova/dist/swf/ova.swf",
-                        url: "../../../../external/flowplayer/ova.swf",
-                        debug: { "debugger": "firebug", "levels": "fatal, vast_template"},
-
-/*                        ads: {
-                                "notice": { "textStyle": "smalltext" },
-                                "deliveryType": "progressive",
-                                "displayCompanions": true,
-                                "restoreCompanions": false,
-                                "companions": [
-                                        {"id":"mp2-companionAd-1", "width":"300","height":"250"},
-                                        {"id":"mp2-companionAd-leaderboard", "width":"728","height":"90"}
-                                ],
-                                "pauseOnClickThrough": true,
-                                "servers": [{
-                                        "type": "DART",
-                                        "tag":"http://ad.doubleclick.net/pfadx/"+mdp.videoPlayer.sb+".mdp.video/"+mdp.videoPlayer.channel
-                                        +";chID="+mdp.videoPlayer.channel+";dcmt=text/xml;sz=60x60;frmt=na;kw="+mdp.videoPlayer.kw
-                                        +";vid="+ mdp.videoPlayer.video.id+";"
-                                        + ( mdp.videoPlayer.extraAdParams ? mdp.videoPlayer.extraAdParams : "")
-                                        + ";cue=pre;ord=__timestamp__;"
-                                }],
-                                "schedule": [{
-                                    "position": "pre-roll",
-                                    "applyToParts": [0]
-                                }]
-                            }*/
-
-                        "ads": {
-                            "displayCompanions": true,
-                            "companions": [ {
-                                "id": "companion-160x600",
-                                "width": 160,
-                                "height": 600
-                            }],
-                            "servers": [
-                                {
-                                    "type": "OpenX",
-                                    "apiAddress": "http://openx.openvideoads.org/openx/www/delivery/fc.php"
-                                }
-                            ],
-                            "schedule": [
-                                {
-                                    "zone": "5",
-                                    "position": "pre-roll"
-                                },
-                                {
-                                    "zone": "33",
-                                    "position": "reserved-bottom-w450px-h50px-transparent-0m",
-                                    "width": 450,
-                                    "height": 50,
-                                    "startTime": "00:00:05",
-                                    "duration": "15"
-                                }
-                            ]
-                        }
                     }
                 },
                 clip : {
@@ -174,22 +105,29 @@ if( ! mdp.videoPlayer )
                 },
                 playlist : [
                     {
-//                        url : "http://content.bitsontherun.com/videos/rO8PIVrl-393434.mp4"
-                        url : "api:G4YahBNTHdc",
+                        url : "api:lXW2LxoRUZg",
+                        guid : "ramp:54002728", // ps3 anti-theft hack
+                        provider: "youtube",
+                        autoPlay: true
+                    },
+                    {
+                        url : "api:ZggXjYjyuCo",
+                        guid : "ramp:55524435", // open source movie Tube
                         provider: "youtube",
                         autoPlay: true
                     }
                 ]
             });
-//    fp.ipad({ simulateiDevice : false });
-    fp.load();
 
 
-    player = MetaPlayer( MetaPlayer.flowplayer(fp), { selectSource : false, sourceTags : false} )
+    player = MetaPlayer(fp)
+            .captions()
+            .overlay()
             .controls()
-            .ramp("http://publishing.ramp.com/recipe/themename/ws_1.3_6724/mp2-playlist?e=46740341")
+            .ramp("f455a86b28160bc0682fec3662e39d3b")
             .load();
 
+    fp.load();
 
 </script>
 

@@ -1,6 +1,6 @@
 /**
 
-MetaPlayer Framework  v0.2.20120405
+MetaPlayer Framework  v3.2.20130313
 
 A standards-based, multiple player, UI and Event framework for JavaScript.
 
@@ -18,12 +18,9 @@ furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in
 all copies or substantial portions of the Software.
 */
-
 /**
  * @fileOverview A media player framework for HTML5/JavaScript for use with RAMP services.
- * @author Greg Kindel <greg@gkindel.com>
- * @version 1.0
- */
+*/
 
 (function () {
 
@@ -41,7 +38,7 @@ all copies or substantial portions of the Software.
     };
 
     /**
-     * Create a MetaPlyer instance. Sets up core player plugins, and DOM scaffolding.
+     * Create a MetaPlayer instance. Sets up core player plugins, and DOM scaffolding.
      * By default, search, metadata, and cues interfaces are queued for load(). If a DOM element is passed,
      * then the layout and playlist interfaces are queued as well.
      *
@@ -62,7 +59,7 @@ all copies or substantial portions of the Software.
      *
      * @name MetaPlayer
      * @constructor
-     * @this {MetaPlayer}
+     * @augments Util.EventDispatcher
      * @param {MediaElement,String} [video] An HTML5 Media element, a DIV element, or jQuery selector string.
      * @param {Object} [options] A map of configuration options
      * @param {Object} options.layout Default options passed in to Layout module, defaults to empty object.
@@ -70,18 +67,19 @@ all copies or substantial portions of the Software.
      * @param {Object} options.search Default options passed in to Search module, defaults to empty object.
      * @param {Object} options.cues Default options passed in to Cues module, defaults to empty object.
      */
-    var MetaPlayer = function (video, options ) {
+    var MetaPlayer = function (media, options ) {
 
         if( ! (this instanceof MetaPlayer) )
-            return new MetaPlayer( video, options );
+            return new MetaPlayer( media, options );
 
-        this.config = $.extend({}, defaults, options );
+
+        this.config = $.extend({}, defaults, options, MetaPlayer.script.query("^mp."));
 
         MetaPlayer.dispatcher(this);
 
         this._plugins = {};
         this._loadQueue = [];
-        this.target = video;
+        this.target = media;
 
         // autodetect, or manual set for testing
         this.isTouchDevice = ( this.config.isTouchDevice != null )
@@ -100,26 +98,14 @@ all copies or substantial portions of the Software.
         if( this.config.cues )
             this.cues = new MetaPlayer.Cues(this, this.config );
 
-        // resolve video element from string, popcorn instance, or direct reference
-        if( typeof video == "string")
-            video = $(video).get(0);
-
-        if( video ) {
-            if( video.getTrackEvents instanceof Function ) {
-                // is popcorn instance
-                this.video = video.media;
-                this.popcorn = video;
-            }
-
-            else if( video.play instanceof Function ) {
-                // is already a media element
-                this.video = video;
-            }
-        }
+        // resolve html5 player adapter
+        this.video = this.adaptMedia(media);
 
         // optional layout disabling, use at own risk for player UI layout
-        if( video && this.config.layout ) {
-            this.layout = MetaPlayer.layout(video, this.config.layout);
+        if( this.config.layout && (this.video || typeof media == "string") ){
+            this.layout = MetaPlayer.layout(this.video || media, this.config.layout);
+            if( this.config.maximize )
+                this.layout.maximize();
         }
 
         // start loading after this execution block, can be triggered earlier by load()
@@ -130,15 +116,21 @@ all copies or substantial portions of the Software.
         }, 0);
     };
 
+    MetaPlayer.DEBUG = "error,warning";
+
     /**
      * Fired when all plugins are loaded.
-     * @constant
+     * @event
+     * @name MetaPlayer#event:READY
+     * @param {Event} e
      */
     MetaPlayer.READY = "ready";
 
     /**
      * Fired when player destructor called to allow plugins to clean up.
-     * @constant
+     * @event
+     * @name MetaPlayer#event:DESTROY
+     * @param {Event} e
      */
     MetaPlayer.DESTROY = "destroy";
 
@@ -147,38 +139,39 @@ all copies or substantial portions of the Software.
 
         /**
          * Initializes requested player plugins, optionally begins playback.
-         * @this {MetaPlayer}
+         * @name MetaPlayer#load
+         * @function
          */
         load : function () {
             this._load();
             return this;
         },
 
+        adaptMedia :  function ( media ) {
+            var video;
+            var self = this;
+            $.each( MetaPlayer.Players, function (key, adapter) {
+                // break loop if adapter return true
+                video = adapter(media, self);
+                if( video )
+                    return false;
+            });
+            return video;
+        },
+
         /**
          * Disabled MP instance, frees up memory resources. Fires DESTROY event for plugin notification.
-         * @this {MetaPlayer}
+         * @name MetaPlayer#destroy
+         * @function
          */
         destroy : function () {
             this.dispatcher.dispatch( MetaPlayer.DESTROY );
 
             delete this.plugins;
             delete this._loadQueue;
-
-            // todo: iterate plugins, call destroy() if def
-            // these should be made plugins
-
             delete this.layout;
             delete this.popcorn;
 
-        },
-
-        log : function (args, tag ){
-            if( this.config.debug.indexOf(tag) < 0 )
-                return;
-
-            var arr = Array.prototype.slice.apply(args);
-            arr.unshift( tag.toUpperCase() );
-            console.log.apply(console, arr);
         },
 
         _load : function () {
@@ -187,31 +180,73 @@ all copies or substantial portions of the Software.
                 // load() was already called
                 return;
             }
+            var self = this;
             this._loaded = true;
 
             // fill in core interfaces were not implemented
             if( ! this.video && this.layout )
                 this.html5();
 
-            if( this.video && ! this.playlist )
-                this.playlist = new MetaPlayer.Playlist(this, this.config.playlist);
+            if( this.config.preload != null )
+                this.video.preload = this.config.preload;
 
             if( this.video && ! this.popcorn && Popcorn != null )
                 this.popcorn = Popcorn(this.video);
 
+            if( this.video ){
+                this.playlist = new MetaPlayer.Playlist(this);
+            }
+
+            if( this.video && this.config.linkAdvance ) {
+                this.video.addEventListener("trackchange", function () {
+                    var link = self.metadata.getData().link;
+                    if( link && self.video.getIndex() > 0)
+                        window.top.location = link;
+                });
+            }
+
+
 
             // run the plugins, any video will have been initialized by now
-            var self = this;
-            $( this._loadQueue ).each(function (i, plugin) {
-                    plugin.fn.apply(self, plugin.args);
-            });
-            this._loadQueue = [];
+            var plugin;
+            while( this._loadQueue.length ) {
+                plugin = this._loadQueue.shift();
+                plugin.fn.apply(this, plugin.args);
+            }
 
             this.ready = true;
 
             // let plugins do any setup which requires other plugins
             this.dispatcher.dispatch( MetaPlayer.READY );
 
+        },
+
+        error : function (code, message, type) {
+            var e = this.createEvent();
+            e.initEvent("error", false, true);
+            e.code = code;
+            e.message = message;
+            this.dispatchEvent(e);
+            var args = Array.prototype.slice.call(arguments);
+            args.unshift("MPF");
+            try {
+                console.error( args.join(" :: ") );
+            }
+            catch(e){};
+        },
+
+        warn : function (code, message) {
+            var e = this.createEvent();
+            e.initEvent("warning", false, true);
+            e.code = code;
+            e.message = message;
+            this.dispatchEvent(e);
+            var args = Array.prototype.slice.call(arguments);
+            args.unshift("MPF");
+            try {
+                console.warn( args.join(" :: ") );
+            }
+            catch(e){};
         }
 
     };
@@ -253,6 +288,8 @@ all copies or substantial portions of the Software.
 
 
     /**
+     * @deprecated
+     * @description
      * Registers a function as a playback plugin.  Playback plugins are initialized earlier than other plugins.
      *
      * For example:
@@ -274,13 +311,80 @@ all copies or substantial portions of the Software.
 
         p[keyword] = function () {
             callback.apply(this, arguments);
+            this.layout.addVideo(this.video);
             return this;
         };
     };
 
+    MetaPlayer.iOS =  /iPad|iPhone|iPod/i.test(navigator.userAgent);
+
+    /**
+     * @name API
+     * @namespace MetaPlayer Interfaces: MetaData, Cues, Search, Layout
+     */
+    MetaPlayer.Core = {};
+
+    /**
+     * @name Services
+     * @namespace MetaData and Search providers
+     */
+    MetaPlayer.Services = {};
+
+    /**
+     * @name Players
+     * @namespace Player HTML5 adapters
+     */
+    MetaPlayer.Players = {};
+
+    /**
+     * @name UI
+     * @namespace Player Controls and Page Widgets
+     */
+    MetaPlayer.UI = {};
+
+    /**
+     * @name Util
+     * @namespace Utility libraries and widgets.
+     */
+    MetaPlayer.Util = {};
+
+    /**
+     * @name Metrics
+     * @namespace Utility libraries and widgets.
+     */
+    MetaPlayer.Metrics = {};
+
+
+    MetaPlayer.log = function (type, rest) {
+        var args = Array.prototype.slice.call(arguments);
+
+        // memoise string DEBUG into objects for quick lookup
+        if( typeof MetaPlayer.DEBUG == "string" ){
+            var types = MetaPlayer.DEBUG.split(/[,\s]+/);
+            MetaPlayer.DEBUG = {};
+            $.each(types, function (i,val){
+                MetaPlayer.DEBUG[val] = true;
+            })
+        }
+
+        if( MetaPlayer.DEBUG && (MetaPlayer.DEBUG == true || MetaPlayer.DEBUG[type]) ) {
+            args.unshift("MPF");
+            try{
+                console.log(args.join(" :: "));
+            }
+            catch(e){}
+        }
+    };
+
+    /**
+     * @name Popcorn
+     * @class PopcornJS plugins provided by the MetaPlayer Framework
+     */
     window.MetaPlayer = MetaPlayer;
-    window.Ramp = MetaPlayer;
+    window.MetaPlayerFramework = MetaPlayer;
     window.MPF = MetaPlayer;
+
+
 
 })();
 
@@ -292,6 +396,12 @@ all copies or substantial portions of the Software.
     var defaults = {
     };
 
+    /**
+     * @class Stores all timed metadata, integrates with PopcornJS to schedule cues. <br/>
+     * @constructor
+     * @name API.Cues
+     * @param {MetaPlayer} player
+     */
     var Cues = function (player, options){
 
         this.config = $.extend({}, defaults, options);
@@ -300,7 +410,7 @@ all copies or substantial portions of the Software.
 
         this._rules = {
             // default rule mapping "captions" to popcorn "subtitle"
-            "subtitle" : { clone : "captions" }
+            "subtitle" : { clone : "captions", enabled : true }
         };
 
         this.player = player;
@@ -311,24 +421,31 @@ all copies or substantial portions of the Software.
 
     /**
      * Fired when cues are available for the focus uri.
-     * @name CUES
+     * @name API.Cues#event:CUES
      * @event
-     * @param data The cues from a resulting load() request.
-     * @param uri The focus uri
-     * @param plugin The cue type
+     * @param {Event} e
+     * @param e.data The cues from a resulting load() request.
+     * @param e.uri The focus uri
+     * @param e.plugin The cue type
      */
     Cues.CUES = "cues";
 
     /**
      * Fired when cue list reset, usually due to a track change
-     * @name CLEAR
+     * @name API.Cues#event:CLEAR
      * @event
+     * @param {Event} e
      */
     Cues.CLEAR = "clear";
+    Cues.RENDER = "render";
+    Cues.ENABLE = "enable";
+    Cues.DISABLE = "disable";
 
     Cues.prototype = {
         /**
          * Bulk adding of cue lists to a uri.
+         * @name API.Cues#setCueLists
+         * @function
          * @param cuelists a dictionary of cue arrays, indexed by type.
          * @param uri (optional) Data uri, or last load() uri.
          */
@@ -341,6 +458,8 @@ all copies or substantial portions of the Software.
 
         /**
          * Returns a dictionary of cue arrays, indexed by type.
+         * @name API.Cues#getCueLists
+         * @function
          * @param uri (optional) Data uri, or last load() uri.
          */
         getCueLists : function ( uri) {
@@ -351,6 +470,8 @@ all copies or substantial portions of the Software.
         /**
          * For a given cue type, adds an array of cues events, triggering a CUE event
          * if the uri has focus.
+         * @name API.Cues#setCues
+         * @function
          * @param type The name of the cue list (eg: "caption", "twitter", etc)
          * @param cues An array of cue obects.
          * @param uri (optional) Data uri, or last load() uri.
@@ -363,13 +484,25 @@ all copies or substantial portions of the Software.
 
             if( ! this._cues[guid][type] )
                 this._cues[guid][type] = [];
-            this._cues[guid][type] = this._cues[guid][type].concat(cues);
 
-            this._dispatchCues(guid, type)
+            this._cues[guid][type] = cues;
+
+            // data normalization
+            $.each(cues, function (i, val) {
+                if( typeof val.start == "string" )
+                    val.start = parseFloat(val.start);
+                if( typeof val.end == "string" )
+                    val.start = parseFloat(val.end);
+            });
+
+            if( uri == this.player.metadata.getFocusUri() )
+                this._renderCueType(type);
         },
 
         /**
          * Returns an array of caption cues events. Shorthand for getCues("caption")
+         * @name API.Cues#getCaptions
+         * @function
          * @param uri (optional) Data uri, or last load() uri.
          */
         getCaptions : function ( uri ){
@@ -379,6 +512,8 @@ all copies or substantial portions of the Software.
         /**
          * Returns an array of cue objects for a given type. If no type specified, acts
          * as alias for getCueLists() returning a dictionary of all cue types and arrays.
+         * @name API.Cues#getCues
+         * @function
          * @param type The name of the cue list (eg: "caption", "twitter", etc)
          * @param uri (optional) Data uri, or last load() uri.
          */
@@ -401,35 +536,60 @@ all copies or substantial portions of the Software.
 
         /**
          * Enables popcorn events for a cue type
+         * @name API.Cues#enable
+         * @function
          * @param type Cue type
          * @param overrides Optional object with properties to define in each popcorn event, such as target
          * @param rules (advanced) Optional rules hash for cloning, sequencing, and more.
          */
         enable : function (type, overrides, rules) {
             var r = $.extend({}, this._rules[type], rules);
+            if(r.enabled )
+                return;
             r.overrides = $.extend({}, r.overrides, overrides);
             r.enabled = true;
             this._rules[type] = r;
 
-            this._renderCues(type, this.getCues( r.clone || type) )
+            var event = this.createEvent();
+            event.initEvent(Cues.ENABLE, false, true);
+            event.action = type;
+            this.dispatchEvent(event);
+
+            this._scheduleCues(type, this.getCues( r.clone || type) )
         },
 
         /**
          * Disables popcorn events for a cue type
+         * @name API.Cues#disable
+         * @function
          * @param type Cue type
          */
         disable : function (type) {
             if( ! type )
                 return;
 
-            if( this._rules[type] )
-                this._rules[type].enabled = false;
+            if(! this._rules[type] )
+                this._rules[type] = {};
+
+            this._rules[type].enabled = false;
+
+            var event = this.createEvent();
+            event.initEvent(Cues.DISABLE, false, true);
+            event.action = type;
+            this.dispatchEvent(event);
 
             this._removeEvents(type);
         },
 
+        isEnabled : function (type) {
+            var r = this._rules[type]
+            return Boolean(r && r.enabled);
+        },
+
         /**
          * Frees external references for manual object destruction.
+         * @name API.Cues#destroy
+         * @function
          * @destructor
          */
         destroy : function  () {
@@ -440,45 +600,15 @@ all copies or substantial portions of the Software.
 
         /* "private" */
 
-        // broadcasts cue data available for guid, if it matches the current focus uri
-        // defaults to all known cues, or can have a single type specified
-        // triggers attachment of popcorn events
-        _dispatchCues : function ( guid, type ) {
-
-            // only focus uri causes events
-            if( guid != this.player.metadata.getFocusUri() ) {
-                return;
-            }
-
-            var self = this;
-            var types = [];
-
-            // specific cue type to be rendered
-            if( type ) {
-                types.push(type)
-            }
-
-            // render all cues
-            else if( this._cues[guid] ){
-                types = $.map(this._cues[guid], function(cues, type) {
-                    return type;
-                });
-            }
-
-            $.each(types, function(i, type) {
-                var cues = self.getCues(type);
-
-                var e = self.createEvent();
-                e.initEvent(Cues.CUES, false, true);
-                e.uri = guid;
-                e.plugin = type;
-                e.cues = cues;
-
-                if( self.dispatchEvent(e) ) {
-                   // allow someone to cancel, blocking popcorn scheduling
-                    self._renderCues(type, cues)
-                }
-            });
+        _renderCueType : function (type){
+            var guid = this.player.metadata.getFocusUri();
+            var cues = this.getCues(type, guid);
+            this._renderCues(type, cues)
+            this.event(Cues.CUES, {
+                uri : guid,
+                plugin: type,
+                cues : cues
+            })
         },
 
         _addListeners : function () {
@@ -486,6 +616,7 @@ all copies or substantial portions of the Software.
             var metadata = player.metadata;
             player.listen( MetaPlayer.DESTROY, this.destroy, this);
             metadata.listen( MetaPlayer.MetaData.FOCUS, this._onFocus, this)
+            metadata.listen( MetaPlayer.MetaData.DATA, this._onData, this)
         },
 
         _onFocus : function (e) {
@@ -496,8 +627,19 @@ all copies or substantial portions of the Software.
             var event = this.createEvent();
             event.initEvent(Cues.CLEAR, false, true);
             this.dispatchEvent(event);
+        },
 
-            this._dispatchCues( e.uri );
+        _onData : function (e) {
+            // render all cues
+            var self = this;
+            $.map(this._cues[e.uri] || [], function(cues, type) {
+                self._renderCueType(type);
+            });
+
+            var event = this.createEvent();
+            event.initEvent(Cues.RENDER, false, true);
+            event.uri = e.uri;
+            this.dispatchEvent(event);
         },
 
         _removeEvents : function ( type ) {
@@ -527,6 +669,8 @@ all copies or substantial portions of the Software.
         _scheduleCues : function (type, cues) {
             var rules = this._rules[type] || {};
             var lastCue;
+
+            this._removeEvents(type);
 
             if(! rules.enabled ) {
                 return;
@@ -588,27 +732,66 @@ all copies or substantial portions of the Software.
         sizeMsec : 250
     };
 
+    /**
+     * @name API.Layout
+     * @class Manages the MetaPlayer DOM elements, video & panel arrangment.
+     * @constructor
+     * @param {String|Element} target The DOM element to decorate, or jQuery selector there of.
+     * @param {Object} [options]  A dictionary of configuration properties.
+     * @param {Boolean} [options.adoptVideo=true]  If no parent element is a "metaplayer" class,
+     * create one and re-parent the video.
+     * @param {Boolean} [options.sizeVideo=true]  Allow re-sizing of the video element.
+     * @param {Number} [options.sizeMsec=250] When animating panels, the duration of the animation.
+     */
     MetaPlayer.Layout = function (target, options){
         this.config = $.extend({}, defaults, options);
 
         this.target = $(target).get(0);
         this.panels = [];
+        MetaPlayer.dispatcher(this);
 
-        // the base is for controls, stage
-        if( this.target.play instanceof Function )
-            this.base = this._setupVideo();
+        /**
+         * The root DOM element of the MetaPlayer instance, with class="metaplayer".
+         * @name API.Layout#base
+         * @type {Element}
+         */
 
-        else if( this.target )
-            this.base = this._setupContainer();
+        /**
+         * A container for video overlays.
+         * @name API.Layout#stage
+         * @type {Element}
+         */
+        this.target = $(target)[0]; // normalize
+        this._setup();
 
-        // the stage is a container for all overlays
-        if( this.base )
-            this.stage = this._addStage();
+        var self = this;
+        $(document.documentElement).bind('fullscreenchange webkitfullscreenchange', function (e){
+            self.onFullScreen(e);
+
+        });
+        $(document).bind('mozfullscreenchange', function (e){
+            self.onFullScreen(e);
+        });
+
+        $(window).bind('resize', function (e) {
+            if( self.isMaximized )
+                self.maximize();
+        });
+
+        $(window).bind("mousewheel DOMMouseScroll touchmove", function (e) {
+            if( self.isMaximized ) {
+                e.stopPropagation();
+                e.preventDefault();
+            }
+        });
+
+        this.isFullScreen = document.fullscreen || document.mozFullScreen || document.webkitIsFullScreen;
     };
 
     MetaPlayer.layout = function  (target, options){
         return new MetaPlayer.Layout(target, options);
     };
+
 
     MetaPlayer.Layout.PANEL_OPTIONS = {
         top : 0,
@@ -621,20 +804,53 @@ all copies or substantial portions of the Software.
 
     MetaPlayer.Layout.prototype =  {
 
-        addPanel : function (options) {
+        /**
+         * Adds a panel to the layout.  A panel is something that should indent the video from the
+         * DOM bounding box, usually a control bar or info panel.
+         * @name API.Layout#addPanel
+         * @function
+         * @param {Object} panelConfig Contains configuration.
+         * @param panelConfig.id A unique name for the panel, used for later access.
+         * @param [panelConfig.top=0] The top video margin required for panel to not cover video.
+         * @param [panelConfig.right=0] The right video margin.
+         * @param [panelConfig.bottom=0] The bottom video margin.
+         * @param [panelConfig.enabled=true] Whether the panel is enabled by default.
+         * @param [panelConfig.video=true] Whether the panel should resize the video in addition to panels.
+         * @example
+         *  mp.layout.addPanel({
+         *    id : "controls",
+         *    bottom: 32,
+         *    video: false
+         *  });
+         */
+        addPanel : function (panelConfig) {
             var box = $.extend({},
                 MetaPlayer.Layout.PANEL_OPTIONS,
-                options);
+                panelConfig);
 
             this.panels.push( box );
             this._renderPanels(0);
             return (this.panels.length - 1);
         },
 
+        /**
+         * Returns the panel spec for a panel id.
+         * @name API.Layout#getPanel
+         * @function
+         * @param {String} id The panel id
+         */
         getPanel : function (id) {
             return this.panels[id] || null;
         },
 
+        /**
+         * Toggles the visibility of a panel, animating if a duration is specified.
+         * @name API.Layout#togglePanel
+         * @function
+         * @param {String} id The panel id
+         * @param {Boolean} bool The target visibility state, true for visible.
+         * @param {Number} [duration] The animation duration, in seconds, or undefined to disable.
+         */
         togglePanel : function (id, bool, duration) {
             var p = this.getPanel(id);
             if( ! p )
@@ -643,10 +859,25 @@ all copies or substantial portions of the Software.
             this._renderPanels(duration);
         },
 
+        /**
+         * Updates a panel specification, usually to a new height or width.
+         * @name API.Layout#updatePanel
+         * @function
+         * @param {String} id The panel id
+         * @param {Object} options The panel spec. See {@link Layout#addPanel}.
+         * @param {Number} [duration] The animation duration, in seconds, or undefined to disable.
+         * @
+         */
         updatePanel : function (id, options, duration) {
             var box = $.extend( this.getPanel(id),
                 options);
             this._renderPanels(duration);
+        },
+
+
+        render : function (duration) {
+            this._renderPanels(duration);
+            this.dispatch("resize");
         },
 
         _renderPanels : function (duration)  {
@@ -671,7 +902,7 @@ all copies or substantial portions of the Software.
                     video.left += box.left || 0;
                     video.bottom += box.bottom || 0;
                     video.right += box.right || 0;
-                    }
+                }
 
                 overlays.top += box.top || 0;
                 overlays.left += box.left || 0;
@@ -683,6 +914,135 @@ all copies or substantial portions of the Software.
 
         },
 
+        maximize : function () {
+            this._maximize();
+            this._secondSize();
+        },
+
+        _maximize : function () {
+            var c = $(this.base);
+            var win =  $(window);
+            if( ! this._restore ){
+                this._restore = {
+                    width: c.width(),
+                    height: c.height(),
+                    offset :c.offset(),
+                    position : c.css('position')
+                };
+            }
+            $('body').css('margin', 0).css('padding', 0);
+
+            if( ! this.restoreZ )
+                this.restoreZ = c.css('z-index');
+
+            c.css('position', 'fixed')
+                .width("100%")
+                .addClass("mp-fullscreen")
+                .height("100%")
+                .css({
+                    'z-index' :  (-1 >>> 1) // max int, 2147483647 in chrome
+                })
+                .offset({
+                    top: win.scrollTop(), left: win.scrollLeft()
+                });
+
+            $("html,body").css("overflow","hidden");
+
+            this._renderPanels();
+
+            if(! this.isMaximized ) {
+                this.isMaximized = true;
+                this.dispatch("maximize");
+            }
+            this.dispatch("resize");
+        },
+
+        fullscreen : function () {
+            var docElm = document.documentElement;
+
+            if (docElm.requestFullscreen) {
+                docElm.requestFullscreen();
+            }
+            else if (docElm.mozRequestFullScreen) {
+                docElm.mozRequestFullScreen();
+            }
+            else if (docElm.webkitRequestFullScreen) {
+                docElm.webkitRequestFullScreen();
+            }
+            else {
+                this.maximize();
+                this._secondSize();
+            }
+        },
+
+        window : function () {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+            else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            }
+            else if (document.webkitCancelFullScreen) {
+                document.webkitCancelFullScreen();
+            }
+        },
+
+        onFullScreen : function (e) {
+            this.isFullScreen = document.fullscreen || document.mozFullScreen || document.webkitIsFullScreen;
+            if( this.isFullScreen ) {
+                this.dispatch("fullscreen");
+                delete this._restore;
+                this.maximize();
+            }
+            else {
+                this.restore();
+            }
+            this._secondSize();
+        },
+
+        restore : function () {
+
+            this.window();
+
+            if( ! this._restore )
+                return;
+
+            // restore size
+            var c = $(this.base);
+            var r = this._restore;
+
+            var win =  $(window);
+            $('body').css('margin', '').css('padding', '');
+            c.css('position', r.position)
+                .offset({ top: r.offset.top, left: r.offset.left})
+                .width(r.width)
+                .css({
+                    'z-index' :  this.restoreZ  || 'inherit'
+                })
+                .removeClass("mp-fullscreen")
+                .height(r.height);
+
+            $("html,body").css("overflow","auto");
+
+            this._renderPanels();
+            if( this.isMaximized ) {
+                this.isMaximized = false;
+                this.dispatch("restore");
+                this.dispatch("resize");
+
+            }
+        },
+
+        _secondSize : function () { // some browsers need a second resize
+            var self = this;
+            var fn =  function () {
+                if( self.isMaximized )
+                    self._maximize();
+                else
+                    self.restore();
+            };
+            setTimeout(fn, 500);
+        },
 
         _sizeVideo : function (box, duration) {
             if( !(this.config.sizeVideo && this.video) )
@@ -700,59 +1060,84 @@ all copies or substantial portions of the Software.
             if( this.video.mpf_resize instanceof Function )
                 this.video.mpf_resize(w, h);
 
-            v.stop().animate({
+            var css = {
                 'margin-top': box.top,
                 'margin-left': box.left,
-                'width' : w,
-                'height' : h
-            }, msec);
-        },
+                'width' : (w / c.width() * 100) + "%", // allows for liquid resizing, sorta
+                'height' : (h / c.height() * 100) + "%"
+            };
 
-        // deprecated: removed to allow click-through
-        _sizeOverlays : function (box, duration) {
-            var msec = (duration != null) ? duration : this.config.sizeMsec;
-
-            $(this.base).find('.mp-stage')
-                .stop()
-                .animate({
-                    top : box.top,
-                    right : box.right,
-                    bottom : box.bottom,
-                    left : box.left
-                }, msec);
-        },
-
-        _setupContainer : function (container) {
-            return $(this.target)
-                .addClass("metaplayer")
-                .get(0);
-        },
-
-        _setupVideo : function () {
-
-            this.video = this.target;
-            var v = $(this.video);
-            var container = v.parents(".metaplayer");
-
-            if( ! container.length ) {
-                if( ! this.config.adoptVideo )
-                    return;
-                container = $("<div></div>")
-                    .addClass("metaplayer")
-                    .insertAfter(v)
-                    .append(v);
+            if( duration ) {
+                this.stage.stop().animate(css, msec);
             }
-            container.width( v.width() );
-            container.height( v.height() );
+            else {
+                this.stage.css(css)
+            }
 
-            return container.get(0);
+        },
+
+        _setup : function () {
+            var target = this.target;
+
+
+            var el = $(target);
+            var v;
+            // target is the video, we need to wrap
+            if( target.play instanceof Function ) {
+                this.video = target;
+                v = $(this.video._proxyFor || this.video );
+            }
+
+            // target is a metaplayer-classed div
+            if( el.is(".metaplayer") )
+                this.base = el;
+
+            // target child of metaplayer div or just some random div without a base
+            else
+                this.base = el.parents(".metaplayer").first();
+
+            // target becomes base if not found
+            if( ! this.base.length ) {
+                this.base = $("<div/>")
+                    .addClass("metaplayer")
+                    .insertAfter(v);
+            }
+
+            this.stage = this.base.children(".mp-stage").first();
+
+            if( ! this.stage.length ) {
+                this.stage = $("<div />")
+                    .addClass("mp-stage")
+                    .css({ position : "relative" })
+                    .appendTo(this.base);
+            }
+
+            if( v ) {
+                this.base.css({
+                    height: v.height(),
+                    width:  v.width()
+                });
+                this.addVideo()
+            }
+            this._renderPanels();
+        },
+
+        addVideo : function (video) {
+            if( video )
+                this.video = video;
+            var v = $(this.video._proxyFor || this.video );
+            v.css({
+                height: "100%",
+                width: "100%"
+            });
+            if( this.config.adoptVideo )
+                this.stage.append(v);
+            this._renderPanels();
         },
 
         _addStage : function () {
             return $("<div></div>").addClass("mp-stage").appendTo(this.base).get(0);
         }
-
-
     };
 
 
@@ -763,7 +1148,13 @@ all copies or substantial portions of the Software.
     var defaults = {
     };
 
-    var MetaData = function (player, options){
+    /**
+     * Constructs the MetaData store. <br />
+     * @name API.MetaData
+     * @class Stores metadata for video items.
+     * @constructor
+     */
+    var MetaData = function (options){
         if( !(this instanceof MetaData ))
             return new MetaData(options);
 
@@ -776,28 +1167,30 @@ all copies or substantial portions of the Software.
 
     MetaPlayer.MetaData = MetaData;
 
-
     /**
      * Fired when a uri becomes the focus, broadcasting events on updates.
-     * @name FOCUS
+     * @name API.MetaData#event:FOCUS
      * @event
-     * @param uri The new focus uri
+     * @param {Event} e
+     * @param e.uri The new focus uri
      */
     MetaData.FOCUS = "focus";
 
     /**
      * Fired when MetaData needs a resource to be defined.
-     * @name LOAD
+     * @name API.MetaData#event:LOAD
      * @event
-     * @param uri Opaque string which can be used by a service to load metadata.
+     * @param {Event} e
+     * @param e.uri Opaque string which can be used by a service to load metadata.
      */
     MetaData.LOAD = "load";
 
     /**
      * Fired when new metadata is received as a result of a load() request.
-     * @name LOAD
+     * @name API.MetaData#event:DATA
      * @event
-     * @param data The metadata from a resulting load() request.
+     * @param {Event} e
+     * @param e.data The metadata from a resulting load() request.
      */
     MetaData.DATA = "data";
 
@@ -806,10 +1199,14 @@ all copies or substantial portions of the Software.
 
 
         /**
-         * Request MetaData for an uri
+         * Request MetaData for an uri.  If no callback is specified, will also
+         * set the focus uri.
+         * @name API.MetaData#load
+         * @function
          * @param uri
-         * @this {MetaData}
-         * @param callback (optional)  If specified will suppress the DATA event
+         * @param [callback] If specified will suppress the DATA event
+         * @see MetaData#event:DATA
+         * @see MetaData#event:FOCUS
          */
         load : function ( uri, callback, scope) {
             var e;
@@ -824,10 +1221,17 @@ all copies or substantial portions of the Software.
                 this.setFocusUri(uri);
             }
 
+            if( ! uri )
+                return;
+
             if( this._data[uri] ){
                 // cache hit; already loaded. respond immediately
                 if( this._data[uri]._cached ) {
-                    this._response(uri);
+                    // consistently async
+                    var self = this;
+                    setTimeout( function (){
+                        self._response(uri);
+                    },0);
                     return true;
                 }
                 // load in progress, skip
@@ -856,7 +1260,10 @@ all copies or substantial portions of the Software.
         },
 
         /**
-         * Returns the uri for which events are currently being fired.
+         * Gets the uri for which events are currently being fired.
+         * @name API.MetaData#getFocusUri
+         * @function
+         * @return {String} The current focus URI.
          */
         getFocusUri : function () {
             return this._lastUri;
@@ -864,21 +1271,24 @@ all copies or substantial portions of the Software.
 
         /**
          * Sets the uri for which events are currently being fired.
+         * @name API.MetaData#setFocusUri
+         * @function
+         * @see MetaData#event:FOCUS
          */
         setFocusUri : function (uri) {
-
-            if( this._lastUri == uri )
-                return;
-
             this._lastUri = uri;
-            e = this.createEvent();
+            this._firedDataEvent = false;
+            var e = this.createEvent();
             e.initEvent(MetaData.FOCUS, false, true);
             e.uri = uri;
             this.dispatchEvent(e);
         },
 
         /**
-         * Returns any for a URI without causing an external lookup.
+         * Returns any cached data for a URI if available. Differs from load() in that
+         * it is synchronous and will not trigger a new data lookup.
+         * @name API.MetaData#getData
+         * @function
          * @param uri Optional argument specifying media guid. Defaults to last load() uri.
          */
         getData : function ( uri ){
@@ -888,24 +1298,32 @@ all copies or substantial portions of the Software.
 
         /**
          * Sets the data for a URI, triggering DATA if the uri has focus.
-         * @param data
+         * @name API.MetaData#setData
+         * @function
+         * @param data {Object}
          * @param uri (optional) Data uri, or last load() uri.
          * @param cache (optional) allow lookup of item on future calls to load(), defaults true.
+         * @see MetaData#event:DATA
          */
         setData : function (data, uri, cache ){
             var guid = uri || this._lastUri;
-            this._data[guid] = $.extend(true, {}, this._data[guid], data);
-            this._data[guid]._cached = ( cache == null ||  cache ) ? true : false;
-            this._response(guid);
+            // dont't clobber known data with cache half-datas
+            if( !( this._data[guid] && ! cache) ){
+                this._data[guid] = $.extend(true, {}, this._data[guid], data);
+                this._data[guid]._cached = ( cache == null ||  cache ) ? true : false;
+            }
+            if( cache )
+                this._response(guid);
         },
 
         /**
          * Frees external references for manual object destruction.
+         * @name API.MetaData#destroy
+         * @function
          * @destructor
          */
         destroy : function  () {
             this.dispatcher.destroy();
-            delete this.player;
             delete this._callbacks;
             delete this._data;
             delete this.config;
@@ -922,12 +1340,13 @@ all copies or substantial portions of the Software.
         _response : function ( uri ){
              var data = this._data[uri];
 
-            if( this._lastUri == uri ) {
+            if( this._lastUri == uri && ! this._firedDataEvent) {
                 var e = this.createEvent();
                 e.initEvent(MetaData.DATA, false, true);
                 e.uri = uri;
                 e.data = data;
                 this.dispatchEvent(e);
+                this._firedDataEvent = true;
             }
 
             if( this._callbacks[uri] ) {
@@ -940,205 +1359,217 @@ all copies or substantial portions of the Software.
     };
 
 
-})();
+})();/**
+ * Playlist functionality for HTML5 video
+ */
 (function () {
 
     var $ = jQuery;
 
-
     var defaults = {
-        sourceTags : true,
-        selectSource : true,
-        linkAdvance : false,
         autoAdvance : true,
-        autoBuffer : true,
-        related: true,
-        loop : false
+        loop : false,
+        selectSource: true,
+        appendSources: false
     };
 
 
     /**
-     *
-     * @name MetaPlayer.Playlist
+     * @name API.Playlist
+     * @class Defines a  interface for playlist navigation and management.
      * @constructor
-     * @param player
-     * @param options
+     * @param {Object} [options]  A dictionary of configuration properties.
+     * @param {Number} [options.autoAdvance=true] Automatically advance the playlist when the current video ends.
+     * @param {Number} [options.selectSource=true] Automatically select the resource when a track is selected.
+     * @param {Number} [options.loop=false] If true, the playlist is circular and will repeat,
      */
-     var Playlist = function (player, options ){
+    var Playlist = function (player, options) {
+
+        // check if already implements Playlist API
+        var media = player.video;
 
         this.config = $.extend({}, defaults, options);
         this.player = player;
-        this._tracks = [];
-        this._index = 0;
 
-        this.loop = this.config.loop;
-        this.preload = this.config.autoBuffer;
-        this.advance = this.config.autoAdvance;
-        this.linkAdvance = this.config.linkAdvance;
+        if( !( media.getPlaylist || media.getItem) ){
+            this._playlist = [];
+            this._index = 0;
+            this.loop = this.config.loop;
+            this.autoAdvance = this.config.autoAdvance;
+            this.selectSource = this.config.selectSource;
 
-        MetaPlayer.dispatcher(this);
+            MetaPlayer.dispatcher(this);
+
+            // extends the video into a playlist via mix-in
+            Playlist.proxy(this, this.player.video);
+
+            this._addProxyListeners();
+        }
 
         this._addListeners();
+
+        return media;
     };
 
     MetaPlayer.Playlist = Playlist;
 
+    /**
+     * Fires when the current track index/guid changes (but possibly before a src is selected).
+     * @name API.Playlist.TRACK_CHANGE
+     * @event
+     */
+    Playlist.TRACK_CHANGE = "trackchange";
+
+    /**
+     * Fires when the playlist is modified, via append or replace.
+     * @name API.Playlist.PLAYLIST_CHANGE
+     * @event
+     */
+    Playlist.PLAYLIST_CHANGE = "playlistchange";
+
+
+    /**
+     * Utility for applying the getters and setters associated with the Playlist API.
+     * @name API.Playlist.proxy
+     * @function
+     * @param {Object} playlist A playlist implementation.
+     * @param {Object} target A DOM element or JS object to which the properties should be applied.
+     */
+    Playlist.proxy = function (playlist, target) {
+        MetaPlayer.proxy.mapProperty("loop autoAdvance selectSource", target, playlist);
+        MetaPlayer.proxy.proxyFunction("getIndex setIndex getItem updateItem getPlaylist setPlaylist next previous",
+            playlist, target);
+        MetaPlayer.proxy.proxyEvent( Playlist.TRACK_CHANGE, playlist, target);
+        MetaPlayer.proxy.proxyEvent( Playlist.PLAYLIST_CHANGE, playlist, target);
+    };
+
     Playlist.prototype = {
 
-        index : function ( i ) {
-            i = this._resolveIndex(i);
-            if( i != null ) {
-                this._index = i;
-                this._select( this.track() );
-            }
-            return this._index;
-        },
-
-        queue : function ( tracks ) {
-            if( ! (tracks instanceof Array) )
-                tracks = [tracks];
-
-            var wasEmpty = (this._tracks.length == 0);
-
+        _addProxyListeners : function () {
             var self = this;
-            $(tracks).each( function (i, track) {
-                self._addTrack(track, true)
+            this.player.video.addEventListener("ended", function (e) {
+                self._onEnded(e);
             });
-            this.dispatcher.dispatch("playlistchange");
+            this.player.video.addEventListener("error", function (e) {
+                self._onEnded(e);
+            });
 
-            if( wasEmpty )
-                this._select( this.track() )
-        },
-
-        // begins the process of changing video source, starting with fetching metadata
-        _select : function ( uri ) {
-            this.dispatcher.dispatch("trackchange");
-            this.player.video.pause();
-            if(! this.player.metadata.load(uri) ){
-                // if have no data, and no one will look it up, just play the url
-                this._setSrc( uri );
-            }
-        },
-
-        empty : function ( tracks ) {
-            if(! this.config.selectSource ){
-                return;
-            }
-
-            this.player.video.pause();
-            this.player.video.src = "";
-            this._tracks = [];
-            this.transcodes = null;
-            this._index = 0;
-            this.dispatcher.dispatch("playlistchange");
-            this.dispatcher.dispatch("trackchange");
-        },
-
-        next  : function () {
-
-            var i = this._index + 1;
-            var t = this.track(i);
-
-            if( this.linkAdvance ) {
-                var data = this.player.metadata.getData();
-                if( data.link ) {
-                    window.top.location = data.link;
-                    return;
-                }
-            }
-
-            this.index(i )
-        },
-
-        previous : function () {
-            this.index( this._index - 1 )
-        },
-
-        track : function (i){
-            if( i === undefined )
-                i = this.index();
-            return this._tracks[ this._resolveIndex(i) ];
-        },
-
-        nextTrack : function () {
-            return this.track( this._index + 1);
-        },
-
-        tracks : function () {
-            return this._tracks;
-        },
-
-        _addTrack : function ( track, silent ) {
-            this._tracks.push(track);
-            if( ! silent )
-                this.dispatcher.dispatch("playlistchange");
-        },
-
-        _resolveIndex : function (i) {
-            if( i == null)
-                return null;
-            var pl = this.tracks();
-            if( i < 0  )
-                i = pl.length + i;
-            if( this.loop )
-                i = i % pl.length;
-            if( i >= pl.length || i < 0) {
-                return null;
-            }
-            return i;
         },
 
         _addListeners : function () {
-            var player = this.player;
-            var metadata = this.player.metadata;
-            var video = this.player.video;
-
-            player.listen(MetaPlayer.DESTROY, this.destroy, this);
-            metadata.listen(MetaPlayer.MetaData.DATA, this._onMetaData, this);
-
             var self = this;
-            $(player.video).bind('ended error', function(e) {
-                self._onEnded()
+            this.player.addEventListener("destroy", function (e) {
+                self._destroy();
+            });
+            this.player.video.addEventListener( "loadstart", function (e) {
+                self.player.video.preload = "auto";
+            });
+            this.player.video.addEventListener( "playing", function (e) {
+//                self.player.video.autoplay = true;
+            });
+            this.player.video.addEventListener( "pause", function (e) {
+//                self.player.video.autoplay = false;
+            });
+            this.player.video.addEventListener( Playlist.TRACK_CHANGE, function (e) {
+                self._onTrackChange(e);
+            });
+            this.player.metadata.addEventListener("data", function (e) {
+                self._onData(e);
             });
         },
 
+        _onEnded : function () {
+            if( this.autoAdvance ) {
+                var self = this;
+                // has to occur after ended event
+                setTimeout(function () {
+                    self.next();
+                }, 0)
 
-        _onMetaData : function (e) {
-            if( e.uri != this.track() ){
+            }
+        },
+
+        _onData : function  (e) {
+            if( this.config.appendSources )
+                this._appendSources(e.data);
+            this.player.video.updateItem(e.uri, e.data);
+        },
+
+        /**
+         * Callback which is fired when a track changes and metadata (and resource urls) becomes available. Will
+         * select media source.
+         * @name API.Playlist#updateItem
+         * @function
+         * @param {String} uri The content guid
+         * @param {Object} metadata An object representing the metadata for this content.
+         */
+        updateItem : function (uri, metadata, already_resolved) {
+            if( this._index == null || uri != this.getItem() )
+                return;
+
+            if( metadata.resolveUrl && ! already_resolved){
+                this._applyResolver(uri, metadata.resolveUrl);
                 return;
             }
 
-            this.transcodes = e.data.content;
+            var v = this.player.video;
+            var src = this._selectResource( metadata.content );
 
-            if( this.config.sourceTags )
-                this.addSourceTags();
+            if( src ) {
+                v.pause();
+                this._applySource(src);
+            }
 
-            if( this.config.selectSource )
-                this.selectSource();
+            if( metadata.thumbnail && (v.preload == "none" || ! v.autoplay) )  // avoid flicker if loading anyway
+                this.player.video.poster = metadata.thumbnail;
         },
 
-        addSourceTags : function  () {
+        _applyResolver : function (guid, lookup_url) {
             var self = this;
-            var video = this.player.video;
-            $.each(this.transcodes, function (i, source) {
-                video.appendChild( self._createSource(source.url, source.type) );
+            MetaPlayer.mrss(lookup_url, function (playlist) {
+                if( playlist.length > 0 ) {
+                    self.updateItem(guid, playlist[0], true)
+                }
             });
         },
 
-        selectSource : function () {
-            // sticky, for playlists
-            this.config.selectSource = true;
+        _applySource : function (src) {
+            if( ! this.selectSource )
+                return;
+            var v = this.player.video;
+            v.src = src;
 
+            // video element should do this on src assign, but is racey
+            if( v.autoplay )
+                v.play();
+
+            else if( v.preload != "none" )
+                v.load();
+        },
+
+        _appendSources : function (data) {
+            var v = this.player.video;
+            $(v).empty();
+
+            $.each(data.content, function (i, item) {
+                $('<source>')
+                    .attr('src', item.url)
+                    .attr('type', item.type)
+                    .appendTo(v);
+            });
+        },
+
+        _selectResource : function (transcodes) {
             var self = this;
             var video = this.player.video;
             var probably = [];
             var maybe = [];
 
-            if( ! this.transcodes )
+            if( ! transcodes )
                 return;
 
-            $.each(this.transcodes, function (i, source) {
-                var canPlay = video.canPlayType(source.type);
+            $.each(transcodes, function (i, source) {
+                var canPlay = video.canPlayType(source.type || self._resolveType(source.url) );
                 if( ! canPlay )
                     return;
                 if( canPlay == "probably" )
@@ -1147,43 +1578,140 @@ all copies or substantial portions of the Software.
                     maybe.push(source.url);
             });
 
-            var src = probably.shift() || maybe .shift();
-            if( src )
-                this._setSrc(src);
+            return probably.shift() || maybe.shift();
         },
 
-        _setSrc : function ( src ) {
-            var video = this.player.video;
-            video.src = src;
-            if( video.autoplay || this.index() > 0 ) {
-                video.play();
-            }
-            else if( video.preload ) {
-                video.load()
-            }
-        },
-
-        _createSource : function (url, type) {
-            var src = $('<source>')
-                .attr('type', type || '')
-                .attr('src', url) ;
-            return src[0];
-        },
-
-        _onEnded : function () {
-            if(! this.advance )
-                return;
-
-            if( this.index() == this.tracks().length - 1 ) {
-                this.dispatcher.dispatch('playlistComplete');
-            }
-
-            this.next();
-        },
-
-        destroy : function () {
+        _destroy : function () {
             this.dispatcher.destroy();
             delete this.player;
+        },
+
+        /**
+         * Returns an Array of content guids, representing the play order.
+         * @name API.Playlist#getPlaylist
+         * @function
+         * @return {Array} An array of guids.
+         */
+        getPlaylist : function () {
+            return this._playlist;
+        },
+
+        /**
+         * Accepts an array of content guids, representing the play order.
+         * @name API.Playlist#setPlaylist
+         * @function
+         * @param {Array} items  An array of GUIDs.
+         * @param {boolean} items If true, will append to the current playlist instead of replacing it.
+         */
+        setPlaylist : function ( items, append ) {
+            if( ! (items instanceof Array) )
+                items = [ items ];
+
+            if( ! append ){
+                this._playlist = [];
+            }
+
+            var i;
+            var pl = this._playlist;
+            for( i = 0; i< items.length; i++) {
+                pl.push( items[i] );
+            }
+
+            this.dispatch(Playlist.PLAYLIST_CHANGE);
+
+            if( ! append )
+                this.setIndex(0, true);
+        },
+
+
+        /**
+         * Returns the current playlist position.
+         * @name API.Playlist#getIndex
+         * @function
+         * @return {Integer}
+         */
+        getIndex : function ( i ) {
+            // internal: will also resolve an index passed in with respect to the loop attribute
+            var pl = this._playlist;
+
+            if( i == null)
+                return this._index;
+
+            if( i < 0  && this.loop)
+                i = pl.length + i;
+
+            if( !this.loop && (i >= pl.length || i < 0) ){
+                return null
+            }
+
+            return  i % pl.length;
+        },
+
+
+        /**
+         * Assigns the current index. If looping is enabled, then index will wrap.
+         * @name API.Playlist#setIndex
+         * @function
+         * @param {Integer} i Sets the current index, triggering a track change;
+         */
+        setIndex : function (i, force) {
+            i = this.getIndex(i);
+
+            if(! force && (i == null || i == this._index) )
+                return false;
+
+            this._index = i;
+
+            this.dispatch(Playlist.TRACK_CHANGE);
+            return true;
+        },
+
+        _onTrackChange : function (e) {
+            var guid = this.player.playlist.getItem();
+            if(! this.player.metadata.load(guid) ){
+                // if have no data, and no one will look it up, just play the url
+                this._applySource(guid);
+            }
+        },
+
+        /**
+         * Returns a GUID for the current video by default, or another video if specified.
+         * @name API.Playlist#getItem
+         * @function
+         * @param {Integer} [i] An optional index, defaults to the current video.
+         * @return {String} The item GUID.
+         */
+        getItem : function ( i ) {
+            if(i == null )
+                i = this._index;
+            return this._playlist[ this.getIndex(i) ];
+        },
+
+        next : function () {
+            return this.setIndex( this.getIndex() + 1 );
+        },
+
+        previous : function () {
+            return this.setIndex( this.getIndex() - 1 );
+        },
+
+
+        _resolveType : function ( url ) {
+            var ext = url.substr( url.lastIndexOf('.') + 1 );
+
+            if( url.match("www.youtube.com") ) {
+                return "video/youtube"
+            }
+
+            if( ext == "ogv")
+                return "video/ogg";
+
+            // none of these seem to work on ipad4
+            // http://developer.apple.com/library/ios/#technotes/tn2235/_index.html
+            if( ext == "m3u8" )
+                return  "application/application.vnd.apple.mpegurl";
+
+            return "video/"+ext.toLowerCase();
         }
 
     };
@@ -1194,9 +1722,19 @@ all copies or substantial portions of the Software.
     var $ = jQuery;
 
     var defaults = {
-        forceRelative : false
+        forceRelative : false,
+        useCache: true
     };
 
+    /**
+     * Creates a Search interface for use with MetaPlayer and RAMP services.
+     * @name API.Search
+     * @class Provides search servies for the currently video. <br />
+     * @constructor
+     * @augments Util.EventDispatcher
+     * @param {MetaPlayer} player A MetaPlayer instance containing a MetaData reference.
+     * @see MetaData
+     */
     var Search = function (player, options){
         this.config = $.extend({}, defaults, options);
 
@@ -1205,10 +1743,70 @@ all copies or substantial portions of the Software.
         MetaPlayer.dispatcher(this);
 
         this.player.listen(MetaPlayer.DESTROY, this.destroy, this);
+
     };
 
+    /**
+     * Fired when a search is initiated.
+     * @name API.Search#event:QUERY
+     * @event
+     * @param {Event} e
+     * @param {String} e.query The current search string
+     * @example
+     * mpf.search.addEventListener( MetaPlayer.Search.RESULTS , function (e) {
+     *    console.log("Searched initiated for: " + e.query);
+     * });
+     */
+    Search.QUERY = "query";
 
-    Search.QUERY = "QUERY";
+    /**
+     * Fired when search results are available.
+     * @name API.Search#event:RESULTS
+     * @event
+     * @param {Event} e
+     * @param {String} e.query The current search string
+     * @param {Object} e.data  The search results
+     * @example
+     * mpf.search.addEventListener( MetaPlayer.Search.RESULTS , function (e) {
+     *   console.log("Results for: " + e.query);
+     *   console.log(JSON.stringify(e.data, null, "  "));
+     * });
+     * mpf.search.query("Babylon");
+     * @example
+     * Results for: Babylon
+     *{
+     *  "query": [
+     *    "Babylon"
+     *  ],
+     *  "results": [
+     *    {
+     *      "start": "473.964",
+     *      "words": [
+     *        {
+     *          "match": false,
+     *          "start": "480.0457",
+     *          "text": "hanging"
+     *        },
+     *        {
+     *          "match": false,
+     *          "start": "480.05457",
+     *          "text": "gardens"
+     *        },
+     *        {
+     *          "match": false,
+     *          "start": "480.06345",
+     *          "text": "of"
+     *        },
+     *        {
+     *          "match": true,
+     *          "start": "480.07233",
+     *          "text": "\nBabylon."
+     *        }
+     *      ]
+     *    }
+     *  ]
+     *}
+     */
     Search.RESULTS = "results";
 
     MetaPlayer.Search = Search;
@@ -1217,11 +1815,116 @@ all copies or substantial portions of the Software.
         return new Search(this);
     });
 
+
+    Search.context = function ( str, offset, count, maxbuffer) {
+        // returns *count words of context starting at offset
+        // if count is negative, looks bacward from offset
+        // if maxbuffer is less than a word size, it will be split into two words (default: 256)
+        // returns an array of objects in the form of
+        // eg: [ { text : "first word", offset : 0 }, ... ]
+
+        var o = offset;
+        var words = [],
+            match;
+        if( count == null )
+            count = 10;
+
+        if( maxbuffer == null )
+            maxbuffer = 256;
+
+        var re, sub;
+        if( count > 0 ){
+            re = /^\s*(\S+)/;
+            sub = str.substr(o, maxbuffer)
+        }
+        else {
+            re = /(\S+)\s*$/;
+            if( o >= maxbuffer )
+                sub = str.substr(  o - maxbuffer, maxbuffer);
+            else
+                sub = str.substr(0, o);
+        }
+
+        var word;
+        while( words.length < Math.abs(count) && (match = sub.match(re) ) ){
+            if( count > 0 ){
+                words.push({
+                    text : match[1],
+                    offset: o
+                });
+                o += match[0].length;
+                sub = str.substr(o, maxbuffer)
+            }
+            else {
+                o -= match[0].length;
+                words.unshift({
+                    text : match[1],
+                    offset: o
+                });
+                if( o >= maxbuffer )
+                    sub = str.substr(  o - maxbuffer, maxbuffer);
+                else
+                    sub = str.substr(0, o);
+            }
+        }
+        return words;
+    };
+
+    Search.search = function (str, query, count) {
+
+        if(! query.length )
+            return [];
+
+        var escaped = query.replace(/(\W)/g, '\\$1')
+            .replace(/(\\\s)+/g, '\\s+');
+        var re = new RegExp("(\\b\\S*" + escaped + "\\S*\\b)", "i");
+        var match;
+        var o = 0;
+        var c;
+        var sub = str.substr(o);
+        var start, after, before, words;
+
+        if( count == null)
+            count = 6;
+
+        var results = [];
+        while( match = sub.match(re) ) {
+            start = o + match.index;
+            after = Search.context(str, start + match[1].length, 10);
+            before = Search.context(str, start, -10);
+            words = [{
+                match : true,
+                text : match[1],
+                offset: start
+            }];
+            words.offset = start;
+
+            c = 0;
+            while( words.length < count && (before.length || after.length) ){
+                c++;
+                if( before.length && c % 2 == 0 )
+                    words.unshift( before.pop() );
+                else if( after.length )
+                    words.push( after.shift() );
+            }
+
+            o = start + 1;
+            sub = str.substr(o);
+            results.push(words);
+        }
+        return results;
+    };
+
     Search.prototype = {
+
+        /**
+         * Initiates a search.
+         * @name API.Search#query
+         * @function
+         * @param {String} query A search phrase.
+         */
         query : function (query, callback, scope) {
             var data = this.player.metadata.getData();
-            if(! data.ramp.searchapi )
-                throw "no searchapi available";
 
 
             var e = this.createEvent();
@@ -1229,12 +1932,76 @@ all copies or substantial portions of the Software.
             e.query = query;
             this.dispatchEvent(e);
 
-            this._queryAPI(data.ramp.searchapi, query, callback, scope)
+            if (this.config.useCache) {
+                this.searchLocal(query, callback, scope);
+            }
+            else {
+                if(! data.ramp.searchapi )
+                    throw "no searchapi available";
+                this._queryAPI(data.ramp.searchapi, query, callback, scope);
+            }
         },
 
+        /**
+         * Disables the instance and frees memory references.
+         * @name API.Search#destroy
+         * @function
+         */
         destroy : function () {
             this.dispatcher.destroy();
             delete this.player;
+        },
+
+        searchLocal : function(query, callback, scope) {
+            var captions = this.player.cues.getCaptions();
+
+            var corpus = "";  // full text
+            var metadata = []; // index of offsets => timestamps
+
+            var o; // position in corpus of last needle match
+            var needles = query.replace(/(^\s|\s$)/, '').toLowerCase().split(/\s+/);
+
+            // build index/corups
+            $.each(captions, function (i, cue) {
+                metadata.push({
+                    start : cue.start,
+                    offset : corpus.length
+                });
+                corpus += cue.text + " ";
+            });
+
+            var timeOffset = function (offset) {
+                var last = 0;
+                for(var t = 0; t < metadata.length; t++ ){
+                    if( offset < metadata[t].offset )
+                        break;
+                    last = metadata[t].start
+                }
+                return last;
+            };
+
+            var matches = Search.search(corpus, query);
+            var ret = {
+                usingCues: true,
+                query : query,
+                results : []
+            };
+
+            $.each(matches, function (i, match) {
+                ret.results.push({
+                    offset: match.offset,
+                    start: timeOffset( match.offset ),
+                    words :$.map(match, function (word) {
+                        return {
+                            offset: word.offset,
+                            text : word.text,
+                            match : Boolean(word.match),
+                            start : timeOffset( word.offset )
+                        }
+                    })
+                })
+            });
+            this.setResults(ret, query, callback, scope);
         },
 
         _queryAPI : function (url, query, callback, scope) {
@@ -1307,7 +2074,7 @@ all copies or substantial portions of the Software.
                         match : Boolean( el.find('MQ').length ),
                         start : el.attr('s'),
                         text : self._deSmart( el.text() )
-                    })
+                    });
                 });
                 ret.results.push(s);
             });
@@ -1317,13 +2084,56 @@ all copies or substantial portions of the Software.
         _deSmart : function (text) {
             return text.replace(/\xC2\x92/, "\u2019" );
         }
-    }
+    };
+
+    /**
+     * @example
+     * Results for: Babylon
+     *{
+     *  "query": [
+     *    "Babylon"
+     *  ],
+     *  "results": [
+     *    {
+     *      "start": "473.964",
+     *      "words": [
+     *        {
+     *          "match": false,
+     *          "start": "480.0457",
+     *          "text": "hanging"
+     *        },
+     *        {
+     *          "match": false,
+     *          "start": "480.05457",
+     *          "text": "gardens"
+     *        },
+     *        {
+     *          "match": false,
+     *          "start": "480.06345",
+     *          "text": "of"
+     *        },
+     *        {
+     *          "match": true,
+     *          "start": "480.07233",
+     *          "text": "\nBabylon."
+     *        }
+     *      ]
+     *    }
+     *  ]
+     *}
+     */
 
 })();
 
 (function () {
     var $ = jQuery;
 
+    /**
+     * Creates a dispatcher property on an object, and mixes in a DOM style event API.
+     * @name Util.EventDispatcher
+     * @constructor
+     * @param source A JS object, or DOM node
+     */
     var EventDispatcher = function (source){
 
         if( source && source.dispatcher instanceof EventDispatcher)
@@ -1338,30 +2148,14 @@ all copies or substantial portions of the Software.
 
     MetaPlayer.dispatcher = EventDispatcher;
 
-    EventDispatcher.Event = function () {
-        this.cancelBubble = false;
-        this.defaultPrevented = false;
-    };
-
-    EventDispatcher.Event.prototype = {
-        initEvent : function (type, bubbles, cancelable)  {
-            this.type = type;
-            this.cancelable = cancelable;
-        },
-        stopPropagation : function () {
-            this.cancelBubble  = true;
-        },
-        stopImmediatePropagation : function () {
-            this.cancelBubble  = true;
-        },
-        preventDefault : function () {
-            if( this.cancelable )
-                this.defaultPrevented = true;
-        }
-    },
-
     EventDispatcher.prototype = {
 
+        /**
+         * Extend <code>source</code> with eventDispatcher properties, via mix-in pattern.
+         * @name Util.EventDispatcher#attach
+         * @function
+         * @param source
+         */
         attach : function (source) {
             if(!  source )
                 return;
@@ -1379,12 +2173,17 @@ all copies or substantial portions of the Software.
             }
 
             // and add our convenience functions
-            MetaPlayer.proxy.proxyFunction ( "listen forget dispatch createEvent",
+            MetaPlayer.proxy.proxyFunction ( "listen forget dispatch createEvent event",
                 this, source);
 
             source.dispatcher = this;
         },
 
+        /**
+         * disables object, frees memory references
+         * @name Util.EventDispatcher#destroy
+         * @function
+         */
         destroy : function () {
             delete this._listeners;
             delete this.addEventListener;
@@ -1393,6 +2192,14 @@ all copies or substantial portions of the Software.
             this.__destroyed = true; // for debugging / introspection
         },
 
+        /**
+         * A an alias for addEventListener which allows for setting scope
+         * @name Util.EventDispatcher#listen
+         * @function
+         * @param eventType
+         * @param {Function} callback An anonymous function
+         * @param [scope] The object to set as <code>this</code> when executing the callback.
+         */
         listen : function ( eventType, callback, scope) {
             this.addEventListener(eventType, function (e) {
                 callback.call(scope, e, e.data);
@@ -1403,6 +2210,15 @@ all copies or substantial portions of the Software.
             this.removeEventListener(type, callback);
         },
 
+        /**
+         * An convenience alias for dispatchEvent which creates an event of eventType,
+         * sets event.data, and dispatches the event.
+         * @name Util.EventDispatcher#dispatch
+         * @function
+         * @param {String} eventType An event name
+         * @param data A value to be set to event.data before dispatching
+         * @returns {Boolean} <code>true</code> if event was not cancelled.
+         */
         dispatch : function (eventType, data) {
             var eventObject = this.createEvent();
             eventObject.initEvent(eventType, true, true);
@@ -1410,13 +2226,35 @@ all copies or substantial portions of the Software.
             return this.dispatchEvent(eventObject);
         },
 
-        // traditional event apis
+        event : function ( type, obj ) {
+            var eventObject = this.createEvent();
+            eventObject.initEvent(type, true, true);
+            $.extend( eventObject, obj );
+            return this.dispatchEvent(eventObject);
+        },
+
+        /* traditional event apis */
+
+        /**
+         * Registers a callback function to be executed every time an event of evenType fires.
+         * @name Util.EventDispatcher#addEventListener
+         * @function
+         * @param {String} eventType An event name
+         * @param {Function} callback An anonymous function
+         */
         addEventListener : function (eventType, callback) {
             if( ! this._listeners[eventType] )
                 this._listeners[eventType] = [];
             this._listeners[eventType].push(callback);
         },
 
+        /**
+         * Un-registers a callback function previously passed to addEventListener
+         * @name Util.EventDispatcher#removeEventListener
+         * @function
+         * @param {String} eventType An event name
+         * @param {Function} callback An anonymous function
+         */
         removeEventListener : function (type, callback) {
             var l = this._listeners[type] || [];
             var i;
@@ -1427,19 +2265,36 @@ all copies or substantial portions of the Software.
             }
         },
 
-        createEvent : function (type) {
+        /**
+         * Creates an Event object which can be configured and dispatched with dispatchEvent
+         * @name Util.EventDispatcher#createEvent
+         * @function
+         * @param {String} eventType An event name
+         */
+        createEvent : function (eventType) {
             if( document.createEvent )
-                return document.createEvent(type || 'Event');
+                return document.createEvent(eventType || 'Event');
 
             return new EventDispatcher.Event();
         },
 
+        /**
+         * Triggers any callbacks associated with eventObject.type
+         * @name Util.EventDispatcher#dispatchEvent
+         * @function
+         * @param {Event} eventObject created with createEvent
+         * @returns {Boolean} <code>true</code> if event was not cancelled.
+         */
         dispatchEvent : function (eventObject) {
 
-//            if( eventObject.type != "timeupdate")
-//                   console.log(eventObject.type, eventObject);
+            if(! eventObject.type.match(/^time/) )
+                MetaPlayer.log("event", eventObject.type, eventObject);
+            else
+                MetaPlayer.log("time", eventObject.type, eventObject);
 
-            var l = this._listeners[eventObject.type] || [];
+            // copy so that removeEventListener doesn't break iteration
+            var l = ( this._listeners[eventObject.type] || [] ).concat();
+
             for(var i=0; i < l.length; i++ ){
                 if( eventObject.cancelBubble ) // via stopPropagation()
                     break;
@@ -1448,52 +2303,354 @@ all copies or substantial portions of the Software.
             return ! eventObject.defaultPrevented;
         }
 
-    }
+    };
+
+    /**
+     * Used as an Event object in browsers which do not support document.createEvent
+     * @name Util.Event
+     * @constructor
+     */
+    EventDispatcher.Event = function () {
+        this.cancelBubble = false;
+        this.defaultPrevented = false;
+    };
+
+    EventDispatcher.dispatch = function (dispatcher, eventType, data ) {
+        var eventObject;
+        if( document.createEvent )
+            eventObject = document.createEvent('Event');
+        else
+            eventObject =  new EventDispatcher.Event();
+
+        eventObject.initEvent(eventType, true, true);
+        if( data instanceof Object )
+            $.extend(eventObject, data);
+        return dispatcher.dispatchEvent(eventObject);
+    };
+
+    EventDispatcher.Event.prototype = {
+        /**
+         * Sets event properties
+         * @name Util.Event#initEvent
+         * @function
+         * @param {String} eventType An event name
+         * @param {Boolean} bubbles  Not used by non-DOM dispatchers
+         * @param {Boolean} cancelable  Enables preventDefault()
+         */
+        initEvent : function (eventType, bubbles, cancelable)  {
+            this.type = eventType;
+            this.cancelable = cancelable;
+        },
+
+        /**
+         * Cancels the event from firing any more callbacks.
+         * @name Util.Event#stopPropagation
+         * @function
+         */
+        stopPropagation : function () {
+            this.cancelBubble  = true;
+        },
+
+        /**
+         * Cancels the event. For non-DOM object, same as stopPropegation()
+         * @name Util.Event#stopImmediatePropagation
+         * @function
+         */
+        stopImmediatePropagation : function () {
+            this.cancelBubble  = true;
+        },
+
+        /**
+         * Indicates a default action should be skipped, by causing dispatchEvent()
+         * to return false.
+         * @name Util.Event#preventDefault
+         * @function
+         */
+        preventDefault : function () {
+            if( this.cancelable )
+                this.defaultPrevented = true;
+        }
+    };
+
 
 })();
 (function () {
 
+    var $ = jQuery;
+
     MetaPlayer.format = {
-        seconds : function (time) {
-            var zpad = function (val, len) {
-                var r = String(val);
-                while( r.length < len ) {
-                    r = "0" + r;
-                }
-                return r;
+
+        zpad : function (val, len) {
+            var r = String(val);
+            while( r.length < len ) {
+                r = "0" + r;
+            }
+            return r;
+        },
+        seconds : function (time, options) {
+            var defaults = {
+                minutes : true,
+                seconds : true,
+                hours   : false // auto
             };
+            var config = $.extend({}, defaults, options);
+
+            var zpad = MetaPlayer.format.zpad;
+
             var hr = Math.floor(time / 3600);
             var min = Math.floor( (time %  3600) / 60);
             var sec = Math.floor(time % 60);
-            var parts = [
-                zpad(min, 2),
-                zpad(sec, 2)
-            ];
-            if( hr )
+            var parts = [];
+
+            if( config.seconds || min || hr )
+                parts.unshift( zpad(sec, 2) );
+            else if( sec > 0)
+                parts.unshift(sec);
+
+            if( config.minutes || hr )
+                parts.unshift( zpad(min, 2) );
+            else if( min > 0)
+                parts.unshift(min);
+
+            if( config.hours )
+                parts.unshift( zpad(hr, config.hours) );
+            else if(  hr > 0)
                 parts.unshift(hr);
+
             return parts.join(":");
         },
 
         replace : function (template, dict) {
-            return template.replace( /\{\{(\w+)\}\}/g,
-                function(str, match) {
-                    var ret;
-                    if( dict[match] instanceof Function ){
-                        ret = dict[match](dict);
-                    }
-                    else if( dict[match] != null ){
-                        ret = dict[match]
-                    }
-                    else {
-                        return "{!!!" + match + "!!!}"
-                    }
-                    return MetaPlayer.format.replace( ret.toString(), dict )
-                });
-        }
-    };
+        return template.replace( /\{\{(\w+)\}\}/g,
+            function(str, match) {
+                var ret;
+                if( dict[match] instanceof Function ){
+                    ret = dict[match](dict);
+                }
+                else if( dict[match] != null ){
+                    ret = dict[match]
+                }
+                else {
+                    return "{!!!" + match + "!!!}"
+                }
+                return MetaPlayer.format.replace( ret.toString(), dict )
+            });
+    }
+};
 
 })();
 
+
+(function () {
+
+    var $ = jQuery;
+
+    var defaults = {
+        steps : null,
+        throttleMs : 250,
+        max : 100,
+        min : 0,
+        value : 25,
+        draggable: true
+    };
+
+    var ProgressBar = function (parent, options) {
+
+        if( ! (this instanceof  ProgressBar))
+            return new ProgressBar(parent, options);
+
+        var config = $.extend({}, defaults, options);
+        this._steps = config.steps;
+        this._throttleMs = config.throttleMs;
+        this._max = config.max;
+        this._min = config.min;
+        this._value = config.value;
+        this.ui = {};
+        this.createMarkup(parent);
+        this._render();
+        this.setDraggable(config.draggable);
+
+        MetaPlayer.dispatcher(this);
+    };
+
+    MetaPlayer.ProgressBar = ProgressBar;
+
+    ProgressBar.prototype = {
+
+        createMarkup : function (parent) {
+            this.ui.track = $("<div></div>")
+                .css({
+                    position : "relative",
+                    top : 0,
+                    left : 0
+                })
+                .bind("mousedown touchstart", this.bind( this._onDragStart ))
+                .appendTo(parent);
+
+            this.ui.fill = $("<div></div>")
+                .css({
+                    position : "absolute",
+                    top : 0,
+                    left : 0,
+                    height: "100%"
+                })
+                .appendTo(this.ui.track);
+        },
+
+
+        getPercent : function () {
+            return this._value / this._range();
+        },
+
+        getValue : function () {
+            return this._value;
+        },
+
+        getStep : function () {
+            return Math.ceil( this.getPercent() * this._steps);
+        },
+
+        setValue : function ( val ) {
+            this._value = val;
+            this._render();
+        },
+
+        setDraggable : function (bool) {
+            this._draggable = Boolean(bool);
+            this.ui.track.css("cursor", this._draggable ? "pointer" : 'inherit');
+        },
+
+        setMin : function ( min ){
+            this._min = min;
+            this._render();
+        },
+
+        setMax : function ( max ){
+            this._max = max;
+            this._render();
+        },
+
+        _range : function () {
+            return this._max - this._min;
+        },
+
+        _render : function (percent) {
+            if( percent == null )
+                percent = this.getPercent();
+
+            if( this._dragging && arguments[0] == null)
+                return;
+
+            if( this._steps > 0 )
+                percent = this.getStep() / this._steps;
+
+            this.ui.fill.width( (percent * 100) + "%" );
+        },
+
+        _onDragStart : function (e) {
+
+            if( ! this._draggable )
+                return;
+
+            this._dragging =  {
+                move : this.bind(this._onDragMove),
+                stop :  this.bind(this._onDragStop)
+            };
+
+            this.dispatch("dragstart");
+
+            $(document)
+                .bind("mousemove touchmove", this._dragging.move)
+                .bind("mouseup touchend", this._dragging.stop);
+
+            this._onDragMove(e);
+        },
+
+        _onDragStop : function (e) {
+            if( ! this._dragging )
+                return;
+
+            $(document)
+                .unbind("mousemove touchmove", this._dragging.move)
+                .unbind("mouseup touchend", this._dragging.stop);
+
+            // ensure we get a last move with the final value
+            this._lastFire = null;
+
+            this._onDragMove(e);
+
+            this._dragging = null;
+
+            this.dispatch("dragstop");
+        },
+
+        _onDragMove : function (e) {
+            var p = this._dragPercent(e, this.ui.track );
+
+
+            if(!  isNaN(p) ) { // touchend has no position info
+                this._value = p * this._range() ;
+                this._lastP = p;
+            }
+            else {
+                p = this._lastP;
+            }
+
+            if( p === 0 || p > 0 )
+                this._render( p );
+
+            e.preventDefault();
+
+            var now = (new Date()).getTime();
+            if( ! this._lastFire || (now - this._lastFire > this._throttleMs) ){
+                this._onThrottle();
+                return;
+            }
+
+            if( ! this._timeout )
+                this._timeout = setTimeout( this.bind(this._onThrottle), this._throttleMs)
+        },
+
+        _onThrottle : function () {
+            clearTimeout(this._timeout);
+            this._timeout = null;
+            this._lastFire = (new Date()).getTime();
+            this.dispatch("dragmove");
+        },
+
+        /* util */
+        bind : function ( fn ) {
+            var self = this;
+            return function () {
+                return fn.apply(self, arguments);
+            }
+        },
+
+        _dragPercent : function (event, el) {
+            var oe = event.originalEvent;
+            var pageX = event.pageX;
+
+            if( oe.targetTouches ) {
+                if( ! oe.targetTouches.length )
+                    return NaN;
+                pageX = oe.targetTouches[0].pageX;
+            }
+
+            var bg = this.ui.track;
+            var x =  pageX - bg.offset().left;
+
+            var p = x / bg.width();
+            if( p < 0 )
+                p = 0;
+            else if( p > 1 )
+                p = 1;
+            return p
+        }
+    };
+
+
+
+})();
 (function () {
     var $ = jQuery;
 
@@ -1517,13 +2674,13 @@ all copies or substantial portions of the Software.
         proxyEvent : function (types, source, target ){
             // emulate if old non-standard event model
             if( ! target.addEventListener ) {
-                Ramp.dispatcher(target);
+                MetaPlayer.dispatcher(target);
             }
             $.each(types.split(/\s+/g), function (i, type) {
                 source.addEventListener(type, function (e) {
                     // if emulated, just use type
                     if( target.dispatch ) {
-                        target.dispatch(e.type);
+                        target.dispatch(e.type, e.data);
                         return;
                     }
                     // else use standard model
@@ -1567,6 +2724,7 @@ all copies or substantial portions of the Software.
         },
 
         define : function (obj, prop, descriptor) {
+            descriptor.configurable = true;
             try {
                 // modern browsers
                 return Object.defineProperty(obj, prop, descriptor);
@@ -1578,8 +2736,9 @@ all copies or substantial portions of the Software.
             // older, pre-standard implementations
             if( obj.__defineGetter && descriptor.get )
                 obj.__defineGetter__( prop, descriptor.get);
-            if( descriptor.set && obj.__defineSetter__ )
+            if( descriptor.set && obj.__defineSetter__ ) {
                 obj.__defineSetter__( prop, descriptor.set);
+            }
 
             // ie7 and other old browsers fail silently
         },
@@ -1588,59 +2747,333 @@ all copies or substantial portions of the Software.
         // IE8: can't do javascript objects
         // iOS: can't do DOM objects
         // use DOM where possible
-        getProxyObject : function ( dom ) {
+        getProxyObject : function ( source ) {
 
-            // All modern browsers (and ie8)
-            if( ! dom )
-                dom = document.createElement("div");
+            // if already a proxy object
+            if( source && source._proxyFor )
+                return source;
+
+            var dom = document.createElement("div");
+            var proxy;
 
             try {
-                Object.defineProperty(dom, "__proptest", {} );
-                return dom;
+                // 1) Proxy can be a DOM node (CR/FF4+/IE8+)  !iOS !IE7
+                // iOS4 throws error on any dom element
+                // iOS4 throws error specifically on parentElement
+                // ie7 has no setter support whatsoever
+                proxy = dom;
+                Object.defineProperty(proxy, "parentElement", {
+                    get : function () {
+                        return source.parentElement;
+                    },
+                    configurable : true
+                });
             }
+
             catch(e){
+                // 2) Proxy is a JS Object, (CR/FF/IE9/iOS) !IE7, !IE8
+                // ie8 only supports getters on DOM elements.
+                proxy = {};
+                Proxy.mapProperty("children", proxy, dom);
+                Proxy.proxyFunction("appendChild removeChild prependChild", dom, proxy);
             }
 
-            // iOS, fake as best we can, adding props as needed
-            var target = {
-                _proxyNode : dom,
-                parentNode : dom.parentNode,
-                tagName : dom.tagName,
-                ownerDocument : dom.ownerDocument,
-                style : dom.style,
-                appendChild : function() { dom.appendChild.apply(dom, arguments) }
-            };
-            try {
-                Object.defineProperty(target, "__proptest", {} );
-                return target;
+            if( source ) {
+                // proxy the source element in attributes the best we can.
+//                we only care about standard dom properties, and FF blows up when you iterate an object tag
+
+//                $.map(dom,  function (val, key) {
+                var key, val;
+                for( key in dom ) {
+
+                    // skip some, either because we don't want to proxy them (append child, etc)
+                    // or because they break (eg. dom["filters"] throws an error in IE8)
+                    if( key.match(/filters|child|textContent|nodeName|nodeType/i) )
+                        continue;
+
+                    val = undefined;
+                    try {
+                        val = dom[key];  // document.createElement('p').offsetParent throws exception in ie8
+                    }
+                    catch(e){}
+
+                    if( val && val instanceof Function )
+                        Proxy.proxyFunction(key, source, proxy);
+                    else
+                        Proxy.mapProperty(key, proxy, source);
+                }
             }
-            catch(e){
+
+            if( proxy !== dom ){
+                // map child methods so as not to modify original dom node
+                // here we lie to jQuery: it refuses to bind nodeType "object"
+                Proxy.mapProperty("nodeName nodeType children textContent", proxy, dom);
+                Proxy.proxyFunction("appendChild removeChild prependChild", dom, proxy);
             }
 
-            throw "Object.defineProperty not defined";
-        },
-
-        proxyPlayer : function (source, target) {
-            var proxy = Ramp.proxy.getProxyObject(target);
-
-            Proxy.mapProperty("duration currentTime volume muted seeking" +
-                " paused controls autoplay preload src ended readyState ad",
-                proxy, source);
-
-            Proxy.proxyFunction("load play pause canPlayType" ,source, proxy);
-
-            // MetaPlayer Optional Extensions
-            Proxy.proxyFunction("mpf_resize" ,source, proxy);
-
-            Proxy.proxyPlayerEvents(source, proxy);
-
+            proxy._proxyFor = source;
             return proxy;
         },
 
-        proxyPlayerEvents : function (source, target){
+        /**
+         *
+         * @name Util.ProxyPlayer
+         * @class ProxyPlayer contains a substantial a subset of the Media Element properties.  If provided
+         * a target DOM node, the media attributes will be applied to that DOM node, if possible.  In iOS, where DOM
+         * getters functions cannot be defined, a JavaScript object will be provided with both media element properties and
+         * proxyed DOM element properties.
+         * @see Documentation ported from: <a href=http://www.w3.org/TR/html5/media-elements.html#media-elements">W3.Org Media Elements</a>
+         * @param source A JavaScript object containing an HTML5 MediaController interface.  Getter/setter properties
+         * such as currentTime and src can be defined as function (eg: currentTime(time), src(src).
+         * @param [target] A DOM element upon which to define the MediaController interface, clobbering any
+         * existing properties (such as readyState). If not defined, the iOS fallback JS object is returned.
+         * @description
+         * This utility function hides browser-specific complexity of mapping a video player wrapper onto a DOM node,
+         * and returns an object which can be used as if it were a <code>&lt;video></code> element.  Usually, this is
+         * the DOM element passed in, with the exception being iOS in which a JS object is returned.
+         * @example
+         *         var myWrapper = {
+         *              __time : 0,
+         *              currenTime : function (val) {
+         *                  if( val != null)
+         *                      this.__time = val;
+         *                  return this.__time;
+         *              }
+         *         };
+         *         var video = MetaPlayer.proxy.proxyPlayer( myWrapoer,
+         *              document.getElementById("#myDif") );
+         */
+
+        /**
+         * @name Util.ProxyPlayer#duration
+         * @type Number
+         * @description Returns the difference between the earliest playable moment and the latest playable moment (not considering whether the data in question is actually buffered or directly seekable, but not including time in the future for infinite streams). Will return zero if there is no media.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#currentTime
+         * @type Number
+         * @description Returns the current playback position, in seconds, as a position between zero time and the
+         * current duration. Can be set, to seek to the given time.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#paused
+         * @type Boolean
+         * @description Returns true if playback is paused; false otherwise. When this attribute is true, any media element slaved to this controller will be stopped.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#volume
+         * @type Number
+         * @description Returns the current playback volume multiplier, as a number in the range 0.0 to 1.0, where 0.0 is the quietest and 1.0 the loudest. Can be set, to change the volume multiplier.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#muted
+         * @type Boolean
+         * @description Returns true if all audio is muted (regardless of other attributes either on the controller or on any media elements slaved to this controller), and false otherwise. Can be set, to change whether the audio is muted or not.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#seeking
+         * @type Boolean
+         * @description Returns true if the user agent is currently seeking.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#controls
+         * @type Boolean
+         * @description If false, render no controls.  If true render the default playback controls.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#autoplay
+         * @type Boolean
+         * @description Automatically loads and plays the video when a source is available.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#preload
+         * @type String
+         * @description If true, then load() will be invoked automatically upon media selection. Ignored if autoplay is enabled.
+         * <ul>
+         * <li>none</li>
+         * <li>metadata</li>
+         * <li>auto</li>
+         * </ul>
+         */
+
+        /**
+         * @name Util.ProxyPlayer#ended
+         * @type Boolean
+         * @description True if the media has loaded and playback position has progressed to the terminus of the
+         * content in the current playback direction.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#src
+         * @type String
+         * @description Gives the address of the media resource (video, audio) to show. Can be set to change
+         * the current media.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#readyState
+         * @type Integer
+         * @description Describes to what degree the media is ready to be rendered at the current playback position.
+         * <ul>
+         * <li>0 - HAVE_NOTHING</li>
+         * <li>1 - HAVE_METADATA</li>
+         * <li>2 - HAVE_CURRENT_DATA</li>
+         * <li>3 - HAVE_FUTURE_DATA</li>
+         * <li>4 - HAVE_ENOUGH_DATA</li>
+         * </ul>
+         * @see <a href="http://www.w3.org/TR/html5/media-elements.html#ready-states">readyState</a>
+         */
+
+        /**
+         * @name Util.ProxyPlayer#load
+         * @function
+         * @description Begins the download, and buffering of the media specified, beginning with media
+         * seletion from <code> &lt;source></code> tags if no <code>src</code> is specified.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#play
+         * @function
+         * @description Sets the paused attribute to false.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#pause
+         * @function
+         * @description Sets the paused attribute to false.
+         */
+
+         /**
+         * @name Util.ProxyPlayer#canPlayType
+         * @function
+         * @param {String} type A MIME type string.
+         * @description Returns the empty string if type is a type that the user agent knows it cannot render, returns
+          * "probably" if the user agent is confident that the type represents a media resource that it can
+          * render, "maybe" otherwise.
+          * @see <a href="http://www.w3.org/TR/html5/media-elements.html#dom-navigator-canplaytype">canPlayType</a>
+          * @see <a href="http://www.w3.org/TR/html5/the-source-element.html#attr-source-type">types</a>
+          */
+
+        /**
+         * @name Util.ProxyPlayer#event:timeupdate
+         * @event
+         * @description The current playback position changed as part of normal playback or discontinuously, such as seeking.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#event:seeking
+         * @event
+         * @description  The seeking property has been set to true.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#event:seeked
+         * @event
+         * @description The seeking property has been set false.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#event:playing
+         * @event
+         * @description Playback is ready to start after having been paused or delayed due to lack of media data.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#event:play
+         * @event
+         * @description The element is no longer paused. Fired after the play() method has returned, or when the autoplay attribute has caused playback to begin.
+         */
+        /**
+         * @name Util.ProxyPlayer#event:pause
+         * @event
+         * @description The element has been paused.
+         */
+        /**
+         * @name Util.ProxyPlayer#event:loadeddata
+         * @event
+         * @description The user agent can render the media data at the current playback position for the first time.
+         */
+        /**
+         * @name Util.ProxyPlayer#event:loadedmetadata
+         * @event
+         * @description The user agent has just determined the duration and dimensions of the media resource.
+         */
+        /**
+         * @name Util.ProxyPlayer#event:canplay
+         * @event
+         * @description The user agent can resume playback of the media data.
+         */
+        /**
+         * @name Util.ProxyPlayer#event:loadstart
+         * @event
+         * @description The element is constructed and is ready for a media source.
+         */
+        /**
+         * @name Util.ProxyPlayer#event:durationchange
+         * @event
+         * @description The duration attribute has just been updated.
+         */
+        /**
+         * @name Util.ProxyPlayer#event:volumechange
+         * @event
+         * @description Either the volume attribute or the muted attribute has changed.
+         */
+        /**
+         * @name Util.ProxyPlayer#event:ended
+         * @event
+         * @description Playback has stopped because the end of the media resource was reached.
+         */
+        /**
+         * @name Util.ProxyPlayer#event:error
+         * @event
+         * @description An error occurs while fetching the media data.
+         */
+
+
+        /**
+         * @name Util.ProxyPlayer#ad
+         * @type Boolen
+         * @description True if an Ad is currently rendering.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#event:adstart
+         * @event
+         * @description Fired when the player begins an ad, indicating that seeking should be disabled.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#event:adstop
+         * @event
+         * @description Fired when the player finishes playing an ad, indicating that seeking can be re-enabled.
+         */
+
+
+        proxyPlayer : function (adapter, dom) {
+            var proxy = MetaPlayer.proxy.getProxyObject(dom);
+
+            Proxy.mapProperty("duration currentTime volume muted seeking" +
+                " paused controls autoplay preload src ended readyState ad",
+                proxy, adapter);
+
+            Proxy.proxyFunction("load play pause canPlayType" ,adapter, proxy);
+
+            // MetaPlayer Optional Extensions
+            Proxy.proxyFunction("mpf_resize mpf_index", adapter, proxy);
+
             Proxy.proxyEvent("timeupdate seeking seeked playing play pause " +
                 "loadeddata loadedmetadata canplay loadstart durationchange volumechange adstart adstop"
-                + " ended error",source, target);
+                + " ended error",adapter, proxy);
+
+            return proxy;
         }
     };
 
@@ -1656,7 +3089,7 @@ all copies or substantial portions of the Software.
 
     var $ = jQuery;
 
-    Ramp.script = {
+    MetaPlayer.script = {
 
         url : function (filename) {
             // returns the first matching script tag
@@ -1685,8 +3118,73 @@ all copies or substantial portions of the Software.
                 src = this.url('metaplayer(-complete)?(\.min)?\.js');
             if( src )
                 return  src.substr(0, src.lastIndexOf('/') + 1);
-        }
+        },
 
+        query : function (filter) {
+            var query = {};
+            var regex = RegExp(filter);
+            var search = location.search && location.search.substr(1).split("&");
+            $.each(search, function (i, pair) {
+                var parts = pair && pair.split("=") || [];
+                var key = parts[0];
+
+                if( ! key )
+                    return;
+
+                // namespacing by prefix
+                if( filter ) {
+                    if( ! key.match(regex) )
+                        return;
+                    else
+                        key = key.replace( regex, '');
+                }
+
+                // unescaping
+                var val = parts[1] || '';
+                val = decodeURIComponent(val.replace(/\+/g, " ") );
+
+                // casting
+                if( val == "" )
+                    val = null;
+                else if( val.match(/^\d+$/) )
+                    val = parseInt( val );
+                else if( val.match(/^true|false$/) )
+                    val = (val === "true");
+
+                query[ key ] = val
+            });
+            return query;
+        },
+
+        camelCase : function (str) {
+            return str.replace(/[\s_\-]+([A-Za-z0-9])?([A-Za-z0-9]*)/g, function(str, p1, p2) { return p1.toUpperCase() + p2.toLowerCase() } )
+        },
+
+        objectPath : function (obj, key, val, depth) {
+            if( depth == null)
+                depth = 0;
+            var i =  key.indexOf(".");
+            if( i == -1 ) {
+                if( val !== undefined )
+                    obj[key] = val;
+                return obj[key];
+            }
+            var name = key.slice(0,i);
+            var remain = key.slice(i+1);
+            if( key !== undefined && ! (obj[name] instanceof Object) )
+                obj[name] = {};
+            return MetaPlayer.script.objectPath(obj[name], remain, val, depth + 1)
+        },
+
+        parseSrtTime : function (str) {
+            var m = str.match(/^(?:(\d+):)?(\d\d):(\d\d)[\.,](\d\d\d)$/);
+            if( ! m ) {
+                return null;
+            }
+            if( ! m[1] )
+                m[1] = 0
+            return ( parseInt(m[1], 10) * 3600) + ( parseInt(m[2], 10) * 60)+ parseInt(m[3], 10) + (parseInt(m[4], 10) *.001);
+        }
     }
 
 })();
@@ -1700,6 +3198,7 @@ all copies or substantial portions of the Software.
     var $ = jQuery;
 
     var defaults = {
+        disabled : false,
         fixedHeight : false,
         minHeight : 20, //px
         mouseDrag : false,
@@ -1767,6 +3266,7 @@ all copies or substantial portions of the Software.
                 .css('border-radius', "4px")
                 .css('background', "#000")
                 .css('opacity', .4)
+                .hide()
                 .css('cursor', "pointer")
                 .width(8)
                 .addClass("mp-scroll-knob")
@@ -1778,7 +3278,7 @@ all copies or substantial portions of the Software.
             this.parent
                 .css("position", "relative")
                 .css("overflow", "visible")
-                .bind("mousewheel", function (e){
+                .bind("mousewheel DOMMouseScroll", function (e){
                     self.onScroll(e);
                 })
                 .bind((this.config.mouseDrag ? "mousedown" : '') + " touchstart", function (e) {
@@ -1790,16 +3290,19 @@ all copies or substantial portions of the Software.
         },
 
         onScroll : function(e) {
-            var x = e.originalEvent.wheelDeltaX || e.originalEvent.delta || 0;
-            var y = e.originalEvent.wheelDeltaY || e.originalEvent.delta || 0;
-            this.scrollBy(-x, -y);
-            e.preventDefault();
+            var x = e.originalEvent.wheelDeltaX || e.originalEvent.delta || e.originalEvent.detail * 10|| 0;
+            var y = e.originalEvent.wheelDeltaY || e.originalEvent.delta ||  e.originalEvent.detail * 10|| 0;
+            if( ! this.config.disabled ){
+                if( this.scrollBy(-x, -y) ){
+                    e.preventDefault();
+                }
+            }
         },
 
         scrollBy : function (x, y, duration){
             var sl = this.scroller.scrollLeft();
             var st = this.scroller.scrollTop();
-            this.scrollTo( sl + x ,  st + y, duration);
+            return this.scrollTo( sl + x ,  st + y, duration);
         },
 
         scrollTop : function () {
@@ -1807,10 +3310,12 @@ all copies or substantial portions of the Software.
         },
 
         scrollTo : function (x, y, duration){
-            var max = this.body.height() - this.parent.height();
-            var at_max = ( max > 0 && this.scroller.scrollTop() + 1 >= max ); // allow rounding fuzzyiness
 
-             if( y > max  )
+            var currentY = this.scroller.scrollTop();
+            var max = this.body.height() - this.parent.height();
+            var at_max = ( max > 0 && currentY + 1 >= max ); // allow rounding fuzzyiness
+
+            if( y > max  )
                 y = max;
 
             if( y < 0 )
@@ -1818,7 +3323,11 @@ all copies or substantial portions of the Software.
 
             this.scroller.stop();
 
-            if( duration && !at_max ){
+            if( y == currentY ){
+                return false;
+            }
+
+            if( duration ){
                 var self = this;
                 this._scrollY = y;
                 this.scroller.animate({
@@ -1828,12 +3337,29 @@ all copies or substantial portions of the Software.
                     self._scrollY = null;
                 });
                 this.render(duration);
+                return false;
             }
-            else {
+
+            if( y ) {
                 this.scroller.scrollLeft(x);
                 this.scroller.scrollTop(y);
                 this.render();
+                return true;
             }
+        },
+
+        throttledRender : function (duration) {
+            if( this._delay )
+                clearTimeout(this._delay);
+
+            if( duration == null )
+                duration = this.config.knobAnimateMs;
+
+            var self = this;
+            this._delay = setTimeout( function () {
+                self._delay = null;
+                self.render(duration);
+            }, 0);
         },
 
         render: function (duration) {
@@ -1842,6 +3368,9 @@ all copies or substantial portions of the Software.
             if( ! this.body || ! this.body.is(":visible")) {
                 return;
             }
+
+            if( this.config.disabled )
+                return;
 
             var bh = this.body.height();
             var ph = this.parent.height();
@@ -1881,11 +3410,10 @@ all copies or substantial portions of the Software.
 
         onResize : function () {
             if( this.config.listenChanges )
-                this.render(this.config.knobAnimateMs);
+                this.throttledRender();
         },
 
         onTouchStart : function (e) {
-
             this.touching = {
                 lastX : this.scroller.scrollLeft(),
                 lastY : this.scroller.scrollTop()
@@ -1921,7 +3449,7 @@ all copies or substantial portions of the Software.
 
         onTouchStop : function (e) {
 
-             $(document)
+            $(document)
                 .unbind("mousemove touchmove", this._touchMove )
                 .unbind("mouseup touchend", this._touchStop );
             this.touching = null;
@@ -1937,9 +3465,12 @@ all copies or substantial portions of the Software.
 
             this.touching.lastX = x;
             this.touching.lastY = y;
-            this.scrollTo(x, y);
-            e.stopPropagation();
-            e.preventDefault();
+
+
+            if(  this.scrollTo(x, y) ){
+                e.stopPropagation();
+                e.preventDefault();
+            }
         },
 
         onKnobStart : function (e, inverse) {
@@ -1959,7 +3490,7 @@ all copies or substantial portions of the Software.
         },
 
         onKnobStop : function (e) {
-             $(document)
+            $(document)
                 .unbind("mousemove touchmove", this._knobMove )
                 .unbind("mouseup touchend", this._knobStop );
             this.dragging = null;
@@ -1998,7 +3529,7 @@ all copies or substantial portions of the Software.
             return new Timer(delay, count);
 
         var self = this;
-        Ramp.dispatcher(this);
+        MetaPlayer.dispatcher(this);
         this.delay = delay;
         this.count = count || -1;
         this._counted = 0;
@@ -2015,7 +3546,7 @@ all copies or substantial portions of the Software.
         };
     };
 
-    Ramp.timer = Timer;
+    MetaPlayer.timer = Timer;
 
     Timer.prototype = {
         reset : function () {
@@ -2056,7 +3587,7 @@ all copies or substantial portions of the Software.
     if( ! window.Ramp )
         window.Ramp = {};
 
-    Ramp.ui = {
+    MetaPlayer.ui = {
         /**
          * Ensures that target's parentNode is it's offsetParent, creating a wrapping div if necessary.
          *  Returned box can be used to reliably position UI elements absolutely using top,left,etc.
@@ -2091,7 +3622,266 @@ all copies or substantial portions of the Software.
         }
     };
 })();
-(function() { 
+(function () {
+
+    var $ = jQuery;
+
+/*
+From MP2:
+ defaultTrackEvents : {"onBegin"  : {label: "Begin",  type: "clip", track: false},
+ "onFinish" : {label: "Finish", type: "clip", track: true},
+ "onPause"  : {label: "Pause",  type: "clip", track: true},
+ "onResume" : {label: "Play",   type: "clip", track: true},
+ "onSeek"   : {label: "Seek",   type: "clip", track: true},
+ "onStart"  : {label: "Start",  type: "clip", track: true},
+ "onStop"   : {label: "Stop",   type: "clip", track: true},
+ "onMute"   : {label: "Mute",   type: "player", track: true},
+ "onUnmute" : {label: "Unmute", type: "player", track: true},
+ "onFullscreen"     : {label: "Fullscreen",      type: "player", track: true},
+ "onFullscreenExit" : {label: "Fullscreen exit", type: "player", track: true},
+ "onCaptionsOn"  : {label: "Captions on",  type: "custom", track: true},
+ "onCaptionsOff" : {label: "Captions off", type: "custom", track: true},
+ "onReplay"      : {label: "Replay", type: "custom", track: true},
+ "onUpNextClick" : {label: "UpNextClick", type: "custom", track: true},
+ "onShare"       : {label: "Share",  type: "custom", track: true},      // twitter/fb/etc
+ "onSearch"      : {label: "Search", type: "custom", track: true},      // search term
+ "onSearchResultClick" : {label: "SearchResultClick", type: "custom", track: true}, // (search term, result position)
+ "onTagClick"    : {label: "TagClick", type: "custom", track: true},  //  (tag type, tag value, position)
+ "onQCardAdd"    : {label: "QCardAdd", type: "custom", track: true},  // (term,ts,target area, card-id)
+ "onQCardUserHover" : {label: "QCardUserHover", type: "custom", track: true}, // (term,ts,target area, card-id)
+ "onQCardDisplay"   : {label: "QCardDisplay",   type: "custom", track: true}, // (term,ts,target area, card-id)
+ "onQCardUserClick" : {label: "QCardUserClick", type: "custom", track: true}  // (term,ts,target area, card-id)
+ },
+ */
+
+    var Adapter = function (player, gaTracker) {
+
+        if( ! (this instanceof Adapter) )
+            return new Adapter(player, gaTracker);
+
+        this.player = player;
+        this.gat = gaTracker;
+        this.addListeners();
+        this.init();
+    };
+
+
+
+    MetaPlayer.addPlugin("gat", function (gaTracker) {
+        this.gat = Adapter(this, gaTracker  );
+    });
+
+    Adapter.prototype = {
+        init : function () {
+            this.hasPlayed = false;
+            this.muted = this.player.video.muted;
+        },
+
+        addListeners : function () {
+            var v = this.player.video;
+
+            v.addEventListener("loadstart", this._bind( function () {
+                this.hasPlayed = false;
+                this._track("Begin");
+            }));
+
+            v.addEventListener("playing", this._bind( function () {
+                if( this.hasPlayed ) {
+                    this._track("Resume");
+                    return;
+                }
+                this.hasPlayed = true;
+                this._track("Start");
+            }));
+
+            v.addEventListener("volumechange", this._bind( function () {
+                var muted = this.player.video.muted || (this.player.video.volume == 0);
+
+                if( this.muted !=  muted ) {
+                    if( this.muted )
+                        this._track("Unmute");
+                    else
+                        this._track("Mute");
+                    this.muted = muted;
+                }
+            }));
+
+            v.addEventListener("ended", this._bind( this._track, "Finish") );
+            v.addEventListener("pause", this._bind( this._track, "Pause") );
+            v.addEventListener("seeked", this._bind( this._track, "Seek") );
+
+
+            var l = this.player.layout;
+            if( l.addEventListener ) { // backwards compatibility
+                l.addEventListener("maximize", this._bind( this._track, "Fullscreen") );
+                l.addEventListener("restore", this._bind( this._track, "Fullscreen exit") );
+            }
+
+            var c = this.player.cues;
+            c.addEventListener("enable", this._bind( function (e) {
+                if( e.action = "captions")
+                    this._track("onCaptionsOn");
+            }));
+            c.addEventListener("disable", this._bind( function (e) {
+                if( e.action = "captions")
+                    this._track("onCaptionsOff");
+            }));
+        },
+
+        _track : function (action, data, time) {
+            if( ! time )
+                time = this.player.video.currentTime;
+            this.gat._trackEvent("Videos", action, data, Math.round(time) );
+        },
+
+        _bind : function (callback) {
+            var args =  Array.prototype.slice.call(arguments, 1);
+            var self = this;
+            return function () {
+                return callback.apply(self, args.length ? args : arguments);
+            }
+        }
+    };
+
+    MetaPlayer.Metrics.GAT = Adapter;
+})();
+(function () {
+
+    var $ = jQuery;
+
+    /**
+     * @name Metrics.SiteCatalyst
+     * @constructor
+     * @class SiteCatalyst integration for HTML5
+     * @param {Video} video The html5 video element to be tracked.
+     * @param {SiteCatalyst} s The "s" global variable provided by SiteCatalyst's s_code.js
+     * @param {String} mediaName The title of the current video
+     * @param {String} [playerName] The current player identifier. Defaults to "metaplayer".
+     * @requires s_code.js
+     * @example
+     *     sc = MetaPlayer.Metrics.SiteCatalyst("#video", s, "Test Video");
+     * @see MetaPlayer#sitecatalyst
+     */
+
+    var SiteCatalyst = function (video, s, mediaName, playerName) {
+
+        if( ! (this instanceof SiteCatalyst) )
+            return new SiteCatalyst(video, s, mediaName, playerName);
+
+        /**
+         * @name mediaName
+         * @type String
+         * @description The title of the current video
+         */
+        this.playerName = playerName || "metaplayer";
+        this.mediaName = mediaName ? mediaName.replace(/\s*$/, "").replace(/\s/g, "+") : "";
+        this.video = $(video);
+        this.s = s;
+
+
+        var self = this;
+        this.video.bind("durationchange play pause seeking seeked ended", function (e) {
+            self._handleMediaEvent(e);
+        });
+    };
+
+    /**
+     * @name MetaPlayer#sitecatalyst
+     * @function
+     * @description MetaPlayer plugin for SiteCatalyst
+     * @param {SiteCatalyst} s The "s" global variable provided by SiteCatalyst's s_code.js
+     * @param {String} [title] The title to use for reporting. Defaults to {@link MetaData} title.
+     * @example
+     * MetaPlayer(video)
+     *       .ramp("http://api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440")
+     *       .sitecatalyst(s)
+     *       .load();
+     * @see Metrics.SiteCatalyst
+     */
+    MetaPlayer.addPlugin("sitecatalyst", function (s, title, playerName) {
+        var sc = SiteCatalyst(this.video, s, title, playerName);
+        this.metadata.addEventListener("data", function(e){
+            this.opened = false;
+            if(e.data.title)
+                sc.mediaName = e.data.title.replace(/\s*$/, "").replace(/\s/g, "+");
+        })
+    });
+
+    SiteCatalyst.prototype = {
+
+        _handleMediaEvent : function (e) {
+            var m = this.s.Media,
+                v = this.video.get(0),
+                n = this.mediaName,
+                d = Math.round(v.duration),
+                t = Math.round(v.currentTime),
+                p = v.paused;
+
+            if( ! d )
+                return;
+
+            // if not opened or opening event, skip
+            if( !( this.opened || e.type.match(/^(play|durationchange)$/) ) ){
+                return;
+            }
+
+            // open media handle as necessary
+            if( ! this.opened ) {
+                MetaPlayer.log("sitecatalyst", e.type, "open", n, 0, this.playerName);
+                m.open(n, d, this.playerName);
+                this.opened = true;
+            }
+
+            switch (e.type) {
+                case "durationchange":
+                    MetaPlayer.log("sitecatalyst", e.type, "play", n, 0);
+                    m.play(n, 0);
+                    break;
+
+                case "play":
+                    MetaPlayer.log("sitecatalyst", e.type, "play", n, t);
+                    m.play(n, t);
+                    break;
+
+                case "pause":
+                    MetaPlayer.log("sitecatalyst", e.type, "stop", n, t);
+                    m.stop(n, t);
+                    break;
+
+                case "seeking":
+                    // throttle seeking events if already stopped
+                    if( !(this.seeking || p ) ) {
+                        MetaPlayer.log("sitecatalyst", e.type, "stop", n, t);
+                        m.stop(n, t);
+                    }
+                    this.seeking = true;
+                    break;
+
+                case "seeked":
+                    if( ! this.seeking )
+                        return;
+                    this.seeking = false;
+                    if( !p ){
+                        MetaPlayer.log("sitecatalyst", e.type, "play", n, t);
+                        m.play(n, t);
+                    }
+                    break;
+
+                case "ended":
+                    MetaPlayer.log("sitecatalyst", e.type, "stop", n, t);
+                    m.stop(n, t);
+                    MetaPlayer.log("sitecatalyst", e.type, "close", n);
+                    m.close(n);
+                    this.opened = false;
+                    break;
+            }
+        }
+
+    };
+
+    MetaPlayer.Metrics.SiteCatalyst = SiteCatalyst;
+})();
+(function() {
     var $ = jQuery;
 
     var defaults = {
@@ -2100,31 +3890,30 @@ all copies or substantial portions of the Software.
         loop: false,
         updateMsec: 500,
         playerVars: {
-            experienceID: null
         }
     };
 
-    var BrightcovePlayer = function(brightcove, options) {
+    var BrightcovePlayer = function(experienceID, options) {
+
         this.config = $.extend(true, {}, defaults, options);
 
         /* Brightcove Values */
-        this.experienceID = this.config.playerVars.experienceID;
+        this.experienceID = experienceID;
 
         /* HTML5 specific attributes */
         
-        // Display 
+        // Display
         this._src = "";
         //this.poster = ""; Is this supported?
         //this.controls = false;  Is this supported?
         //this.videoWidth = 640;  Supported?
         //this.videoHeight = 480; Supported?
 
-        // Playback 
+        // Playback
         this._currentTime = 0;
         this._duration = NaN;
         this._paused = true;
         this._ended = false;
-        this._autoplay = true;
         this._loop = false;
         this._autobuffer = true;
         this._seeking = false;
@@ -2136,7 +3925,7 @@ all copies or substantial portions of the Software.
 
         // Ot_her Player Attributes
         this._volume = 1;
-        this._muted = false; 
+        this._muted = false;
         this._readyState = 0;
         //this.networkState;
         //this.error;
@@ -2147,139 +3936,194 @@ all copies or substantial portions of the Software.
         this._preload = this.config.preload;
         this._loop = this.config.loop;
 
-        // other object vars
-//        this._timeCheckInterval = null;
 
         MetaPlayer.dispatcher( this );
 
-        this.brightcove = brightcove;
-        this.brightcovePlayer = this.brightcove.api.getExperience(this.experienceID);
-        this.brightcoveVideoPlayer = this.brightcovePlayer.getModule(brightcove.api.modules.APIModules.VIDEO_PLAYER);
-        this.brightcoveContent = this.brightcovePlayer.getModule(brightcove.api.modules.APIModules.CONTENT);
-        this.brightcoveExperience = this.brightcovePlayer.getModule(brightcove.api.modules.APIModules.EXPERIENCE);
-        this.brightcoveExperience = this.brightcovePlayer.getModule(brightcove.api.modules.APIModules.CUE_POINTS);
 
-        //this.container = $(this.config.container).get(0);
-        this.addListeners();
+        var objectElement = $("#"+experienceID);
+        this.container = objectElement.get(0);
+        this.video = MetaPlayer.proxy.proxyPlayer(this, this.container);
 
-        this.video = MetaPlayer.proxy.proxyPlayer(this);
-        
+        this.initCheck()
     };
 
-    MetaPlayer.addPlayer("brightcove", function (brightcove, options) {
+    MetaPlayer.Players.Brightcove = function ( bcExperienceId ) {
+        if( ! window.brightcove )
+            return;
 
-        // single arg form 
-        if ( ! options && brightcove instanceof Object) {
-            options = brightcove;
-            brightcove = null;
+        var bc_object = document.getElementById(bcExperienceId);
+        if( ! bc_object || bc_object.getAttribute("class") == "BrightcoveExperience" )
+            return;
+
+        return MetaPlayer.brightcove(bcExperienceId);
+    };
+
+    MetaPlayer.addPlayer("brightcove", function (bc, options) {
+        // single arg form
+        if ( ! options && bc instanceof Object) {
+            options = bc;
+            bc = null;
         }
 
         if ( ! options ) {
             options = {};
         }
 
-//        if ( ! brightcove ) {
-            // not sure yet.
-//        }
-
-        if (! this.video) {
-            var bc = new BrightcovePlayer(brightcove, options);
-            this.video = bc.video;  
-            this.brightcove = bc;            
+        if ( ! bc ) {
+            bc = $("<div></div>")
+                .prependTo(this.layout.base);
         }
-        
+
+        var bCove = new BrightcovePlayer(bc, options);
+        this.video = bCove.video;
+        this.brightcove = bCove;
     });
 
-    MetaPlayer.brightcove = function (brightcove, options) {
-        var bc = new BrightcovePlayer(brightcove, options);
-        return bc.video;
-    }
+    MetaPlayer.brightcove = function (bcExperienceId, options) {
+        var bCove = new BrightcovePlayer(bcExperienceId);
+        return bCove.video;
+    };
 
     BrightcovePlayer.prototype =  {
-        
-        init : function() {
+        initCheck : function () {
+            MetaPlayer.log("brightcove", "initcheck...")
+            var self = this;
+            if( brightcove.api && brightcove.internal._instances[this.experienceID] ) {
+                try {
+                    this.brightcovePlayer = brightcove.api.getExperience(this.experienceID);
+                    this.brightcoveVideoPlayer = this.brightcovePlayer.getModule(brightcove.api.modules.APIModules.VIDEO_PLAYER);
+                    this.addListeners();
+                    MetaPlayer.log("brightcove", "initcheck ok")
+                    clearInterval( this._readyInterval );
+                    self.init();
 
+                }
+                catch(e){}
+            }
+            else if( ! this._readyInterval ) {
+                MetaPlayer.log("brightcove", "initcheck start interval")
+                this._readyInterval = setInterval( function (e) {
+                    self.initCheck();
+                }, 250);
+            }
+        },
+        init : function() {
+            try {
+            this.brightcovePlayer = brightcove.api.getExperience(this.experienceID);
+            this.brightcoveVideoPlayer = this.brightcovePlayer.getModule(brightcove.api.modules.APIModules.VIDEO_PLAYER);
+            } catch(e){
+                debugger;
+            }
+            this.addListeners();
+            this.startVideo();
         },
 
         isReady : function() {
-            return this.brightcove && this.brightcovePlayer.getModule(this.brightcove.api.modules.APIModules.VIDEO_PLAYER);
+            return this.brightcovePlayer;
         },
 
-        addListeners : function() { 
+        addListeners : function() {
             var bcvp = this.brightcoveVideoPlayer;
             var self = this;
 
-            bcvp.addEventListener("mediaBegin", function(e) { 
+            bcvp.addEventListener("mediaBegin", function(e) {
                 self.onMediaBegin(e);
             });
 
-            bcvp.addEventListener("mediaChange", function(e) { 
+            bcvp.addEventListener("mediaChange", function(e) {
                 self.onMediaChange(e);
-            });            
+            });
 
-            bcvp.addEventListener("mediaComplete", function(e) { 
+            bcvp.addEventListener("mediaComplete", function(e) {
                 self.onMediaComplete(e);
-            });            
+            });
 
-            bcvp.addEventListener("mediaError", function(e) { 
+            bcvp.addEventListener("mediaError", function(e) {
                 self.onMediaError(e);
-            });            
+            });
 
-            bcvp.addEventListener("mediaPlay", function(e) { 
+            bcvp.addEventListener("mediaPlay", function(e) {
                 self.onMediaPlay(e);
-            });            
+            });
 
-            bcvp.addEventListener("mediaProgress", function(e) { 
+            bcvp.addEventListener("mediaProgress", function(e) {
                 self.onMediaProgress(e);
-            });            
+            });
 
-            bcvp.addEventListener("mediaSeekNotify", function(e) { 
+            bcvp.addEventListener("mediaSeekNotify", function(e) {
                 self.onMediaSeekNotify(e);
-            });            
+            });
 
-            bcvp.addEventListener("mediaStop", function(e) { 
+            bcvp.addEventListener("mediaStop", function(e) {
                 self.onMediaStop(e);
-            });            
+            });
         },
 
-        onMediaBegin : function(e) {
-            
-        },
 
         onMediaChange : function(e) {
+            this._src = e.media.id;
+            this._duration = e.duration / 1000;
+            this._currentTime = 0;
+            this._seekOnPlay = null;
+            this._hasBegun = false;
+
+
             if ( this._autoplay ) {
                 this._paused = false;
             }
             else {
                 this._paused = true;
             }
-            this._duration = e.duration * .001;
-            this.dispatch('durationchange');
+            this._readyState = 4;
+            this.dispatch("canplay");
             this.dispatch('loadedmetadata');
-
             this.dispatch('loadeddata');
+            this.dispatch("durationchange");
         },
 
         onMediaComplete : function(e) {
             this._ended = true;
-            this._duration = NaN;
-            this.dispatch("ended");
+            this._paused = true;
+            var self = this;
+            // re-entry problems
+            setTimeout( function () {
+                self.dispatch("ended");
+            }, 0);
         },
 
         onMediaError : function(e) {
-
         },
 
         onMediaPlay : function(e) {
             this._ended = false;
             this._paused = false;
-            this.dispatch("play");
-            this.dispatch("playing");
+            this._hasBegun = true;
+
+            this._currentTime = e.position;
+
+            var self = this;
+            // brightcove has re-entry problems if seek is called during play event
+            setTimeout( function () {
+                self.dispatch("play");
+                self.dispatch("playing");
+            },250);
+        },
+
+        onMediaBegin : function(e) {
+            this._hasBegun = true;
         },
 
         onMediaProgress : function(e) {
-            this._currentTime = e.position;
-            this.dispatch("timeupdate");
+            var update = e.position - this._currentTime;
+            if( isNaN(update) || update > .2 ) {
+             // throttle to no more than 5/sec, BC seems to do about 25/sec
+                this._currentTime = e.position;
+                this.dispatch("timeupdate");
+            }
+
+            // onBegin is too soon to seek (it gets ignored), so we do it here
+            if( this._seekOnPlay )
+                this.doSeek(this._seekOnPlay )
         },
 
         onMediaSeekNotify : function(e) {
@@ -2305,15 +4149,1716 @@ all copies or substantial portions of the Software.
             }
         },
 
-        startVideo : function() {   
+        startVideo : function() {
+            if ( ! this.isReady()) {
+                return;
+            }
+
+            if ( this._preload == "none")
+                return;
+
+            if( this._ended )
+                this.currentTime(0);
+
+            this._ended = false;
+            this.muted( this._muted );
+
+            var src = this._src;
+            if ( !src ) {
+                return;
+            }
+
+            this.dispatch("loadstart");
+
+            // "http://link.brightcove.com/services/link/bcpid1745093542/bclid1612710147/bctid1697210143001?src=mrss"
+            var longForm = src.toString().match(/^http:\/\/link.brightcove.com.*bctid(\d+)\?/);
+            if( longForm )
+                src = parseInt( longForm[1] );
+
+            if (this._autoplay)
+                this.brightcoveVideoPlayer.loadVideoByID(src);
+            else
+                this.brightcoveVideoPlayer.cueVideoByID(src);
+        },
+
+        doSeek : function(time) {
+            this._currentTime = time;
+
+            if(! this._hasBegun ){
+                this._seekOnPlay = time;
+            }
+
+            this._seeking = true;
+            this._seekOnPlay = null;
+            this.dispatch("seeking");
+            this.brightcoveVideoPlayer.seek(time);
+
+            // onMediaSeekNotify callback doesn't fire when
+            // programmatically seeking
+
+            var self = this;
+            setTimeout(function () {
+                self._currentTime = time;
+                self._seeking = false;
+                self.dispatch("seeked");
+                self.dispatch("timeupdate");
+            }, 1500);
+        },
+
+        /* Media Interface */
+
+        load : function() {
+            this._preload = "auto";
+            this.startVideo();
+        },
+
+        play : function() {
+            this._preload = "auto";
+            this._autoplay = true;
+
+            if( this._readyState == 4 )
+                this.brightcoveVideoPlayer.play();
+            else
+                this.startVideo();
+        },
+
+        pause : function() {
+            this.isReady() && this.brightcoveVideoPlayer.pause();
+        },
+
+        canPlayType : function( type) {
+            MetaPlayer.log("brightcove", "canPlayType?", type)
+            return Boolean  ( type.match(/\/brightcove$/ ) );
+        },
+
+        paused : function() {
+            return this._paused;
+        },
+
+        duration : function() {
+            return this._duration;
+        },
+
+        seeking : function() {
+            return this._seeking;
+        },
+
+        ended : function() {
+            if ( ! this.isReady() ) {
+                return false;
+            }
+            return this._ended;
+        },
+
+        currentTime: function(val) {
+            if (! this.isReady() ) {
+                this._currentTime = val || 0;
+                return 0;
+            }
+            if ( val !== undefined ) {
+                this._ended = false;
+                this.doSeek(val);
+            }
+            return this._currentTime;
+        },
+
+        muted : function( val ) {
+            if ( val !== undefined ) {
+                this._muted = val;
+                if ( ! this.isReady() ) {
+                    return val;
+                }
+                // note: BC does not have a documented mute api
+                this.brightcoveVideoPlayer._callMethod("mute", [ Boolean(val) ]);
+                this.dispatch("volumechange");
+                return val;
+            }
+            return this._muted;
+        },
+
+        volume : function( val ) {
+            if ( val !== undefined ) {
+                this._volume = val;
+                if ( ! this.isReady() ) {
+                    return val;
+                }
+                // note: BC does not have a documented volume api
+                this.brightcoveVideoPlayer._callMethod("setVolume", [ val ]);
+                this.dispatch("volumechange");
+            }
+            return this._volume;
+        },
+
+        src : function (id) {
+            if (id !== undefined) {
+                this._src = id;
+                this._readyState = 0;
+                this._duration = NaN;
+                this._currentTime = 0;
+                this.startVideo();
+            }
+            return this._src;
+        },
+
+        autoplay : function ( val ) {
+            if( val != null)
+                this._autoplay = Boolean(val);
+            return this._autoplay;
+        },
+
+        preload : function ( val ) {
+            if( val != null)
+                this._preload = val;
+            return this._preload;
+        },
+
+        readyState: function() {
+            return this._readyState;
+        }
+
+    };
+
+})();(function () {
+
+    /* FlowPlayer HTML5 Adapter and MPF Playlist API
+
+     - FlowPlayer has many re-entry issues, where calling a method within an event handler causes exceptions,
+     so the _async() method gets around this by wrapping the handler with a setTimout of 0.
+
+     - Additionally, there is no way to change tracks without playing, and startBuffering is an unsupported API.
+     Buffering is achieved through play() pause() combinations, but calling them in rapid succession causes further
+     race conditions.
+     */
+
+
+    var $ = jQuery;
+    var $f = window.flowplayer;
+
+    var defaults = {
+        updateIntervalMsec : 500,
+        seekDetectSec : 1.5
+    };
+
+    var log = function () {
+        var args = Array.prototype.slice.call(arguments);
+        args.unshift("flowplayer");
+        MetaPlayer.log.apply(null, args);
+    };
+
+    var FlowPlayer = function (el, options){
+
+        if( !(this instanceof FlowPlayer ))
+            return new FlowPlayer(el, options);
+
+        this._readyState = 0;
+        this._preload = "auto";
+        this._autoplay = false;
+        this._duration = NaN;
+        this._currentTime = 0;
+        this._paused = true;
+        this._ended = false;
+        this._seeking = false;
+        this._muted = false;
+        this._volume = 1;
+        this._buffered = false;
+        this._controls = true;
+
+
+        this._index = null;
+        this._autoAdvance = true;
+        this._loop = false;
+        this._flowplayer = el;
+        this.ad = false;
+
+        this._hasFiredBegin = {};
+
+        // we can make the assumption here that if there's a playlist, the current item will be the first one
+        if ( this._flowplayer.getPlaylist() && this._flowplayer.getPlaylist()[0] && this._flowplayer.getPlaylist()[0].url ) {
+            this._src = this._flowplayer.getPlaylist()[0].url;
+        }
+
+        this.config = $.extend(true, {}, defaults, options);
+        this.dispatcher = MetaPlayer.dispatcher(this);
+
+        this.video = MetaPlayer.proxy.proxyPlayer(this, this._flowplayer.getParent());
+
+        // flowplayer-driven playlist if it arrives with content, else mpf-driven
+        if( this.getPlaylist().length )
+            MetaPlayer.Playlist.proxy(this, this.video);
+
+        this._timeupdater = MetaPlayer.timer( this.config.updateIntervalMsec );
+        this._timeupdater.listen('time', this._onTime, this);
+
+        this._init();
+    };
+
+    MetaPlayer.Players.FlowPlayer = function (media) {
+        if( ! (media.getCommonClip instanceof Function) )
+            return null;
+        return FlowPlayer(media).video;
+    };
+
+    MetaPlayer.flowplayer = function ( media ) {
+        return MetaPlayer.Players.FlowPlayer(media);
+    };
+
+
+    FlowPlayer._isAd = function ( clip ){
+        return (clip.isCommon || clip.ovaAd || clip.isInStream || ! clip.url);
+    };
+
+    FlowPlayer.prototype = {
+
+        _init: function (fp){
+            this._hlsplugin = (this._flowplayer.getPlugin('httpstreaming') != null);
+            this._youtube = (this._flowplayer.getPlugin('youtube') != null);
+
+            if( this._flowplayer.isLoaded() )
+                this._onLoad();
+            else {
+                this._flowplayer.onLoad( this._async(this._onLoad) );
+            }
+        },
+
+        _onLoad : function () {
+            log('fp: onLoad()', this.volume() );
+
+            // fires twice on ipad
+            if( this._onLoadFired )
+                return;
+            this._onLoadFired = true;
+
+            // Player listeners
+            var fp = this._flowplayer;
+
+            fp.onVolume( this._bind( function() {
+                log('fp: onVolume()');
+                this._volume = this._flowplayer.getVolume() / 100;
+                this.dispatch("volumechange");
+            }));
+
+            fp.onMute( this._bind( function () {
+                log('fp: onMute()');
+                this._muted = true;
+                this.dispatch("volumechange");
+            }));
+
+            fp.onUnmute( this._bind( function () {
+                log('fp: onUnmute()', this._readyPlaying);
+                this._muted = false;
+                this.dispatch("volumechange");
+            }));
+
+            fp.onPlaylistReplace( this._async( function () {
+                log('fp: onPlaylistReplace()');
+                this._index = null;
+                this._addPlaylistListeners();
+            }));
+
+            fp.onClipAdd( this._async( function (clip) {
+                log('fp: onClipAdd()');
+                this._addClipListeners(clip);
+                this.dispatch("playlistchange");
+            }));
+
+            if( this._playlist )
+                this.setPlaylist( this._playlist );
+            else
+                this._addPlaylistListeners();
+
+            if( this._loadSrc  )
+                this._setItem(this._loadSrc);
+
+            this.volume( this._volume );
+            this.controls( this._controls );
+
+        },
+
+        _addPlaylistListeners : function (  ) {
+            $.each( this._flowplayer.getPlaylist(), this._bind( function (i, clip) {
+                this._addClipListeners(clip);
+            }));
+            this.dispatch("playlistchange");
+        },
+
+        _addClipListeners : function (clip) {
+            if( ! clip )
+                return;
+
+            var onBegin = this._bind( function (clip) {
+                log('fp: on*Begin() ', this._index, clip.index, clip.url, this.ad);
+
+                // only fire once for a video
+                if( this._hasFiredBegin[ clip.url ] ) {
+                    log('fp: on*Begin() skip', this._index, clip.index, clip.url, this.ad);
+                    return;
+                }
+
+                this._hasFiredBegin[ clip.url ] = true;
+
+                this._timeupdater.reset();
+
+                var idx = this._getIndexByClip(clip);
+                if( idx != this._index ) {
+                    this._doTrackChange( idx );
+                    this.dispatch("loadstart");
+                }
+
+                if( FlowPlayer._isAd(clip) ){
+                    if( ! this.ad ) {
+                        this.ad = true;
+                        this.dispatch("adstart");
+                    }
+                }
+                else if( this.ad ) {
+                    this.ad = false;
+                    this.dispatch("adstop");
+                }
+
+
+                this._currentTime = 0;
+                this._paused = false;
+                this._src = clip.url;
+
+                if( this._ended ) {
+                    this._ended = false;
+                    this.dispatch("play"); // per spec, only after pause event. but whatever --catches play after end
+                }
+
+                this.dispatch("playing"); // on any playback start
+                this._timeupdater.start();
+            });
+
+            // with OVA, some ads only fire one of the other
+            clip.onBeforeBegin( onBegin );
+            clip.onBegin( onBegin );
+
+            clip.onUpdate( this._async( function (clip){
+                log("fp: onUpdate", clip.index, this._index, this._paused, clip.url);
+                if(! this._paused ) {
+                    this._flowplayer.stopBuffering();
+                    this._flowplayer.play();
+                }
+            }));
+
+            clip.onBufferFull( this._async( function (clip){
+                log("fp: onBufferFull");
+                this._buffered = true;
+                if( MetaPlayer.iOS )
+                    this.play();
+            }));
+
+            clip.onBufferEmpty( this._async( function (clip){
+                log("fp: onBufferEmpty");
+                this._buffered = true;
+            }));
+
+            clip.onBufferStop( this._async( function (clip){
+                log("fp: onBufferStop");
+                this._buffered = true;
+            }));
+
+            clip.onStart( this._async( function (clip) {
+                // note: doesn't always fire with flash player
+                log('fp: onStart()', this._readyState );
+                // ipad controls can't be hidden until after playing
+                if(  MetaPlayer.iOS && ! this._hasPlayed ){
+                    this._hasPlayed = true;
+                    this._setHTML5Controls(false);
+                }
+            }));
+
+            clip.onStop( this._async( function (clip) {
+                log('fp: onStop()');
+            }));
+
+            clip.onBeforeFinish( this._bind( function (clip) {
+                log('fp: onBeforeFinish() ', this._autoAdvance);
+            }));
+
+            clip.onFinish( this._bind( function (clip) {
+                log('fp: onFinish()');
+                this._hasFiredBegin[ clip.url ] = undefined;
+                this._paused = true;
+                this._ended = true;
+                if( ! this.ad ) {
+                    this._delay( function () {
+                        this.dispatchIfClip("ended");
+                    });
+                } else {
+                    var self = this;
+                    setTimeout( function() {
+                        self.ad = false;
+                        self.dispatch("adstop");
+                    }, 1000);
+                }
+
+                if(! this._autoAdvance && ! this.ad) {
+                    this._flowplayer.pause();
+                }
+                return false; // ipad adapter listens for this because above pause() doesn't work
+            }));
+
+            clip.onPause( this._async( function (clip) {
+                log('fp: onPause() ' , this._flowplayer.isPaused(), this._flowplayer.isPlaying() );
+            }));
+
+            clip.onResume( this._async( function (clip) {
+                log('fp: onResume()');
+                this._paused = false;
+                this._ended = false;
+
+                this.dispatch("play"); // per spec, only after pause event
+                this.dispatch("playing"); // on any playback start
+            }));
+
+            clip.onBeforeSeek( this._async(function (clip) {
+                log('fp: onBeforeSeek()');
+                this._seeking = true;
+                this.dispatch("seeking");
+            }));
+
+            clip.onSeek( this._async( function (clip) {
+                log('fp: onSeek()');
+                // detected by timeupdate for more robustness, seeks during pauses
+            }));
+        },
+
+        _setItem : function (src) {
+            var data = this._createClipData(src);
+
+            var fp = this._flowplayer;
+            fp.setPlaylist([ data ]);
+
+            if( this._preload != "none" )
+                this.load();
+        },
+
+        _onTime : function () {
+            if(! this._flowplayer.isLoaded() ) {
+                return;
+            }
+
+            var c = this._flowplayer.getClip();
+            if( ! c) {
+                return;
+            }
+
+            var status = this._flowplayer.getStatus(); // expensive
+            var old = this._currentTime;
+            var delta = status.time - this._currentTime;
+            var seeked = false;
+
+            if( this._paused && Math.abs(delta) > this.config.seekDetectSec ) {
+                seeked = true;
+            }
+
+            // a seek is defined as a positive delta > threshold or a negative delta
+            if( (Math.abs(delta) > this.config.seekDetectSec) || ( delta < 0) ){
+                seeked = true;
+            }
+
+            if( delta ) {
+                this._currentTime = status.time;
+                this.dispatchIfClip("timeupdate");
+            }
+
+            if( seeked ) {
+                this._seeking = false;
+                this.dispatchIfClip("seeked");
+
+                if ( !this._paused ) {
+                    this.dispatch("playing");
+                }
+            }
+
+//            log('fp: _onTime duration check', status.time, c, c.duration, status);
+            if(! this.ad &&  isNaN(this._duration) && status.time > 0) {
+                // if status.time == 0, then there's a good chance a pause() fired now event will fail
+                if( c && c.duration > 0 ){
+                    this._duration = c.duration;
+                    this.dispatch("durationchange");
+                }
+            }
+
+            if( this._readyState != 4 && (this._preload != "none" || this._autoplay) ){
+                log('fp: _onTime _readyState check', this._readyState, this._buffered, status.time, c.duration, status);
+
+                var fp = this._flowplayer;
+
+                // we don't have metadata and need to play to get it
+                if( this._readyState == 0 && !(this._duration && this._buffered) && this._paused  && ! this._error  ) {
+                    // removed: FP doesn't like play() called before onBegin
+                    log('fp: _onTime play() get metadata', this._duration, this._buffered);
+                    this._paused = false;
+                    fp.play();
+                    this._readyState = 1;
+                    return;
+                }
+
+                // we have metadata, but need to check the play state to know if we're ready
+                if( this._buffered) {
+                    if( this._autoplay ) {
+                        if( ! this._paused && fp.isPlaying()) {
+                            this._doClipReady();
+                        }
+                        else {
+                            log('fp: _onTime play() autoplay=true');
+                            this._paused = false;
+                            fp.play();
+                        }
+                    }
+                    else { // if not autoplay
+                        if( fp.isPlaying() ) {
+                            log('fp: _onTime play() autoplay=false', this._autoplay);
+                            this.pause();
+                        }
+                        else {
+                            this._doClipReady();
+                        }
+                    }
+                }
+            }
+
+        },
+
+        _doClipReady : function () {
+            this._readyState = 4;
+            var wasPaused = this._paused;
+            this._paused = true;
+            this.dispatchIfClip("loadedmetadata");
+            this.dispatchIfClip("loadeddata");
+            this.dispatchIfClip("canplay");
+            this._paused = wasPaused;
+
+        },
+
+        // only return non-ad items
+        _getFilteredPlaylist : function () {
+            return $.map( this._flowplayer.getPlaylist(), function (clip){
+                if( FlowPlayer._isAd(clip) )
+                    return null;
+                return clip;
+            });
+        },
+
+        _doTrackChange : function (index, force) {
+            this._index = index;
+            this._seeking = false;
+            this._readyState = 0;
+            this._currentTime = 0;
+            this._duration = NaN;
+            this._buffered = false;
+            this._ended = false;
+            this.dispatch("trackchange");
+        },
+
+        /* Media Interface */
+
+        load : function () {
+            log("load()");
+            this._preload = "auto";
+            if( this._readyState == 4 )
+                return;
+
+            var fp = this._flowplayer;
+            log("load : fpplay() ", this._readyState );
+            this._paused = false;
+            fp.play();
+        },
+
+        play : function () {
+            this._autoplay = true;
+            this._paused = false;
+            if( this._ended ) {
+                this._flowplayer.stop();
+                this._delay( this._bind( function () {
+                    var fp_idx = this._flowplayer.getClip().index;
+                    log("play fp.play() ", fp_idx);
+                    this._flowplayer.play(fp_idx);
+
+                }));
+            }
+            else if( this._readyState == 4 ){
+                log("play fp.play() ", this._readyState );
+                this._flowplayer.play();
+            }
+            else
+                this.load();
+        },
+
+        pause : function () {
+            log("pause()");
+            this._paused = true;
+            this._flowplayer.pause();
+            this.dispatch("pause");
+        },
+
+        src : function (val) {
+            var loaded = this._flowplayer.isLoaded();
+            if( val != null ) {
+                if( loaded )
+                    this._setItem( val );
+                else
+                    this._loadSrc = val;
+            }
+            return this._src;
+        },
+
+        readyState : function (val) {
+            return this._readyState;
+        },
+
+        currentTime : function (val) {
+            if( this.ad )
+                return 0;
+
+            if( val != null ) {
+                if( val < 0 )
+                    val = 0;
+                log("currentTime fp.seek", val);
+                this._flowplayer.seek(val);
+            }
+            return this._currentTime;
+        },
+
+        duration : function () {
+            return this._duration;
+        },
+
+        seeking : function () {
+            return this._seeking;
+        },
+
+        preload : function (val) {
+            if( val != null )
+                this._preload = val;
+            return this._preload;
+        },
+
+        autoplay: function (val) {
+            if( val != null )
+                this._autoplay = val;
+            return this._autoplay;
+        },
+
+        paused : function () {
+            return Boolean( this._paused );
+        },
+
+        muted : function (val) {
+            if( val !== undefined ) {
+                if( val )
+                    this._flowplayer.mute();
+                else
+                    this._flowplayer.unmute();
+            }
+            return this._muted;
+        },
+
+        controls : function (val) {
+            if( val != null )
+                this._controls = val;
+
+            if( MetaPlayer.iOS ){
+                if (! this._hasPlayed ) {
+                    this._setHTML5Controls( true );
+                    return;
+                }
+                else {
+                    this._setHTML5Controls( false );
+                }
+            }
+
+            if( ! this._flowplayer.isLoaded() )
+                return;
+
+            var controls = this._flowplayer.getPlugin("controls");
+            var playBtn =  this._flowplayer.getPlugin("play");
+
+            if ( val ) {
+                controls && ( controls.show() );
+                playBtn && playBtn.show();
+            }
+            else {
+                controls && ( controls.hide() );
+                playBtn && playBtn.hide();
+            }
+
+            return this._controls;
+        },
+
+        ended : function () {
+            return this._ended;
+        },
+
+        volume : function (val) {
+            if( val !== undefined ) {
+                this._flowplayer.setVolume(val * 100);
+            }
+            return this._flowplayer.getVolume() / 100;
+        },
+
+        canPlayType : function (type) {
+            var canPlay = null;
+
+            // html5 / ipad
+            if( window.flashembed.__replaced ) {
+                if( ! this._video )
+                    this._video = document.createElement('video');
+
+                // just accept m3u8
+                if( MetaPlayer.iOS && type.match(/mpegurl|m3u8/i)  ) {
+                    canPlay = "probably";
+                }
+                else if( this._video.canPlayType )
+                    canPlay = this._video.canPlayType(type);
+            }
+
+            else if( this._youtube && type.match(/youtube$/i) ) {
+                canPlay = "probably";
+            }
+
+            else if( this._hlsplugin && type.match(/mpegurl|m3u8/i) ) {
+                canPlay = "probably";
+            }
+
+            // fall through to flash
+            else if( type.match( /mp4|flv|jpg/ ) ) {
+                canPlay = "probably";
+            }
+
+            return canPlay;
+        },
+
+        /* Playlist  API */
+        getPlaylist : function () {
+            return $.map( this._getFilteredPlaylist(), function (clip){
+                return clip.guid ||  clip.url;
+            });
+        },
+
+        setPlaylist : function ( items, append ) {
+            var pl = [];
+
+            var fp = this._flowplayer;
+
+            if( ! fp.isLoaded() ) {
+                this._playlist = items;
+                return;
+            }
+
+            if (! items.length )
+                items = [ items ];
+
+            var cl, i;
+            for(i = 0; i<items.length; i++) {
+                cl = this._createClipData(null, items[i]);
+                if( append )
+                    fp.addClip(cl);
+                else
+                    pl.push(cl);
+            }
+
+            this._playlist = null;
+            this._index = null;
+
+            fp.setPlaylist(pl);
+        },
+
+        _getIndexByClip : function ( clip ){
+            var index = 0;
+            $.each( this._getFilteredPlaylist(), function (i, c){
+                if( c.index >= clip.index ) {
+                    index = i;
+                    return false;
+                }
+            });
+            return index;
+        },
+        _getOffsetFromIndex : function ( playlist_idx ){
+            var count = 0;
+            var index = null;
+            $.each( this._flowplayer.getPlaylist(), function (i, clip){
+                if( playlist_idx == count ) {
+                    index = i;
+                    return false;
+                }
+                if(! FlowPlayer._isAd(clip) ){
+                    count++;
+                }
+            });
+            return index;
+        },
+
+        getIndex : function ( i ) {
+            var pl = this.getPlaylist();
+
+            if( i == null ) {
+                return this._index;
+            }
+
+            if( i < 0  && this._loop)
+                i = pl.length + i;
+
+            if( !this._loop && (i >= pl.length || i < 0) ){
+                return null;
+            }
+
+            return  i % pl.length;
+        },
+
+        setIndex : function (i) {
+
+            if( i == null || isNaN(i) ) {
+                return null;
+            }
+
+            var idx = this.getIndex(i);
+            if( idx == null ) {
+                // looping disabled or no change
+                return false;
+            }
+
+//            this._doTrackChange(idx, true);
+            var fp_idx = this._getOffsetFromIndex(idx);
+            log("setIndex fp.play()", fp_idx);
+            this._paused = false;
+            this._flowplayer.play(fp_idx);
+
+            return true;
+        },
+
+        getItem : function ( i ) {
+            return this.getPlaylist()[ this.getIndex(i) ];
+        },
+
+        updateItem : function (uri, data) {
+            // breaks VPAID ads
+//            var c = this._flowplayer.getClip() || this._flowplayer.getClip(0);
+//            if( c.url )
+//                return;
+//
+//            var probably = [];
+//            var maybe = [];
+//            var self = this;
+//            $.each(data.content, function (i, content) {
+//                var canPlay = self.canPlayType(content.type);
+//                if( ! canPlay )
+//                    return;
+//                if( canPlay == "probably" )
+//                    probably.push(content.url);
+//                else
+//                    maybe.push(content.url);
+//            });
+//
+//            var url = probably.shift() || maybe .shift();
+//            var updated = this._createClipData(url, uri);
+//            c.update( updated );
+//
+//            if( this._autoplay )
+//                this.play()
+//
+//            if( this._preload && this._preload != "none" )
+//                this.load()
+        },
+
+        autoAdvance : function (val) {
+            if( val != null ) {
+                this._autoAdvance = val;
+            }
+
+            return this._autoAdvance;
+        },
+
+        loop: function (val) {
+            if( val != null ) {
+                this._loop = val;
+            }
+
+            return this._loop;
+        },
+
+        next : function () {
+            log("next()");
+            return this.setIndex(this._index + 1);
+        },
+
+        previous : function () {
+            log("previous()");
+            return this.setIndex(this._index - 1);
+        },
+
+        // private
+
+        _createClipData : function (src, guid) {
+            // Create a clip data depending on a plugin
+            var data = {};
+
+            var config = this._flowplayer.getConfig();
+            if ( !(src || guid) )
+                return data;
+
+            if ( this._youtube && src && src.match(/youtube\.com/i) ) {
+                data.provider = "youtube";
+                data.urlResolvers = 'youtube';
+                var yid = src.match( /www.youtube.com\/(watch\?v=|v\/)([\w-]+)/ )[2];
+                data.url = "api:" + yid;
+            } else {
+                data.url = src;
+            }
+
+            if( src.match(/\.m3u8$/) ){
+                data.provider = "httpstreaming";
+                data.urlResolvers = 'httpstreaming';
+            }
+            if( guid )
+                data.guid = guid;
+
+            data.autoPlay = false;
+            data.autoBuffering = false;
+            data.scaling = config.clip.scaling;
+            return data;
+        },
+
+        _setHTML5Controls : function (bool) {
+            var video = $(this._flowplayer.getParent() ).find('video').get(0);
+            video && (video.controls = bool);
+        },
+
+        dispatchIfClip : function (type) {
+
+            if( this.ad ){
+                if(! type.match(/^time/))
+                    log("skip e:", type );
+                return;
+            }
+
+            if(! type.match(/^time/))
+                log("e:", type );
+            this.dispatch(type);
+        },
+
+        _delay : function (callback, delay) {
+            if( delay == null) {
+                delay = 0;
+            }
+
+            var bound = this._bind(callback);
+            setTimeout(bound, delay);
+        },
+
+        _async : function (callback, delay){
+            // ensures that the callback is fired after the current execution block finishes (preventing flash re-entry)
+            if( delay == null) {
+                delay = 0;
+            }
+
+            var self = this;
+            return function () {
+                var args = arguments;
+                setTimeout( function () {
+                    callback.apply(self, args);
+                }, delay);
+            };
+        },
+
+        _bind : function (callback){
+            // convenience, reduces bugs relate to scope by allowing use of 'this'
+            var self = this;
+            return function () {
+                return callback.apply(self, arguments);
+            };
+        }
+    };
+
+
+})();
+/**
+ * HTML5 MetaPlayer Adapter
+ * Supports:  Media API, Playlist API
+ * Since we already have an HTML5 Media interface, we just need to add the Playlist Read API.
+ */
+
+(function () {
+
+    var $ = jQuery;
+
+    var Html5Adapter = function (media) {
+
+        if( typeof media == "string" ){
+            media = $(media).get(0);
+        }
+
+        // is a media adapter
+        if( ! (media && media.play && media.canPlayType) )
+            return null;
+
+        return media;
+    };
+
+    Html5Adapter.create = function (target) {
+        var t = $(target);
+        var video = $("<video></video>")
+            .height( t.height() )
+            .width( t.width() )
+            .appendTo(t)
+            .get(0);
+
+        video.controls = true;
+        return video;
+    };
+
+    MetaPlayer.Players.HTML5 = Html5Adapter;
+
+    /* deprecated */
+
+    MetaPlayer.html5 = function (target){
+        return Html5Adapter.create(target);
+    };
+
+    MetaPlayer.addPlayer("html5", function (options) {
+        this.video = Html5Adapter.create(this.layout.base);
+    });
+
+
+})();
+(function() {
+
+    var $ = jQuery;
+
+    /**
+     * @name Players.JWPlayer
+     * @constructor
+     * @param {JWPlayer} el A JWPlayer instance
+     * @description Given a JWPlayer instance, returns an HTML5 MediaElement like
+     * interface for standards compatibility.
+     * @extends Util.ProxyPlayer
+     * @example
+     * var jwp = jwplayer('video').setup({
+     *    flashplayer: "player.swf",
+     *    autostart   : true,
+     *    width: "100%",
+     *    height: "100%"
+     * });
+     * var video = MetaPlayer.jwplayer(jwp);
+     *
+     * @see MetaPlayer.jwplayer
+     * @see <div style="margin: 10px 0;">Live Example: </div>
+     * <iframe style="width: 100%; height: 300px" src="http://jsfiddle.net/ramp/XG495/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+     */
+
+    var log = function() {
+        if ( window.console ) {
+            console.log.apply( console, arguments );
+        }
+    };
+
+    var JWPlayer = function( jwp ) {
+        if ( !( this instanceof JWPlayer ) ) {
+            return new JWPlayer( jwp );
+        }
+
+        this._jwplayer = jwp;
+        this._volume = 0;
+        this._seeking = null;
+        this._readyState = 0;
+        this._ended = false;
+        this._paused = true;
+        this._duration = NaN;
+        this._metadata = null;
+        this._muted = false;
+        this._started = false;
+        this._currentTime = 0;
+        this._src = "";
+
+        this.dispatcher = MetaPlayer.dispatcher( this );
+        this.video = MetaPlayer.proxy.proxyPlayer( this, this._jwplayer.container );
+        MetaPlayer.Playlist.proxy( this, this.video );
+
+        this._autoplay = this._jwplayer.config.autostart;
+        this._preload = this._jwplayer.config.autobuffer;
+        
+        this._onLoad();
+    };
+
+    /**
+     * @name MetaPlayer.jwplayer
+     * @function
+     * @param {JWPlayer} el A JWPlayer instance
+     * @descriptions Given a JWPlayer instance, returns an HTML5 MediaElement like
+     * interface for standards compatibility. Serves as an alias for <code>(new JWPlayer(el, options)).video</code>
+     * @example
+     * var jwp = jwplayer('video').setup({
+     *    flashplayer: swf,
+     *    autostart   : true,
+     *    width: "100%",
+     *    height: "100%"
+     * });
+     * var video = MetaPlayer.jwplayer(jwp);
+     *
+     * @see Players.JWPlayer
+     * @see <a href="http://jsfiddle.net/ramp/XG495/">Live Example</a>
+     */
+    // MetaPlayer.jwplayer = function( jwp ) {
+    //     var jwplayer = JWPlayer( jwp );
+    //     return jwplayer.video;
+    // };
+
+    MetaPlayer.jwplayer = function( jwp ) {
+        var jwplayer = JWPlayer( jwp );
+        return jwplayer.video;
+    };
+
+    JWPlayer.prototype = {
+        
+        _onLoad: function() {
+            
+            var self = this,
+                jwp = this._jwplayer;
+
+            jwp.onBuffer(function( e ){
+                //log( "Buffer", e );
+                
+                self._readyState = 4;
+            });
+
+            jwp.onBufferChange(function( e ) {
+                ////log( "BufferChange", e );
+            });
+
+            jwp.onBufferFull(function( e ) {
+                //log( "BufferFull", e );
+            });
+
+            jwp.onError(function( e ) {
+                //log( "Error", e );
+            });
+
+            jwp.onFullscreen(function( e ) {
+                //log( "FullScreen", e );
+            });
+
+            jwp.onMeta(function( e ) {
+                //log( "Meta", e );
+            });
+
+            jwp.onMute(function( e ) {
+                //log( "Mute", e );
+
+                self._muted = e.mute;
+            });
+
+            jwp.onPlaylist(function( e ) {
+                //log( "Playlist" , e);
+            });
+
+            jwp.onPlaylistItem(function( e ){
+                //log( "PlaylistItem", e );
+
+                var playlistItem = self._jwplayer.getPlaylistItem(e.index);
+                self._src = playlistItem.sources[0].file;
+                self._paused = true;
+
+            });
+
+            jwp.onBeforePlay(function( e ){
+                //log( "BeforePlay", e );
+
+                var waitForDuration = function( duration ) {
+                    if ( duration == -1 ) {
+                        setTimeout( function() {
+                            waitForDuration( self._jwplayer.getDuration() );
+                        }, 500 );
+                        return;
+                    }
+                    else {
+                        
+                        self._paused = true;
+                        self._duration = self._jwplayer.getDuration();
+                        self._volume = self._jwplayer.getVolume();
+                        self.dispatch('loadedmetadata');
+                        self.dispatch("loadstart");
+                        self.dispatch('loadeddata');
+                        self._readyState = 4;
+                        self.dispatch('canplay');
+                        
+                        self.dispatch("durationchange");
+                    }
+                };
+
+                waitForDuration( self._jwplayer.getDuration() );
+            });
+
+
+            jwp.onPlay(function( e ){
+                //log( "Play", e );
+
+                self._paused = false;
+                self.dispatch("play");
+            });
+
+            jwp.onPause(function( e ) {
+                //log( "Pause", e );
+
+                self.dispatch("pause");
+                self._paused = true;
+            });
+
+            jwp.onSeek(function( e ) {
+                //log( "Seek", e );
+
+                self._seeking = false;
+                self.dispatch("seeked");
+                self.dispatch("timeupdate");
+                self._currentTime = e.position;
+            });
+
+            jwp.onIdle(function( e ){
+                //log( "Idle", e );
+            });
+
+            jwp.onComplete(function( e ){
+                //log( "Complete", e );
+
+                self._paused = true;
+                self._ended = true;
+                self.dispatch("ended");
+            });
+
+            jwp.onTime(function( e ){
+                ////log( "Time", e );
+
+                self._currentTime = e.position;
+                self.dispatch("timeupdate");
+                self.dispatch("playing");
+                self._paused = false;
+                this_seeking = false;
+            });
+
+            jwp.onVolume(function( e ){
+                //log( "Volume", e );
+
+                self._volume = e.volume;
+            });
+        },
+
+        autoplay: function( val ) {
+            if ( val !== null) {
+                this._autoplay = Boolean( val );
+            }
+
+            return this._autoplay;
+        },
+
+        preload: function( val ) {
+            if ( val != null ) {
+                this._preload = val;
+            }
+
+            return this._preload;
+        },
+
+        _doSeek: function( time ) {
+            this._currentTime = time;
+
+            // if ( !this._hasBegun ) {
+            //     this._seekOnPlay = time;
+            // }
+
+            this._seeking = true;
+            this.dispatch("seeking");
+            this._jwplayer.seek( time );
+        },
+
+        _isReady: function() {
+            return this._jwplayer.getState();
+        },
+
+        _bind: function( fn ) {
+            var self = this;
+
+            return function() {
+                return fn.apply( self,arguments );
+            };
+        },
+
+        _getVideoContainer: function( target ) {
+            return ( target.container ) ? target.container.parentElement : target;
+        },
+
+        /**
+         * MetaPlayer Media Interfaces
+         *
+         * @Functions
+         * load()
+         * play()
+         * pause()
+         * canPlayType(type)
+         *
+         */
+        load: function() {
+            //log('load()');
+            
+            if ( !this._isReady() ) {
+                return;
+            }
+
+            this.dispatch("loadstart");
+
+            if ( !this.src() ) {
+                return;
+            }
+
+            var jwp = this._jwplayer;
+            var current = this._jwplayer.getPlaylistItem() ;
+
+            if ( ! current || ( current.file != this.src() ) ) {
+                jwp.load({
+                    file : this._src,
+                    type: ( this._src.match(".mov") && jwplayer.version.split(".")[0] >= 6 ? "mp4": undefined )
+                });
+            }
+            jwp.play();
+        },
+
+        play: function() {
+            //log('play()');
+            this._autoplay = true;
+
+            if ( this._ended ) {
+                this._jwplayer.seek( 0 );
+                this._restorePaused = false;
+                return;
+            }
+
+            this.load();
+        },
+
+        pause: function() {
+            //log('pause()');
+            
+            if ( this._paused ) {
+                return;
+            }
+            
+            this._autoplay = false;
+            this._paused = true;
+            this._jwplayer.pause();
+        },
+
+        canPlayType: function( val ) {
+            switch( val ){
+                // via http://developer.longtailvideo.com/trac/browser/branches/4.2/com/jeroenwijering/parsers/ObjectParser.as?rev=80
+                case 'application/x-fcs':
+                case 'application/x-shockwave-flash':
+                case 'audio/aac':
+                case 'audio/m4a':
+                case 'audio/mp4':
+                case 'audio/mp3':
+                case 'audio/mpeg':
+                case 'audio/x-3gpp':
+                case 'audio/x-m4a':
+                case 'image/gif':
+                case 'image/jpeg':
+                case 'image/png':
+                case 'video/flv':
+                case 'video/3gpp':
+                case 'video/h264':
+                case 'video/mp4':
+                case 'video/x-3gpp':
+                case 'video/x-flv':
+                case 'video/x-m4v':
+                case 'video/x-mp4':
+                case 'video/mov':
+                    return "probably";
+
+                // rtmp (manifest)
+                // http://www.longtailvideo.com/support/jw-player/28836/media-format-support/
+                case "application/smil":
+                    return "maybe";
+
+                // ... and add a few more:
+                // m3u8 works in premium
+                case "application/application.vnd.apple.mpegurl":
+                case "application/x-mpegURL":
+                    return "maybe";
+
+                // ramp() service returns this for youtube videos
+                case "video/youtube":
+                    return "maybe";
+
+                default:
+                    return "";
+            }
+        },
+
+        /**
+         * MetaPlayer Media Properties
+         * paused()
+         * duration()
+         * seeking()
+         * ended()
+         * currentTime(val)
+         * muted()
+         * volume(val)
+         * src(val)
+         * readyState()
+         * controls()
+         */
+        paused: function() {
+            return this._paused;
+        },
+
+        duration: function() {
+            return this._duration;
+        },
+
+        seeking: function() {
+            return Boolean( this._seeking );
+        },
+
+        ended: function() {
+            return this._ended;
+        },
+
+        currentTime: function( val ) {
+            if ( val != undefined ) {
+                if ( val < 0 ) {
+                    val = 0;
+                }
+
+                this._ended = false;
+                this._doSeek( val );
+            }
+
+            return this._currentTime;
+        },
+
+        readyState: function( val ) {
+            if ( val != undefined ) {
+                this._readyState = val;
+             }
+
+            return this._readyState;
+        },
+        muted: function( val ) {
+            if ( val != undefined ) {
+                this._muted = val;
+                this._jwplayer.setMute( val );
+                this.dispatch("volumechange");
+                return val;
+            }
+            return this._muted;
+        },
+        volume: function( val ) {
+            if ( val != null && val != this._volume ) {
+                this._volume = val;
+
+                // ovp doesn't support to change any volume level.
+                this._jwplayer.setVolume( ( this._volume <= 1 ) ? ( this._volume * 100 ) : this._volume );
+                this.dispatch("volumechange");
+            }
+            return ( this._volume > 1 ) ? ( this._volume / 100 ) : this._volume;
+        },
+
+        src: function( val ) {
+            if ( val == undefined ) {
+                if ( !this._isReady() ) {
+                    return this._src;
+                }
+                else {
+                    return this._src || this._jwplayer.getPlaylistItem().file;
+                }
+            }
+
+            this._src = val;
+
+            if ( this.autoplay() ) {
+                this.play();
+            }
+
+            if ( this._preload != "none" ) {
+                this.load();
+            }
+
+            return this._src;
+        },
+
+        // MPF Extensions
+        mpf_resize: function( w, h ) {
+            if ( this._height != h || this._width != w ) {
+                this._height = h;
+                this._width = w;
+                this._jwplayer.resize( w +"px", h+"px" );
+            }
+        }
+    };
+
+})();
+(function() {
+    var $ = jQuery;
+
+
+    var defaults = {
+        autoplay: false,
+        preload: true,
+        loop: false,
+        updateMsec: 500,
+        playerVars: {
+            experienceID: null
+        }
+    };
+
+    var KalturaPlayer = function( objectId ) {
+
+        /* HTML5 specific attributes */
+
+        // Display
+        this._src = "";
+        //this.poster = ""; Is this supported?
+        //this.controls = false;  Is this supported?
+        //this.videoWidth = 640;  Supported?
+        //this.videoHeight = 480; Supported?
+
+        // Playback
+        this._currentTime = 0;
+        this._duration = NaN;
+        this._paused = true;
+        this._ended = false;
+        this._autoplay = true;
+        this._loop = false;
+        this._autobuffer = true;
+        this._seeking = false;
+        //this.defaultPlaybackRate = 1; Supported?
+        //this.playbackRate = 1; Supported?
+        //this.seekable = {}; Supported?
+        //this.buffered = {}; Supported?
+        //this.played = {}; Supported?
+
+        // Ot_her Player Attributes
+        this._volume = 1;
+        this._muted = false;
+        this._readyState = 0;
+        //this.networkState;
+        //this.error;
+
+        MetaPlayer.dispatcher( this );
+
+        this.kdp = document.getElementById(objectId);
+
+        //this.container = container.parentNode;
+
+        this.video = MetaPlayer.proxy.proxyPlayer(this, this.kdp);
+        
+        this.addListeners();
+        
+    };
+
+    MetaPlayer.kaltura = function ( objectId ) {
+        var kta = new KalturaPlayer( objectId );
+        return kta.video;
+    };
+
+    KalturaPlayer.prototype =  {
+        
+        init : function() {
+
+        },
+
+        isReady : function() {
+            return this.kdp;
+        },
+
+        addListeners : function() {
+            var kdp = this.kdp,
+                self = this;
+
+            // The nature of KDP's observer pattern requires that calbacks be
+            // decalared in the Global Scope - so don't blame me. O.o
+            window.kdpCallback_onMediaBegin = function () {
+                self._ended = false;
+                self._paused = false;
+                self.dispatch("play");
+                self.dispatch("playing");
+            };
+
+            window.kdpCallback_onMediaPaused = function() {
+                self._paused = true;
+                self._ended = false;
+                self.dispatch("pause");
+            };
+
+            window.kdpCallback_onMediaChange = function () {
+
+            };
+
+            window.kdpCallback_onDurationChange = function (e) {
+                // onDurationChange fires from the KDP when seeking (weird)
+                // so, let's assume we can ignore the event if the duration is
+                // the same
+                if (self._duration === e.newValue) {
+                    return;
+                }
+
+                self._duration = e.newValue;
+                //self._paused = !self._autoplay;
+
+                self.dispatch('durationchange');
+            };
+
+            window.kdpCallback_onMediaProgress = function (e) {
+                // KDP does not provide a callback for programmatically seeking - only for scrubber
+                // actions directly on their player, so we have to fake it.
+                if (self._seeking) {
+                    self._seeking = false;
+                    self.dispatch("seeked");
+                }
+                self._currentTime = e;
+                self.dispatch("timeupdate");
+            };
+
+            window.kdpCallback_onMediaComplete = function () {
+                self._ended = true;
+                self._paused = true;
+                self._duration = NaN;
+                self.dispatch("ended");
+            };
+
+            window.kdpCallback_onEntryReady = function (e) {
+                // support for loading source through player itself,
+                // without this we never get into readyState, popcorn is never happy, etc
+                if ( self._readyState < 4) {
+                    self._readyState = 4;
+                    self.dispatch("loadstart");
+                    self.dispatch("canplay");
+                }
+
+                self.dispatch('loadedmetadata');
+                self.dispatch('loadeddata');
+
+                self._duration = e.duration;
+                self.dispatch('durationchange');
+            };
+
+            kdp.addJsListener('entryReady',' kdpCallback_onEntryReady');
+            kdp.addJsListener('playerPlayed', "kdpCallback_onMediaBegin");
+            kdp.addJsListener('playerPaused', "kdpCallback_onMediaPaused");
+            kdp.addJsListener('playerPlayEnd', "kdpCallback_onMediaComplete");
+            kdp.addJsListener('durationChange', "kdpCallback_onDurationChange");
+            kdp.addJsListener('playerUpdatePlayhead', "kdpCallback_onMediaProgress");
+        },
+
+        startVideo : function() {
             if ( ! this.isReady()) {
                 return;
             }
 
             this._ended = false;
 
+            // not supported
 //            if ( this._muted ) {
-                // mute brightcove - not supported
+//                this.kdp.sendNotification('mute');
 //            }
 
             var src = this._src;
@@ -2321,42 +5866,34 @@ all copies or substantial portions of the Software.
             if ( !src ) {
                 return;
             }
-            
+
             if ( this._readyState < 4) {
                 this._readyState = 4;
                 this.dispatch("loadstart");
                 this.dispatch("canplay");
             }
 
-            // TODO: Pull out ID if URL passed for SRC
-
-            if (this._autoplay) {                
-                this.brightcoveVideoPlayer.loadVideoByID(src);
+            if (this._autoplay) {
+                this.kdp.sendNotification('changeMedia', {entryId: src});
+                var self = this;
+                setTimeout(function() {
+                    self.kdp.sendNotification('doPlay');
+                }, 500);
             }
-            else if (this._preload) {                
+            else if (this._preload) {
                 this.load();
             }
 
 
         },
 
-        doSeek : function(time) {    
+        doSeek : function(time) {
             this._seeking = true;
             this.dispatch("seeking");
-            this.brightcoveVideoPlayer.seek(time);
+            this.kdp.sendNotification('doSeek', parseFloat(time));
             this._currentTime = time;
 
             var self = this;
-
-            // onMediaSeekNotify callback doesn't fire when
-            // programmatically seeking
-            
-            setTimeout(function () { 
-                self._currentTime = time;
-                self._seeking = false;
-                self.dispatch("seeked");
-                self.dispatch("timeupdate");
-            }, 1500);
         },
 
         /* Media Interface */
@@ -2368,7 +5905,7 @@ all copies or substantial portions of the Software.
                 return;
             }
 
-            this.brightcoveVideoPlayer.cueVideoByID(this._src);            
+            this.kdp.sendNotification('changeMedia', {entryId: this._src});
 
         },
 
@@ -2379,7 +5916,7 @@ all copies or substantial portions of the Software.
                 return;
             }
 
-            this.brightcoveVideoPlayer.play();
+            this.kdp.sendNotification('doPlay');
 
         },
 
@@ -2388,29 +5925,29 @@ all copies or substantial portions of the Software.
                 return;
             }
 
-            this.brightcoveVideoPlayer.pause();
+            this.kdp.sendNotification('doPause');
         },
 
-        canPlayType : function() {
-            return Boolean  ( type.match(/\/brightcove$/ ) );
+        canPlayType : function( type) {
+            return Boolean  ( type.match(/\/kaltura$/ ) );
         },
 
         paused : function() {
             return this._paused;
         },
 
-        duration : function() {            
+        duration : function() {
             return this._duration;
         },
 
-        seeking : function() {  
+        seeking : function() {
             return this._seeking;
         },
 
-        ended : function() { 
+        ended : function() {
             if ( ! this.isReady() ) {
                 return false;
-            }                        
+            }
             return this._ended;
         },
 
@@ -2418,7 +5955,7 @@ all copies or substantial portions of the Software.
             if (! this.isReady() ) {
                 return 0;
             }
-            if ( val != undefined ) {
+            if ( val !== undefined ) {
                 this._ended = false;
                 this.doSeek(val);
             }
@@ -2426,16 +5963,16 @@ all copies or substantial portions of the Software.
         },
 
         muted : function( val ) {
-            if ( val != null ) {
+            if ( val !== undefined ) {
                 this._muted = val;
                 if ( ! this.isReady() ) {
                     return val;
                 }
 //                if ( val ) {
-                    // mute brightcove - not supported
+                    // mute kaltura - not supported
 //                }
 //                else {
-                    // unmute brightcove - not supported
+                    // unmute kaltura - not supported
 //                }
                 this.dispatch("volumechange");
                 return val;
@@ -2443,13 +5980,15 @@ all copies or substantial portions of the Software.
             return this._muted;
         },
 
-        volume : function( val ) {   
-            if ( val != null ) {
+        volume : function( val ) {
+            if ( val !== undefined ) {
                 this._volume = val;
                 if ( ! this.isReady() ) {
                     return val;
                 }
-                // set brightcove volume - not supported
+
+                this.kdp.sendNotification('changeVolume', val);
+
                 this.dispatch("volumechange");
             }
             return this._volume;
@@ -2467,983 +6006,357 @@ all copies or substantial portions of the Software.
             return this._readyState;
         }
 
-    }
+    };
 
-})();(function () {
-
+})();(function() {
     var $ = jQuery;
-    var $f = window.flowplayer;
 
     var defaults = {
-        autoplay : false,
-        preload : true,
-        controls : true,
-        swfUrl : "flowplayer-3.2.7.swf",
-        wmode : "transparent",
-        cssName : "mp-flowplayer",
-        statusThrottleMSec : 500,
-        fpConfig : {
-            clip : {
-                scaling : "fit"
-            },
-            canvas : {
-                backgroundColor : "#0000000",
-                backgroundGradient : "none"
-            }
+        autoplay: false,
+        preload: true,
+        loop: false,
+        updateMsec: 500,
+        playerVars: {
         }
     };
 
-    var FlowPlayer = function (el, options){
+    var OoyalaPlayer = function() {
 
-        if( !(this instanceof FlowPlayer ))
-            return new FlowPlayer(el, options);
+        /* HTML5 specific attributes */
+        
+        // Display
+        this._src = "";
+        //this.poster = ""; Is this supported?
+        //this.controls = false;  Is this supported?
+        //this.videoWidth = 640;  Supported?
+        //this.videoHeight = 480; Supported?
 
-        this.config = $.extend(true, {}, defaults, options);
+        // Playback
+        this._currentTime = 0;
+        this._duration = NaN;
+        this._paused = true;
+        this._ended = false;
+        this._loop = false;
+        this._autobuffer = true;
+        this._seeking = false;
+        this._preload = "none";
+        this._autoplay = false;
+        //this.defaultPlaybackRate = 1; Supported?
+        //this.playbackRate = 1; Supported?
+        //this.seekable = {}; Supported?
+        //this.buffered = {}; Supported?
+        //this.played = {}; Supported?
 
-        this.dispatcher = MetaPlayer.dispatcher(this);
+        // Ot_her Player Attributes
+        this._volume = 1;
+        this._muted = false;
+        this._readyState = 0;
+        //this.networkState;
+        //this.error;
 
-        this._iOS = /iPad|iPhone|iPod/i.test(navigator.userAgent);
-        this.__seeking = null;
-        this.__readyState = 0;
-        this.__ended = false;
-        this.__paused = true;
-        this.__duration = NaN;
-        this.__youtubePlugin = false;
+        var ooyalaScriptEl = $('script[src*="//player.ooyala.com/player.js"]').get(0);
 
-        this._pageSetup(el);
+        //http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values
+        var getParameterByName = function(name, string)
+        {
+            name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+            var regexS = "[\\?&]" + name + "=([^&#]*)";
+            var regex = new RegExp(regexS);
+            var results = regex.exec(string);
+            if(results === null)
+                return "";
+            else
+                return decodeURIComponent(results[1].replace(/\+/g, " "));
+        };
 
-        this.__preload = this.config.preload;
-        this.__autoplay = this.config.autoplay;
-        this.__src = "";
+        this.playerId = getParameterByName('playerId', ooyalaScriptEl.src);
+        this.playerCallback = getParameterByName('callback', ooyalaScriptEl.src);
 
-        this._statepoll = Ramp.timer(250);
-        this._statepoll.listen('time', this._onPlayStatePoll, this);
-
-        this._timeupdater = Ramp.timer(250);
-        this._timeupdater.listen('time', this._onTimeUpdate, this);
-
-        var self = this;
-        this._flowplayer.onLoad( function () {
-            self._onLoad();
-        });
-
-        this.video = MetaPlayer.proxy.proxyPlayer(this, this._flowplayer.getParent());
-        // check a flowplayer plugins
-        this._loadPlugins();
+        this.onReady();
+        
+        this.init();
     };
 
-    MetaPlayer.flowplayer = function (el, options) {
-        return FlowPlayer(el, options).video;
+    MetaPlayer.ooyala = function () {
+        var ooyala = new OoyalaPlayer();
+        return ooyala.video;
     };
 
-    MetaPlayer.addPlayer("flowplayer", function (el, options) {
-        // single argument mode: function(options) {
-        if(!  el.getCommonClip  ) {
-            options = el;
-            el = $("<div></div>")
-                .addClass("mp-video")
-                .appendTo(this.layout.stage);
-        }
-        this.flowplayer = FlowPlayer(el, options);
-        this.video = this.flowplayer.video;
-    });
+    OoyalaPlayer.prototype =  {
+        init : function() {
 
-    FlowPlayer.prototype = {
-
-        _pageSetup : function (el) {
-            // if passed in fp instance
-            if( el.getCommonClip ) {
-                this._flowplayer = el;
-                var common  = this._flowplayer.getCommonClip();
-                this.preload( Boolean(common.autoBuffering) );
-                this.autoplay( Boolean(common.autoPlay) );
-            }
-            // otherwise start one up
-            else {
-                el = $(el).get(0); // resolve "#foo"
-                var config = $.extend(true, {
-                    clip : {
-                        autoPlay: false,
-                        autoBuffering: true
-                    }
-                }, this.config.fpConfig);
-
-
-                this._flowplayer = $f( el, {
-                    src: this.config.swfUrl,
-                    wmode: this.config.wmode
-                }, config );
-            }
+            this.addListeners();
+            this.startVideo();            
         },
 
-        _loadPlugins : function () {
-            var config = this._flowplayer.getConfig();
-            if( ! config.hasOwnProperty("plugins") )
-                return;
-
-            var pluginConfig = config.plugins;
-            // check youtube plugin
-            if( pluginConfig.youtube && pluginConfig.youtube.url.length > 0 )
-                this.__youtubePlugin = true;
+        isReady : function() {
+            // we don't instantiate until the ready callback from the plyaer
+            return true;
         },
 
-        _onLoad : function () {
-            // fires twice on ipad
-            if( this._onLoadFired )
-                return;
-            this._onLoadFired = true;
-
+        addListeners : function() {
             var self = this;
+            
+            window[this.playerCallback] = function(playerId, eventName, eventArgs) {
+                switch (eventName) {
+                    case "apiReady":
+                        break;
+                    case "playerEmbedded":
 
-            // Player listeners
-            this._flowplayer.onVolume( function (level) {
-                self.dispatchIfClip("volumechange");
-            });
-
-            this._flowplayer.onMute( function (level) {
-                self.dispatchIfClip("volumechange");
-            });
-
-            this._flowplayer.onUnmute( function (level) {
-                self.dispatchIfClip("volumechange");
-            });
-
-
-            this._flowplayer.onPlaylistReplace( function () {
-                self.dispatchIfClip("playlistChange");
-            });
-
-
-            this._flowplayer.onClipAdd( function () {
-                self.dispatchIfClip("playlistChange");
-            });
-
-
-            this.controls( this.__controls );
-
-            // apply src from before we were loaded, if any
-            if( this.__src ) {
-                this.src( this.__src );
-            }
-            else {
-                var fp = this._flowplayer;
-                var clips = fp.getPlaylist();
-                $.each( clips, function (i, clip) {
-                    self._addClipListeners(clip);
-                    self.__src = clip.url;
-                });
-            }
-
-            self.dispatchIfClip('loadstart');
-
-            if( this.preload() || this.autoplay()  )
-                this.load();
+                        break;
+                    case "playheadTimeChanged":
+                        self.onMediaProgress(eventArgs);
+                        break;
+                    case "stateChanged":
+                        switch (eventArgs.state) {
+                            case "buffering":
+                                self.onMediaBegin();
+                                break;
+                            case "playing":
+                                self.onMediaPlay();
+                                break;
+                            case "paused":
+                                self.onMediaPause();
+                                break;
+                        }
+                        break;
+                    case "seeked":
+                        self.onMediaSeekNotify(eventArgs);
+                        break;
+                    case "playComplete":
+                        self.onMediaComplete();
+                        break;
+                    case "currentItemEmbedCodeChanged":
+                        // not sure what difference is here between this and embedCodeChanged
+                        
+                        break;
+                    case "totalTimeChanged":
+                        
+                        break;
+                    case "embedCodeChanged":
+                        self.onMediaChange(eventArgs);
+                        break;
+                    case "volumeChanged":
+                        
+                        break;
+                }
+            };
         },
 
-        _addClipListeners : function (clip) {
-            var self = this;
+        onReady : function() {
+            this.ooyalaPlayer = $('#' +this.playerId).get(0);
+            MetaPlayer.dispatcher( this );
+            this.video = MetaPlayer.proxy.proxyPlayer(this, this.ooyalaPlayer);
+        },
 
-            if( ! clip )
+        onMediaChange : function(e) {
+            this._src = e.embedCode;
+            this._currentTime = 0;
+            this._duration = e.time;
+            this._seekOnPlay = null;
+            this._hasBegun = false;
+            this._readyState = 4;
+
+            // if ( this._autoplay ) {
+            //     this._paused = false;
+            //     // do the playing here for change
+            // }
+            // else {
+            //     console.log('we are here');
+            //     this._paused = true;
+            // }
+            
+            this.dispatch('canplay');
+            this.dispatch("loadstart");
+            this.dispatch('loadedmetadata');
+            this.dispatch('loadeddata');
+            this.dispatch("durationchange");
+        },
+
+        onMediaComplete : function(e) {
+            this._currentTime = 0;
+            this._ended = true;
+            this._paused = true;
+            this.dispatch("ended");
+        },
+
+        onMediaError : function(e) {
+        },
+
+        onMediaPlay : function() {
+            this._ended = false;
+            this._paused = false;
+            this._hasBegun = true;
+            this.dispatch("playing");
+            this.dispatch("play");
+        },
+
+        onMediaBegin : function() {
+            this._hasBegun = true;
+        },
+
+        onMediaProgress : function(e) {
+            this._currentTime = e.playheadTime;
+            this.dispatch("timeupdate");
+        },
+
+        onMediaSeekNotify : function(e) {
+            this._seeking = false;
+            this.dispatch("seeked");
+            this.dispatch("timeupdate");
+            this._currentTime = e.newPlayheadTime;
+        },
+
+        onMediaPause : function() {
+            this._paused = true;
+            this._ended = false;
+            this.dispatch( "pause" );
+        },
+
+        startVideo : function() {
+            if( this._ended ) {
+                this.currentTime(0);
+            }
+
+            this._ended = false;
+            this.muted( this._muted );
+
+            var src = this._src;
+            if ( !src ) {
                 return;
-
-
-            clip.onBeforeBegin( function (clip) {
-                self.ad = clip.ovaAd || clip.isInStream;
-                if( self.ad ) {
-                    self.dispatch("adstart");
-                }
-                return true;
-            });
-
-
-            clip.onBegin( function (clip) {
-                self._flowplayer.setVolume(100);
-                self.__seeking = null;
-                self.__duration = NaN;
-                self._flowplayer.unmute();
-            });
-
-            clip.onStart( function (clip) {
-                self._setReady();
-                self._setPlaying(true);
-
-                // ipad controls can't be hidden until after playing
-                if( self._iOS && ! self.__controls ) {
-                    self._setHTML5Controls(false);
-                }
-
-                self.dispatchIfClip('loadeddata');
-                self.__duration = clip.duration;
-
-                self.dispatchIfClip("durationchange");
-                self.dispatchIfClip('loadedmetadata');
-            });
-
-
-            clip.onStop( function (clip) {
-                if( self.ad ){
-                    self.ad = false;
-                    self.dispatch("adstop");
-                }
-                // this fires some times while play-seeking, not useful.
-                // self._setPlaying(false);
-            });
-
-            clip.onFinish( function (clip) {
-                self.__duration = NaN;
-                self.__seeking = null;
-                if( self.ad ){
-                    self.dispatch("adstop");
-                    self.ad = false;
-                    return;
-                }
-                self.__ended = true;
-                self._setPlaying(false);
-                self._flowplayer.stop();
-                self.dispatchIfClip("ended");
-            });
-
-            clip.onPause( function (clip) {
-                self._setPlaying(false);
-                self._setReady();
-            });
-
-            clip.onResume( function (clip) {
-                self._setPlaying(true);
-                self.dispatchIfClip("play");
-
-                if( ! this.__duration ) {
-                    self.__duration = clip.duration;
-                    self.dispatchIfClip("durationchange");
-                }
-            });
-
-            clip.onBeforeSeek( function (clip) {
-
-                self.dispatchIfClip("seeking");
-                self.dispatchIfClip("timeupdate");
-
-                // fp doesn't do seeks while paused until it plays again, so we fake
-                if( self.paused() )  {
-                    self.dispatchIfClip("seeked");
-                    self.__seeking = null;
-                }
-            });
-
-            clip.onSeek( function (clip) {
-                this.__currentTimeCache = 0;
-                self.__seeking = null;
-                if( ! self.paused() )
-                    self.dispatchIfClip("seeked");
-            });
-
-        },
-
-        _setReady : function (){
-            if( this.__readyState != 4 ) {
-                this.__readyState = 4;
-                this.dispatchIfClip("canplay");
             }
-            else {
-                this.dispatchIfClip("seeking");
-                this.dispatchIfClip("seeked");
+
+            this.dispatch("loadstart");
+
+            //var longForm = src.toString().match(/^http:\/\/link.brightcove.com.*bctid(\d+)\?/);
+            // if( longForm )
+            //     src = parseInt( longForm[1] );
+            
+            this.ooyalaPlayer.setQueryStringParameters({embedCode: src});
+
+            if ( this._autoplay ) {
+               this.ooyalaPlayer.playMovie();
             }
+                
         },
 
-        _setPlaying : function ( bool ){
-            this.__paused = ! bool;
-            // the play and pause events fire before isPlaying() and isPaused() update
-            this._statepoll.start();
-        },
+        doSeek : function(time) {
+            this._currentTime = time;
 
-        _setHTML5Controls : function (bool) {
-            var video = $(this._flowplayer.getParent() ).find('video').get(0);
-            video && (video.controls = bool);
+            if(! this._hasBegun ){
+                this._seekOnPlay = time;
+            }
+
+            this._seeking = true;
+            this._seekOnPlay = null;
+            this.dispatch("seeking");
+            this.ooyalaPlayer.setPlayheadTime(time);
+            
         },
 
         /* Media Interface */
 
-        load : function () {
-            this.preload(true);
-            if( this.src() && this._flowplayer.isLoaded()  ) {
-                var c =  this._flowplayer.getClip(0);
-
-                c.update({
-                    autoPlay : this.autoplay(),
-                    autoBuffer : true
-                });
-
-                // if ipad()
-                if(  window.flashembed.__replaced && ! this.__loaded ) {
-                    // ipad() play method respects autoPlay and autoBuffering
-                    // but requires an argument to update video.src correctly
-                    this._flowplayer.play(0);
-
-                    // also has regexp bug which breaks every other play() (related: http://stackoverflow.com/a/2630538/369724)
-                    if( this.autoplay() ) {
-                        this._flowplayer.play(0);
-                    }
-                    this.__loaded = true;
-                    return;
-                }
-
-                if( this.autoplay() ) {
-                    this._flowplayer.play();
-                }
-                else {
-                    this._flowplayer.startBuffering();
-                }
-            }
+        load : function() {
+            this._preload = "auto";
+            this.startVideo();
         },
 
-        play : function () {
-            this.autoplay(true);
-            this.__paused = false; // helps onBeforeBegin() know to ignore clip.autoPlay == false
-            this.load();
-        },
-
-        pause : function () {
-            this._flowplayer.pause();
-        },
-
-        canPlayType : function (type) {
-            var canPlay = null;
-
-            // html5 / ipad
-            if( window.flashembed.__replaced ){
-                if( ! this._video )
-                    this._video = document.createElement('video');
-
-                // just accept m3u8
-                if( this._iOS  && type.match(/mpegurl|m3u8/i)  ){
-                    canPlay = "probably";
-                } else if( this._video.canPlayType )
-                    canPlay = this._video.canPlayType(type)
-            }
-
-            else if( this.__youtubePlugin && type.match(/youtube$/i) ) {
-                canPlay = "probably";
-            }
-
-            // fall through to flash
-            else if( type.match( /mp4|flv|jpg/ ) ) {
-                canPlay = "probably";
-            }
-
-            return canPlay
-        },
-
-        paused : function (){
-            return this.__paused;
-        },
-
-        duration : function () {
-            return this.__duration;
-        },
-
-        seeking : function () {
-            return (this.__seeking !== null );
-        },
-
-        ended : function () {
-            return this.__ended;
-        },
-
-        currentTime : function (val){
-            if( val !== undefined ){
-                if( val < 0 )
-                    val = 0
-                if( val > this.duration )
-                    val = this.duration;
-                this.__seeking = val;
-                this._flowplayer.seek(val);
-            }
-
-            if( this.__seeking !== null ) {
-                return this.__seeking;
-            }
-
-            if( ! this._flowplayer.isLoaded() )
-                return 0;
-
-            // throttle the calls so we don't affect playback quality
-            var now = (new Date()).getTime();
-            var then = this.__currentTimeCache;
-            var diff = now - then;
-
-            if(then && diff< this.config.statusThrottleMSec ) {
-                return this.__currentTime + (diff / 1000); // approx our position
-            }
-            else
-                this.__currentTimeCache = now;
-
-            var status = this._flowplayer.getStatus(); // expensive
-
-            this.__currentTime = status.time;
-            return this.__currentTime;
-        },
-
-        muted : function (val){
-            if( val !== undefined ){
-                if( val )
-                    this._flowplayer.mute();
-                else
-                    this._flowplayer.unmute();
-            }
-            var status = this._flowplayer.getStatus();
-            return Boolean( status.muted );
-        },
-
-        volume : function (val){
-            if( val !== undefined ) {
-                this._flowplayer.setVolume(val * 100);
-            }
-            return this._flowplayer.getVolume() / 100;
-        },
-
-        controls : function (val) {
-            if( ! this._flowplayer.isLoaded() ) {
-                if( val !== undefined )
-                    this.__controls = val;
-                return this.config.controls;
-            }
-
-            var controls = this._flowplayer.getControls();
-            var playBtn =  this._flowplayer.getPlugin("play");
-
-            if( val !== undefined ){
-                this.__controls = val;
-                if( val ) {
-                    controls && ( controls.show() );
-                    playBtn && playBtn.show();
-                    this._setHTML5Controls(true);
-                }
-                else {
-                    controls && ( controls.hide() );
-                    playBtn && playBtn.hide();
-                    this._setHTML5Controls(false);
-                }
-            }
-            return this.__controls
-        },
-
-        preload : function (val) {
-            if( val !== undefined )
-                this.__preload = val;
-            return this.__preload;
-        },
-
-        autoplay : function (val) {
-            if( val !== undefined )
-                this.__autoplay = val;
-            return this.__autoplay;
-        },
-
-        loop : function (bool) {
-            if( bool !== undefined ) {
-                this.__loop = bool;
-            }
-            return this.__loop;
-        },
-
-        src : function (val) {
-            if( val !== undefined ) {
-                // have to show to allow proprietary must-use play button
-                if( this._iOS )
-                    this._setHTML5Controls(true);
-
-                this.__src = val;
-                this.__loaded  = false;
-                this.__duration  = NaN;
-                var fp = this._flowplayer;
-                if( fp.isLoaded() ) {
-                    fp.setClip(this._createClipData(this.__src));
-                    var c = fp.getClip(0);
-                    this._addClipListeners(c);
-                }
-            }
-            return this.__src;
-        },
-
-        readyState : function (val) {
-            if( val !== undefined )
-                this.__readyState = val;
-            return this.__readyState;
-        },
-
-        /* Timer Handlers */
-
-        _onPlayStatePoll : function () {
-            if( this._flowplayer.isPlaying() === this.paused() )
-                return;
-
-            this._statepoll.reset();
-            if( this.paused()  ) {
-                this.dispatchIfClip("pause");
-                this._timeupdater.reset();
+        play : function() {
+            this._autoplay = true;
+            if ( this._preload == "none" ) {
+                this.startVideo();
             }
             else {
-                this.autoplay(true);
-                this.dispatchIfClip("playing");
-                this.dispatchIfClip("play");
-                this._timeupdater.start();
+
+                this.ooyalaPlayer.playMovie();
             }
         },
 
-        _onTimeUpdate : function  () {
-            this.dispatchIfClip("timeupdate");
+        pause : function() {
+            return this.ooyalaPlayer.pauseMovie();
         },
 
-        /* Create a clip data depending on a plugin */
-        _createClipData : function (src) {
-            var data = {};
-            var config = this._flowplayer.getConfig();
-            if ( typeof src === "undefined" || src.length <= 0 )
-                return data;
-            if ( this.__youtubePlugin && ! src.match(/http|rtmp/i) ) {
-                data.provider = "youtube";
-                data.urlResolvers = 'youtube';
-                data.url = "api:" + src;
-            } else {
-                data.url = src;
-            }
-            data.autoPlay = false;
-            data.autoBuffering = false;
-            data.scaling = config.clip.scaling;
-            return data;
+        canPlayType : function( type) {
+            MetaPlayer.log("ooyala", "canPlayType?", type);
+            return Boolean  ( type.match(/\/ooyala$/ ) );
         },
 
-        dispatchIfClip : function (e){
-            var clip = this._flowplayer.getClip();
-             if( clip && (clip.ovaAd || clip.isInStream) )
-                return;
-            this.dispatch(e);
-        }
-    };
-})();
+        paused : function() {
+            return this._paused;
+        },
 
-(function () {
+        duration : function() {
+            return this._duration;
+        },
 
-    var $ = jQuery;
+        seeking : function() {
+            return this._seeking;
+        },
 
-    var defaults = {
-        applySources : true,
-        selectSource : true,
-        preload : true,
-        muted : false,
-        autoplay : false,
-        autoAdvance : true,
-        related: true,
-        loop : false,
-        volume: 1,
-        controls : true
-    };
+        ended : function() {
+            return this._ended;
+        },
 
-    var Html5Player = function (parent, options ){
-        if( !(this instanceof Html5Player ))
-            return new Html5Player(parent, options);
-
-        this._iOS = /iPad|iPhone|iPod/i.test(navigator.userAgent);
-        this.config = $.extend({}, defaults, options);
-        this._createMarkup(parent);
-    };
-
-    MetaPlayer.addPlayer("html5", function (options) {
-        var html5 = new Html5Player(this.layout.stage, options);
-        this.video = html5.video;
-    });
-
-    MetaPlayer.html5 = function (target, options) {
-        var html5 = new Html5Player(target, options);
-        return html5.video;
-    };
-
-    Html5Player.prototype = {
-        _createMarkup : function ( parent ) {
-            var p = $(parent);
-            var v = p.find('video');
-
-            if( p.is('video') || parent.currentTime != null ) {
-                v = p;
+        currentTime: function(val) {
+            if ( val !== undefined ) {
+                this._ended = false;
+                this.doSeek(val);
             }
+            return this._currentTime;
+        },
 
-            if( v.length > 0 ) {
-                if( this._iOS ){
-                    // ipad video breaks upon reparenting, so needs resetting
-                    // jquery listeners will be preserved, but not video.addEventListener
-                    this.video = v.clone(true, true).appendTo( v.parent() ).get(0);
-                    v.remove();
-                } else {
-                    this.video = v.get(0);
+        muted : function( val ) {
+            if ( val != undefined ) {
+                this._muted = val;
+               
+                if ( val ) {
+                    this.ooyalaPlayer.setVolume(0);
                 }
+                this.dispatch("volumechange");
+                return val;
             }
-            else {
-                var video = document.createElement('video');
-                video.autoplay = this.config.autoplay;
-                video.preload = this.config.preload;
-                video.controls = this.config.controls;
-                video.muted = this.config.muted;
-                video.volume = this.config.volume
-                video.style.height = "100%";
-                video.style.width = "100%";
-                this.video = video;
-                p.append(video);
-            }
-
-        }
-
-    };
-
-})();
-(function() {
-
-    var $ = jQuery;
-    var jwplayer = window.jwplayer;
-
-    var defaults = {
-        autostart  : true,
-        autobuffer : true,
-        controlbar :  "none",
-        image      : "",
-        id         : "jwplayer",
-        //duration   : 0,
-        volume     : 100,
-        width      : "100%",
-        height     : "100%",
-        icons      : false, // disable a big play button on the middle of screen
-        events     : {
-            onTime: function(e) {}, onMeta: function(e) {}
-        },
-        plugins: { viral: { onpause: false, oncomplete: false, allowmenu: false } } // disable all viral features.
-    };
-
-    var JWPlayer = function(el, options) {
-        if(!( this instanceof JWPlayer ))
-            return new JWPlayer(el, options);
-
-        this.config = $.extend(true, {}, defaults, options);
-        this.__autoplay = this.config.autostart;
-        this.__autobuffer = this.config.autobuffer;
-        this.__volume = (this.config.volume/100);
-        this.__seeking = null;
-        this.__readyState = 0;
-        this.__ended = false;
-        this.__paused = (! this.config.autostart);
-        this.__duration = NaN;
-        this.__metadata = null;
-        this.__started = false;
-        this.__currentTime = 0;
-        this.__src = "";
-
-        this._jwplayer = this._render( $(el).get(0) );
-
-        // we have to wrap: jwplayer will clone this container and eventually
-        // remove it from the DOM.
-        var video = $("<div></div>")
-            .height( el.config.height )
-            .width( el.config.width )
-            .insertAfter( el.container )
-            .append(el.container);
-
-        this.dispatcher = MetaPlayer.dispatcher( this );
-        this.video = MetaPlayer.proxy.proxyPlayer( this, video.get(0) );
-
-        var self = this;
-        this._jwplayer.onReady(function() {
-            self._onLoad();
-        });
-    };
-
-    if( window.MetaPlayer ) {
-        MetaPlayer.addPlayer("jwplayer", function ( target, options ) {
-            if(target.container ) {
-                $(this.layout.stage).append(target.container);
-            }
-            else {
-                options = target;
-                target = this.layout.stage;
-            }
-            this.jwplayer = JWPlayer(target, options);
-            this.video = this.jwplayer.video;
-        });
-    } else {
-        window.MetaPlayer = {};
-    }
-
-    MetaPlayer.jwplayer = function (target, options) {
-        var jwplayer = JWPlayer(target, options);
-        return jwplayer.video;
-    };
-
-    JWPlayer.prototype = {
-        _render: function (el) {
-            if( el.container ) {
-                this.__autoplay = el.config.autostart;
-                return el;
-            }
-            var target = $("<div class='mpf-jwplayer'></div>").appendTo(el).get(0);
-            return jwplayer(target).setup(this.config);
+            return this._muted;
         },
 
-        _onLoad: function() {
-            var self = this;
+        volume : function( val ) {
+           if ( val != null && val != this._volume ) {
+                this._volume = val;
 
-            //console.log("_onLoad", this._jwplayer.getMeta());
-            // Player listeners
-            this._jwplayer.onPlay( function (level) {
-                self.__ended = false;
-                self.__paused = false;
-                self.__started = true;
-                self.dispatch("play");
-            });
-
-            this._jwplayer.onPause( function (level) {
-                self.__paused = true;
-                self.dispatch("pause");
-            });
-
-            this._jwplayer.onTime( function (e) {
-                self.__currentTime = e.position;
-                self.dispatch("timeupdate");
-            });
-
-            this._jwplayer.onIdle( function (e) {
-                // not sure what should do for this event.
-            });
-
-            this._jwplayer.onBuffer( function (e) {
-                self.__readyState = 4;
-                self.dispatch("buffering");       
-            });
-
-            this._jwplayer.onSeek( function (e) {
-                self.__seeking = e.offset;
-                self.__currentTime = e.offset;
-                self.dispatch("seeked");
-            });
-
-            this._jwplayer.onComplete( function (e) {
-                self.__ended = true;
-                self.__started = false;
-                self.__paused = true;
-                self.dispatch("ended");
-            });
-
-            this._jwplayer.onVolume( function (e) {
-                self.dispatch("volumechange");
-            });
-
-            this._jwplayer.onMute( function (e) {
-                self.dispatch("volumechange");
-            });
-
-            this._jwplayer.onMeta( function (e) {
-                self.__metadata = e.metadata;   
-                if ( e.metadata.duration && e.metadata.duration > 0 ) {
-                    self.__duration = e.metadata.duration;
-                    self.dispatch("loadeddata");
-                    self.dispatch("loadedmetadata");
-                    self.dispatch("durationchange");
-                }
-            });
-
-            this._jwplayer.onPlaylist( function (e) {
-                self.__started = false;
-                self.dispatch("playlistChange");
-            });
-
-            this._jwplayer.onError( function (e) {
-                self.__started = false;
-            });
-
-            this.__src = this._getSrc();
-
-            this.dispatch('loadstart');
-            this.dispatch("canplay");
-
-            if( this._getAutoBuffer() || this._getAutoPlay() )
-                this.load();
-        },
-
-        _doSeek : function (time) {
-            this.__seeking = true;
-            this.dispatch("seeking");
-            this._jwplayer.seek( time );
-            this.__currentTime = time;
-
-            // no seeking events exposed, so fake best we can
-            // will be subject to latency, etc
-            var self = this;
-            setTimeout (function () {
-                self._updateTime(); // trigger a time update
-                self.__seeking = null;
-                self.dispatch("seeked");
-                self.dispatch("timeupdate");
-            }, 1500)
-        },
-        _updateTime : function () {
-            this.__currentTime = this._jwplayer.getPosition();
-        },
-
-        _getAutoPlay : function () {
-            return this.__autoplay;
-        },
-
-        _getAutoBuffer : function () {
-            return this.__autobuffer;
-        },
-
-        _getSrc : function () {
-            if (! this._jwplayer ) return "";
-            return this._jwplayer.getPlaylist()[0].file;
-        },
-
-        /**
-         * adding to video src to jwplayer's playlist
-         * due to its async for getting a video src,
-         * creates a interval to check the player is initiated or not to put a video source.
-         */ 
-        _addToPlaylist : function (val) {
-            var self = this;
-            if( typeof val !== 'undefined' && val.length > 0 ) {
-                if( self._jwplayer && self._jwplayer.getState() ) {
-                    self._jwplayer.load({file : val, autostart: self._jwplayer.config.autostart});
-                    clearInterval( self._playlistCheckInterval );
-                    self._playlistCheckInterval = null;
-                } else {
-                    if( self._playlistCheckInterval ) {
-                        return;
-                    }
-                    self._playlistCheckInterval = setInterval(function () {
-                        self._addToPlaylist(val);
-                    }, 1000);
-                }
-                self.__src = val;
-            }
-        },
-
-        _getVideoContainer : function (target) {
-            return (target.container)? target.container.parentElement : target;
-        },
-
-        /**
-         * MetaPlayer Media Interfaces
-         *
-         * @Functions
-         * load()
-         * play()
-         * pause()
-         * canPlayType(type)
-         *
-         */
-        load : function () {
-            if( this.src() ) {
-                var f = this.src();
-                this._jwplayer.load([{file: f}]);
-            }
-            if( this._jwplayer ) {
-                if( this._getAutoPlay() ) {
-                    this._jwplayer.play();
-                } else {
-                    // in jwplayer, it doesn't have a autobuffer. add a trick with play/pause.
-                    this._jwplayer.play();
-                    this._jwplayer.pause();
-                }
-            }
-        },
-        play : function () {
-            this._jwplayer.play();
-        },
-        pause : function () {
-            this._jwplayer.pause();
-        },
-        canPlayType : function (val) {
-            return true;
-        },
-        /**
-         * MetaPlayer Media Properties
-         * paused()
-         * duration()
-         * seeking()
-         * ended()
-         * currentTime(val)
-         * muted()
-         * volume(val)
-         * src(val)
-         * readyState()
-         * controls()
-         */
-        paused : function () {
-            return this.__paused;
-        },
-        duration : function () {
-            return this.__duration;
-        },
-        seeking : function () {
-            return (this.__seeking !== null);
-        },
-        ended : function () {
-            return this.__ended;
-        },
-        currentTime : function (val) {
-            if( val !== undefined ){
-                if( val < 0 )
-                    val = 0;
-                if( val > this.duration )
-                    val = this.duration;
-                this._doSeek(val);
-            }
-
-            return this.__currentTime;
-        },
-        readyState : function (val) {
-            if( val !== undefined )
-                this.__readyState = val;
-            return this.__readyState;
-        },
-        muted : function (val) {
-            if( val !== undefined )
-                this._jwplayer.setMute();
-            return this._jwplayer.getMute();
-        },
-        volume : function (val) {
-            if( val != null ){
-                this.__volume = val;
-                if( ! this._jwplayer )
-                    return val;
-                // ovp doesn't support to change any volume level.
-                this._jwplayer.setVolume(val*100);
+                this.ooyalaPlayer.setVolume( val );
                 this.dispatch("volumechange");
             }
-            return (this.__volume > 1)? (this.__volume/100):this.__volume;
-        },
-        src : function (val) {
-            this._addToPlaylist(val);
-            return this.__src
-        },
-        controls : function (val) {
-            if( typeof val !== 'undefined' ) {
-                this.__controls = val;
-                if( val )
-                    this._jwplayer.getPlugin("controlbar").show();
-                else
-                    this._jwplayer.getPlugin("controlbar").hide();
-            }
-            return this.__controls;
+            return ( this._volume > 1 ) ? ( this._volume / 100 ) : this._volume;
         },
 
-        // MPF Extensions
-        mpf_resize : function (w, h) {
-            if( this._height != h || this._width != w ){
-                this._height = h;
-                this._width = w;
-                this._jwplayer.resize(w +"px", h+"px");
+        src : function (id) {
+            if (id !== undefined) {
+                this._src = id;
+                this._duration = NaN;
+                this._currentTime = 0;
+                this.startVideo();
             }
+            return this._src;
+        },
+
+        autoplay : function ( val ) {
+            if( val != null)
+                this._autoplay = Boolean(val);
+            return this._autoplay;
+        },
+
+        preload : function ( val ) {
+            if( val != null)
+                this._preload = val;
+            return this._preload;
+        },
+
+        readyState: function() {
+            return this._readyState;
         }
+
     };
 
-})();
-(function () {
+})();(function () {
     var $ = jQuery;
     var ovp = window.ovp;
 
@@ -3514,7 +6427,7 @@ all copies or substantial portions of the Software.
 
     if( window.MetaPlayer ) {
         MetaPlayer.addPlayer("ovp", function ( options ) {
-            var target = $("<div></div>").appendTo(this.layout.stage);
+            var target = $("<div></div>").appendTo(this.layout.base);
             this.ovp = OVPlayer(target, options);
             this.video = this.ovp.video;
         });
@@ -3538,11 +6451,11 @@ all copies or substantial portions of the Software.
         
         _addEventListeners : function () {
             // start ovp player status check
-            this._loadtimer = Ramp.timer(this.config.status_timer);
+            this._loadtimer = MetaPlayer.timer(this.config.status_timer);
             this._loadtimer.listen('time', this._onBeforeLoad, this);
             this._loadtimer.start();
             
-            this._statustimer = Ramp.timer(this.config.status_timer);
+            this._statustimer = MetaPlayer.timer(this.config.status_timer);
             this._statustimer.listen('time', this._onStatus, this);
         },
         _onBeforeLoad : function () {
@@ -3766,14 +6679,808 @@ all copies or substantial portions of the Software.
         }
     };
 })();
-(function () {
+(function() {
+    var $ = jQuery;
+
+    var StrobeMediaPlayback = function( playerId, jsBridge ) {
+        /* HTML5 specific attributes */
+        
+        if ( !( this instanceof StrobeMediaPlayback ) ) {
+            return new StrobeMediaPlayback( playerId, jsBridge );
+        }
+
+        // Display
+        this._src = "";
+        //this.poster = ""; Is this supported?
+        //this.controls = false;  Is this supported?
+        //this.videoWidth = 640;  Supported?
+        //this.videoHeight = 480; Supported?
+
+        // Playback
+        this._currentTime = 0;
+        this._paused = true;
+        this._ended = false;
+        this._loop = false;
+        this._autobuffer = true;
+        this._seeking = false;
+        this._duration = NaN;
+
+        this._volume = 1;
+        this._muted = false;
+        this._readyState = 0;
+        this._preload = "none";
+        this._autoplay = false;
+
+        this.dispatcher = MetaPlayer.dispatcher( this );
+
+        this.playerId = playerId;
+        this.player = $( '#' +playerId ).get( 0 );
+
+        this.video = MetaPlayer.proxy.proxyPlayer(this, this.player);
+
+        // I don't normally proxy object tags, but when I do I use a workaround.
+        var addEventListener = this.video.addEventListener;
+        this.video.addEventListener = function  (type, callback, useCapture){
+            // strobe object.addEventListener throws an exception with three args.
+            addEventListener.apply(this, [type, callback]);
+        };
+
+        this.addListeners( jsBridge );
+    };
+
+    MetaPlayer.strobemediaplayback = function ( playerId, jsBridge ) {
+        var smp = StrobeMediaPlayback( playerId, jsBridge );
+        return smp.video;
+    };
+
+    StrobeMediaPlayback.prototype =  {
+        isReady : function() {
+            return Boolean(this.player && this.player.getState() != "loading");
+        },
+
+        addListeners : function( jsBridge ) {
+            var self = this;
+
+            window[ jsBridge ] = function( a,b,c ) {
+
+                switch( b ) {
+                    case "loadstart":
+                        self.onLoadStart( c );
+                        break;
+                    case "durationchange":
+                        self.onMediaChange( c );
+                        break;
+                    case "complete":
+                        self.onMediaComplete();
+                        break;
+                    case "play":
+                        self.onMediaPlay( c );
+                        break;
+                    case "timeupdate":
+                        self.onMediaProgress( c );
+                        break;
+                    case "seeked":
+                        self.onMediaSeekNotify( c );
+                        break;
+                    case "pause":
+                        self.onMediaPause();
+                }
+            };
+            return this;
+        },
+
+        onLoadStart: function(e) {
+            this._readyState = 4;
+            this.dispatch("loadstart");
+        },
+
+        onMediaChange : function(e) {
+            //this._src = e.media.id;
+            
+            if ( !isNaN( e.duration ) ) {
+                this._duration = e.duration;
+                this.dispatch('loadedmetadata');
+                this.dispatch('loadeddata');
+                this.dispatch("canplay");
+                this.dispatch("durationchange");
+            }
+
+            this._currentTime = 0;
+            this._seekOnPlay = null;
+            this._hasBegun = false;
+
+
+            if ( this._autoplay ) {
+                this._paused = false;
+            }
+            else {
+                this._paused = true;
+            }
+        },
+
+        onMediaComplete : function(e) {
+            this._ended = true;
+            this._paused = true;
+            
+            this.dispatch("ended");
+        },
+
+        onMediaError : function(e) {
+        },
+
+        onMediaPlay : function(e) {
+            this._ended = e.ended;
+            this._paused = false;
+            this._hasBegun = true;
+
+            
+            this.dispatch("play");
+            this.dispatch("playing");
+            
+        },
+
+        onMediaBegin : function(e) {
+            this._hasBegun = true;
+        },
+
+        onMediaProgress : function(e) {
+            this._currentTime = e.currentTime;
+            this.dispatch("timeupdate");
+        },
+
+        onMediaSeekNotify : function(e) {
+            this._seeking = false;
+            this.dispatch("seeked");
+            this.dispatch("timeupdate");
+            //this._currentTime = e.position;
+        },
+
+        onMediaPause: function() {
+            this._paused = true;
+            this.dispatch("pause");
+        },
+
+        startVideo : function() {
+            if ( ! this.isReady()) {
+                return;
+            }
+
+            if ( this._preload == "none") {
+                return;
+            }
+
+            if( this._ended ) {
+                this.currentTime(0);
+            }
+
+            this._ended = false;
+
+            var src = this._src;
+            if ( !src ) {
+                return;
+            }
+            
+
+            // "http://link.brightcove.com/services/link/bcpid1745093542/bclid1612710147/bctid1697210143001?src=mrss"
+            //var longForm = src.toString().match(/^http:\/\/link.brightcove.com.*bctid(\d+)\?/);
+            // if( longForm ) {
+            //     src = parseInt( longForm[1] );
+            // }
+
+            if (this._autoplay) {
+                this.player.setMediaResourceURL(src);
+                this.player.play2();
+            }
+            else {
+                this.player.setMediaResourceURL(src);
+            }
+        },
+
+        doSeek : function(time) {
+            this._currentTime = time;
+
+            if(! this._hasBegun ){
+                this._seekOnPlay = time;
+            }
+
+            this._seeking = true;
+            this._seekOnPlay = null;
+            this.dispatch("seeking");
+            
+            if (this.player.getState() != "ready" && this.player.canSeekTo( time ) )
+            {
+                this.player.seek( time );
+            }
+
+            // var self = this;
+            // setTimeout(function () {
+            //     self._currentTime = time;
+                this._seeking = false;
+                this.dispatch("seeked");
+                this.dispatch("timeupdate");
+            // }, 1500);
+        },
+
+        /* Media Interface */
+
+        load : function() {
+            this._preload = "auto";
+            this.startVideo();
+        },
+
+        play : function() {
+            this._paused = false;
+            this._preload = "auto";
+            this._autoplay = true;
+
+            if( this._readyState == 4 ) {
+                this.player.play2();
+            }
+            else {
+                this.startVideo();
+            }
+        },
+
+        pause : function() {
+            if( this.isReady() )
+                this.player.pause();
+        },
+
+        canPlayType : function( type) {
+            switch( type ){
+                case 'video/strobe':
+                case 'appplication/strobe':
+
+                // borrowed from jwplayer
+                case 'application/x-fcs':
+                case 'application/x-shockwave-flash':
+                case 'audio/aac':
+                case 'audio/m4a':
+                case 'audio/mp4':
+                case 'audio/mp3':
+                case 'audio/mpeg':
+                case 'audio/x-3gpp':
+                case 'audio/x-m4a':
+                case 'image/gif':
+                case 'image/jpeg':
+                case 'image/png':
+                case 'video/flv':
+                case 'video/3gpp':
+                case 'video/h264':
+                case 'video/mp4':
+                case 'video/x-3gpp':
+                case 'video/x-flv':
+                case 'video/x-m4v':
+                case 'video/x-mp4':
+                case 'video/mov':
+                    return "probably";
+
+                // m3u8 works with plugin
+                case "application/application.vnd.apple.mpegurl":
+                case "application/x-mpegURL":
+                    return "maybe";
+
+                default:
+                    return "";
+            }
+        },
+
+        paused : function() {
+            return this._paused;
+        },
+
+        duration : function() {
+            return this._duration;
+        },
+
+        seeking : function() {
+            return this._seeking;
+        },
+
+        ended : function() {
+            if ( ! this.isReady() ) {
+                return false;
+            }
+            return this._ended;
+        },
+
+        currentTime: function(val) {
+            if (! this.isReady() ) {
+                this._currentTime = val || 0;
+                return 0;
+            }
+            if ( val !== undefined ) {
+                this._ended = false;
+                this.doSeek(val);
+            }
+            return this._currentTime;
+        },
+
+        muted : function( val ) {
+            if ( val != undefined ) {
+                this._muted = Boolean(val) ;
+                if ( this.isReady() )
+                    this.player.setVolume( this._muted ? 0 : this._volume );
+                this.dispatch("volumechange");
+            }
+            return this._muted;
+        },
+
+        volume : function ( val ) {
+            if ( val != undefined ) {
+                this._volume = val;
+                this.muted( this._muted );
+            }
+            return this._volume;
+        },
+
+        src : function (id) {
+            if (id != undefined) {
+                this._src = id;
+                this._readyState = 0;
+                this._duration = NaN;
+                this._currentTime = 0;
+                this.startVideo();
+            }
+            return this._src;
+        },
+
+        autoplay : function ( val ) {
+            if( val != null)
+                this._autoplay = Boolean(val);
+            return this._autoplay;
+        },
+
+        preload : function ( val ) {
+            if( val != null)
+                this._preload = val;
+            return this._preload;
+        },
+
+        readyState: function() {
+            return this._readyState;
+        }
+
+    };
+
+})();(function() { 
+    var $ = jQuery;
+
+    var defaults = {
+        autoplay: false,
+        preload: true,
+        loop: false,
+        updateMsec: 500,
+        playerVars: {
+            
+        }
+    };
+
+    var ThePlatformPlayer = function( element ) {
+
+        if ( !( this instanceof ThePlatformPlayer ) ) {
+            return new ThePlatformPlayer( element );
+        }
+
+        /* HTML5 specific attributes */
+
+        // Display
+        this._src = "";
+        //this.poster = ""; Is this supported?
+        //this.controls = false;  Is this supported?
+        //this.videoWidth = 640;  Supported?
+        //this.videoHeight = 480; Supported?
+
+        // Playback
+        this._currentTime = 0;
+        //this._duration = NaN;
+        this._paused = true;
+        this._ended = false;
+        this._autoplay = false;
+        this._preload = "none";
+        this._loop = false;
+        this._autobuffer = true;
+        this._seeking = false;
+        //this.defaultPlaybackRate = 1; Supported?
+        //this.playbackRate = 1; Supported?
+        //this.seekable = {}; Supported?
+        //this.buffered = {}; Supported?
+        //this.played = {}; Supported?
+
+        // Other Player Attributes
+        this._volume = 1;
+        this._muted = false;
+        this._readyState = 0;
+        //this.networkState;
+        //this.error;
+
+        this._seekingWhilePaused = false;
+        this._seekingWhilePausedTime = NaN;
+
+        this.dispatcher = MetaPlayer.dispatcher( this );
+        this.video = MetaPlayer.proxy.proxyPlayer(this, $('#' +element).get(0) );
+
+        this.addListeners();
+
+         $(element).css({
+             width: "100%",
+             height: "100%"
+         });
+    };
+
+    MetaPlayer.theplatform = function ( element ) {
+        var tp = ThePlatformPlayer( element );
+        return tp.video;
+    };
+
+    ThePlatformPlayer.prototype =  {
+
+        init : function() {
+
+        },
+
+        isReady : function() {
+            return tpController;
+        },
+
+        addListeners : function() {
+            var tpc = tpController;
+            var self = this;
+
+
+            tpc.addEventListener("OnMediaPause", function(e) {
+                self.onMediaPause(e);
+            });
+
+            tpc.addEventListener("OnMediaUnpause", function(e) {
+                self.onMediaUnpause(e);
+            });
+
+            tpc.addEventListener("OnMediaStart", function(e) {
+                self.onMediaStart(e);
+            });
+
+            tpc.addEventListener("OnReleaseStart", function(e) {
+                self.onReleaseStart(e);
+            });
+
+            tpc.addEventListener("OnMediaPlay", function(e) {
+                self.onReleaseStart(e);
+            });
+
+            tpc.addEventListener("OnLoadReleaseUrl", function(e) {
+                self.onMediaChange(e);
+            });
+
+            tpc.addEventListener("OnSetReleaseUrl", function(e) {
+                self.onMediaChange(e);
+            });
+
+            tpc.addEventListener("OnMediaEnd", function(e) {
+                self.onMediaEnd(e);
+            });
+
+            tpc.addEventListener("OnMediaError", function(e) {
+                self.onMediaError(e);
+            });
+
+            tpc.addEventListener("OnMediaPlaying", function(e) {
+                self.onMediaPlaying(e);
+            });
+
+            tpc.addEventListener("OnMediaSeek", function(e) {
+                self.onMediaSeek(e);
+            });
+
+        },
+
+        /* Event Handlers */
+
+        onReleaseStart : function(e) {
+           // if (!this._seekingWhilePaused) {
+                this._ended = false;
+                this._paused = false;
+                this.dispatch("play");
+                this.dispatch("playing");
+            // }
+        },
+
+        onMediaStart : function(e) {
+            if (e.data.baseClip.isAd) {
+                this.dispatch('adstart');
+                return;
+            }
+
+            // if (this._seekingWhilePaused) {
+
+            //     var self = this;
+            //     setTimeout(function() {
+            //         tpController.seekToPosition(self._seekingWhilePausedTime);
+            //     }, 50);
+            // }
+
+            this._currentTime = 0;
+            this.onMediaDuration(e);
+        },
+
+        onMediaDuration : function (e) {
+            if (typeof e.data == "object") {
+                this._duration = e.data.length || e.data.duration;
+                this._src = e.data.url;
+                this.dispatch('durationchange', this._duration);
+            }
+        },
+
+        onMediaChange : function(e) {
+            if ( this._readyState < 4) {
+                this._readyState = 4;
+                this.dispatch("loadstart");
+                this.dispatch("canplay");
+            }
+            this.dispatch('loadedmetadata');
+            this.dispatch('loadstart');
+            this.dispatch('canplay');
+            this.dispatch('loadeddata');
+
+            // // we can only get media duration after pressing play
+            // if ( !this._autoplay ) {
+            //     tpController.clickPlayButton();
+            //     this._playToGetDuration = true;
+            // }
+
+            this.dispatch('trackchange', e.data);
+        },
+
+        onMediaEnd : function(e) {
+            if (e.data.baseClip.isAd) {
+                this.dispatch('adstop');
+                return;
+            }
+            this._paused = true;
+            this._ended = true;
+            this._duration = NaN;
+            this._currentTime = 0;
+            this.dispatch("ended");
+        },
+
+        onMediaError : function(e) {
+            this.dispatch("error");
+        },
+
+        onMediaPlaying : function(e) {
+            if (!this._seekingWhilePaused) {
+                this._currentTime = e.data.currentTime * 0.001;
+            }
+
+            // TODO: Make this smarter for cases where we're not overlaying anything on the video
+            if ($('video').length > 0) {
+                $('video').get(0).controls = false;
+            }
+
+            this.dispatch("timeupdate");
+            this.dispatch("playing");
+
+            // if ( this._playToGetDuration ) {
+            //     delete this._playToGetDuration;
+            //     tpController.pause(true);
+            // }
+        },
+
+        onMediaSeek : function(e) {
+            this._currentTime = e.data.end.currentTime * 0.001;
+            this._seeking = false;
+            if ( !this._paused ) {
+                setTimeout(function() {
+                    tpController.pause(false);
+                    tpController.clickPlayButton();
+                }, 1000);
+            }
+            this.dispatch("seeked");
+            this.dispatch("timeupdate");
+            
+            // if (this._seekingWhilePaused) {
+                
+            //     var self = this;
+            //     setTimeout(function() {
+            //         tpController.pause(true);
+            //     }, 50);
+            // }
+        },
+
+        onMediaPause : function(e) {
+            // if (this._seekingWhilePaused) {
+            //     this._seekingWhilePaused = false;
+            //     this._seekingWhilePausedTime = NaN;
+            // }
+            this._paused = true;
+            this._ended = false;
+            this.dispatch("pause");
+            
+        },
+
+        onMediaUnpause : function(e) {
+            this._paused = false;
+            this._ended = false;
+            this.dispatch("play");
+            this.dispatch("playing");
+
+            if (this._seekingWhilePaused) {
+                var self = this;
+                setTimeout(function() {
+                    tpController.seekToPosition(self._seekingWhilePausedTime);
+                }, 50);
+                
+            }
+            
+        },
+
+        /* --------------------------------- */
+
+        startVideo : function() {
+
+            this._ended = false;
+
+            if ( this._muted ) {
+                tpController.mute(this._muted);
+            }
+
+            var src = this._src;
+
+            if ( !src ) {
+                return;
+            }
+            
+            if (this._autoplay) {
+                tpController.setReleaseURL(src);
+            }
+            else if (this._preload != "none") {
+                this.load();
+            }
+
+            // if ( this._readyState < 4) {
+            //     this._readyState = 4;
+            //     this.dispatch("loadstart");
+            //     this.dispatch("canplay");
+            // }
+
+
+        },
+
+        seekWhilePaused : function() {
+            tpController.clickPlayButton();
+            tpController.pause(false);
+        },
+
+        doSeek : function(time) {
+            this._seeking = true;
+            this.dispatch("seeking");
+
+            this._currentTime = time;
+
+            // if (!this._ended && this._paused) {
+            //     this._seekingWhilePaused = true;
+            //     this._seekingWhilePausedTime = time;
+            //     this.seekWhilePaused();
+            // }
+            // else {
+                tpController.seekToPosition(time * 1000);
+            // }
+        },
+
+        /* Media Interface */
+
+        load : function() {
+            this._preload = true;
+
+            tpController.loadReleaseURL(this._src);
+
+        },
+
+        play : function() {
+            this._seekingWhilePaused = false;
+            this._seekingWhilePausedTime = NaN;
+            this._autoplay = true;
+
+            if ( this._preload == "none" ) {
+                this._preload = "auto";
+                this.startVideo();
+                return;
+            }
+
+            var self = this;
+
+            if (this._paused) {
+                setTimeout(function() {
+                    tpController.pause(false);
+                }, 500);
+            }
+
+            if (this._paused && this._currentTime == 0) {
+                tpController.clickPlayButton();
+            }
+
+            this._paused = false;
+        },
+
+        pause : function() {
+            tpController.pause(!this._paused);
+        },
+
+        canPlayType : function( type ) {
+            return Boolean  ( type.match(/\/theplatform$/ ) );
+        },
+
+        paused : function() {
+            return this._paused;
+        },
+
+        duration : function() {
+            return this._duration * 0.001;
+        },
+
+        seeking : function() {
+            return this._seeking;
+        },
+
+        ended : function() {
+            return this._ended;
+        },
+
+        currentTime: function(val) {
+            if ( val !== undefined ) {
+                this._ended = false;
+                this.doSeek(val);
+            }
+            return this._currentTime;
+        },
+
+        muted : function( val ) {
+            if ( val !== undefined ) {
+                this._muted = val;
+
+                tpController.mute(this._muted);
+
+                this.dispatch("volumechange");
+                return val;
+            }
+            return this._muted;
+        },
+
+        volume : function( val ) {
+            if ( val !== undefined ) {
+                this._volume = val;
+
+                if (this._volume <= 1) {
+                    val = val * 100;
+                }
+                tpController.setVolume(val);
+                this.dispatch("volumechange");
+            }
+            return this._volume;
+        },
+
+        src : function (id) {
+            if (id !== undefined) {
+                this._src = id;
+                this.startVideo();
+            }
+            return this._src;
+        },
+
+        readyState: function() {
+            return this._readyState;
+        }
+
+    };
+
+})();(function () {
 
     // save reference for no conflict support
     var $ = jQuery;
 
     var defaults = {
         autoplay : false,
-        preload : true,
+        preload : "auto",
         updateMsec : 500,
         playerVars : {
             enablejsapi : 1,
@@ -3792,6 +7499,10 @@ all copies or substantial portions of the Software.
     };
 
     var YouTubePlayer = function (youtube, options) {
+
+        if( !(this instanceof YouTubePlayer) )
+            return new YouTubePlayer(youtube, options);
+
         this.config = $.extend(true, {}, defaults, options);
 
         this.__seeking = false;
@@ -3825,11 +7536,18 @@ all copies or substantial portions of the Software.
         }
         else {
             this.youtube = youtube;
+            var el = $(youtube.a);
             // wrap so we have a non-iframe container to append source elements to
             this.container  = $("<div></div>")
-                .appendTo( youtube.a.parentNode )
-                .append( youtube.a )
+                .appendTo( el.parent() )
+                .height( el.height() )
+                .width( el.width() )
+                .append( el )
                 .get(0);
+
+            el.width("100%");
+            el.height("100%");
+
             this.addListeners();
         }
 
@@ -3837,6 +7555,20 @@ all copies or substantial portions of the Software.
     };
 
 
+    MetaPlayer.youtube = function (youtube, options){
+        var yt = new YouTubePlayer(youtube, options);
+        return yt.video;
+    };
+
+    MetaPlayer.Players.YouTube = function (media) {
+        if( ! ( media.getVideoEmbedCode instanceof Function ) )
+            return false;
+        return MetaPlayer.youtube(media);
+    };
+
+    /**
+     * @deprecated
+     */
     MetaPlayer.addPlayer("youtube", function (youtube, options ) {
 
         // single arg form
@@ -3856,19 +7588,13 @@ all copies or substantial portions of the Software.
                 options.chromeless = true;
 
            youtube = $("<div></div>")
-               .addClass("mp-video")
-               .appendTo(this.layout.stage);
+               .prependTo(this.layout.base);
         }
 
         var yt = new YouTubePlayer(youtube, options);
         this.video = yt.video;
         this.youtube = yt
     });
-
-    MetaPlayer.youtube = function (youtube, options){
-        var yt = new YouTubePlayer(youtube, options);
-        return yt.video;
-    }
 
 
     YouTubePlayer.prototype = {
@@ -3927,77 +7653,139 @@ all copies or substantial portions of the Software.
                 return;
             }
 
-            // flash implemented, works in IE?
-            // player.addEventListener(event:String, listener:String):Void
-            this.startVideo();
+            if( this.__readyState < 4 ){
+                this.__readyState = 4;
+            }
+
+
+            if( this.__muted ) {
+                this.youtube.mute();
+            }
+
+            // volume works, this is too early to set mute
+            this.volume(this.__volume);
+
+            this._initTrack();
+
+            this.startDurationCheck();
+
+            this.startTimeCheck(); // check while paused to handle event-less seeks
         },
 
         isReady : function () {
-            return this.youtube && this.youtube.playVideo;
+            return Boolean(this.youtube && this.youtube.playVideo);
         },
 
         onStateChange : function (e) {
             var state = e.data;
 
+            MetaPlayer.log("youtube", "onStateChange", state);
             // http://code.google.com/apis/youtube/js_api_reference.html#Events
             switch(state) {
                 case -1: // unstarted
                     break;
                 case 0: //ended
                     this.__ended = true;
-                    this.__duration = NaN;
                     this.dispatch("ended");
                     break;
                 case 1: // playing
                     this.__paused = false;
-                    this.dispatch("playing");
-                    this.dispatch("play");
+                    if( ! this.__ended ) {
+                        this.dispatch("playing");
+                        this.dispatch("play");
+                    }
+                    this.startDurationCheck();
                     break;
                 case 2: // paused
-                    this.__paused = true;
-                    this.dispatch("pause");
+                    if( ! this.__paused ) {
+                        this.__paused = true;
+                        this.dispatch("pause");
+                    }
                     break;
                 case 3: // buffering
-                    this.startDurationCheck();
-                    this.startTimeCheck(); // check while paused to handle event-less seeks
+                    
                     break;
                 case 5: // queued
+                    this.dispatch("loadstart");
                     this.dispatch("canplay");
                     this.dispatch("loadeddata");
+                    this.dispatch("loadedmetadata");
+
+                    // play then stop if !autoplay to get duration
+                    if (!this.autoplay) {
+                        this.youtube.playVideo();
+                        this.__playingForDuration = true;
+                    }
                     break;
             }
         },
 
         onError : function (e) {
+            MetaPlayer.log("youtube", "onError", e);
             this.dispatch("error");
         },
 
         startTimeCheck : function () {
+
             var self = this;
             if( this._timeCheckInterval ) {
                 return;
             }
 
             this._timeCheckInterval = setInterval(function () {
-                self.onTimeUpdate();
+                self.updateTime();
             }, this.updateMsec);
 
             // set an initial value, too
             this.updateTime();
         },
 
-        stopTimeCheck : function () {
-            clearInterval(this._timeCheckInterval);
-            this._timeCheckInterval = null;
-        },
-
-        onTimeUpdate: function () {
-            this.updateTime();
-            this.dispatch("timeupdate");
-        },
-
         updateTime : function () {
-            this.__currentTime = this.youtube.getCurrentTime();
+            var last = this.__currentTime;
+            var now = this.youtube.getCurrentTime();
+            var seekThreshold = last + (2 * (this.updateMsec / 1000) );
+            var paused = this.paused();
+            var seeked = false;
+
+            // detect seek while playing
+            if( ! paused  && (now < last || now > seekThreshold) )
+                seeked = true;
+
+            // detect seek while paused
+            else if( paused && (now != last ) )
+                seeked = true;
+
+            this.__currentTime = now;
+
+            if( ! this.__ended && now >= this.__duration - (this.updateMsec/1000) && now == last ) {
+                this.__ended = true;
+                this.__paused = true;
+                this.dispatch("ended");
+                this.dispatch("paused");
+                return;
+            }
+
+            if( this.__ended && ! paused) {
+                this.__ended = false;
+                this.__paused = false;
+                this.dispatch("play");
+                console.log("playing");
+                this.dispatch("playing");
+                return;
+            }
+
+            if( seeked ) {
+                if( ! this.__seeking ){
+                    this.__seeking = true;
+                    this.dispatch("seeking");
+                }
+                this.__seeking = false;
+                this.dispatch("seeked");
+            }
+
+            if( now != last ) {
+                this.dispatch("timeupdate");
+            }
         },
 
         startDurationCheck : function () {
@@ -4014,47 +7802,51 @@ all copies or substantial portions of the Software.
         },
 
         onDurationCheck : function () {
+            if( this.__readyState != 4 )
+                return;
+
             var duration = this.youtube.getDuration();
             if( duration > 0 ) {
                 this.__duration = duration;
-                this.dispatch("loadedmetadata");
+                if (this.__playingForDuration) {
+                    this.youtube.stopVideo();
+                    delete this.__playingForDuration;
+                }
                 this.dispatch("durationchange");
                 clearInterval( this._durationCheckInterval );
                 this._durationCheckInterval = null;
             }
         },
 
-        startVideo : function () {
-            // not loaded yet
-            if( ! this.isReady() )
-                return;
-
-            this.__ended = false;
-
-            if( this.__muted ) {
-                this.youtube.mute();
-            }
-            // volume works, this is too early to set mute
-            this.youtube.setVolume(this.__volume);
-
+        _initTrack : function () {
             var src = this.src();
+            MetaPlayer.log("youtube", "init track", src)
             if( ! src ) {
                 return;
             }
 
-            if( this.__readyState < 4 ){
-                this.dispatch("loadstart");
-                this.__readyState = 4;
-            }
+            // player not loaded yet
+            if( ! this.isReady() )
+                return;
+
+            this.__ended = false;
+            this.__currentTime = 0;
+            this.__duration = NaN;
+            this.__seeking = false;
 
             if( src.match("^http") ){
                 var videoId = src.match( /www.youtube.com\/(watch\?v=|v\/)([\w-]+)/ )[2];
             }
             this.youtube.cueVideoById( videoId || src );
 
+            this.dispatch("loadstart");
+
+            MetaPlayer.log("youtube", "_initTrack", this.autoplay);
+
             if( this.autoplay )
                 this.play();
-            else if( this.preload )
+
+            else if( this.preload != "none" )
                 this.load();
 
         },
@@ -4062,47 +7854,37 @@ all copies or substantial portions of the Software.
         doSeek : function (time) {
             this.__seeking = true;
             this.dispatch("seeking");
-            this.youtube.seekTo( time );
-            this.__currentTime = time;
-
-            // no seeking events exposed, so fake best we can
-            // will be subject to latency, etc
-            var self = this;
-            setTimeout (function () {
-                self.updateTime(); // trigger a time update
-                self.__seeking = false;
-                self.dispatch("seeked");
-                self.dispatch("timeupdate");
-            }, 1500)
+            if( time != this.__currentTime )
+                this.youtube.seekTo( time );
         },
 
         /* Media Interface */
 
         load : function () {
-            this.preload = true;
-
-            if( ! this.isReady() )
+            this.preload = "auto";
+            if( ! this.isReady() ){
                 return;
+            }
+            MetaPlayer.log("youtube", "load()", this.isReady() );
 
-            if( this.youtube.getPlayerState() != -1 )
-                return;
-
-            var src = this.src();
             // kickstart the buffering so we get the duration
-            this.youtube.playVideo();
-            this.youtube.pauseVideo();
+            //this.youtube.playVideo();
+            //this.youtube.pauseVideo();
+
+            this.startDurationCheck();
         },
 
         play : function () {
             this.autoplay = true;
             if( ! this.isReady() )
                 return;
-
+            MetaPlayer.log("youtube", "play()", this.isReady() );
             this.youtube.playVideo()
         },
 
         pause : function () {
-            if(! this.isReady()  )
+            MetaPlayer.log("youtube", "pause()", this.isReady() );
+            if(! this.isReady() )
                 return false;
             this.youtube.pauseVideo()
         },
@@ -4133,7 +7915,6 @@ all copies or substantial portions of the Software.
             if(! this.isReady()  )
                 return 0;
             if( val != undefined ) {
-                this.__ended = false;
                 this.doSeek(val);
             }
             return this.__currentTime;
@@ -4169,7 +7950,7 @@ all copies or substantial portions of the Software.
         src : function (val) {
             if( val !== undefined ) {
                 this.__src = val;
-                this.startVideo();
+                this._initTrack();
             }
             return this.__src
         },
@@ -4187,115 +7968,267 @@ all copies or substantial portions of the Software.
     var defaults = {
     };
 
-    var MrssService = function (video, options) {
-        if( ! (this instanceof MrssService ))
-            return new MrssService(video, options);
-
+    var MetaqService = function (url, options) {
+        if( ! (this instanceof MetaqService ))
+            return new MetaqService(url, options);
         this.config = $.extend({}, defaults, options);
-
-        this.dispatcher = MetaPlayer.dispatcher(video);
-        this.dispatcher.attach(this);
-
-        // if we're attached to video, update with track changes
-        this.dispatcher.listen("trackchange", this._onTrackChange, this);
+        MetaPlayer.dispatcher(this);
+        if( url )
+            this.load( url )
     };
 
-
-    if( ! window.Ramp )
-        window.Ramp = {};
-
-    MetaPlayer.mrss = function (options) {
-        return MrssService(null, options);
+    MetaPlayer.metaq = function (url, callback, options) {
+        var service =  MetaqService(url, options);
+        service.listen("data", function (e) {
+            callback(e.items);
+        })
     };
 
-    MetaPlayer.addPlugin("mrss", function (options) {
-        this.service = MrssService(this.video, options);
-    });
+    MetaPlayer.prototype.metaq = function (url) {
+        var mpf = this;
+        if(! this._metaq ) {
+            this._metaq  = MetaqService();
 
-    MrssService.prototype = {
-        load : function ( url  ) {
+            mpf.metadata.listen("data", function (e) {
+                var tracks = e.data.cueTracks || [];
+                var i, url, track;
+                for(i = 0; i< tracks.length; i++ ){
+                    track = tracks[i];
+                    if( track.type == "application/x-metaq-xml" ) {
+                        url = tracks[i].href;
+                        mpf._metaq.load(url, e.uri)
+                    }
+                }
+            });
+            this._metaq.listen("data", function (e) {
+                mpf.cues.setCueLists(e.cues, e.data);
+            });
+        }
+        if( url )
+            this._metaq.load(url);
+        return this;
+    };
+
+    MetaqService.prototype = {
+        load : function ( url, extraData) {
+            MetaPlayer.log("metaq", "load", url, extraData);
 
             var params = {};
-
             $.ajax(url, {
                 dataType : "xml",
                 timeout : 15000,
                 context: this,
                 data : params,
                 error : function (jqXHR, textStatus, errorThrown) {
-                    console.error("Load playlist error: " + textStatus + ", url: " + url);
+                    MetaPlayer.log("metaq", "got error", errorThrown);
+
+                    this.event("error", {
+                        url : url,
+                        status : textStatus,
+                        message: errorThrown,
+                        data : extraData
+                    })
                 },
                 success : function (response, textStatus, jqXHR) {
-                    this.setData( this.parse(response) );
+                    MetaPlayer.log("metaq", "got response");
+
+                    var cues = this.parse(response);
+                    this.event("data", {
+                        'cues': cues,
+                        'data': extraData
+                    })
                 }
             });
         },
 
-        setData : function (data) {
-            this._data = data;
-            var d = this.dispatcher;
-            d.dispatch('metadata', data.metadata);
-            d.dispatch('transcodes', data.transcodes);
-            d.dispatch('captions', data.captions);
-            d.dispatch('tags', data.tags);
-            d.dispatch('metaq', data.metaq);
-            d.dispatch('related', data.related);
+        parse : function (xml) {
+            MetaPlayer.log("metaq", "got response");
+            var i;
+            var matches = xmlChildren(xml, "Response.Matches.Match");
+            var cues = {};
+            var match;
+
+            for(i=0; i<matches.length; i++ ){
+                match = parseMatch( matches[i] );
+                if( ! cues[match.type] )
+                    cues[match.type] = [];
+                cues[match.type].push(match.attributes);
+            }
+            return cues;
+        }
+    };
+
+    function xmlChildren(xml, nodeName ){
+        if( nodeName == "") {
+            return xml;
+        }
+
+        var ret = [];
+        var i;
+        var path = nodeName.split(".");
+        var tag = path.shift();
+        var nodes = xml.childNodes;
+        var node;
+
+        for( i = 0; i < nodes.length; i++ ){
+            node = nodes[i];
+            if( node.nodeName == tag )
+                ret = ret.concat( xmlChildren( node, path.join(".") ) );
+        }
+        return ret;
+    }
+
+    function xmlText (xml, path) {
+        var text, node;
+        try {
+            node = xmlChildren(xml, path)[0];
+            text = node.textContent || node.text || "";
+        }
+        catch(e){}
+        return text;
+    }
+
+    function xmlNameValues(nodes) {
+        var ret = {};
+        var i, name;
+        for( i = 0;i < nodes.length; i++){
+            name  = xmlText(nodes[i], "Name");
+            if( name )
+                ret[ name ] = xmlText(nodes[i], "Value");
+        }
+        return ret;
+    }
+
+    function parseMatch (matchXml) {
+
+        var type = xmlText(matchXml, "Actions.Action.Type");
+        if( ! type )
+            type = xmlText(matchXml, "Actions.Action.Name");
+
+        var attributes = $.extend({
+            start : parseFloat( xmlText(matchXml, "Occurrence.StartTime") )
+            // end : parseFloat( xmlText(matchXml, "Occurrence.EndTime") )
+        }, xmlNameValues( xmlChildren(matchXml, "Actions.Action.Attributes.Attribute") ));
+
+
+        return  {
+            type : type,
+            attributes: attributes
+        };
+    }
+})();(function () {
+
+    /*
+     * support for MediaRSS v1.1.2
+     * - with additional support for subTitle
+     */
+    var $ = jQuery;
+
+    var defaults = {
+        isPlaylist : true
+    };
+
+    var MrssService = function (url, options) {
+        if( ! (this instanceof MrssService ))
+            return new MrssService(url, options);
+        MetaPlayer.dispatcher(this);
+        if( url )
+            this.load( url )
+    };
+
+    MetaPlayer.mrss = function (url, callback, options) {
+        var service =  MrssService(url, options);
+        service.listen("data", function (e) {
+            callback(e.items);
+        })
+    };
+
+    MetaPlayer.prototype.mrss = function (url, options) {
+        var options = $.extend({}, defaults, options)
+        var mpf = this;
+        if(! this._mrss ) {
+            this._mrss  = MrssService();
+            this._mrss.listen("data", function (e) {
+                var items = e.items;
+                var playlist = [];
+                $(e.items).each( function (i, item) {
+                    if( item.cues ){
+                        mpf.cues.setCueLists( item.cues, item.guid );
+                        delete item.cues; // these don't show up in metadata
+                    }
+                    mpf.metadata.setData( item, item.guid);
+                    playlist.push(item.guid);
+                });
+                if(options.isPlaylist)
+                    mpf.playlist.setPlaylist(playlist);
+            });
+            this._mrss.listen("error", function (e) {
+                mpf.warn(e.code, e.message)
+            });
+        }
+        this._mrss.load(url);
+        return this;
+    };
+
+    MrssService.prototype = {
+        load : function ( url, extraData) {
+            var params = {};
+            $.ajax(url, {
+                dataType : "xml",
+                timeout : 15000,
+                context: this,
+                data : params,
+                error : function (jqXHR, textStatus, errorThrown) {
+                    this.event("error", {
+                        url : url,
+                        code : "MRSSAjaxError",
+                        message: errorThrown + " :: " + url
+                    })
+                },
+                success : function (response, textStatus, jqXHR) {
+                    var items = this.parse(response);
+                    this.event("data", {
+                        'items': items,
+                        'data': extraData
+                    })
+                }
+            });
         },
-
-        _onTrackChange : function (e, track) {
-            if(! track ) {
-                return;
-            }
-            e.preventDefault();
-
-            if( typeof track == "string"  ){
-                this.load(track);
-            }
-            else {
-                this.setData(track);
-            }
-        },
-
 
         parse : function (data) {
             var self = this;
-            var playlist = [];
+            var items = [];
             var nodes = $(data).find('item').toArray();
 
             $.each(nodes, function(i, node) {
-                playlist.push( self.parseItem(node) );
+                items.push( self.parseItem(i, node) );
             });
-
-            var media = playlist.shift();
-            media.related = playlist;
-            return media;
+            return items;
         },
 
-        parseItem : function (item) {
-            var media = {
-                metadata : {},
-                transcodes : [],
-                tags : [],
-                captions : [],
-                metaq : {},
-                related : []
-            };
-            var el = $(item);
+        parseItem : function (i, itemXml) {
             var self = this;
+            var item = {};
+            var el = $(itemXml);
+            var time = (new Date()).getTime();
 
-            // compatibility issues: http://bugs.jquery.com/ticket/10377
-            var content = el.find('media:content, content');
+            // redundant selectors due to compatibility issues: http://bugs.jquery.com/ticket/10377
+            var content = el.find('media\\:content, content');
+            item.content = [];
+            item.group = {};
             $.each(content, function (i, node) {
                 node = $(node);
                 var codec = node.attr('codec');
-                var type = node.attr('type') + ( codec ? 'codec="'+codec+'"' : '');
-                media.transcodes.push({
+                var type = node.attr('type') || '';
+                if( type && codec )
+                    type += 'codec="'+codec+'"';
+                var content = {
                     url : node.attr('url'),
                     fileSize : node.attr('fileSize'),
                     type : type,
                     medium : node.attr('medium'),
                     isDefault : node.attr('isDefault'),
-                    expression : node.attr('expression'),
+                    expression : node.attr('expression') || "full",
                     bitrate : node.attr('bitrate'),
                     framerate : node.attr('framerate'),
                     samplingrate : node.attr('samplingrate'),
@@ -4305,23 +8238,189 @@ all copies or substantial portions of the Software.
                     width : node.attr('width'),
                     lang : node.attr('lang'),
                     codec : codec
+                };
+                item.content.push(content);
+
+                // item.group[expression] = [ content, content ]
+                if( ! item.group[content.expression] )
+                    item.group[content.expression] = [];
+                item.group[content.expression].push(content)
+            });
+
+            // mpf requires a GUID, so generate one if missing
+            item.guid = el.find('guid').text() || "MPF_" + i + "_" + (new Date).getTime() ;
+            item.title = el.find('media\\:title, title').first().text();
+            item.description = el.find('media\\:description, description').first().text();
+
+            item.thumbnails = [];
+            el.find('media\\:thumbnail, thumbnail').each( function (i, node) {
+                var thumb = $(node);
+                item.thumbnails.push({
+                    url : thumb.attr('url'),
+                    width : thumb.attr('width'),
+                    height : thumb.attr('height'),
+                    time : thumb.attr('time')
+                })
+            });
+            if( item.thumbnails.length )
+                item.thumbnail = item.thumbnails[0].url;
+
+            item.subTitles = [];
+            el.find('media\\:subTitle, subTitle').each( function (i, node) {
+                var track = $(node);
+                item.subTitles.push({
+                    type : track.attr('type'),
+                    lang : track.attr('lang'),
+                    href : track.attr('href')
+                })
+            });
+            item.subTitle = item.subTitles[0];
+
+            item.rating = el.find('media\\:rating, rating').first().text();
+            item.adult = el.find('media\\:adult, adult').first().text();
+            item.keywords = el.find('media\\:keywords, keywords').first().text();
+
+
+            var hash = el.find('media\\:hash, hash');
+            item.hash = {
+                algo : hash.attr('algo'),
+                text : hash.text()
+            };
+
+            var player = el.find('media\\:player, player');
+            item.player = {
+                url : player.attr('url'),
+                height : player.attr('height'),
+                width : player.attr('width')
+            };
+
+            item.credits = [];
+            el.find('media\\:credit, credit').each( function (i, node) {
+                var credit = $(node);
+                item.credits.push({
+                    role : credit.attr('role'),
+                    scheme : credit.attr('scheme'),
+                    text : credit.text()
+                })
+            });
+            item.credit = item.credits[0];
+
+            var copyright = el.find('media\\:copyright, copyright');
+            item.copyright = {
+                url : copyright.attr('url'),
+                text : copyright.text()
+            };
+
+            item.text = [];
+            el.find('media\\:text, text').each( function (i, node) {
+                var line = $(node);
+                item.text.push({
+                    type : line.attr('type'),
+                    lang : line.attr('lang'),
+                    start : line.attr('start'),
+                    end : line.attr('end'),
+                    text : line.text()
                 })
             });
 
-            media.metadata.title = el.find('media:title, title').text()
+            item.restrictions = [];
+            el.find('media\\:restriction, restriction').each( function (i, node){
+                    var r = $(node);
+                    var type = r.attr('type');
+                    item.restrictions[type] = {
+                        relationship : r.attr('relationship'),
+                        text : player.text()
+                    }
+            });
 
-            media.metadata.description = el.find('media:description, description').text()
-                || el.find(']').text();
 
-            media.metadata.thumbnail = el.find('media:thumbnail, thumbnail').attr('url');
+            /*
+             not implemented:
+             media:community
+                media:starRating
+                media:statistics
+                media:tags
+             media:comments
+                media:comment
+             media:embed
+                media:param
+             media:responses
+                media:response
+             media:backLinks
+                media:backLink
+             media:status
+             media:price
+             media:license
+             media:peerLink
+             media:location
+                georss:where
+                gml:Point
+                gml:pos
+             media:rights
+             media:scenes
+                media:scene
+             */
 
-            return media;
-        },
+            /* MPF extensions */
+            el.find('mpf\\:attribute, attribute').each( function (i, node){
+                var attr = $(node);
+                var type = MetaPlayer.script.camelCase( attr.attr('name') );
+                MetaPlayer.script.objectPath( item, type, attr.text() );
+            });
 
-        search : function ( query, callback, scope) {
-            throw "not implemented"
+
+            item.cueTracks = [];
+            el.find('media\\:cueTrack, cueTrack').each( function (i, node) {
+                var track = $(node);
+                item.cueTracks.push({
+                    type : track.attr('type'),
+                    href : track.attr('href')
+                })
+            });
+
+            item.cues = {};
+            el.find('mpf\\:cue, cue').each( function (i, node) {
+                var track = $(node);
+                var type = track.attr('type') || 'unknown';
+                var format = track.attr('format') || '';
+                var cue = {
+                    start : MetaPlayer.script.parseSrtTime( track.attr('start') || ''),
+                    end : MetaPlayer.script.parseSrtTime( track.attr('end') || '')
+                };
+
+                if( cue.end == null )
+                    delete cue.end;
+
+                if(! item.cues[type] )
+                    item.cues[type] = []
+
+                if( format  == "json") {
+                    try {
+                        $.extend(cue, JSON.parse( track.text() ))
+                    }
+                    catch(e){
+                        self.event("error", {
+                            code : "MRSSJsonError",
+                            message: e.toString() + " :: " + track.text()
+                        });
+                        return false;
+                    }
+                }
+                else {
+                    cue.text = track.text();
+                }
+                item.cues[type].push( cue );
+            });
+
+            return item;
         }
     };
+
+    window.xmlnsFind = function (node, tagname){
+        $.grep( $(node).find('*'), function (el, i){
+            console.log("e: " + el.tagName + " .. " + el.nodeName );
+        })
+    }
 
 })();(function () {
 
@@ -4329,33 +8428,48 @@ all copies or substantial portions of the Software.
 
     var defaults = {
         msQuotes : true,
-        serviceUri : "/device/services/mp2-playlist?e="
+        rampHost : "http://api.ramp.com/v1/mp2/playlist/",
+        retries : 3,
+        retryDelayMSec : 4000
     };
 
     var RampService = function (player, url, options) {
-        this.config = $.extend({}, defaults);
+        this.config = $.extend({}, defaults, options);
         this.dispatcher = MetaPlayer.dispatcher(this);
         this.player = player;
         this._currentUrl = null;
+        this.rampHost = this.config.rampHost;
+        this._retries = 0;
         this.player.listen( MetaPlayer.READY, this.onReady, this);
     };
 
-    MetaPlayer.addPlugin("ramp", function (url, options) {
+    MetaPlayer.addPlugin("ramp", function (apikey, rampId, options) {
         if(! this._ramp )
-            this._ramp =  new RampService(this, url);
+            this._ramp =  new RampService(this, apikey, rampId, options);
 
         var ramp = this._ramp;
 
-        if( url ) {
-            if(! this.ready )
-                ramp._currentUrl = url;
+        // if they pass in a url...
+        if( apikey && apikey.match("/") ){
+            // if passed in a template url
+            if( apikey.match(/[\?\&]e=$/) ){
+                ramp.rampHost = apikey;
+            }
+            // else passed in a playlist url
+            else if(! this.ready )
+                ramp._currentUrl = apikey;
             else
-                ramp.load( url , true);
+                ramp.load( apikey , true);
         }
-
-        if( options )
-            ramp.config = $.extend(ramp.config, options);
-
+        // if they pass in an api token
+        else if( apikey ) {
+            ramp.apiKey = apikey;
+            if( rampId ) {
+                if(! rampId.match(/^ramp:/) )
+                    rampId = "ramp:" + rampId;
+                ramp._currentUrl = rampId
+            }
+        }
         return this;
     });
 
@@ -4374,15 +8488,19 @@ all copies or substantial portions of the Software.
 
         onMetaDataLoad : function (e) {
             var data = e.data;
+            var uri;
             if(data.ramp && data.ramp.serviceURL ){
-                this.load(data.ramp.serviceURL );
-                // let others know we're on it.
-                e.stopPropagation();
+                uri = data.ramp.serviceURL
+            }
+            else if( e.uri.match(/^ramp:/) ){
+                uri = e.uri;
+            }
+            if( uri ) {
+                this.load(uri);
+                e.stopPropagation(); // let others know we're on it.
                 e.preventDefault();
             }
-            else {
-            // fall through to noop if not recognized
-            }
+            // else fall through to noop if not recognized
         },
 
         onDestroy : function () {
@@ -4398,7 +8516,25 @@ all copies or substantial portions of the Software.
             var url = uri;
             if( typeof uri == "string" &&  uri.match(/^ramp\:/) ) {
                 var parts = this.parseUrl(uri);
-                url = parts.rampHost + this.config.serviceUri + parts.rampId;
+
+                // ex.   ramp://publishing.ramp.com/:12345
+                if( parts.apiKey && parts.apiKey.match('/') ){
+                    url = parts.apiKey + parts.rampId;
+                }
+                // ex.   ramp:QWER1234ASDF2345:12345
+                // ex.   ramp:12345  w/ ramp("QWER1234ASDF2345")
+                else if( parts.apiKey || this.apiKey ){
+                    parts.apiKey = this.apiKey;
+                    url = this.rampHost + "?apikey="
+                        + encodeURIComponent(parts.apiKey)
+                        + "&e="
+                        + encodeURIComponent(parts.rampId)
+                }
+                // ex.   ramp:12345  w/ ramp("http://publishing.ramp.com/foo/mp2-playlist/e=")
+                else if( this.rampHost ) {
+                    url  = this.rampHost + parts.rampId
+                }
+
             }
 
             var params = {
@@ -4410,18 +8546,30 @@ all copies or substantial portions of the Software.
                 context: this,
                 data : params,
                 error : function (jqXHR, textStatus, errorThrown) {
-                    var e = this.createEvent();
-                    e.initEvent(textStatus, false, true);
-                    e.message = errorThrown;
-                    this.dispatchEvent(e);
+                    if( this._retries <  this.config.retries ) {
+                        setTimeout( this.bind( function (e) {
+                            this.load(uri, isPlaylist);
+                        }), this.config.retryDelayMSec * this._retries); // increase delay with each retry
+                        this._retries++;
+                        this.player.warn( "ServiceAjaxError", jqXHR.status + " " + textStatus + " "+ uri +" attempt #" + this._retries);
+                        return;
+                    }
+
+                    this.player.error( "ServiceAjaxError",  jqXHR.status + " " + textStatus + " "+ uri +"  attempt #" + this._retries);
+                    this._retries = 0;
                 },
                 success : function (response, textStatus, jqXHR) {
+                    this._retries = 0;
                     var items = this.parse(response, url);
                     if( items.length )
                         this.setItems(items, isPlaylist);
+                    else {
+                        this.player.warn( "ServiceParseError", "Invalid Playlist ["+ uri +"]")
+                    }
                 }
             });
         },
+
 
         setItems : function (items, isPlaylist) {
             var metadata = this.player.metadata;
@@ -4431,14 +8579,13 @@ all copies or substantial portions of the Software.
             // first item contains full info
             var first = items[0];
             var guid = first.metadata.guid;
-            if( isPlaylist )
-                metadata.setFocusUri(guid);
-            metadata.setData( first.metadata, guid, true );
+
             cues.setCueLists( first.cues, guid  );
+            metadata.setData( first.metadata, guid, true );
 
             // subsequent items contain metadata only, no transcodes, tags, etc.
             // they require another lookup when played, so disable caching by metadata
-            if( playlist && isPlaylist ) {
+            if( playlist  ) {
                 var self = this;
                 // add stub metadata
                 $.each(items.slice(1), function (i, item) {
@@ -4446,10 +8593,15 @@ all copies or substantial portions of the Software.
                 });
 
                 // queue the uris
-                playlist.empty();
-                playlist.queue( $.map(items, function (item) {
-                    return item.metadata.guid;
-                }));
+                if( isPlaylist ) {
+                    playlist.setPlaylist( $.map(items, function (item) {
+                        return item.metadata.guid;
+                    }));
+                }
+            }
+            else {
+                // only trigger a DATA event if not playing video
+                metadata.load(guid);
             }
         },
 
@@ -4476,8 +8628,27 @@ all copies or substantial portions of the Software.
             item.metadata.title = video.attr('title');
             item.metadata.description = video.find('metadata meta[name=description]').text();
             item.metadata.thumbnail = video.find('metadata meta[name=thumbnail]').attr('content');
-            item.metadata.guid = video.find('metadata meta[name=rampId]').attr('content');
+            item.metadata.guid = "ramp:" + video.find('metadata meta[name=rampId]').attr('content');
             item.metadata.link = video.find('metadata meta[name=linkURL]').attr('content');
+
+            item.metadata.subTitles = [];
+            video.find('metadata meta[name=subTitle]').each( function (i, node){
+                var track = $(node);
+                item.metadata.subTitles.push({
+                        type : track.attr('content'),
+                        href : track.text()
+                    });
+            });
+            item.metadata.subTitle = item.metadata.subTitles[0];
+
+            item.metadata.cueTracks = [];
+            video.find('metadata meta[name=cueTrack]').each( function (i, node){
+                var track = $(node);
+                    item.metadata.cueTracks.push({
+                        type : track.attr('content'),
+                        href : track.text()
+                    });
+            });
 
             // other metadata
             item.metadata.ramp = {
@@ -4515,6 +8686,7 @@ all copies or substantial portions of the Software.
 
             // jump tags
             item.metadata.ramp.tags = [];
+            item.cues.tags = [];
             var jumptags = $(node).find("seq[xml\\:id^=jumptags]");
             jumptags.find('ref').each(function (i, jump){
                 var tag = {};
@@ -4525,20 +8697,39 @@ all copies or substantial portions of the Software.
                 if( tag.timestamps )
                     tag.timestamps = tag.timestamps.split(',');
                 item.metadata.ramp.tags.push(tag);
+
+                $.each(tag.timestamps, function(i, time){
+                    var event = {
+                        term : tag.term,
+                        start: parseFloat(time)
+                    };
+                    item.cues.tags.push(event);
+                });
             });
 
             // event tracks / MetaQ
-            item.cues = {};
             var metaqs = $(node).find("seq[xml\\:id^=metaqs]");
             metaqs.find('ref').each(function (i, metaq){
                 var event = {};
+
+                // handle mp2-style cues, which are collapsed into one cue entry
+                if( $(metaq).find('param[name="origin"]').text() == "metaq" ) {
+                    self.parseMp2Cues(item.cues, metaq);
+                    return;
+                }
+
                 $(metaq).find('param').each( function (i, val) {
                     var param = $(val);
                     var name =  param.attr('name');
                     var text =  self.deSmart( param.text() );
-                    if( name == "code" ) {
-                        var code = $.parseJSON( text );
-                        $.extend(true, event, code);
+                    if( name == "code"  ) {
+                        try {
+                            var code = $.parseJSON( text );
+                            $.extend(true, event, code);
+                        }
+                        catch (e){
+                            event.code = text;
+                        }
                     }
                     else
                         event[ name ] = text;
@@ -4554,6 +8745,39 @@ all copies or substantial portions of the Software.
             var smilText = $(node).find("smilText");
             item.cues.captions = this.parseCaptions(smilText);
             return item;
+        },
+
+        parseMp2Cues : function  (cues, metaq){
+            var self = this;
+            var mq = $(metaq);
+            var event = {};
+
+            event.term = mq.find('param[name=term]').text();
+
+            var plugin = mq.find('param[name=id]').text();
+            if( plugin == "timeline-q")
+                event.plugin = "timeQ";
+            else if( plugin == "adhoc-js")
+                event.plugin = "script";
+
+
+            $(metaq).find('param').each( function (i, val) {
+                var param = $(val);
+                var name =  param.attr('name');
+                event[ name ] = self.deSmart( param.text() );
+            });
+
+            var timestamps = event.timestamps || '';
+            delete event.timestamps;
+
+            if( ! cues[event.plugin] )
+                cues[event.plugin] = [];
+
+            $.each(timestamps.split(','), function (i, val){
+                var e = $.extend({}, event);
+                e.start = parseFloat(val);
+                cues[event.plugin].push(e);
+            });
         },
 
         parseCaptions : function (xml) {
@@ -4667,9 +8891,12 @@ all copies or substantial portions of the Software.
                 obj = {};
             if( parts[0] !== "ramp" )
                 obj.url = url;
-            else {
-                obj.rampHost = parts[1];
+            else if( parts.length == 3 ){
+                obj.apiKey = parts[1];
                 obj.rampId = parts[2];
+            }
+            else {
+                obj.rampId = parts[1];
             }
             return obj;
         },
@@ -4694,17 +8921,885 @@ all copies or substantial portions of the Software.
 
             // none of these seem to work on ipad4
             if( ext == "m3u8" )
-            // return  "application.vnd.apple.mpegurl";
-            // return  "vnd.apple.mpegURL";
                 return  "application/application.vnd.apple.mpegurl";
 
-            return "video/"+ext;
+            return "video/"+ext.toLowerCase();
+        },
+
+        bind : function ( callback ) {
+            var self = this;
+            return function () {
+                callback.apply(self, arguments);
+            }
         }
     };
 
 
 })();
+(function () {
 
+    var $ = jQuery;
+
+    var defaults = {
+    };
+
+    var SrtService = function (options) {
+        if( ! (this instanceof SrtService ))
+            return new SrtService(options);
+        this.config = $.extend({}, defaults, options);
+        MetaPlayer.dispatcher(this);
+    };
+
+    MetaPlayer.srt = function (url, callback, options) {
+        var srt = SrtService(options);
+        srt.listen("data", function (e) {
+            callback && callback(e.cues)
+        });
+        srt.load(url);
+    };
+
+    MetaPlayer.prototype.srt = function (url) {
+        var mpf = this;
+        if(! mpf._srt ) {
+            mpf._srt  = SrtService();
+
+            mpf.metadata.listen("data", function (e) {
+                var tracks = e.data.subTitles || [];
+                var i, url, track;
+                for(i = 0; i< tracks.length; i++ ){
+                    track = tracks[i];
+                    if( track.type == "application/x-subrip" || track.href.match(/\.srt$/) ) {
+                        url = tracks[i].href;
+                        break;
+                    }
+                }
+                if( url )
+                    mpf._srt.load(url, e.uri)
+            });
+
+            mpf._srt.listen("data", function (e) {
+                mpf.cues.setCues("captions", e.cues,  e.data );
+            });
+        }
+
+        if( url )
+            mpf._srt.load(url, mpf.metadata.getFocusUri() );
+        return mpf;
+    };
+
+    SrtService.prototype = {
+        load : function ( url, passedData) {
+            var params = {};
+
+            $.ajax(url, {
+                dataType : "text",
+                timeout : 15000,
+                context: this,
+                data : params,
+                error : function (jqXHR, textStatus, errorThrown) {
+                    this.event("error", {
+                        url : url,
+                        data : passedData,
+                        status : textStatus,
+                        message: errorThrown
+                    });
+                },
+                success : function (response, textStatus, jqXHR) {
+                    var captionData = this.parse(response);
+                    if( captionData )
+                        this.event("data", {
+                            url : url,
+                            data : passedData,
+                            cues : captionData
+                        });
+                }
+            });
+        },
+
+        parse : function (text) {
+            var captions = [];
+            // don't /\n/ use regex! http://blog.stevenlevithan.com/archives/cross-browser-split
+            var lines = text.split("\n");
+            var line, times, cue, attr, content, buffer;
+
+            while( line = lines.shift() ){
+                buffer = [];
+                cue = {
+                    start : null,
+                    end : null,
+                    text : null
+                };
+                content = [];
+
+                // optional id (webvtt)
+                if( line.indexOf("-->") == -1){
+                    cue.id = line;
+                    line = lines.shift();
+                    buffer.push(line);
+                }
+
+                // expect a timestamp
+                times = line && line.match(/^([\d\,\:]+)\s*-->\s*([\d\,\:]+)(?:\s+(.*))?/);
+                if ( times ) {
+                    cue.start = MetaPlayer.script.parseSrtTime(times[1]);
+                    cue.end = MetaPlayer.script.parseSrtTime(times[2]);
+                    line = lines.shift();
+                    buffer.push(line);
+
+                    // support simple cue attributes of form "\w+:[^\s\:]+"
+                    if( times[3] ){
+                        $.each(times[3].split(' '), function (i,val){
+                            var parts = val.split(":");
+                            var name =  MetaPlayer.script.camelCase(parts[0]);
+                            if( parts[1] )
+                                cue[ name ] = parts[1]
+                        })
+                    }
+                }
+
+                while( line && line.length ) {
+                    content.push(line);
+                    line = lines.shift();
+                    buffer.push(line);
+                }
+                cue.text = content.join("\n");
+
+                var data;
+                if( cue.format ){
+                    if ( cue.format == "json") {
+                        try {
+                            data= JSON.parse(cue.text);
+                            delete cue.format;
+                            delete cue.text;
+                            $.extend(cue, data);
+                        }
+                        catch(e){
+                            cue.error = e.toString();
+                        }
+                    }
+                }
+
+                if( cue.start != null && cue.end != null && cue.text ){
+                    captions.push(cue);
+                }
+                else {
+                    try {
+                        console.warn(cue, "invalid srt cue:\n" + buffer.join("\n") );
+                    } catch(e){}
+                }
+            }
+            return captions;
+        }
+
+
+    };
+
+})();
+(function () {
+
+    var $ = jQuery;
+
+    var defaults = {
+    };
+
+    var defaultSettings = {
+        lang : 'en',
+        textEdge : 'edge-drop',
+        textOpacity : 'opacity-normal',
+        textColor : 'white',
+        textFont : 'font-default',
+        textSize : 'size-100',
+        frameOpacity : 'alpha-semi',
+        frameColor : 'black'
+    };
+
+    var rules = {
+        'size-50' : {
+            'font-size' : '.5em'
+        },
+        'size-100' : {
+            'font-size' : '1em'
+        },
+        'size-150' : {
+            'font-size' : '1.5em'
+        },
+        'size-200' : {
+            'font-size' : '2em'
+        },
+
+        'edge-none' : {
+            filter: 'none',
+            'text-shadow' : 'none'
+        },
+        'edge-drop' : {
+            filter: 'progid:DXImageTransform.Microsoft.DropShadow(offX=1,offY=1,color=000000)',
+            'text-shadow' : '#000000 .05em .05em 2px'
+        },
+        'edge-outline' : {
+            filter: 'glow(color=black,strength=3)',
+            'text-shadow' : '#000000 1px 1px 0, #000000 -1px -1px 0, #000000 1px -1px 0, #000000 -1px 1px 0'
+        },
+        'edge-raised' : {
+            filter: 'progid:DXImageTransform.Microsoft.DropShadow(offX=-1,offY=-1,color=ffffff)',
+            'text-shadow' : '#ffffff -1px -1px 0'
+        },
+        'edge-depressed' : {
+            filter: 'progid:DXImageTransform.Microsoft.DropShadow(offX=1,offY=1,color=ffffff)',
+            'text-shadow' : '#ffffff 1px 1px 0'
+        },
+        'edge-uniform' : {
+            filter: 'glow(color=white,strength=3)',
+            'text-shadow' : '#ffffff 1px 1px 0, #ffffff -1px -1px 0, #ffffff 1px -1px 0, #ffffff -1px 1px 0'
+        },
+
+        'opacity-normal' : {
+            'opacity' : '1'
+        },
+        'opacity-semi' : {
+            'opacity' : '.75'
+        },
+
+        'alpha-trans' : {
+            '_alpha' : '0'
+        },
+        'alpha-semi' : {
+            '_alpha' : '.5'
+        },
+        'alpha-opaque' : {
+            '_alpha' : '1'
+        },
+
+        'white' : {
+            'color' : '#ffffff'
+        },
+        'red' : {
+            'color' : '#ff0000'
+        },
+        'magenta' : {
+            'color' : '#ff27ff'
+        },
+        'yellow' : {
+            'color' : '#ffff00'
+        },
+        'green' : {
+            'color' : '#00ff00'
+        },
+        'cyan' : {
+            'color' : '#00ffff'
+        },
+        'blue' : {
+            'color' : '#0000ff'
+        },
+        'black' : {
+            'color' : '#000000'
+        },
+
+        'font-mono-sans' : {
+            'text-transform' : 'none',
+            "font-size" : "1em",
+            "font-family" : "Andale Mono, monospace"
+        },
+        'font-prop-sans' : {
+            'text-transform' : 'none',
+            "font-size" : "1em",
+            "font-family" : "Arial, sans-serif"
+        },
+        'font-mono-serif' : {
+            'text-transform' : 'none',
+            "font-size" : "1em",
+            "font-family" : "Courier, monospace"
+        },
+        'font-prop-serif' : {
+            'text-transform' : 'none',
+            "font-size" : "1em",
+            "font-family" : "Times, serif"
+        },
+        'font-casual' : {
+            'text-transform' : 'none',
+            "font-size" : "1em",
+            "font-family" : "Comic Sans, Comic Sans MS, fantasy"
+        },
+        'font-cursive' : {
+            'text-transform' : 'none',
+            "font-size" : "1em",
+            "font-family" : "Lucida Handwriting, cursive"
+        },
+        'font-small-caps' : {
+            'text-transform' : 'uppercase',
+            "font-family" : "Verdana, sans-serif",
+            "font-size" : ".9em"
+        },
+        'font-default' : {
+            'text-transform' : 'none',
+            "font-size" : "1em",
+            "font-family" : "Verdana, sans-serif"
+        }
+    };
+    var CaptionConfig = function (parent, target, options) {
+        if( !(this instanceof CaptionConfig ))
+            return new CaptionConfig(parent, target, options);
+
+        this.config = $.extend({}, defaults, options);
+        this.data = {};
+        this.ui = {};
+        this.target = $(target);
+        this.createMarkup(parent);
+        this.close();
+        this.load();
+
+        $(window).bind('storage', this.bind( function  (e){
+            this.load();
+        }));
+    };
+
+    MetaPlayer.addPlugin("captionconfig", function (options) {
+        var captionconfig =  CaptionConfig(this.layout.stage, this.layout.base, options);
+
+        if( this.controlbar && this.controlbar.addButton )
+            this.controlbar.addButton(
+                $("<div></div>")
+                    .addClass("mp-cc-settings-btn")
+                    .attr('title', "Configure Captions")
+                    .click( captionconfig.bind( captionconfig.toggle ) )
+        );
+
+        this.captionconfig =  captionconfig;
+
+        // initialize so that our render has a target
+        if( ! this.captions.focus )
+            this.captions();
+
+        this.listen("ready", function () {
+            captionconfig.render();
+        });
+    });
+
+    MetaPlayer.CaptionConfig = CaptionConfig;
+
+    CaptionConfig.prototype = {
+
+        render: function  () {
+            var t = $(this.target);
+            var settings =  this.data;
+
+            var textCss = {};
+            textCss = $.extend( textCss, rules[settings.textEdge] );
+            textCss = $.extend( textCss, rules[settings.textOpacity] );
+            textCss = $.extend( textCss, rules[settings.textColor] );
+            textCss = $.extend( textCss, rules[settings.textFont] );
+            t.find('.mp-cc-text').css(textCss);
+
+            var frameCss = {};
+            frameCss = $.extend( frameCss, rules[settings.frameOpacity] );
+            frameCss = $.extend( frameCss, rules[settings.frameColor] );
+            frameCss = $.extend( frameCss, rules[settings.textSize] );
+            frameCss.background = rgba( frameCss.color, frameCss._alpha );
+            t.find('.mp-cc-frame').css(frameCss);
+        },
+
+        toggle : function () {
+            if( this.ui.base.is(":visible") )
+                this.close();
+            else
+                this.open();
+        },
+
+        close : function (){
+            this.ui.base.toggle(false);
+        },
+
+        open : function (){
+            this.ui.base.toggle(true);
+        },
+
+        load : function () {
+            this.data = $.extend({}, defaultSettings);
+            var save = localStorage.getItem("com.ramp.mpf.caption.settings");
+            try {
+                if( save != null ){
+                    this.data = $.extend( this.data, JSON.parse(save) );
+                }
+            }
+            catch (e) {
+                //... ignore bad json
+            }
+            this.resetForm();
+            this.render();
+        },
+
+        resetForm: function (settings) {
+            this.ui.langSelect.val(this.data.lang);
+            this.ui.displaySelect.val(this.data.display)
+            this.ui.textFont.val(this.data.textFont);
+            this.ui.textColor.select(this.data.textColor);
+            this.ui.frameColor.select(this.data.frameColor);
+            this.ui.textSize.select(this.data.textSize);
+            this.ui.textEdge.select(this.data.textEdge);
+            this.ui.textOpacity.select(this.data.textOpacity);
+            this.ui.frameOpacity.select(this.data.frameOpacity);
+            this.render()
+        },
+
+        setRule : function (name, rule) {
+            this.data[name] = rule;
+            this.render();
+            this.save();
+        },
+
+        save : function () {
+            var save = JSON.stringify(this.data);
+            localStorage.setItem("com.ramp.mpf.caption.settings", save);
+        },
+
+        createMarkup : function (parent){
+
+            this.ui.base = $('<div></div>')
+                .addClass('mp-cc-config')
+                .appendTo(parent);
+
+            this.ui.panel = $('<div></div>')
+                .addClass('mp-cc-config-panel')
+                .appendTo(this.ui.base);
+
+            // header
+            this.ui.header = $("<div></div>")
+                .addClass("mp-cc-config-header")
+                .appendTo(this.ui.panel);
+
+            $("<div></div>")
+                .addClass("mp-cc-config-badge")
+                .appendTo(this.ui.header);
+
+            $("<div></div>")
+                .addClass("mp-cc-config-title")
+                .text("Closed Captions")
+                .appendTo(this.ui.header);
+
+            var headerRight = $("<div></div>")
+                .addClass("mp-cc-config-header-right")
+                .appendTo(this.ui.header);
+
+            $("<div></div>")
+                .addClass("mp-cc-config-reset")
+                .text("Reset")
+                .click( this.bind( function(e) {
+                    this.data = $.extend({}, defaultSettings);
+                    this.resetForm();
+                }))
+                .appendTo(headerRight);
+
+            $("<div></div>")
+                .addClass("mp-cc-config-separator")
+                .appendTo(headerRight);
+
+            $("<div></div>")
+                .addClass("mp-cc-config-save")
+                .text("Save")
+                .click( this.bind( function(e) {
+                    this.close();
+                }))
+                .appendTo(headerRight);
+
+            $("<div></div>")
+                .addClass("mp-cc-config-hr")
+                .appendTo(this.ui.panel);
+
+            // body
+            var body = $("<div></div>")
+                .addClass("mp-cc-config-body")
+                .appendTo(this.ui.panel);
+
+            // body left col
+            var left = $("<div></div>")
+                .addClass("mp-cc-config-left")
+                .appendTo(body);
+
+
+            this.ui.langSelect =  this.textSelect([
+                    {
+                        name : "English",
+                        value : "en"
+                    }
+                ]);
+//            this.row( "Language", this.ui.langSelect).appendTo(left);
+
+            this.ui.textFont =  this.textSelect([
+                    {
+                        name : "Verdana",
+                        value : "font-default"
+                    },
+                    {
+                        name : "Andale",
+                        value : "font-mono-sans"
+                    },
+                    {
+                        name : "Arial",
+                        value : "font-prop-sans"
+                    },
+                    {
+                        name : "Courier",
+                        value : "font-mono-serif"
+                    },
+                    {
+                        name : "Times",
+                        value : "font-prop-serif"
+                    },
+                    {
+                        name : "Casual",
+                        value : "font-casual"
+                    },
+                    {
+                        name : "Cursive",
+                        value : "font-cursive"
+                    },
+                    {
+                        name : "Capitals",
+                        value : "font-small-caps"
+                    }
+                ])
+                .change( this.bind( function(e) {
+                    this.setRule("textFont", $(e.currentTarget).val() );
+                }));
+            this.row( "Font", this.ui.textFont).appendTo(left);
+
+
+            this.ui.displaySelect =  this.textSelect([
+                    {
+                        name : "Pop On",
+                        value : "pop"
+                    },
+                    {
+                        name : "Roll Up",
+                        value : "roll"
+                    },
+                    {
+                        name : "Paint On",
+                        value : "paint"
+                    }
+                ]);
+//            this.row( "Display", displaySelect).appendTo(left);
+
+            this.ui.textColor = ColorSelect().onChange( this.bind( function (val){
+                this.setRule("textColor", val);
+            }));
+            this.row( "Text Color", this.ui.textColor.dom).appendTo(left);
+
+            this.ui.frameColor = ColorSelect().onChange( this.bind( function (val){
+                this.setRule("frameColor", val);
+            }));
+            this.row( "Frame Color", this.ui.frameColor.dom).appendTo(left);
+
+            // body right col
+            var right = $("<div></div>")
+                .addClass("mp-cc-config-right")
+                .appendTo(body);
+
+//            $("<div></div>")
+//                .addClass("mp-cc-config-row-empty")
+//                .appendTo(right);
+
+
+            var textTemplate ='<div class="mp-cc-config-text-template"><div>ABC</div></div>';
+
+            this.ui.textSize = Carousel()
+                .onChange( this.bind( function (val) {
+                    this.setRule('textSize', val);
+                }))
+                .append( $(textTemplate).addClass("mp-cc-config-text-size-50"),  "size-50")
+                .append( $(textTemplate).addClass("mp-cc-config-text-size-100"), "size-100")
+                .append( $(textTemplate).addClass("mp-cc-config-text-size-150"), "size-150")
+                .append( $(textTemplate).addClass("mp-cc-config-text-size-200"), "size-200");
+            this.ui.textSize.dom.addClass("mp-cc-config-text-size");
+            this.row("Text Size", this.ui.textSize.dom ).appendTo(right);
+
+
+            this.ui.textEdge = Carousel()
+                .onChange( this.bind( function (val) {
+                    this.setRule('textEdge', val);
+                }))
+                .append( $(textTemplate).addClass("mp-cc-config-text-edge-none"), 'edge-none')
+                .append( $(textTemplate).addClass("mp-cc-config-text-edge-drop"), 'edge-drop')
+                .append( $(textTemplate).addClass("mp-cc-config-text-edge-outline"), 'edge-outline')
+                .append( $(textTemplate).addClass("mp-cc-config-text-edge-raised"), 'edge-raised')
+                .append( $(textTemplate).addClass("mp-cc-config-text-edge-depressed"), 'edge-depressed')
+                .append( $(textTemplate).addClass("mp-cc-config-text-edge-uniform"), 'edge-uniform');
+            this.ui.textEdge.dom.addClass("mp-cc-config-text-edge");
+            this.row("Text Edge", this.ui.textEdge.dom ).appendTo(right);
+
+
+            this.ui.textOpacity = Carousel()
+                .onChange( this.bind( function (val) {
+                    this.setRule('textOpacity', val);
+                }))
+                .append( $(textTemplate).addClass("mp-cc-config-text-opacity-normal"), 'opacity-normal')
+                .append( $(textTemplate).addClass("mp-cc-config-text-opacity-semi"), 'opacity-semi');
+            this.ui.textOpacity.dom.addClass("mp-cc-config-text-opacity");
+            this.row("Text Opacity", this.ui.textOpacity.dom ).appendTo(right);
+
+            var frameTemplate ='<div class="mp-cc-config-frame-opacity"><div class="mp-cc-config-frame-fill"></div></div>';
+
+            this.ui.frameOpacity = Carousel()
+                .onChange( this.bind( function (val) {
+                    this.setRule('frameOpacity', val);
+                }))
+                .append( $(frameTemplate).addClass("mp-cc-config-frame-opacity-trans"), 'alpha-trans')
+                .append( $(frameTemplate).addClass("mp-cc-config-frame-opacity-semi"), 'alpha-semi' )
+                .append( $(frameTemplate).addClass("mp-cc-config-frame-opacity-opaque"), 'alpha-opaque' );
+            this.ui.frameOpacity.dom.addClass("mp-cc-config-text-opacity");
+            this.row("Frame Opacity", this.ui.frameOpacity.dom ).appendTo(right);
+
+
+            // clear body
+            $("<div></div>")
+                .addClass("mp-cc-config-clear")
+                .appendTo(body);
+
+            // footer, sample
+           this.ui.footer = $("<div></div>")
+                .addClass("mp-cc-config-footer")
+                .appendTo(this.ui.panel);
+
+            var bg = $('<div></div>')
+                .addClass("mp-cc-frame")
+                .appendTo(this.ui.footer);
+
+            $('<span></span>')
+                .addClass("mp-cc-text")
+//                .text("The quick brown fox jumps over the lazy dog")
+                .text("Sample Caption")
+                .appendTo(bg)
+        },
+
+        row : function (label, content) {
+            var row = $("<div></div>")
+                .addClass("mp-cc-config-row");
+
+            $("<div></div>")
+                .text(label)
+                .addClass("mp-cc-config-label")
+                .appendTo(row);
+
+            var body = $("<div></div>")
+                .addClass("mp-cc-config-row-body")
+                .append( content )
+                .appendTo(row);
+
+            return row;
+        },
+
+        textSelect : function (options) {
+            var select = $("<select></select>")
+                .addClass("mp-cc-config-select");
+
+            $.each(options, function (i, option) {
+                $("<option></option>")
+                    .text(option.name)
+                    .val(option.value)
+                    .addClass("mp-cc-config-option")
+                    .appendTo(select);
+            });
+            return select;
+        },
+
+        bind : function ( callback ) {
+            var self = this;
+            return function () {
+                callback.apply(self, arguments);
+            };
+        }
+    };
+
+    // an array of color boxes selector
+    var ColorSelect = function () {
+        if( ! (this instanceof ColorSelect) )
+            return new ColorSelect();
+
+        this.ui = {};
+        this.index = null;
+        this.values = [];
+        this.callbacks = [];
+
+        this.dom = $("<div></div>")
+            .addClass("mp-cc-config-colorbox")
+            .delegate(".mp-cc-config-color", "click", this.bind( function (e){
+                var i = $(e.currentTarget).data('index');
+                this.select(i)
+            }));
+
+        $.each(this.colors, this.bind( function (i, name) {
+            this.colorBox(rules[name].color ).data('index', i).appendTo(this.dom);
+        }));
+    };
+
+    ColorSelect.prototype = {
+        colors : ['white', 'red', 'magenta', 'yellow', 'green', 'cyan', 'blue', 'black'],
+
+        colorBox : function (color){
+            var el = $("<div></div>")
+                .addClass("mp-cc-config-color");
+
+            $("<div></div>")
+                .addClass("mp-cc-config-fill")
+                .css('background', color)
+                .appendTo(el);
+            return el
+        },
+
+        select : function (index) {
+
+            if( typeof index == "string" ) {
+                var search = index;
+                index = null;
+                $.each( this.colors, function (i, val) {
+                    if( val == search ) {
+                        index = i;
+                        return true;
+                    }
+                });
+            }
+
+            if( index == null || isNaN(index) )
+                return;
+
+            var children = this.dom.children();
+            if( index == this.index )
+                return;
+
+            this.index = index;
+            children.removeClass("mp-cc-config-color-selected");
+            $(children[index]).addClass("mp-cc-config-color-selected");
+
+            var val = this.colors[index];
+            $.each(this.callbacks, function (i, callback) {
+                callback( val );
+            });
+        },
+
+        onChange : function ( fn ){
+            this.callbacks.push(fn);
+            return this;
+        },
+
+        bind : function ( callback ) {
+            var self = this;
+            return function () {
+                callback.apply(self, arguments);
+            };
+        }
+    };
+
+    // an arrow-base selector that loops
+    var Carousel = function () {
+        if( ! (this instanceof Carousel) )
+            return new Carousel();
+
+        this.ui = {};
+        this.index = null;
+        this.values = [];
+        this.callbacks = [];
+        this.dom = $("<div></div>").addClass("mp-cc-config-carousel");
+
+        $("<div></div>")
+            .addClass("mp-cc-config-carousel-next")
+            .click( this.bind(this.next) )
+            .mousedown( function (e) { e.preventDefault() })
+            .appendTo( this.dom );
+
+        this.ui.body = $("<div></div>")
+            .addClass("mp-cc-config-carousel-body")
+            .appendTo( this.dom );
+
+        $("<div></div>")
+            .addClass("mp-cc-config-carousel-previous")
+            .mousedown( function (e) { e.preventDefault() })
+            .click( this.bind(this.previous) )
+            .appendTo( this.dom );
+    };
+
+    Carousel.prototype = {
+        select : function (index) {
+            if( typeof index == "string" ) {
+                var search = index;
+                index = null;
+                $.each( this.values, function (i, val) {
+                    if( val == search ) {
+                        index = i;
+                        return true;
+                    }
+                });
+            }
+
+            if( index == null || isNaN(index) )
+                return;
+
+
+            var children = this.ui.body.children();
+            var i = (index + children.length) % children.length; // avoids negative mods
+            if( i == this.index )
+                return;
+
+            children.hide();
+            $( children[i] ).show();
+            this.index = i;
+
+            var val = this.value();
+            $.each(this.callbacks, function (i, callback) {
+                callback( val );
+            });
+        },
+
+        onChange : function ( fn ){
+            this.callbacks.push(fn);
+            return this;
+        },
+
+        value : function ( index ) {
+            if( index == null )
+                index = this.index;
+            return this.values[index];
+        },
+
+        append : function (el, value) {
+            if( value == null)
+                value = this.values.length;
+
+            this.ui.body.append( $(el).hide() );
+            this.values.push( value  );
+            return this;
+        },
+
+        next : function (e) {
+            this.select(this.index + 1);
+            e && e.preventDefault() && e.stopPropagation();
+        },
+
+        previous : function (e) {
+            this.select(this.index - 1);
+            e && e.preventDefault() && e.stopPropagation();
+        },
+
+        bind : function ( callback ) {
+            var self = this;
+            return function () {
+                callback.apply(self, arguments);
+            };
+        }
+
+    };
+
+    function rgba (hex, alpha) {
+        if( ! (hex && alpha) )
+            return '';
+
+        var rgba = [
+            parseInt( hex.substr(1,2), 16),
+            parseInt( hex.substr(3,2), 16),
+            parseInt( hex.substr(5,2), 16),
+            parseFloat(alpha)
+        ];
+        return "rgba(" + rgba.join(",") + ")";
+    }
+})();
 
 (function () {
 
@@ -4718,6 +9813,24 @@ all copies or substantial portions of the Software.
         pluginName :pluginName,  // override to use another popcorn plugin
         detectTextTracks : false  // beta, popcorn parser issues
     };
+
+    /**
+     * Captions are a PopcornJS plugin. Requires a parent with layout relative or absolute.
+     * @name UI.Captions
+     * @class The MetaPlayer captions overlay and plugin for PopcornJS
+     * @constructor
+     * @param {Element|PopcornJS} target The video element, or PopcornJS instance containing one.
+     * @example
+     * var mpf = MetaPlayer(video)
+     *     .ramp("http://api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440")
+     *     .captions()
+     *     .load();
+     *
+     * @see <a href="http://jsfiddle.net/ramp/bvrxy/">Live Demo</a>
+     * @see MetaPlayer#captions
+     * @see Popcorn#captions
+
+     */
 
     var Captions = function (target, options) {
 
@@ -4762,31 +9875,54 @@ all copies or substantial portions of the Software.
     Captions.instances = {};
     Captions._count = 0;
 
+    /**
+     * @name MetaPlayer#captions
+     * @function
+     * @requires  metaplayer-complete.js
+     * @description
+     * Creates a {@link UI.Captions} instance
+     * @example
+     * var mpf = MetaPlayer(video)
+     *     .ramp("http://api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440")
+     *     .captions()
+     *     .load();
+     * @see UI.Captions
+     */
     MetaPlayer.addPlugin("captions", function (options){
 
         var popcorn = this.popcorn;
-        this.captions = Captions(popcorn, options);
+        var captions = Captions(popcorn, options);
+
+        this.layout.listen("resize", function (){
+            captions.size();
+        });
 
         if( ! (popcorn[pluginName] instanceof Function) )
             throw "popcorn plugin does not exist: " + pluginName;
 
         this.cues.enable( pluginName );
+        this.captions = captions;
     });
 
     Captions.prototype = {
         init : function (){
-            this.container = this.create();
+            this.container = this.create()
+                .addClass("mp-cc-frame")
+                .hide();
+            this.text = $('<div></div>')
+                .addClass("metaplayer-captions-text")
+                .addClass("mp-cc-text")
+                .appendTo(this.container);
 
             this._captions = {};
 
-            var target;
-            if( this.target.getTrackEvents )
-                target = this.target.media;
-            else
-                target = this.target;
-
             $(this.target.parentNode).append( this.container );
 
+        },
+
+        size:  function () {
+            var size = this.container.parent().height() / 20;
+            this.container.css('font-size',size + "px");
         },
 
         findTrackElements : function (){
@@ -4811,21 +9947,25 @@ all copies or substantial portions of the Software.
         },
 
         focus : function (options) {
-            var el = this.create("text", 'div');
-            el.html( options.text );
+            var el = $("<span></span>")
+                .html( options.text );
             this._captions[ options.start ] = el;
-            this.container.append(el);
+            this.text.append(el);
+            this.container.show()
         },
 
         blur : function (options) {
             var el = this._captions[options.start];
             delete this._captions[options.start];
             el.remove();
+            if( this.text.children().length == 0 )
+                this.container.hide()
         },
 
         clear : function (options) {
             this._captions = {};
-            this.container.empty();
+            this.text.empty();
+            this.container.hide()
         },
 
         /* util */
@@ -4843,7 +9983,25 @@ all copies or substantial portions of the Software.
         }
     };
 
+
     if( Popcorn ) {
+        /**
+         * Schedules a subtitle to be rendered at a given time.
+         * @name Popcorn#captions
+         * @function
+         * @param {Object} config
+         * @param {String} config.text The caption text.
+         * @param {Number} config.start Start time text, in seconds.
+         * @param {Number} [config.end] End time text, in seconds, if any.
+         * @example
+         *  # without MetaPlayer Framework
+         *  var pop = Popcorn(video);
+         *  pop.captions({
+         *      start: 0,
+         *      end : 2,
+         *      text : "The first caption"
+         *  });
+         */
         Popcorn.plugin( pluginName , {
             _setup: function( options ) {
                 Captions(this);
@@ -4864,8 +10022,6 @@ all copies or substantial portions of the Software.
     }
 
 })();
-
-
 (function () {
 
     var $ = jQuery;
@@ -4873,11 +10029,40 @@ all copies or substantial portions of the Software.
 
     var defaults = {
         duplicates: false,
+        refocus: true,
         cssPrefix : "mp-carousel",
         slideDurationMs : 750,
         renderAnnotations : true
     };
 
+    /**
+     * Carousel is a PopcornJS plugin for rendering MetaQ carousel events. The UI is rendered
+     * as a window with sliding panels, controled through a tab control consisting of dots.
+     * @name UI.Carousel
+     * @class The MetaPlayer carousel widget and plugin for PopcornJS
+     * @constructor
+     * @param {Element} id The DOM target to which the carousel will be added.
+     * @param {Object} [options]
+     * @param {Boolean} [options.duplicates=false] If true, tile out duplicates rather than consolidating them into
+     * one card.
+     * @param {Boolean} [options.renderAnnotations=true] If the MetaPlayer controlbar is present, will render
+     * timeline annotations indication when Carousel events will fire.
+     * @param {Number} [options.slideDurationMs=750] The animation duration, in msec.
+     * @param {Boolean} [options.refocus=true] If duplicates are consolidated (disable), refocus the single card on
+     * subsequent events.
+     * @example
+     * # with default options:
+     * var mpf = MetaPlayer(video)
+     *     .ramp("http://api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440")
+     *     .carousel("#mycarousel", {
+     *          duplicates: false,
+     *          slideDurationMS: 750,
+     *          renderAnnotations: true
+     *     })
+     *     .load();
+     * @see MetaPlayer#carousel
+     * @see Popcorn#carousel
+     */
     var Carousel = function (id, options) {
 
         // return any previous instance for this player
@@ -4902,6 +10087,21 @@ all copies or substantial portions of the Software.
         return new Carousel(target, options);
     };
 
+    /**
+     * @name MetaPlayer#carousel
+     * @function
+     * @description
+     * Creates a {@link UI.Carousel} instance with the given target and options.
+     * @param {Element} id The DOM or jQuery element to which the carousel will be added.
+     * @param {Object} [options]
+     * @example
+     * var mpf = MetaPlayer(video)
+     *     .ramp("http://api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440")
+     *     .carousel("#mycarousel")
+     *     .load();
+     * @see UI.Carousel
+     * @requires  metaplayer-complete.js
+     */
     MetaPlayer.addPlugin("carousel", function (target, options){
         var popcorn = this.popcorn;
         this.carousel = Carousel(target, options);
@@ -4921,6 +10121,8 @@ all copies or substantial portions of the Software.
             this.scroller = $("<div></div>").addClass( this.cssName('scroller') ).appendTo(this.target);
             this.navbar = $("<div></div>").addClass( this.cssName('navbar') ).appendTo(this.target);
             this._uniques = {};
+            this._autoscroll = true;
+
 
             this.target.addClass( this.cssName() );
             this.render();
@@ -4928,6 +10130,13 @@ all copies or substantial portions of the Software.
             var self = this;
             var nav = this.find( this.cssName('nav') ).click( function (e) {
                 self._navClick(e);
+            });
+
+            this.target.bind("mouseenter", function (e){
+                self._autoscroll = false;
+            });
+            this.target.bind("mouseleave", function (e){
+                self._autoscroll = true;
             });
 
             this.scroller.bind("touchstart", function (e) {
@@ -5021,7 +10230,9 @@ all copies or substantial portions of the Software.
             var id = options.url || options.html;
 
             // render annotations if asked
-            if( this.config.renderAnnotations && this.player && this.player.controls ){
+            if( this.config.renderAnnotations && this.player
+                && this.player.controls
+                && this.player.controls.addAnnotation ){
                 this.player.controls.addAnnotation(options.start, null, options.topic || '', 'metaq');
             }
 
@@ -5029,6 +10240,7 @@ all copies or substantial portions of the Software.
             if(! this.config.duplicates ){
                 if( this._uniques[ id ] != null ){
                     options.index = this._uniques[ id ];
+                    options.duplicate = true;
                     return;
                 }
                 this._uniques[ id ] = options.index;
@@ -5036,7 +10248,6 @@ all copies or substantial portions of the Software.
 
             var card = $("<div></div>")
                 .addClass( this.cssName("content"))
-                .html(options.html || '')
                 .appendTo(this.scroller);
 
 
@@ -5049,15 +10260,36 @@ all copies or substantial portions of the Software.
                 })
                 .appendTo( this.find('navbar')  );
 
+            if( options.html) {
+                if( options.html.match(/^http\:\/\//) ) {
+                    card.html('');
+                    $("<div></div>")
+                        .addClass( this.cssName('loading') )
+                        .appendTo(card);
+
+                    $.ajax(options.html, {
+                        dataType : "text",
+                        timeout : 15000,
+                        error : function (jqXHR, textStatus, errorThrown) {
+                            if (status == "error")
+                                card.empty().addClass( self.cssName("error") );
+                        },
+                        success : function (response, textStatus, jqXHR) {
+                            card.html(response);
+                        }
+                    });
+                }
+                else {
+                    card.html(options.html || '')
+                }
+            }
             if( options.url ) {
-                $("<div></div>")
+                var frame = $("<iframe></iframe>")
+                    .attr("frameborder", "0")
                     .addClass( this.cssName('loading') )
                     .appendTo(card);
 
-                card.load( options.url, function(response, status, xhr) {
-                    if (status == "error")
-                        card.empty().addClass( self.cssName("error") );
-                });
+                frame.attr('src', options.url);
             }
 
 
@@ -5066,6 +10298,12 @@ all copies or substantial portions of the Software.
         },
 
         focus : function (options) {
+            if(! this._autoscroll )
+                   return;
+
+            if( options.duplicate && ! this.config.refocus )
+                return;
+
             this.scrollTo( options.index );
         },
 
@@ -5088,6 +10326,37 @@ all copies or substantial portions of the Software.
     };
 
     if( Popcorn ) {
+        /**
+         * Schedules a carousel card to be rendered and focused at a given time.
+         * @name Popcorn#carousel
+         * @function
+         * @param {Object} config
+         * @param {Element} config.target The target element for the carousel
+         * @param {String} config.topic The tooltip to be used on the navigation dot
+         * @param {String} [config.html] The HTML content of the panel
+         * @param {String} [config.url] An alternate to <code>html</code, and Ajax url for HTML content.
+         * @param {Number} config.start Start time text, in seconds.
+         * @example
+         *  var pop = Popcorn(video);
+         *
+         *  # optional configuration step
+         *  MetaPlayer.carousel("#carousel", {
+         *          duplicates: false,
+         *  });
+         *
+         *  pop.carousel({
+         *      target: "#carousel"
+         *      topic : "one!"
+         *      html : "<b>first card</b>",
+         *      start: 1
+         *  });
+         *  pop.carousel({
+         *      target: "#carousel"
+         *      topic : "two!"
+         *      url : /two.html",
+         *      start: 10,
+         *  });
+         */
         Popcorn.plugin( "carousel" , {
             _setup: function( options ) {
                 Carousel(options.target).setup(options)
@@ -5106,6 +10375,599 @@ all copies or substantial portions of the Software.
             }
         });
     }
+
+})();
+(function () {
+
+    var $ = jQuery;
+
+    var defaults = {
+        controls : true,
+        fullscreen : false,
+        annotations : 'tags',
+        backButtonSec : 5,
+        volumeBarSteps : 5,
+        pauseDuringSeek : false,
+        tracktip: true,
+        volumeButtonSteps : 3
+    };
+
+    var ControlBar = function (target, player, options) {
+
+        if( !(this instanceof ControlBar) )
+            return new ControlBar(target, player, options);
+
+        this.player = player;
+        this.player.video.controls = false;
+
+        this.config = $.extend(true, {}, defaults, options);
+
+        if(typeof this.config.annotations == "string" )
+            this.config.annotations = this.config.annotations.split(/\s+/);
+
+        this.ui = {};
+        if( ! target ) {
+            target = $('<div></div>')
+                .css('position', 'absolute')
+                .css('width', '100%')
+                .css('top', 'auto')
+                .css('bottom', '0')
+                .appendTo(player.layout.base)
+                .get(0);
+            this.ui.layoutPanel = player.layout.addPanel({})
+        }
+
+        this.target = $(target);
+        this.createMarkup();
+
+        if( MetaPlayer.iOS ){
+            this.player.video.controls = true;
+            this.ui.left.toggle(false);
+            this.ui.right.toggle(false);
+        }
+
+        if( ! this.config.controls )
+            this.ui.panel.hide();
+
+        this.addListeners();
+        this.render();
+
+    };
+
+    MetaPlayer.ControlBar = ControlBar;
+
+    MetaPlayer.addPlugin("controlbar", function(options) {
+        this.controlbar = ControlBar(null, this, options);
+    });
+
+    ControlBar.prototype = {
+
+        createMarkup : function (){
+
+            this.ui.base = $(this.target).addClass('mpf-controlbar')
+                .mousemove( this.bind( this.focus ))
+                .mouseout( this.bind( this.blur ));
+
+            /* timeline */
+            var tl = $('<div>')
+                .addClass("mpf-controlbar-track")
+                .appendTo(this.target)
+                .bind("mousedown touchstart", this.bind( this.onTrackStart ));
+
+            if( this.config.tracktip && MetaPlayer.TrackTip )
+                this.ui.tracktip = MetaPlayer.TrackTip(tl, this.player);
+
+            this.ui.buffer  = $('<div>')
+                .addClass("mpf-controlbar-track-buffer")
+                .appendTo(tl);
+
+            this.ui.track  = $('<div>')
+                .addClass("mpf-controlbar-track-fill")
+                .appendTo(tl);
+
+            this.ui.overlay = $('<div>')
+                .addClass("mpf-controlbar-track-overlay")
+                .appendTo(tl);
+
+            this.ui.knob = $('<div>')
+                .addClass("mpf-controlbar-track-knob")
+                .appendTo(this.ui.track);
+
+            /* button bar */
+            this.ui.panel = $('<div>')
+                .addClass("mpf-controlbar-panel")
+                .appendTo(this.target);
+
+            // left button group
+            this.ui.left = $('<div>')
+                .addClass("mpf-controlbar-panel-left")
+                .appendTo(this.ui.panel);
+
+            this.ui.play = $('<div>')
+                .addClass("mpf-controlbar-play")
+                .appendTo(this.ui.left)
+                .attr('title', "Play")
+                .click( this.bind( function () {
+                    this.player.video.play();
+                }));
+
+            this.ui.pause = $('<div>')
+                .addClass("mpf-controlbar-pause")
+                .appendTo(this.ui.left)
+                .attr('title', "Pause")
+                .click( this.bind(function () {
+                    this.player.video.pause();
+                }));
+
+            this.ui.back = $('<div>')
+                .addClass("mpf-controlbar-back")
+                .appendTo(this.ui.left)
+                .attr('title', "Skip Back")
+                .click( this.bind(function () {
+                    this.player.video.currentTime -= this.config.backButtonSec;
+                }));
+
+            this.ui.clock= $('<div>')
+                .addClass("mpf-controlbar-clock")
+                .appendTo(this.ui.left);
+
+            this.ui.time = $('<div>')
+                .text("00:00")
+                .addClass("mpf-controlbar-time")
+                .appendTo(this.ui.clock);
+
+            $('<div>')
+                .html("&nbsp;/&nbsp;")
+                .addClass("mpf-controlbar-time-spacer")
+                .appendTo(this.ui.clock);
+
+            this.ui.duration = $('<div>')
+                .text("99:99")
+                .addClass("mpf-controlbar-duration")
+                .appendTo(this.ui.clock);
+
+            // right button group
+            this.ui.right = $('<div>')
+                .addClass("mpf-controlbar-panel-right")
+                .appendTo(this.ui.panel);
+
+            this.ui.volume = $('<div>')
+                .addClass("mpf-controlbar-volume")
+                .appendTo(this.ui.right)
+                .attr('title', "Toggle Mute")
+                .click( this.bind( this.onMuteToggle ));
+
+            var volumebar = $('<div>')
+                .addClass("mpf-controlbar-volumebar")
+                .appendTo(this.ui.right)
+                .attr('title', "Set Volume")
+                .bind("mousedown touchstart", this.bind( this.onVolumeStart ));
+
+            this.ui.volumebar = $('<div>')
+                .addClass("mpf-controlbar-volumebar-fill")
+                .appendTo(volumebar);
+
+            this.ui.cc = $('<div>')
+                .addClass("mpf-controlbar-cc")
+                .addClass("mpf-controlbar-cc-off")
+                .appendTo(this.ui.right)
+                .attr('title', "Toggle Captions")
+                .click( this.bind( this.onCCToggle ) );
+
+            this.ui.fullscreen = $('<div>')
+                .addClass("mpf-controlbar-fullscreen")
+                .attr('title', "Toggle Zoom")
+                .click( this.bind( this.onFullscreenToggle ))
+                .appendTo(this.ui.right)
+                .toggle( Boolean(this.config.fullscreen)
+            );
+
+            this.toggle( this.config.controls );
+
+        },
+
+        addButton : function (el, position) {
+            if( position != null )
+                this.ui.right.children().eq(position).before(el);
+            else
+                el.appendTo(this.ui.right);
+        },
+
+        toggle: function (bool) {
+            if( bool == null )
+                bool = this.ui.panel.css("display") == 'none';
+
+            this.ui.panel.css('display', bool ? 'block' : 'none');
+            this.ui.knob.css('display', bool ? 'block' : 'none'); // overflow causes scrollbar in fullscreen
+
+            if( this.ui.layoutPanel == null)
+                return;
+
+            var height = this.player.layout.isMazimized  ?  this.ui.track.height() : this.ui.base.height();
+            this.player.layout.updatePanel(this.ui.layoutPanel, { bottom:  height});
+        },
+
+        addAnnotation : function (text, time, type) {
+            var d = this.player.video.duration;
+            if( !d )
+                return;
+
+            var el = $('<div>')
+                .attr("title", text)
+                .addClass("mpf-controlbar-track-marker")
+                .appendTo(this.ui.overlay)
+                .css('left', (time/d*100) + "%");
+
+            if( type )
+                el.addClass("mpf-controlbar-track-marker-" + type);
+
+        },
+
+        clearAnnotations : function (type) {
+            if( type )
+                this.ui.base.find(".mpf-controlbar-track-marker-"+type).remove();
+            else
+                this.ui.overlay.empty();
+        },
+
+        addListeners : function () {
+            var v = this.player.video;
+            v.addEventListener("loadstart", this.bind( this.onLoadStart ));
+            v.addEventListener("pause", this.bind( this.renderControls) );
+            v.addEventListener("playing", this.bind( this.renderControls) );
+            v.addEventListener("canplay", this.bind( function () {
+                if( MetaPlayer.iOS ){
+                    this.player.video.controls = false;
+                    this.ui.left.toggle(true);
+                    this.ui.right.toggle(true);
+                }
+            }));
+            v.addEventListener("ended", this.bind( this.renderControls) );
+            v.addEventListener("loadstart", this.bind( this.renderControls) );
+            v.addEventListener("durationchange", this.bind( this.renderDuration) );
+            v.addEventListener("volumechange", this.bind( this.renderVolume) );
+            v.addEventListener("timeupdate", this.bind( this.renderTime ));
+
+            this.player.playlist.addEventListener("trackchange", this.bind( this.onTrackChange ));
+            this.player.cues.addEventListener("cues", this.bind( this.onCues ));
+            this.player.search.listen("results", this.onSearchResults, this);
+
+            this.player.listen("ready", this.bind( function () {
+                this.player.cues.disable("captions");
+            }));
+        },
+
+        onTrackChange: function () {
+            this._duration = null;
+            this.clearAnnotations();
+        },
+
+        onLoadStart : function () {
+            this.ui.cc.toggleClass("mpf-controlbar-cc-off", true);
+            this.render();
+        },
+
+        focus : function () {
+            clearTimeout(this._blurTimer);
+            this._blurTimer = setTimeout( this.bind(function (){
+                this.ui.knob.stop().animate({'opacity': 1 });
+            }), 300);
+        },
+
+        blur : function () {
+            clearTimeout(this._blurTimer);
+            this._blurTimer = setTimeout( this.bind(function (){
+                this.ui.knob.stop().animate({'opacity': 0 });
+            }), 750);
+        },
+
+        render : function () {
+            this.renderControls();
+            this.renderDuration();
+            this.renderVolume();
+        },
+
+        renderControls : function () {
+            var v = this.player.video;
+
+            // Play / Pause
+            this.ui.pause.hide();
+            this.ui.play.hide();
+
+            if( v.paused )
+                this.ui.play.show();
+            else
+                this.ui.pause.show();
+        },
+
+        renderDuration : function () {
+            var d = this.player.video.duration;
+            if( ! d ) {
+                this.ui.clock.hide();
+                return;
+            }
+
+            var f = MetaPlayer.format.seconds(d);
+
+            this._duration = d;
+            this.ui.duration.text(f);
+            this.renderTime();
+            this.renderCues();
+            this.ui.clock.show();
+        },
+
+        renderVolume : function () {
+            var p = this.player.video;
+
+            if( MetaPlayer.iOS ) {
+                this.ui.volume.hide();
+                this.ui.volumebar.parent().hide();
+            }
+
+            // volume bar
+            var v = p.muted ? 0 : p.volume;
+            this.ui.volumebar.width( (v * 100) + "%" );
+
+            // volume button
+            var b = this.ui.volume;
+            var steps = this.config.volumeButtonSteps;
+            var step, css;
+
+            // clear prior states
+            b.attr('class', "mpf-controlbar-volume");
+
+            if( v == 0 )
+                css ="mpf-controlbar-muted";
+            else if( steps ) {
+                step = Math.ceil(v * steps);
+                css = "mpf-controlbar-volume-" + step;
+            }
+            else
+                css ="mpf-controlbar-unmuted";
+
+            b.addClass(css);
+        },
+
+        onVolumeStart : function (e) {
+            this._volumeDragging =  {
+                move : this.bind(this.onVolumeMove),
+                stop :  this.bind(this.onVolumeStop)
+            };
+            $(document)
+                .bind("mousemove touchmove", this._volumeDragging.move)
+                .bind("mouseup touchstop", this._volumeDragging.stop);
+            this.onVolumeMove(e);
+        },
+
+        onVolumeStop: function (e) {
+            if( ! this._volumeDragging )
+                return;
+
+            $(document)
+                .unbind("mousemove touchmove", this._volumeDragging.move)
+                .unbind("mouseup touchstop", this._volumeDragging.stop);
+            this._volumeDragging = null;
+            this.onVolumeMove(e);
+        },
+
+        onVolumeMove : function (e) {
+            var v = this._dragPercent(e, this.ui.volumebar);
+
+            var steps = this.config.volumeBarSteps;
+            if( steps )
+                v = Math.ceil(v * steps) / steps;
+
+            this.player.video.volume = v;
+            this.player.video.muted = false;
+            e.preventDefault();
+        },
+
+        onMuteToggle : function (){
+            var p = this.player.video;
+            var v = p.muted ? 0 : p.volume;
+
+            // unmute
+            if( p.muted || v == 0 ) {
+                p.muted = false;
+                if( p.volume == 0 )
+                    p.volume = 1;
+            }
+
+            // mute
+            else {
+                p.muted = true;
+            }
+        },
+
+        renderTime : function () {
+            this.renderClock();
+            this.renderTimeline();
+        },
+
+        renderClock : function () {
+            var t = this.player.video.currentTime;
+            var f = "";
+            if(! isNaN(t) )
+                f = MetaPlayer.format.seconds(t);
+            this.ui.time.text(f);
+        },
+
+        renderTimeline : function (force) {
+            var v = this.player.video;
+            var t = force == null ? v.currentTime : force;
+
+            if( this._trackDragging && force == null)
+                return;
+
+            var w = 0;
+            if( v.duration )
+                w = t / v.duration * 100;
+
+            if( w < 0 )
+                w = 0;
+            else if( w > 100 )
+                w = 100;
+
+            this.ui.track.width(w + "%");
+        },
+
+        onTrackStart : function (e) {
+            this._trackDragging =  {
+                move : this.bind(this.onTrackMove),
+                stop :  this.bind(this.onTrackStop)
+            };
+
+            if( this.config.pauseDuringSeek ){
+                this._trackDragging.resume = ! this.player.video.paused;
+                this.player.video.pause();
+            }
+            $(document)
+                .bind("mousemove touchmove", this._trackDragging.move)
+                .bind("mouseup touchend", this._trackDragging.stop);
+            this.onTrackMove(e);
+        },
+
+        onTrackStop : function (e) {
+            if( ! this._trackDragging )
+                return;
+
+            $(document)
+                .unbind("mousemove touchmove", this._trackDragging.move)
+                .unbind("mouseup touchend", this._trackDragging.stop);
+
+            if( this._trackDragging.resume )
+                this.player.video.play();
+
+            this.onTrackMove(e);
+
+            this._trackDragging = null;
+
+            if( this.player.tracktip )
+                this.player.tracktip.close();
+        },
+
+        onTrackMove : function (e) {
+            var v = this.player.video;
+
+            if( ! v.duration || v.ad )
+                return;
+
+            var p = this._dragPercent(e, this.ui.track );
+
+            if( p != null )
+                this._trackDragging.lastTime = p * v.duration;
+
+            if( e.type.match(/^touchend|mouseup/) ) {
+                this.player.video.currentTime = this._trackDragging.lastTime;
+            }
+
+            this.renderTimeline(this._trackDragging.lastTime);
+
+            if( this.player.tracktip )
+                this.player.tracktip.open(this._trackDragging.lastTime);
+
+            e.preventDefault();
+        },
+
+        onCCToggle : function (){
+            this.toggleCaptions(null);
+        },
+
+        onFullscreenToggle : function () {
+            if( this.player.config.maximize){
+                if( this.player.layout.isFullScreen )
+                    this.player.layout.window();
+                else
+                    this.player.layout.fullscreen();
+                return;
+            }
+
+            if( this.player.layout.isMaximized )
+                this.player.layout.restore();
+            else
+                this.player.layout.fullscreen();
+        },
+
+        toggleCaptions : function (bool) {
+            var cues = this.player.cues;
+
+            var enabled = (bool == null)
+                ? ! cues.isEnabled('captions')
+                : bool;
+
+            if( enabled )
+                cues.enable('captions');
+            else
+                cues.disable('captions');
+        },
+
+        onCues : function () {
+            this._cuesRendered = false;
+            this.renderCues();
+        },
+
+        renderCues : function () {
+
+            this.clearAnnotations();
+
+            var cues = this.player.cues;
+            var hasCC = cues.getCaptions().length;
+            this.ui.cc.toggleClass("mpf-controlbar-cc-off", ! hasCC);
+
+            var plugins = this.config.annotations;
+            var self = this;
+
+            $.each( plugins, function (i, name) {
+                $.each( cues.getCues(name), function (i, cue ){
+                    self.addAnnotation(cue.term || cue.topic || cue.text || '', cue.start, name);
+                });
+            });
+        },
+
+        onSearchResults : function (e) {
+            var results = e.data.results;
+
+            this.clearAnnotations('search');
+
+            if(! e.query )
+                return;
+
+            $.each(results, this.bind( function(i, result){
+                this.addAnnotation(e.query, result.start, "search")
+            }));
+        },
+
+        /* util */
+        bind : function ( fn ) {
+            var self = this;
+            return function () {
+                return fn.apply(self, arguments);
+            }
+        },
+
+        _dragPercent : function (event, el) {
+            var oe = event.originalEvent;
+            var pageX = event.pageX;
+
+            if( oe.targetTouches ) {
+                if( ! oe.targetTouches.length )
+                    return;
+                pageX = oe.targetTouches[0].pageX;
+            }
+
+            var bg = $(el).parent();
+            var x =  pageX - bg.offset().left;
+
+            var p = x / bg.width();
+            if( p < 0 )
+                p = 0;
+            else if( p > 1 )
+                p = 1;
+            return p
+        }
+    };
+
+
 
 })();
 
@@ -5135,6 +10997,30 @@ all copies or substantial portions of the Software.
         showBelow : true
     };
 
+    /**
+     * The Controls player widget renders a timeline scrubber, play/pause button, and a current
+     * playback timestamp. The timeline scrubber supports the addition of annotations.
+     * @name UI.Controls
+     * @class The MetaPlayer controls and timeline scrubber player widgets.
+     * @constructor
+     * @param {MetaPlayer} player A MetaPlayer instance.
+     * @param {Object} [options]
+     * @param {Boolean} [options.autoHide=false] Controls are only rendered during mouse hover.
+     * @param {Boolean} [options.renderTags=true] Render any Tags metadata, if available.
+     * @param {Boolean} [options.showBelow=true] Show the controls below the video (not overlaid).
+     * @example
+     * MetaPlayer(video)
+     *       .controls({
+     *           autoHide : false,
+     *           renderTags : true,
+     *           showBelow : true
+     *       })
+     *       .ramp("http://api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440")
+     *       .load();
+     * @example
+     * <iframe style="width: 100%; height: 375px" src="http://jsfiddle.net/ramp/PYzRm/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+     * @see MetaPlayer#controls
+     */
     var Controls = function (player, options) {
 
         this.config = $.extend(true, {}, defaults, options);
@@ -5145,7 +11031,6 @@ all copies or substantial portions of the Software.
 
         this.annotations = [];
         this.video.controls = false;
-        this._iOS = /iPad|iPhone|iPod/i.test(navigator.userAgent);
         this._hasTween = $.easing.easeOutBounce; // jquery UI
 
         if( this.config.createMarkup )
@@ -5155,16 +11040,16 @@ all copies or substantial portions of the Software.
         this.addVideoListeners();
         this.addUIListeners();
 
-        this.trackTimer = Ramp.timer(this.config.trackIntervalMsec);
+        this.trackTimer = MetaPlayer.timer(this.config.trackIntervalMsec);
         this.trackTimer.listen('time', this.render, this);
 
-        this.clockTimer = Ramp.timer(this.config.clockIntervalMsec);
+        this.clockTimer = MetaPlayer.timer(this.config.clockIntervalMsec);
         this.clockTimer.listen('time', this.onClockTimer, this);
 
-        this.revealTimer = Ramp.timer(this.config.revealDelayMsec);
+        this.revealTimer = MetaPlayer.timer(this.config.revealDelayMsec);
         this.revealTimer.listen('time', this.onRevealTimer, this);
 
-        this.hideTimer = Ramp.timer(this.config.hideDelayMsec);
+        this.hideTimer = MetaPlayer.timer(this.config.hideDelayMsec);
         this.hideTimer.listen('time', this.onHideTimer, this);
 
         this.panel = this.player.layout.addPanel({ });
@@ -5178,13 +11063,29 @@ all copies or substantial portions of the Software.
             this.showBelow(true);
         }
 
-        if( this._iOS ){
+        if( MetaPlayer.iOS ){
+            this.video.controls = true;
             this.toggle(false, 0);
             this.showBelow(false);
         }
 
     };
 
+    /**
+     * @name MetaPlayer#controls
+     * @function
+     * @description
+     * Creates a {@link UI.Controls} instance with the given options.
+     * @param {Object} [options]
+     * @example
+     * var mpf = MetaPlayer(video)
+     *     .ramp("http://api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440")
+     *     .controls()
+     *     .load();
+     * @see <a href="http://jsfiddle.net/ramp/PYzRm/">Live Example</a>
+     * @see UI.Controls
+     * @requires  metaplayer-complete.js
+     */
     MetaPlayer.addPlugin("controls", function (options) {
         this.controls = new Controls(this, options);
     });
@@ -5193,7 +11094,8 @@ all copies or substantial portions of the Software.
 
         addVideoListeners : function () {
             var self = this;
-            $(this.video).bind('pause play seeked seeking ended', function(e){
+            $(this.video).bind('pause play playing seeked seeking ended', function(e){
+                self.video.controls = false
                 self.onPlayStateChange(e)
             });
 
@@ -5202,7 +11104,7 @@ all copies or substantial portions of the Software.
             });
 
             $(this.video).bind('durationchange', function(e){
-                self.renderAnnotations(true)
+                self.renderAnnotations(true);
             });
         },
 
@@ -5248,7 +11150,7 @@ all copies or substantial portions of the Software.
             player.bind("mouseleave", function (e) {
                 if( self.config.autoHide ) {
                     self.revealTimer.reset();
-                    self.hideTimer.start()
+                    self.hideTimer.start();
                 }
             });
         },
@@ -5267,7 +11169,7 @@ all copies or substantial portions of the Software.
         },
 
         onTags : function (e) {
-            var tags = e.data.ramp.tags;
+            var tags = e.data.ramp.tags || [];
             var self = this;
             $.each(tags, function (i, tag){
                 $.each(tag.timestamps, function (j, time){
@@ -5313,8 +11215,8 @@ all copies or substantial portions of the Software.
         onClockTimer : function (e) {
             if( ! this.dragging )
                 this.renderTime();
-//            if( ! this.buffered )
-//                this.renderBuffer();
+            //            if( ! this.buffered )
+            //                this.renderBuffer();
         },
 
         onPlayToggle : function () {
@@ -5425,14 +11327,14 @@ all copies or substantial portions of the Software.
             this.find("time-current").text( this.formatTime(time) );
         },
 
-//        renderBuffer : function (){
-//            var status = this.video.status();
-//            var bufferPercent = status.buffer.end / this.video.duration * 100;
-//            var buffer = this.find('track-buffer').stop();
-//            buffer.animate( { width : bufferPercent + "%"}, this.config.clockIntervalMsec, 'linear');
-//            if( bufferPercent == 100)
-//                this.buffered = true;
-//        },
+        //        renderBuffer : function (){
+        //            var status = this.video.status();
+        //            var bufferPercent = status.buffer.end / this.video.duration * 100;
+        //            var buffer = this.find('track-buffer').stop();
+        //            buffer.animate( { width : bufferPercent + "%"}, this.config.clockIntervalMsec, 'linear');
+        //            if( bufferPercent == 100)
+        //                this.buffered = true;
+        //        },
 
         render : function (){
             var duration = this.video.duration;
@@ -5486,6 +11388,12 @@ all copies or substantial portions of the Software.
 
         },
 
+        /**
+         * toggles whether the controls are visible during mouse-over.
+         * @name UI.Controls#autohide
+         * @function
+         * @param {Boolean} bool True for visible.
+         */
         autoHide : function (bool) {
             if( bool )
                 this.hideTimer.start();
@@ -5505,6 +11413,13 @@ all copies or substantial portions of the Software.
             this.hideTimer.reset();
         },
 
+        /**
+         * Toggles the visiblity of the controls
+         * @name UI.Controls#toggle
+         * @function
+         * @param {Boolean} bool True for visible.
+         * @param {Number} duration Seconds of fade in/out, if defined.
+         */
         toggle : function (bool, duration) {
             var el = this.find();
             var v = $(this.container).find('.metaplayer-video');
@@ -5517,18 +11432,34 @@ all copies or substantial portions of the Software.
                 this.showBelow(bool);
 
             el.stop().animate({
-                opacity: show ? 1 : 0
+                    opacity: show ? 1 : 0
                 }, duration == null ? this.config.revealTimeMsec : duration,
                 function () {
                     el.toggle(show);
                 });
         },
 
+        /**
+         * Toggles the rendering of the controls below playback, adding a bottom marign to the video.
+         * @name UI.Controls#showBelow
+         * @function
+         * @param {Boolean} bool True for controls below the video..
+         */
         showBelow : function (bool){
             var h = bool ? this.find().height() : 0;
             this.player.layout.updatePanel(this.panel, { bottom: h } );
         },
 
+         /**
+         * Toggles the rendering of the controls below playback, adding a bottom marign to the video.
+         * @name UI.Controls#addAnnotation
+         * @function
+          * @param {Number} start The start time, in seconds
+          * @param {Number} end The start time, in seconds. This will affect the width of the annotation container,
+          * although the CSS theme may have a fixed with annotation marker.
+          * @param {String} title The tooltip text.
+          * @param [cssClass] An optional CSS class to append to the annotation for custom styling.
+         */
         addAnnotation : function (start, end, title, cssClass) {
             var overlay = this.find('track-overlay');
             var marker = this.create("track-marker");
@@ -5597,7 +11528,7 @@ all copies or substantial portions of the Software.
                                 top : 0
                             },
                             (config.annotationMsec + ( Math.random() * config.annotationEntropy * config.annotationMsec)),
-                             "easeOutBounce"
+                            "easeOutBounce"
                         );
                     }
                     annotation.rendered = true;
@@ -5608,7 +11539,7 @@ all copies or substantial portions of the Software.
                 // enforce annotation spacing rendering (but not firing)
                 if (last && spacing != null
                     && last.el.position().left + ( last.el.width() * spacing )
-                       > annotation.el.position().left ) {
+                    > annotation.el.position().left ) {
                     annotation.el.stop().hide();
                     return;
                 }
@@ -5620,6 +11551,12 @@ all copies or substantial portions of the Software.
             this.annotations.modified = false;
         },
 
+        /**
+         * Removes all annotation markers which were identified with given name. 
+         * @name UI.Controls#removeAnnotations
+         * @function
+         * @param {String} className A CSS class name used to select annotations.
+         */
         removeAnnotations : function (className) {
             var i, a;
             for(i = this.annotations.length - 1; i >= 0 ; i-- ) {
@@ -5731,6 +11668,49 @@ all copies or substantial portions of the Software.
 
     };
 
+    /**
+     * @name UI.Embed
+     * @class Embed is a PopcornJS plugin which present buttons which can be used to summon
+     * a textbox with embed code for various sizes.
+     * @description Embed can be provided with lightweight string templates which can be used
+     * to access any properties of {@link API.MetaData#getData}, as well as a 'src' property which
+     * is an alias to the embedUrl template. String variables are escaped with double curly brackets.
+     * @constructor Constructor method.
+     * @param {Element} id The DOM or jQuery element to which the buttons will be added.
+     * @param {MetaPlayer} [player] A MetaPlayer instance
+     * @param {Object} [options]
+     * @param {Object} [options.embedUrl] A string template for the URL generated.
+     * @param {Object} [options.embedCode] A string template for the code generated, which
+     * by default contains a reference to embedUrl.
+     * @param {Object} [options.sizes]
+     * @param {String} [options.label] The label preceding the buttons in the DOM.
+     * @example
+     * var mpf = MetaPlayer(video)
+     *     .ramp("http://api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440")
+     *     .embed("#embed")
+     *     .load();
+     *
+     * @example
+     * # with default options
+     * var mpf = MetaPlayer(video)
+     *     .ramp("http://api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440")
+     *     .embed("#embed", {
+     *          label : "Embed:",
+     *          sizes : [
+     *              {name: 'large', width: 960, height: 590},
+     *              {name: 'medium', width: 620, height: 380},
+     *              {name: 'small', width: 400, height: 245}
+     *          ],
+     *          embedUrl : "{{embedURL}}&width={{width}}&height={{height}}",
+     *          embedCode : '&lt;iframe src="{{src}}" height="{{height}}px" width="{{width}}px" ' +
+     *              'frameborder="0" scrolling="no" marginheight="0" marginwidth="0" ' +
+     *              'style="border:0; padding:0; margin:0;">&lt;/iframe>'
+     *     })
+     *     .load();
+     *
+     * @see <a href="http://jsfiddle.net/ramp/PaTgf/">Live Example</a>
+     * @see MetaPlayer#embed
+     */
     var Embed = function (target, player, options) {
         this.config = $.extend(true, {}, defaults, options);
         this.container = target;
@@ -5740,6 +11720,20 @@ all copies or substantial portions of the Software.
 
     MetaPlayer.Embed  = Embed;
 
+    /**
+     * @name MetaPlayer#embed
+     * @function
+     * @description
+     * Creates a {@link UI.Embed} instance with the given target and options.
+     * @param {Element} id The DOM or jQuery element to which the buttons will be added.
+     * @param {Object} [options]
+     * @example
+     * var mpf = MetaPlayer(video)
+     *     .ramp("http://api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440")
+     *     .embed("#embed")
+     *     .load();
+     * @see UI.Embed
+     */
     MetaPlayer.addPlugin("embed", function (target, options) {
         this.embed = new Embed(target, this, options);
     });
@@ -5873,6 +11867,8 @@ all copies or substantial portions of the Software.
         this.config = $.extend({}, defaults, options);
         this.player = player;
 
+        this.countdownEnabled = (this.config.countDownSec > 0);
+
         // used to find our templates
         this.baseUrl = MetaPlayer.script.base("(metaplayer|ui).endcap.js");
 
@@ -5904,14 +11900,15 @@ all copies or substantial portions of the Software.
             var metadata = this.player.metadata;
             var playlist = this.player.playlist;
 
-            metadata.listen(MetaPlayer.MetaData.DATA, this.onTrackChange, this);
-            playlist.listen("playlistchange", this.onTrackChange, this);
+            metadata.addEventListener(MetaPlayer.MetaData.DATA, function (e) {
+                self.onMetaData(e);
+            });
 
-            $(video).bind('play playing seeked loadstart', function () {
+            $(video).bind('play playing seeked loadstart', function (e) {
                 self.onPlaying();
             });
 
-            $(video).bind('ended', function () {
+            $(video).bind('ended', function (e) {
                 self.onEnded();
             });
 
@@ -5940,9 +11937,9 @@ all copies or substantial portions of the Software.
                 }
             });
 
-            playlist.advance = false;
+            playlist.autoAdvance = false;
 
-            this.countdown = Ramp.timer(1000, this.config.countDownSec);
+            this.countdown = MetaPlayer.timer(1000, this.config.countDownSec);
             this.countdown.listen('time', this.onCountdownTick, this);
             this.countdown.listen('complete', this.onCountdownDone, this);
 
@@ -5966,9 +11963,15 @@ all copies or substantial portions of the Software.
         },
 
         onEnded : function () {
+            if( this.player.video.ad )
+                return;
+            this.toggle(true);
+            if( ! this.countdownEnabled ) {
+                this.find('countdown').text('');
+                return;
+            }
             this.countdown.start();
             var count = this.find('countdown').text( this.config.countDownSec );
-            this.toggle(true);
         },
 
         onPlaying : function () {
@@ -5988,15 +11991,16 @@ all copies or substantial portions of the Software.
             }
 
             if( bool )
-                el.show().animate({ opacity: 1}, this.config.fadeMs);
+                el.show().animate({ opacity: 1}, this.config.fadeMs, function (){
+                    $(this).show();
+                });
             else
                 el.animate({ opacity: 0 }, this.config.fadeMs, function (){
                     $(this).hide();
                 });
         },
 
-        onTrackChange : function (e) {
-
+        onMetaData : function (e) {
             var data = this.player.metadata.getData();
             if( ! data )
                 return;
@@ -6011,9 +12015,14 @@ all copies or substantial portions of the Software.
 
             this.find('next').hide();
 
-            var nextup = this.player.playlist.nextTrack();
-            if( nextup )
-                this.player.metadata.load( nextup, this.onNextData, this )
+            var pl = this.player.playlist;
+
+            var nextTrack = pl.getItem( pl.getIndex() + 1 );
+
+            if(! nextTrack )
+                return;
+
+            this.player.metadata.load(nextTrack, this.onNextData, this )
         },
 
         onNextData : function (data) {
@@ -6054,10 +12063,42 @@ all copies or substantial portions of the Software.
         filterMsec : 500,
         revealMsec : 1500,
         duplicates : false,
+        scrollbar : true,
         renderAnnotations : true,
         baseUrl : ""
     };
 
+    /**
+     * FrameFeed is a PopcornJS plugin for rendering MetaQ framefeed events. The UI is rendered
+     * as a feed with iframe panels prepended to the top of the list, animating down. The feed can
+     * be filtered by a string match against the panel's tag property.
+     * @name UI.FrameFeed
+     * @class The MetaPlayer framefeed widget and plugin for PopcornJS
+     * @constructor
+     * @param {Element} id The DOM target to which the framefeed will be added.
+     * @param {Object} [options]
+     * @param {Boolean} [options.duplicates=false] If false, will not render duplicates of rendered cards
+     * @param {Boolean} [options.renderAnnotations=true] If the MetaPlayer controlbar is present, will render
+     * timeline annotations indicating when FrameFeed events will fire.
+     * @param {Number} [options.filterMsec=750] The animation duration, in msec, for when a filter is applied.
+     * @param {Number} [options.revealMsec=1500] The animation duration, in msec, for when a panel is added.
+     * @param {String} [options.baseUrl=""] A prefix to any urls in the feed. Can be used if the feed contains relative URLS.
+     * @example
+     * # shown with all default options:
+     * var mpf = MetaPlayer(video)
+     *     .ramp("http://api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440")
+     *     .framefeed("#myfeed", {
+     *          duplicates: false,
+     *          filterMsec: 500,
+     *          revealMsec: 1500,
+     *          renderAnnotations: true
+     *          baseUrl : ""
+     *     })
+     *     .load();
+     * @see <a href="http://jsfiddle.net/ramp/GCUrq/">Live Demo</a>
+     * @see MetaPlayer#framefeed
+     * @see Popcorn#framefeed
+     */
     var FrameFeed = function (target, options) {
 
         var t = $(target);
@@ -6079,7 +12120,7 @@ all copies or substantial portions of the Software.
             .height("100%")
             .appendTo(target);
 
-        this.scrollbar = MetaPlayer.scrollbar(target);
+        this.scrollbar = MetaPlayer.scrollbar(target, { disabled : ! this.config.scrollbar });
         this.seen = {};
         this.init();
 
@@ -6090,7 +12131,21 @@ all copies or substantial portions of the Software.
 
     FrameFeed.instances = {};
 
-
+    /**
+     * @name MetaPlayer#framefeed
+     * @function
+     * @description
+     * Creates a {@link UI.FrameFeed} instance with the given target and options.
+     * @param {Element} id The DOM or jQuery element to which the framefeed will be added.
+     * @param {Object} [options]
+     * @example
+     * var mpf = MetaPlayer(video)
+     *     .ramp("http://api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440")
+     *     .framefeed("#myfeed")
+     *     .load();
+     * @see UI.FrameFeed
+     * @requires  metaplayer-complete.js
+     */
     MetaPlayer.addPlugin("framefeed", function (target, options){
         this.cues.enable("framefeed", { target : target });
         this.framefeed = FrameFeed(target, options);
@@ -6156,7 +12211,7 @@ all copies or substantial portions of the Software.
         },
 
 
-        frame : function (obj, animate) {
+        frame : function (obj, duration) {
             if( typeof obj == "string" ){
                 obj = { url :  obj };
             }
@@ -6172,7 +12227,7 @@ all copies or substantial portions of the Software.
             this.seen[url] = obj;
 
             var self = this;
-
+            var revealMsec = duration == null ? this.config.revealMsec : duration;
             if( ! obj.item ){
                 obj.loadAnimate = true;
                 var frame = $("<iframe frameborder='0'></iframe>")
@@ -6183,7 +12238,7 @@ all copies or substantial portions of the Software.
                     .bind("load", function () {
                         obj.loaded = true;
                         self.renderItem(obj,
-                            obj.loadAnimate ? self.config.revealMsec : null);
+                            obj.loadAnimate ? revealMsec : null);
                     })
                     .attr("height", obj.height);
 
@@ -6196,7 +12251,7 @@ all copies or substantial portions of the Software.
                 this.items.push(obj);
             }
             else {
-                this.renderItem(obj, this.config.revealMsec);
+                this.renderItem(obj, revealMsec);
             }
         },
 
@@ -6236,6 +12291,9 @@ all copies or substantial portions of the Software.
                 if( scroll && duration) {
                     this.scrollbar.scrollTo( 0 , scroll + obj.height );
                 }
+                else {
+                    this.scrollbar.render();
+                }
             }
             // else scroll and fade in
             else {
@@ -6268,6 +12326,30 @@ all copies or substantial portions of the Software.
     };
 
     if( Popcorn ) {
+        /**
+         * Schedules a framefeed card to be rendered and focused at a given time.
+         * @name Popcorn#framefeed
+         * @function
+         * @param {Object} config
+         * @param {Element} config.target The target element for the framefeed
+         * @param {String} config.height A height for the feed item
+         * @param {String} config.url An Ajax url for Iframe content.
+         * @param {Number} config.start Start time text, in seconds.
+         * @example
+         *  var pop = Popcorn(video);
+         *
+         *  # optional configuration step
+         *  MetaPlayer.framefeed("#myfeed", {
+         *          duplicates: false,
+         *  });
+         *
+         * pop.framefeed({
+         *     target : "#myfeed",
+         *     start : 1,
+         *     height: 200,
+         *     url :"http://www.ramp.com/"
+         * });
+         */
         Popcorn.plugin( "framefeed" , {
 
             _setup: function( options ) {
@@ -6303,12 +12385,29 @@ all copies or substantial portions of the Software.
 
     var defaults = {
         cssPrefix : "mp-hl",
-        filterMsec : 500,
-        revealMsec : 1500,
-        duplicates : false,
         baseUrl : ""
     };
 
+    /**
+     * Headlines is a page widget which populates with a set of links harvested from a RSS feed. RSS
+     * feeds can be specified for various times in the video, re-populating the link in the page.
+     * @name UI.Headlines
+     * @class The MetaPlayer headlines widget and plugin for PopcornJS
+     * @constructor
+     * @param {Element} id The DOM target to which the headlines will be added.
+     * @param {Object} [options]
+     * @param {String} [baseUrl=""] An options base url to prepend to item links in the feed.
+     * @example
+     * # shown with default options:
+     * var mpf = MetaPlayer(video)
+     *     .ramp("http://api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440")
+     *     .headlines("#headlines", {
+     *          baseUrl : "/feeds/"
+     *     })
+     *     .load();
+     * @see MetaPlayer#framefeed
+     * @see Popcorn#framefeed
+     */
     var Headlines = function (target, options) {
         var t = $(target);
         target = t.get(0);
@@ -6330,7 +12429,21 @@ all copies or substantial portions of the Software.
 
     Headlines.instances = {};
 
-
+    /**
+     * @name MetaPlayer#headlines
+     * @function
+     * @description
+     * Creates a {@link UI.Headlines} instance with the given target and options.
+     * @param {Element} id The DOM or jQuery element to which the headlines will be added.
+     * @param {Object} [options]
+     * @example
+     * var mpf = MetaPlayer(video)
+     *     .ramp("http://api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440")
+     *     .headlines("#headlines")
+     *     .load();
+     * @see UI.Headlines
+     * @requires  metaplayer-complete.js
+     */
     MetaPlayer.addPlugin("headlines", function (target, options){
         this.cues.enable("headlines", { target : target });
         this.headlines = Headlines(target, options);
@@ -6454,6 +12567,25 @@ all copies or substantial portions of the Software.
     };
 
     if( Popcorn ) {
+        /**
+         * Schedules a headline links to be rendered and a given time.
+         * @name Popcorn#headlines
+         * @function
+         * @param {Object} config
+         * @param {Element} config.target The target element for the headlines
+         * @param {String} config.height A height for the feed item
+         * @param {String} config.url An Ajax url for RSS source (subject to ajax cross-domain restrictions)
+         * @param {Number} config.start Start time, in seconds.
+         * @example
+         *  var pop = Popcorn(video);
+         *
+         * pop.headlines ({
+         *     target : "#myheadlines",
+         *     url : "sample-rss.xml",
+         *     start : 10
+         * });
+         *
+         */
         Popcorn.plugin( "headlines" , {
 
             _setup: function( options ) {
@@ -6494,7 +12626,33 @@ all copies or substantial portions of the Software.
         seekBeforeSec : 1,
         hideOnEnded : true
     };
-
+    /**
+     * @name UI.Overlay
+     * @class The MetaPlayer information overlay player widget.
+     * @constructor
+     * @param {MetaPlayer} player A MetaPlayer instance.
+     * @param {Object} [options]
+     * @param {Boolean} [options.autoHide=true] Overlay closes on mouse-out. If false, or on iOS,\
+     * a close button is rendered instead.
+     * @param {Boolean} [options.captions=false] Whether captions are on by default.
+     * @param {Number} [options.mouseDelayMsec=1000] Delay in mouse-over before overlay opens.
+     * @param {Number} [options.seekBeforeSec=1] When clicking search results, how many seconds prior to result to seek.
+     * @param {Boolean} [options.hideOnEnd=true] Hides the overlay when the video ends, not conflicting with an endcap screen.
+     * @example
+     * MetaPlayer( video)
+     *       .ramp("http://api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440")
+     *       .captions({
+     *          autoHide : true.
+     *          captions : false,
+     *          mouseDelayMsec : 1000,
+     *          seekBeforeSec : 1,
+     *          hideOnEnd : true
+     *       })
+     *       .overlay()
+     *       .load();
+     * @example
+     * <iframe style="width: 100%; height: 375px" src="http://jsfiddle.net/ramp/Pux7K/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+     */
     var Overlay = function (player, options) {
 
         if( !(this instanceof Overlay ))
@@ -6522,6 +12680,22 @@ all copies or substantial portions of the Software.
         this.video.overlay = this;
     };
 
+    /**
+     * @name MetaPlayer#overlay
+     * @function
+     * @description
+     * Creates a {@link UI.Overlay} instance with the given options.
+     * @param {Object} [options]
+     * @example
+     * MetaPlayer( video)
+     *       .ramp("http://api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440")
+     *       .captions()
+     *       .overlay()
+     *       .load();
+     * @see <a href="http://jsfiddle.net/ramp/Pux7K/">Live Example</a>
+     * @see UI.Overlay
+     * @requires  metaplayer-complete.js
+     */
     MetaPlayer.addPlugin("overlay", function (options) {
         this.overlay = Overlay(this, options);
     });
@@ -6533,11 +12707,13 @@ all copies or substantial portions of the Software.
             this.addPlaylistListeners();
             this.addPopcornListeners();
             this.addServiceListeners();
+            this.addVideoListeners();
 
             //  render initial state
             this.onVolumeChange();
             this.onPlayStateChange();
             this.setCaptions(this.config.captions);
+            this.adPlaying = false;
 
             if( this.player.isTouchDevice || ! this.config.autoHide )
                 this.find('close-btn').show();
@@ -6553,10 +12729,10 @@ all copies or substantial portions of the Software.
 
         getMarkup : function () {
             var root = $("<div></div>")
-                .addClass("metaplayer-overlay")
+                .addClass("metaplayer-overlay");
 
             var container = $("<div></div>")
-                .addClass("metaplayer-overlay-container")
+                .addClass("metaplayer-overlay-container");
         },
 
         addUIListeners : function () {
@@ -6607,7 +12783,7 @@ all copies or substantial portions of the Software.
                 self.onVolumeDrag(e);
             });
 
-            if( this.player.isTouchDevice )
+            if( MetaPlayer.iOS )
                 this._addTouchListeners();
             else
                 this._addMouseListeners();
@@ -6619,11 +12795,10 @@ all copies or substantial portions of the Software.
 
         _addTouchListeners : function () {
             var self = this;
-            var video = $(this.container ).find( 'video'  );
+            var video = $(this.player.video );
             video.bind('touchstart', function () {
-                console.log("touch start " + video);
                 if( ! self._ended )
-                    self.delayedToggle(true)
+                    self.delayedToggle(true);
             });
         },
 
@@ -6632,19 +12807,33 @@ all copies or substantial portions of the Software.
 
             var containers = $([ this.container, this.player.video ]);
             containers.bind('mouseenter', function (e) {
-                if( ! self._ended )
-                    self.delayedToggle(true)
+                if( ! self._ended && ! self.adPlaying )
+                    self.delayedToggle(true);
             });
 
             containers.bind('mouseleave', function (e) {
                 if( ! self._ended )
-                    self.delayedToggle(false)
+                    self.delayedToggle(false);
             });
         },
 
         addServiceListeners : function () {
             var metadata = this.player.metadata;
             metadata.listen(MetaPlayer.MetaData.DATA, this.onTags, this);
+        },
+
+        addVideoListeners : function () {
+            var self = this;
+
+            $(this.video).bind('adstart adstop', function(e){
+                if (e.type == "adstart") {
+                    self.toggle(false);
+                    self.adPlaying = true;
+                }
+                else {
+                    self.adPlaying = false;
+                }
+            });
         },
 
         onTags : function (e) {
@@ -6660,19 +12849,22 @@ all copies or substantial portions of the Software.
 
         renderNextUp : function (){
             var metadata = this.player.metadata;
-            var nextTrack = this.playlist.nextTrack();
-            if( nextTrack )
-                metadata.load( nextTrack, this.onNextData, this)
+            var nextTrack = this.playlist.getItem( this.playlist.getIndex() + 1 );
+
+            if(! nextTrack )
+                return;
+
+            var data = metadata.getData(nextTrack);
+            if( data )
+                this.onNextData( data );
+            else
+                metadata.load(nextTrack, this.onNextData, this);
         },
 
         onNextData : function (data) {
             this.find('preview-thumb').attr('src', data.thumbnail);
             this.find('preview-title').text(data.title);
             this.find('next').show();
-        },
-
-        onPlaylistChange : function () {
-            this.renderNextUp()
         },
 
         onTrackChange : function () {
@@ -6682,7 +12874,7 @@ all copies or substantial portions of the Software.
             $('.' + this.cssName('tag') ).remove();
             this.find('next').hide();
 
-            this.renderNextUp()
+            this.renderNextUp();
         },
 
         createTag : function ( term ) {
@@ -6745,7 +12937,7 @@ all copies or substantial portions of the Software.
             });
 
             var time = this.create('result-time');
-            time.text( Ramp.format.seconds( result.start) );
+            time.text( MetaPlayer.format.seconds( result.start) );
             el.append(time);
 
             var phrase = this.create('result-text');
@@ -6779,6 +12971,12 @@ all copies or substantial portions of the Software.
             });
         },
 
+        /**
+         * Toggles the captions and associated overlay button.
+         * @name UI.Overlay#setCaptions
+         * @function
+         * @param {Boolean} bool True for captions enabled
+         */
         setCaptions : function ( bool ){
             var pop = this.player.popcorn;
 
@@ -6788,7 +12986,7 @@ all copies or substantial portions of the Software.
                 pop.disable('captions');
 
             this.find('cc').toggle(bool);
-            this.find('cc-off').toggle(!bool)
+            this.find('cc-off').toggle(!bool);
         },
 
 
@@ -6799,7 +12997,7 @@ all copies or substantial portions of the Software.
             video.bind('canplay', function(e){
                 // check if volume adjustment is not supported (eg. iOS)
                 var hold = self.video.volume;
-                var test =  .5;
+                var test =  0.5;
                 self.video.volume = test;
                 if(self.video.volume !=  test)
                     self.hideVolumeControls();
@@ -6821,9 +13019,10 @@ all copies or substantial portions of the Software.
         },
 
         addPlaylistListeners : function (){
-            var playlist = this.player.playlist;
-            playlist.listen("trackchange", this.onTrackChange, this);
-            playlist.listen("playlistchange", this.onPlaylistChange, this);
+            var self = this;
+            this.player.metadata.addEventListener("data", function (e) {
+                self.onTrackChange(e);
+            });
             this.player.search.listen(MetaPlayer.Search.QUERY, this.onSearchStart, this);
             this.player.search.listen(MetaPlayer.Search.RESULTS, this.onSearchResult, this);
         },
@@ -6886,7 +13085,7 @@ all copies or substantial portions of the Software.
         },
 
         onPlayStateChange : function (e) {
-            this._ended = false;
+            this._ended = this.video.ended;
             // manage our timers based on play state
             // don't use toggle(); triggers layout quirks in chrome
             if( this.video.paused ) {
@@ -6931,9 +13130,15 @@ all copies or substantial portions of the Software.
             setTimeout( function () {
                 if( this.__opened != self._delayed )
                     self.toggle(self._delayed);
-            }, this.config.mouseDelayMsec)
+            }, this.config.mouseDelayMsec);
         },
 
+        /**
+         * Toggles the overlay's visibility.
+         * @name UI.Overlay#toggle
+         * @function
+         * @param {Boolean} bool True for visible.
+         */
         toggle : function ( bool ) {
             this.__opened = bool;
 
@@ -6941,7 +13146,7 @@ all copies or substantial portions of the Software.
             var height = this.find('container').height();
             if( bool )
                 node.animate({height: height}, 500, function () {
-                    node.height('')
+                    node.height('');
                 });
             else
                 node.animate({height: 0}, 500);
@@ -6965,6 +13170,493 @@ all copies or substantial portions of the Software.
     };
 
 })();
+(function () {
+    var $ = jQuery;
+    var Popcorn = window.Popcorn;
+
+    if( ! Popcorn )
+        return;
+
+    Popcorn.plugin( "script" , {
+        _setup: function( options ) {
+        },
+
+        start: function( event, options ){
+            if( options.code.match(/^\s*<script/) ) {
+                $('head').append(options.code);
+                return;
+            }
+            try {
+                window.eval(options.code);
+            }
+            catch(e){}
+        },
+
+        end: function( event, options ){
+        },
+
+        _teardown: function( options ) {
+        }
+    });
+})();
+
+
+(function () {
+
+    var $ = jQuery;
+
+    var defaults = {
+        inputLabel : "Search in video",
+        nextLabel : "NEXT:",
+        cssPrefix : "mp-searchbar",
+        spacingSec : 0,
+        maxNext : 0,
+        fadeOutPx : 21,
+        cueType : "tags",
+        seekOffset : -.5
+    };
+
+    var SearchBar = function (target, player, options) {
+
+        if( !(this instanceof SearchBar) )
+            return new SearchBar(target, player, options);
+
+        this.player = player;
+        this.target = $(target);
+
+        this.config = $.extend(true, {}, defaults, options);
+
+        this.createMarkup();
+        this.addListeners();
+        this.clear();
+
+    };
+
+    MetaPlayer.SearchBar = SearchBar;
+
+    MetaPlayer.addPlugin("searchbar", function(target, options) {
+        this.searchbar = SearchBar(target, this, options);
+    });
+
+    SearchBar.prototype = {
+
+        createMarkup : function (){
+            this.ui = {};
+            $(this.target).addClass('mpf-searchbar');
+
+            // Next Up
+            this.nextup = $('<div>')
+                .addClass("mpf-searchbar-nextup")
+                .css('opacity', 0)
+                .appendTo(this.target);
+
+            $('<div>')
+                .addClass("mpf-searchbar-nextup-label")
+                .html(this.config.nextLabel + "&nbsp;")
+                .appendTo(this.nextup);
+
+            this.counter = $('<div>')
+                .addClass("mpf-searchbar-nextup-countdown")
+                .appendTo(this.nextup);
+
+            // Search Form
+            var searchform = $('<div>')
+                .addClass("mpf-searchbar-search")
+                .appendTo(this.target);
+
+            var inputbox = $('<div>')
+                .addClass("mpf-searchbar-search-inputbox")
+                .appendTo(searchform);
+
+            this.input = $('<input>')
+                .addClass("mpf-searchbar-search-input")
+                .attr('placeholder', this.config.inputLabel )
+                .appendTo(inputbox)
+                .keypress( this.bind( this.onInputKey ));
+
+            $('<div>')
+                .addClass("mpf-searchbar-search-submit")
+                .appendTo(searchform)
+                .click( this.bind( this.onInput ));
+
+
+            // Tags
+            this.tags = $('<div>')
+                .addClass("mpf-searchbar-tags")
+                .appendTo(this.target);
+
+            this.scroll = $('<div>')
+                .addClass("mpf-searchbar-tags-scroll")
+                .appendTo(this.tags);
+
+            $('<div>')
+                .addClass("mpf-searchbar-tags-fade")
+                .appendTo(this.target);
+
+            // Navigation
+            this.nav = $('<div>')
+                .addClass("mpf-searchbar-nav")
+                .appendTo(this.target);
+
+            this.ui.prev = $('<div>')
+                .addClass("mpf-searchbar-nav-prev")
+                .appendTo(this.nav)
+                .click( this.bind(this.previous) );
+
+            this.ui.next =$('<div>')
+                .addClass("mpf-searchbar-nav-next")
+                .appendTo(this.nav)
+                .click( this.bind(this.next) );
+
+
+            // Search Results
+            this.results = $('<div>')
+                .addClass("mpf-searchbar-results")
+                .appendTo(this.target);
+
+            $('<div>')
+                .addClass("mpf-searchbar-results-clear")
+                .appendTo(this.results)
+                .click( this.bind( function () {
+                this.player.search.query('');
+            }));
+
+            this.query = $('<div>')
+                .addClass("mpf-searchbar-results-query")
+                .appendTo(this.results);
+
+            this.resultsFound = $('<div>')
+                .addClass("mpf-searchbar-results-label")
+                .html("found at: ")
+                .appendTo(this.results);
+
+            this.resultsNotFound = $('<div>')
+                .addClass("mpf-searchbar-results-label")
+                .html("not found. ")
+                .appendTo(this.results);
+
+            this.resultsList = $('<div>')
+                .addClass("mpf-searchbar-results-list")
+                .appendTo(this.results);
+
+            $('<div>')
+                .addClass("mpf-searchbar-results-fade")
+                .appendTo(this.results);
+
+        },
+
+        renderTag : function ( text, time ) {
+            var first = ! this.scroll.children().length;
+            if( ! first )
+                $('<div>')
+                    .html("&#x2022;")
+                    .addClass("mpf-searchbar-tag-spacer")
+                    .appendTo(this.scroll);
+
+            return $('<div>')
+                .append(  $("<div>").addClass("mpf-searchbar-tag-label").text(text) )
+                .data("start", time)
+                .data("term", text)
+                .addClass("mpf-searchbar-tag")
+                .appendTo(this.scroll);
+        },
+
+        addListeners : function () {
+            this.player.cues.addEventListener(MetaPlayer.Cues.CUES, this.bind( this.onCues) );
+
+            this.player.video.addEventListener("timeupdate", this.bind( this.renderTime ) );
+
+            this.target.delegate(".mpf-searchbar-tag, .mpf-searchbar-results-item", "mouseenter",
+                this.bind( this.onPreviewStart ) );
+
+            this.target.delegate(".mpf-searchbar-tag, .mpf-searchbar-results-item", "mouseleave",
+                this.bind( this.onPreviewStop ) );
+
+            this.scroll.delegate(".mpf-searchbar-tag", "click", this.bind( function (e) {
+                var time = $(e.currentTarget).data('start');
+                this.player.video.currentTime = time + this.config.seekOffset;
+
+                var term = $(e.currentTarget).data('term');
+                this.player.search.query(term);
+                this.input.val(term);
+            }));
+
+            this.resultsList.delegate(".mpf-searchbar-results-item", "click", this.bind( function (e) {
+                var time = $(e.currentTarget).data('start');
+                this.player.video.currentTime = time + this.config.seekOffset;
+            }));
+
+            this.player.search.listen(MetaPlayer.Search.QUERY, this.onSearch, this);
+            this.player.search.listen(MetaPlayer.Search.RESULTS, this.onResults, this);
+        },
+
+        onPreviewStart : function (e) {
+            var time = $(e.currentTarget).data('start');
+            if( this.player.tracktip && this.player.tracktip.open )
+                this.player.tracktip.open(time);
+        },
+        onPreviewStop : function (e) {
+            if( this.player.tracktip && this.player.tracktip.close )
+                    this.player.tracktip.close();
+        },
+
+        onCues : function (e) {
+            this.clear();
+            var tags = this.player.cues.getCues( this.config.cueType );
+            this.tagData = [];
+            var last;
+            $.each(tags, this.bind( function (i, tag){
+                var data = $.extend({}, tag);
+                if( last && (this.getTerm(data) == this.getTerm(last) || data.start < last.start + this.config.spacingSec) )
+                    return;
+                last = tag;
+                data.el = this.renderTag( this.getTerm(tag), tag.start);
+                data.index = this.tagData.length;
+                this.tagData.push(data);
+            }));
+
+            this.nextup.css('opacity', this.tagData.length ? 1 : 0);
+            this.renderTime();
+        },
+
+
+        renderTime : function ( seconds ) {
+            var time = seconds;
+
+            if( typeof seconds != "number")
+                 time = this.player.video.currentTime || 0;
+
+            // cache hit
+            if(this._renderCache
+                && (time > this._renderCache.start && (time < this._renderCache.end || ! this._renderCache.end) )){
+                this.renderNext(time);
+                return;
+            }
+
+            if( ! this.tags.is(":visible") )
+                return;
+
+            this._renderCache = null;
+
+            this.scroll.children('.mpf-searchbar-tag-selected')
+                .removeClass('mpf-searchbar-tag-selected');
+
+            if( ! (this.tagData && this.tagData.length))
+                return;
+
+            var tag, next, i = -1;
+            while(i < this.tagData.length){
+                tag = this.tagData[i];
+                next = this.tagData[i+1];
+                if( ! next || next.start > time )
+                    break;
+                i++;
+            }
+            // cache tag bounds so we can skip rendering in each timeupdate loop
+            this._renderCache = {
+                start : 0,
+                index : i
+            };
+
+            if( tag ) {
+                tag.el.addClass('mpf-searchbar-tag-selected');
+                this._renderCache.term = tag.term;
+                this._renderCache.start = tag.start;
+                this.centerTag(tag.index);
+            }
+            else
+                this.centerTag(-1);
+
+
+            if( next ) {
+                this._renderCache.end = next.start;
+            }
+
+        },
+
+        renderNext : function (time) {
+
+            if( ! this._renderCache )
+                return;
+
+            var next_sec = Math.round(this._renderCache.end - time) || null;
+
+            if( this._renderCache.counter == next_sec )
+                return;
+
+            if( ! this.config.maxNext || next_sec >  this.config.maxNext )
+                next_sec = null;
+
+            this.counter.text(
+                MetaPlayer.format.seconds(next_sec, { minutes: false, seconds: false })
+            );
+
+            if( ! this._renderCache.counter )
+                this.nextup.children().show();
+
+            this._renderCache.counter = next_sec;
+        },
+
+        centerTag : function (index) {
+            var tag = this.tagData[index];
+            var offset = 0;
+
+            var middle = (this.tags.width() - this.config.fadeOutPx) / 2;
+            if( tag ) {
+                var center = tag.el.position().left + (.5 * tag.el.width());
+                if( center < middle )
+                    offset = 0;
+                else
+                    offset = center - middle;
+            }
+
+            this.scrollTo( offset );
+        },
+
+        next : function ( ) {
+            var i = 0, tag, offset;
+            var view = this.tags.width() - this.config.fadeOutPx;
+            var max = view - this.scroll.position().left;
+            while(this.tagData && i < this.tagData.length) {
+                tag = this.tagData[i++];
+                if( tag.el.width() + tag.el.position().left > max )  {
+                    offset = tag.el.position().left;
+                    break;
+                }
+            }
+            if( offset )
+                this.scrollTo( offset );
+        },
+
+        previous : function () {
+            var view = this.tags.width() - this.config.fadeOutPx;
+            var i = this.tagData.length -1, tag;
+            var min = -this.scroll.position().left;
+            var offset;
+            while( i >= 0  ) {
+                tag = this.tagData[i];
+                if( tag.el.position().left < min ){
+                    offset = tag.el.position().left + tag.el.width() - view;
+                    if( offset < 0 )
+                        offset = 0;
+                    break;
+                }
+                i--;
+            }
+            if( offset != null )
+                this.scrollTo( offset );
+        },
+
+        scrollTo: function (x, now) {
+            if ( now )
+                this.scroll.stop().css('left', -x);
+            else
+                this.scroll.stop().animate({ 'left' : -x });
+
+            var view = this.tags.width() - this.config.fadeOutPx;
+            var max = view;
+            if( this.tagData && this.tagData.length ){
+                var last = this.tagData[this.tagData.length-1].el;
+                max = last.width() + last.position().left;
+            }
+
+            this.ui.prev.css('visibility', x > 0 ? 'visible' : 'hidden');
+            this.ui.next.css('visibility', x + view < max  ? 'visible' : 'hidden');
+        },
+
+        search : function (query) {
+            this.player.search.query(query);
+        },
+
+        clear : function () {
+            this.counter.hide();
+            this.scroll.empty();
+            this.scrollTo(0, true);
+            this._renderCache = null;
+            this.toggleResults(false);
+        },
+
+        /* results */
+
+        onInputKey : function (e) {
+            if ( e.which == 13 ) {
+                this.onInput();
+                e.preventDefault();
+            }
+        },
+
+        onInput : function () {
+            var query = this.input.val();
+            this.player.search.query(query)
+        },
+
+        toggleResults : function ( results ) {
+            this.results.toggle( results );
+            this.nextup.toggle( !results );
+            this.tags.toggle( !results );
+            this.nav.toggle( !results );
+            if(! results ){
+                this.input.val('');
+            }
+        },
+
+        onSearch : function (e) {
+            this.query.text(e.query);
+            this.resultsList.empty();
+        },
+
+        onResults : function (e) {
+            var results = e.data.results;
+            if(! e.query ) {
+                this.toggleResults(false);
+                return;
+            }
+
+            var found = Boolean(e.data.results.length);
+            this.resultsFound.toggle(found);
+            this.resultsNotFound.toggle(!found);
+
+            this.query.text(e.query);
+            $.each(results, this.bind( function(i, result){
+                $("<div></div>")
+                    .data("start", result.start)
+                    .text( MetaPlayer.format.seconds(result.start) )
+                    .addClass("mpf-searchbar-results-item")
+                    .appendTo(this.resultsList)
+            }));
+            this.toggleResults(true);
+        },
+
+        /* util */
+
+        getTerm : function (options) {
+            return options.term || options.topic || options.text || '';
+        },
+
+        bind : function ( fn ) {
+            var self = this;
+            return function () {
+                return fn.apply(self, arguments);
+            }
+        },
+
+        find : function (className){
+            return $(this.container).find('.' + this.cssName(className) );
+        },
+        create : function (className, tagName){
+            if( ! tagName )
+                tagName = "div";
+            return $("<" + tagName + ">").addClass( this.cssName(className) );
+        },
+
+        cssName : function (className){
+            return  this.config.cssPrefix + (className ? '-' + className : '');
+        }
+    };
+
+
+
+})();
 
 
 (function () {
@@ -6975,14 +13667,14 @@ all copies or substantial portions of the Software.
         cssPrefix : "mp-search",
         tags : true,
         query : "",
-        seekBeforeSec : .25,
+        seekBeforeSec : 0.25,
         context : 3,
         strings : {
             'tagHeader' : "In this video:",
             'searchPlaceholder' : "Search transcript...",
             'ellipsis' : "...",
             'resultsHeader' : "Showing {{count}} {{results}} for \"{{query}}\":",
-            'results' : function (dict) { return "result" + (dict['count'] == 1 ? "" : "s")},
+            'results' : function (dict) { return "result" + (dict['count'] == 1 ? "" : "s"); },
             'clear' : "x"
         }
     };
@@ -7045,7 +13737,7 @@ all copies or substantial portions of the Software.
             var t = $(this.target);
             var c = this.create();
 
-            var f= this.create('form')
+            var f= this.create('form');
             c.append(f);
 
             var ti = $('<input type="text" />');
@@ -7121,7 +13813,7 @@ all copies or substantial portions of the Software.
                     .click( function () {
                         self.search(tag.term);
                     })
-                    .appendTo(cell)
+                    .appendTo(cell);
             });
         },
 
@@ -7151,7 +13843,7 @@ all copies or substantial portions of the Software.
 
         onSearchResult : function (e, response) {
             this.clear();
-
+            
             if( ! response.query.length ) {
                 return;
             }
@@ -7160,16 +13852,14 @@ all copies or substantial portions of the Software.
 
             this.find('close').show();
             var r = this.scrollbar.body;
-
-
-            $("<div></div>")
+            var blahblah = $("<div></div>")
                 .addClass( this.cssName("result-count") )
                 .text( this.getString("resultsHeader", {
                     count : response.results.length,
                     query : response.query.join(" ")
                 }))
                 .appendTo(r);
-
+                
             var self = this;
             this.create("close")
                 .text( this.getString("clear") )
@@ -7177,7 +13867,6 @@ all copies or substantial portions of the Software.
                     self.onClose();
                 })
                 .appendTo(r);
-
 
             $.each(response.results, function (i, result){
                 var el = self.create('result');
@@ -7189,19 +13878,25 @@ all copies or substantial portions of the Software.
                         .text(word.text);
                     if( word.match ){
                         offset = i;
-                        w.addClass( self.cssName('match') )
+                        w.addClass( self.cssName('match') );
                     }
                     words.push( w.get(0) );
                 });
 
+                // We don't need to trim anything if we're using cues,
+                // which provide snippets already
+                offset = response.usingCues ? 0 : offset;
+                var context = response.usingCues ? 10 : self.config.context;
 
-                var phrase = SearchBox.getPhrase(words, offset, self.config.context );
-                start = result.words[phrase.start].start;
+                var phrase = SearchBox.getPhrase(words, offset, context);
+                
+                // we just need the start of the cue if we're using cues (obviously) :)
+                start = response.usingCues ? result.start : result.words[phrase.start].start;
 
                 el.data('start', start);
 
                 var time = self.create('time')
-                    .text( Ramp.format.seconds(start) )
+                    .text( MetaPlayer.format.seconds(start) )
                     .appendTo(el);
 
                 $.each(phrase.words, function (i, word) {
@@ -7220,7 +13915,7 @@ all copies or substantial portions of the Software.
 
         getString : function (name, dict) {
             var template = $.extend({}, this.config.strings, dict);
-            return MetaPlayer.format.replace( this.config.strings[name], template)
+            return MetaPlayer.format.replace( this.config.strings[name], template);
         },
 
         /* util */
@@ -7239,6 +13934,151 @@ all copies or substantial portions of the Software.
     };
 
 
+
+})();
+
+
+(function () {
+
+    var $ = jQuery;
+
+    var defaults = {
+        openDelayMsec : 1000,
+        hideDelayMsec : 4000,
+        backButtonSec : 5,
+        overlay : true,
+        autoHide : true,
+        embedHeight : 380,
+        embedWidth : 620,
+        embedTemplate : "<iframe src='{{embedURL}}' height='{{embedHeight}}px' width='{{embedWidth}}px' "+
+                    " frameborder='0' scrolling='no' marginheight='0' marginwidth='0' " +
+                    " style='border:0; padding:0; margin:0;'></iframe>"
+    };
+
+    MetaPlayer.addPlugin("share", function(options) {
+        this.share = new MetaPlayer.UI.Share(this, options);
+    });
+
+    MetaPlayer.UI.Share = function (player, options) {
+        this.player = player;
+        this.config = $.extend({}, defaults, options);
+        this.createMarkup(player.layout.stage);
+
+        this.player.metadata.listen("data", this.bind( this._onData ) );
+    };
+
+    MetaPlayer.UI.Share.prototype = {
+
+        createMarkup : function (container){
+            var ui = this.ui = {};
+
+            if( this.player.controlbar && this.player.controlbar.addButton ){
+                this.player.controlbar.addButton(
+                    $("<div></div>")
+                        .addClass( cssName('button') )
+                        .text("Share")
+                        .attr('title', "Share Menu")
+                        .click( this.bind ( function (e) {
+                            this.toggle();
+                            e.preventDefault();
+                        }))
+                );
+            }
+
+            // share menu
+            ui.shareMenu = $("<div />")
+                .hide()
+                .addClass( cssName("panel"))
+                .appendTo( container );
+
+            ui.shareClose = $("<div />")
+                .addClass( cssName("close"))
+                .text("x")
+                .click( this.bind ( function (e) {
+                    this.toggle(false);
+                }))
+                .appendTo( ui.shareMenu );
+
+            ui.shareButtons = $("<div />")
+                .addClass( cssName("buttons"))
+                .appendTo( ui.shareMenu );
+
+            if( MetaPlayer.Social )
+                this._social = new MetaPlayer.Social(ui.shareButtons, this.player );
+
+            ui.shareEmbed = $("<div />")
+                .addClass( cssName("embed"))
+                .appendTo( ui.shareMenu );
+
+            var shareLinkRow = $("<div />")
+                .addClass( cssName("row"))
+                .appendTo( ui.shareMenu );
+
+            $("<div />")
+                .addClass( cssName("label"))
+                .text("Get Link")
+                .appendTo( shareLinkRow );
+
+            ui.shareLink = $("<input />")
+                .bind("click touchstart", function (e) {  $(e.currentTarget).select() })
+                .addClass( cssName("link"))
+                .appendTo( shareLinkRow );
+
+            var shareEmbedRow = $("<div />")
+                .addClass( cssName("row"))
+                .appendTo( ui.shareMenu );
+
+            $("<div />")
+                .addClass( cssName("label"))
+                .text("Get Embed")
+                .appendTo( shareEmbedRow );
+
+            ui.shareEmbed = $("<input />")
+                .bind("click touchstart", function (e) {  $(e.currentTarget).select() })
+                .addClass( cssName("embed"))
+                .appendTo( shareEmbedRow );
+
+        },
+
+        toggle : function (bool) {
+            if( bool == null )
+                bool = ! this.ui.shareMenu.is(":visible");
+
+            if( bool && this._hasData)
+                this.ui.shareMenu.stop().fadeIn();
+            else
+                this.ui.shareMenu.stop().fadeOut();
+        },
+
+
+        _onData : function () {
+            this._hasData = true;
+            var data = this.player.metadata.getData();
+            this.ui.shareLink.val( data.ramp.linkURL );
+            this.ui.shareEmbed.val( this.embedUrl( data.ramp.embedURL ) );
+        },
+
+        embedUrl : function (embedURL) {
+            var dict = {
+                embedHeight : this.config.embedHeight,
+                embedWidth : this.config.embedWidth,
+                embedURL : embedURL
+            };
+            return MetaPlayer.format.replace( this.config.embedTemplate, dict);
+        },
+
+        bind : function ( callback ) {
+            var self = this;
+            return function () {
+                callback.apply(self, arguments);
+            };
+        }
+    };
+
+    // css namespace
+    function cssName ( name ) {
+        return 'mpf-share' + (name ? '-' + name : '');
+    }
 
 })();
 ( function () {
@@ -7355,6 +14195,344 @@ all copies or substantial portions of the Software.
         }
     };
 })();
+(function () {
+
+    var $ = jQuery;
+    var Popcorn = window.Popcorn;
+
+    if( ! Popcorn )
+        return;
+
+    var defaults = {
+        top : 1,
+        left : 0,
+        right: 0,
+        durationSec : 4,
+        center : true
+    };
+
+    Popcorn.TimeQ = function (popcorn, options) {
+        var cached = popcorn._timeQ;
+        if( cached ) {
+            if( options ){
+                cached.config = $.extend( cached.config, options );
+                cached.position();
+            }
+            return cached;
+        }
+
+        if( ! (this instanceof Popcorn.TimeQ) )
+            return new Popcorn.TimeQ(popcorn, options);
+
+        this.config = $.extend({}, defaults, options);
+        this.el = $('<div></div>')
+            .addClass("mpf-timeq")
+            .css({
+                position: "absolute",
+                'z-index' : this.config.zIndex,
+                display : "none"
+            })
+            .appendTo( $('body') );
+
+        this.media = popcorn.media;
+        popcorn._timeQ = this;
+
+    };
+
+
+    Popcorn.TimeQ.prototype = {
+
+        init : function (options) {
+            options.end = options.start + this.config.durationSec;
+        },
+
+        focus : function (options) {
+            this.el.html(options.code);
+            this.position(options.start);
+            this.el.stop().slideDown();
+        },
+
+        blur : function (options) {
+            this.el.stop().slideUp();
+        },
+
+        destroy : function (options) {
+            this.el.remove();
+        },
+
+        position : function ( time ) {
+
+            if( time == null )
+                time = this.last;
+            else
+                this.last = time;
+
+            var percent = 0;
+            if( this.media.duration > 0 )
+                percent = time / this.media.duration;
+
+            var el = this.el;
+
+            var centered = this.config.center;
+            var m = $(this.media);
+            var mo = m.offset();
+            var mw = m.outerWidth() - (this.config.left + this.config.right);
+            var mh = m.height();
+
+            var min = mo.left + (centered ? 0 : this.config.left);
+            var max = min + mw;
+
+            var ew = el.outerWidth();
+
+            var pos = mo.left + this.config.left + (mw * percent);
+            if( centered ) {
+                pos -= (.5 * ew);
+                max += (this.config.left + this.config.right);
+            }
+
+            // if would overflow left
+            if( pos < min  ) {
+                pos = min;
+            }
+
+            // if would overflow right
+            if( pos + ew > max) {
+                pos = max - ew;
+            }
+
+            el.css({
+                top: mo.top + this.config.top + mh,
+                left:  pos
+            });
+        }
+    };
+
+    Popcorn.plugin( "timeQ" , {
+        _setup: function( options ) {
+            Popcorn.TimeQ(this).init(options);
+        },
+
+        start: function( event, options ){
+            Popcorn.TimeQ(this).focus(options)
+        },
+
+        end: function( event, options ){
+            Popcorn.TimeQ(this).blur(options)
+        },
+
+        _teardown: function( options ) {
+            Popcorn.TimeQ(this).destroy();
+        }
+    });
+
+    if( MetaPlayer ) {
+        MetaPlayer.addPlugin("timeQ", function (options){
+            Popcorn.TimeQ(this.popcorn, options);
+        });
+    }
+})();
+
+
+(function () {
+
+    var $ = jQuery;
+
+    var defaults = {
+        offsetY : 5
+    };
+
+    var TrackTip = function (target, player, options) {
+        if( !(this instanceof TrackTip) )
+            return new TrackTip(target, player, options);
+
+        this.player = player;
+        this.player.tracktip = this;
+        this.target = $(target);
+        this.config = $.extend(true, {}, defaults, options);
+        this.createMarkup();
+        this.renterTime(0);
+        this.renderPosition(0);
+
+        this.player.layout.listen("resize", this.onResize, this)
+    };
+
+    MetaPlayer.TrackTip = TrackTip;
+
+    MetaPlayer.addPlugin("tracktip", function(target, options) {
+        this.tracktip = TrackTip(target, this, options);
+    });
+
+    TrackTip.prototype = {
+
+        createMarkup : function (){
+            this.ui = {};
+
+            this.ui.track = $(this.target)
+                .bind("mousemove touchmove", this.bind( this.onTrackMove))
+                .bind("mouseleave touchend", this.bind( this.close));
+
+            this.ui.base = $("<div></div>")
+                .addClass("mp-tracktip")
+                .bind("touchend", this.bind( this.close))
+                .appendTo(this.target);
+
+            this.ui.box = $("<div></div>")
+                .addClass("mp-tracktip-box")
+                .appendTo(this.ui.base);
+
+            this.ui.thumb = $("<img>")
+                .addClass("mp-tracktip-thumb")
+                .appendTo(this.ui.box);
+
+            this.ui.caption = $("<div></div>")
+                .addClass("mp-tracktip-cc")
+                .appendTo(this.ui.box);
+
+            this.ui.box = $("<div></div>")
+                .addClass("mp-tracktip-clear")
+                .appendTo(this.ui.base);
+
+            this.ui.time = $("<div></div>")
+                .addClass("mp-tracktip-time")
+                .appendTo(this.ui.base);
+        },
+
+        open : function (t){
+            var d = this.player.video.duration;
+            if( ! d )
+                return;
+            var p = t/d;
+            this.renterTime(p);
+            this.renderPosition(p);
+        },
+
+        close : function () {
+            this.ui.base.stop().hide().css('opacity', 0);
+        },
+
+        onTrackMove : function  (e) {
+            var p = this._dragPercent(e, this.target);
+            this.renterTime(p);
+            this.renderPosition(p);
+        },
+
+        renderPosition : function (p) { //0..1
+            var tw = this.ui.track.width();
+            var ow = this.ui.base.outerWidth();
+            var oh = this.ui.base.outerHeight();
+            var max = tw - ow;
+            var x = (tw * p) - (ow * .5);
+            if( x < 0 )
+                x = 0;
+            if( x > max )
+                x = max;
+            this.ui.base.css('left', x);
+            this.ui.base.css('top', - (oh + this.config.offsetY));
+        },
+
+        renterTime : function (t) {
+            var d = this.player.video.duration;
+            if( ! d )
+                return;
+
+            var sec = t*d;
+            this.ui.time.text( MetaPlayer.format.seconds(sec));
+            this.renderCaption(sec);
+            this.renderThumb(sec);
+            this.ui.base.stop().show().animate({'opacity': 1}, 100);
+        },
+
+        renderCaption : function  (t) {
+            var captions = this.player.cues.getCaptions();
+            var last;
+            $.each(captions, function (i, val) {
+                if( val.start > t ) {
+                    return false;
+                }
+                last = val;
+            });
+            var text = '';
+            if( last && last.text ) {
+                text = "..." + last.text.replace(/\s*$/, '') + "...";
+            }
+            this.ui.caption.html( text );
+        },
+
+        renderThumb : function (t) {
+            var data = this.player.metadata.getData();
+            var base;
+            var extension = "jpg";
+            var rate = 10;
+            if( ! data )
+                return;
+
+            if( data.timedThumbnailRoot ){
+                base = data.timedThumbnailRoot;
+                extension = data.timedThumbnailExt;
+                rate = parseFloat( data.timedThumbnailRate );
+            }
+            else if( data.ramp && data.ramp.thumbnail ) {
+                base = data.ramp.thumbnail.match(/^.*\//)[0];
+            }
+
+            var file, time;
+            if( base ) {
+                time = Math.ceil(t / rate) * rate;
+                file = base + MetaPlayer.format.zpad( time, 6) + "." + extension;
+            }
+            else {
+                file = data.thumbnail;
+            }
+
+            if( file )
+                this.ui.thumb.attr('src', file);
+        },
+
+        /* util */
+        _dragPercent : function (event, el) {
+            var oe = event.originalEvent;
+            var pageX = event.pageX;
+
+            if( oe.targetTouches ) {
+                if( ! oe.targetTouches.length )
+                    return;
+                pageX = oe.targetTouches[0].pageX;
+            }
+
+            var bg = $(el);
+            var x =  pageX - bg.offset().left;
+
+            var p = x / bg.width();
+            if( p < 0 )
+                p = 0;
+            else if( p > 1 )
+                p = 1;
+            return p
+        },
+
+        onResize : function () {
+            var b = $(this.player.layout.base);
+
+            var width = Math.max( b.width() * .2, 250)
+            var font =  width / 20;
+
+            this.ui.thumb
+                .height( (font * 5) + "px");
+
+            this.ui.base
+                .css("font-size", font + "px")
+                .width(width);
+        },
+
+        bind : function ( fn ) {
+            var self = this;
+            return function () {
+                return fn.apply(self, arguments);
+            }
+        }
+    };
+
+})();
 
 
 (function () {
@@ -7377,6 +14555,36 @@ all copies or substantial portions of the Software.
             .indexOf(m[3].toUpperCase()) >= 0;
     };
 
+    /**
+     * Transcript is a PopcornJS plugin for rendering captions in paragraph-form, with each caption scrolled into
+     * view and highlighted as it is activated. Text can be clicked to seek to corresponding parts of the video.
+     * @name UI.Transcript
+     * @class The MetaPlayer moving transcript widget and plugin for PopcornJS
+     * @constructor
+     * @param {Element} id The DOM target to which the transcript will be added.
+     * @param {Object} [options]
+     * @param {Boolean} [options.breaks=false] If true, each caption will be on its own line.
+     * @param {Boolean} [options.timestamps=false] If true, ill prefix each caption with a timestamp
+     * @param {Number} [options.focusMs=750] The fade in animation duration when a caption becomes active
+     * @param {Number} [options.fadeMs=750] The fade out animation duration when a caption becomes inactive
+     * @param {Number} [options.opacity=1] The opacity for inactive captions
+     * @example
+     * # with default options:
+     * var mpf = MetaPlayer(video)
+     *     .ramp("http://api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440")
+     *     .transcript('#mytranscript', {
+     *         breaks: true,
+     *         timestamps: true,
+     *         focusMs: 1000,
+     *         fadeMs : 750,
+     *         opacity: 1
+     *      })
+     *     .load();
+     * @see <a href="http://jsfiddle.net/ramp/CcWEX/">Live Example</a>
+     * @see MetaPlayer#transcript
+     * @see Popcorn#transcript
+     * @requires  metaplayer-complete.js, popcorn.js
+     */
     var Transcript = function (target, player, options) {
 
         // two argument constructor (target, options)
@@ -7409,6 +14617,21 @@ all copies or substantial portions of the Software.
 
     MetaPlayer.Transcript = Transcript;
 
+    /**
+     * @name MetaPlayer#transcript
+     * @function
+     * @description
+     * Creates a {@link UI.Transcript} instance with the given target and options.
+     * @param {Element} id The DOM or jQuery element to which the transcript will be added.
+     * @param {Object} [options]
+     * @example
+     * var mpf = MetaPlayer(video)
+     *     .ramp("http://api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440")
+     *     .transcript("#mytranscript")
+     *     .load();
+     * @see UI.Transcript
+     * @requires  metaplayer-complete.js, popcorn.js
+     */
     MetaPlayer.addPlugin("transcript", function (target, options) {
         this.cues.enable("transcript", { target : target }, { clone : "captions"} );
         this.transcript = Transcript( target, this.video, options);
@@ -7550,7 +14773,30 @@ all copies or substantial portions of the Software.
 
     if( Popcorn ) {
         Popcorn.plugin( "transcript" , {
-
+            /**
+             * Adds a caption to be added to the tracscript, and scheduled to be focused at a given time.
+             * @name Popcorn#transcript
+             * @function
+             * @param {Object} config
+             * @param {Element} config.end The target container for the caption text.
+             * @param {String} config.text The caption text.
+             * @param {Number} config.start Start time text, in seconds.
+             * @param {Number} [config.end] End time text, in seconds, if any.
+             * @example
+             *  # without MetaPlayer Framework
+             *  var pop = Popcorn(video);
+             *
+             *  # optional configuration step
+             *  MetaPlayer.transcript('#mytranscript', { breaks: true })
+             *
+             *  pop.transcript({
+             *      start: 0,
+             *      end : 2,
+             *      text : "The first caption"
+             *      target : "#mytranscript"
+             *  });
+             *  @see UI.Transcript
+             */
             _setup: function( options ) {
                 var t = Transcript(options.target, this.media);
                 t.append( options );

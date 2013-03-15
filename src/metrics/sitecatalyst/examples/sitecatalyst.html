@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+
+	<title>SiteCatalyst | MetaPlayer</title>
+
+	<style>
+		#video {
+			width: 545px;
+			height: 300px;
+			background: gray;
+		}
+	</style>
+
+    <!--Dependency: jQuery-->
+	<script src="../../../../external/jquery/jquery-1.6.2.js" type="text/javascript"></script>
+
+	<!--Dependency: Popcorn -->
+	<script src="../../../../external/popcorn/popcorn.js" type="text/javascript"></script>
+
+	<!-- Core: Ramp -->
+	<script src="../../../core/metaplayer.js"></script>
+	<script src="../../../core/utils/util.event.js"></script>
+	<script src="../../../core/utils/util.proxy.js"></script>
+	<script src="../../../core/utils/util.scrollbar.js"></script>
+	<script src="../../../core/utils/util.script.js"></script>
+	<script src="../../../core/utils/util.timer.js"></script>
+	<script src="../../../core/utils/util.format.js"></script>
+	<script src="../../../core/utils/util.ui.js"></script>
+	<script src="../../../core/playlist/player.playlist.js"></script>
+	<script src="../../../core/layout/core.layout.js"></script>
+	<script src="../../../core/metadata/core.metadata.js"></script>
+	<script src="../../../core/search/core.search.js"></script>
+	<script src="../../../core/cues/core.cues.js"></script>
+	<link href="../../../core/layout/core.layout.css" rel="stylesheet" type="text/css">
+
+	<script src="../../../metrics/sitecatalyst/metrics.sitecatalyst.js"></script>
+
+	<script>
+		var s = {
+			Media : {
+				open : function (a, b, c) {
+                    console.log("s.Media.open('"+a+"', "+b+", '"+c+"')")
+				},
+				play : function (a,b) {
+                    console.log("s.Media.play('"+a+"', "+b+")");
+				},
+				stop : function (a,b) {
+                    console.log("s.Media.stop('"+a+"', "+b+")");
+				},
+				close : function (a) {
+                    console.log("s.Media.close('"+a+"')");
+				}
+			}
+		};
+	</script>
+
+	<script type="text/javascript">
+        MetaPlayer.DEBUG ="sitecatalyst";
+		$( function () {
+			sc = MetaPlayer.Metrics.SiteCatalyst("#video", s, "TestTitle", "TestPlayer");
+		});
+	</script>
+
+
+</head>
+<body>
+<h3>MetaPlayer &raquo; SiteCatalyst</h3>
+
+<video id="video" controls preload="none">
+	<source src="http://media.w3.org/2010/05/sintel/trailer.mp4" />
+	<source src="http://media.w3.org/2010/05/sintel/trailer.ogv" />
+	<source src="http://media.w3.org/2010/05/sintel/trailer.webm" />
+</video>
+
+
+</body>
+</html>

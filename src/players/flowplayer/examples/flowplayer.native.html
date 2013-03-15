@@ -26,7 +26,6 @@
     <script src="../../../core/metadata/core.metadata.js"></script>
     <script src="../../../core/search/core.search.js"></script>
     <script src="../../../core/cues/core.cues.js"></script>
-
     <link href="../../../core/layout/core.layout.css" rel="stylesheet" type="text/css">
 
     <!-- Service Plugin: RAMP -->
@@ -40,7 +39,7 @@
             position: relative;
             width: 600px;
             height: 300px;
-            background:  #333;
+            background:  blue;
         }
         #video {
             position: absolute;
@@ -66,14 +65,18 @@
     var sintel = "http://media.w3.org/2010/05/sintel/trailer.mp4";
     var popcorn = "http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.mp4";
 
-    var fp = $f( 'video', "../../../../external/flowplayer/flowplayer-3.2.7.swf", {
-        clip : {
+    var fp = $f( 'video',             {
+        src: "../../../../external/flowplayer/flowplayer-3.2.7.swf",
+        wmode: "transparent"
+    },{
+
+        playlist : {
             scaling : "fit",
             url : sintel,
             autoBuffering: false,
             autoPlay: false
         }
-    }).load();
+    });
 
     var video = MetaPlayer.flowplayer(fp);
 

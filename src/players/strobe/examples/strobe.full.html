@@ -1,0 +1,148 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset=utf-8>
+
+        <title>Strobe Media Playback | Metaplayer</title>
+
+        <!--Dependency: jQuery-->
+        <script src="../../../../external/jquery/jquery-1.7.1.js" type="text/javascript"></script>
+
+        <script src="../../../../external/jquery/jquery.iecors.js" type="text/javascript"></script>
+
+        <!--Dependency: JwPlayer -->
+        <script src="../../../../external/swfobject/swfobject.js"></script>
+
+        <!--Dependency: Popcorn -->
+        <script src="../../../../external/popcorn/popcorn.js"></script>
+        
+
+        <!-- Core: Ramp -->
+        <script src="../../../core/metaplayer.js"></script>
+        <script src="../../../core/utils/util.event.js"></script>
+        <script src="../../../core/utils/util.proxy.js"></script>
+        <script src="../../../core/utils/util.script.js"></script>
+        <script src="../../../core/utils/util.timer.js"></script>
+        <script src="../../../core/utils/util.format.js"></script>
+        <script src="../../../core/utils/util.ui.js"></script>
+        <script src="../../../core/utils/util.scrollbar.js"></script>
+        <script src="../../../core/playlist/player.playlist.js"></script>
+        <script src="../../../core/metadata/core.metadata.js"></script>
+        <script src="../../../core/search/core.search.js"></script>
+        <script src="../../../core/cues/core.cues.js"></script>
+        <script src="../../../services/ramp/service.ramp.js"></script>
+
+        <!-- Core: Layout -->
+        <script src="../../../core/layout/core.layout.js"></script>
+        <link href="../../../core/layout/core.layout.css" rel="stylesheet" type="text/css">
+
+        <!-- Media : html5 -->
+        <script src="../../../players/html5/player.html5.js"></script>
+
+        <!-- Media : OVP -->
+        <script src="../../../players/strobe/player.strobe.js"></script>
+
+        <!-- UI: Controls -->
+        <script src="../../../ui/controlbar/ui.controlbar.js"></script>
+        <link href="../../../ui/controlbar/theme/ui.controlbar.css" rel="stylesheet"  type="text/css">
+
+        <!-- UI: Captions -->
+        <script src="../../../ui/captions/ui.captions.js"></script>
+        <link href="../../../ui/captions/ui.captions.css" rel="stylesheet"  type="text/css">
+        <link href="../../../themes/mp2/theme.captions.css" rel="stylesheet"  type="text/css">
+
+        <!-- UI: Overlay -->
+        <script src="../../../ui/overlay/ui.overlay.js"></script>
+        <link href="../../../ui/overlay/ui.overlay.css" rel="stylesheet"  type="text/css">
+        <link href="../../../themes/mp2/theme.overlay.css" rel="stylesheet"  type="text/css">
+
+        <!-- UI: Endcap -->
+        <script src="../../../ui/endcap/ui.endcap.js"></script>
+        <link href="../../../ui/endcap/ui.endcap.css" rel="stylesheet"  type="text/css">
+        <link href="../../../themes/mp2/theme.endcap.css" rel="stylesheet"  type="text/css">
+
+        <!-- UI: Framefeed -->
+        <script src="../../../ui/framefeed/ui.framefeed.js"></script>
+        <link href="../../../ui/framefeed/ui.framefeed.css" rel="stylesheet"  type="text/css">
+
+        <!-- UI: Headlines -->
+        <script src="../../../ui/headlines/ui.headlines.js"></script>
+        <link href="../../../ui/headlines/ui.headlines.css" rel="stylesheet"  type="text/css">
+
+        <!-- UI: Searchbox -->
+        <script src="../../../ui/searchbar/ui.searchbar.js"></script>
+        <link href="../../../ui/searchbar/theme/ui.searchbar.css" rel="stylesheet"  type="text/css">
+
+        <!-- UI: Transcript -->
+        <script src="../../../ui/transcript/ui.transcript.js"></script>
+        <link href="../../../ui/transcript/ui.transcript.css" rel="stylesheet"  type="text/css">
+
+        <style>
+    		#strobeMediaPlayback  {
+                width: 600px;
+                height: 400px;
+            }
+            #transcript {
+                font-family: Arial;
+                width: 598px;
+                height: 200px;
+                border: 1px solid #d0d0d0;
+                color: #d0d0d0;
+                font-size: 11px;
+                margin-top: 20px;
+            }
+
+            #searchbar {
+                width: 600px;
+            }
+
+        </style>
+
+    </head>
+
+    <body>
+
+            <div id="strobeMediaPlayback"></div>
+
+        <div id="searchbar"></div>
+        <div id="transcript"></div>
+
+        <script type="text/javascript">
+            var video, player, init = false;
+
+            var parameters = {
+                src: "http://mediapm.edgesuite.net/osmf/content/test/manifest-files/dynamic_Streaming.f4m",
+                autoPlay: false,
+                controlBarMode: "none",
+                javascriptCallbackFunction: "window.onJavaScriptBridgeCreated"
+            };
+
+            // Embed the player SWF:
+            swfobject.embedSWF
+                ( "../../../../external/strobe/StrobeMediaPlayback.swf"
+                , "strobeMediaPlayback"
+                , 640
+                , 480
+                , "10.1.0"
+                , "../../../../external/strobe/expressInstall.swf"
+                , parameters
+                , { allowFullScreen: "true", wmode: "opaque" }
+                , { name: "strobeMediaPlayback" }
+            );
+
+            window.onJavaScriptBridgeCreated = function( id ) {
+                if ( !init ) {
+                    init = true;
+                    video = MetaPlayer.strobemediaplayback( id, "onJavaScriptBridgeCreated" );
+                    player = MetaPlayer( video )
+                            .controlbar()
+                            .searchbar("#searchbar")
+                            .ramp( "http://api.ramp.com/v1/mp2/playlist/?e=52871241&apikey=f455a86b28160bc0682fec3662e39d3b" )
+                            .transcript("#transcript")
+                            .load();
+                }
+            }
+        </script>
+
+    </body>
+</html>

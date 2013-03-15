@@ -53,16 +53,11 @@
     <div id='target'></div>
 
     <script type="text/javascript">
-        var player = MetaPlayer('#target',
-                {
-                    linkAdvance : true
-                })
+        var player = MetaPlayer('#target')
                 .controls({
-                    renderTags: false,
-                    renderMetaq : true
+                    renderTags: false
                 })
-                .ramp("ramp:/thechewpoc:51416033")
-
+                .ramp("f455a86b28160bc0682fec3662e39d3b", "52871241")
                 .load();
 
         player.video.autoplay = true;

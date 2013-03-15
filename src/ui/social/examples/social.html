@@ -31,10 +31,13 @@
     <script src="../../../core/utils/util.ui.js"></script>
     <script src="../../../core/playlist/player.playlist.js"></script>
     <script src="../../../core/layout/core.layout.js"></script>
+    <script src="../../../core/metadata/core.metadata.js"></script>
+    <script src="../../../core/search/core.search.js"></script>
+    <script src="../../../core/cues/core.cues.js"></script>
     <link href="../../../core/layout/core.layout.css" rel="stylesheet" type="text/css">
 
     <!-- Service Plugin: RAMP -->
-    <script src="../../../services/smil/service.smil.js"></script>
+    <script src="../../../services/ramp/service.ramp.js"></script>
 
     <!-- UI: Social -->
     <script src="../../../ui/social/ui.social.js"></script>
@@ -44,17 +47,19 @@
 <body>
 <h3>Metaplayer &raquo; Social Plugin</h3>
 
-<button data-src="ramp:/pca:36234882">Clip 1</button>
-<button data-src="ramp:/advisor:48920875">Clip 2</button>
+<button data-src="ramp:52975368">Clip 1</button>
+<button data-src="ramp:52871241">Clip 2</button>
 
 <div id="social"></div>
 
 <script type="text/javascript">
-    var service = MetaPlayer.ramp();
-    var social = MetaPlayer.social('#social', service);
+    var mpf = MetaPlayer()
+            .ramp("f455a86b28160bc0682fec3662e39d3b")
+            .social('#social')
+            .load();
 
     $('button').click( function () {
-        service.load( $(this).data('src') );
+        mpf.metadata.load( $(this).data('src') );
     });
 </script>
 

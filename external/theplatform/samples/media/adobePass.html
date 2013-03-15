@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" xmlns:tp="http://player.theplatform.com/" tp:hostpageGenerator="true">
+<head>
+	<meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-language" content="en" />
+    <title>Adobe Pass Sample</title>
+    <link href="http://feed.theplatform.com/f/dn0R6B/oO0zH4OZCAXy?form=rss" type="application/rss+xml" rel="alternate" />
+    <link media="screen" type="text/css" href="../../pdk/skins/glass/main.css" rel="stylesheet" />
+    <link media="screen" type="text/css" href="../css/everything.css" rel="stylesheet" />
+
+    <script type="text/javascript">
+        function traceToken(r, t) {
+            if (self.console) {
+                console.log("Adobe Pass Token: \n" + t);
+            }
+        }
+    </script>
+
+    <script src="../../pdk/tpPdk.js" type="text/javascript"> </script>
+</head>
+<body>
+    <div id="header">
+        <a href="http://www.theplatform.com/">
+            <img alt="tp" src="../../images/thePlatformLarge.png" class="tp-logo" />
+        </a>
+        <a href="http://www.theplatform.com/products/product_detail/type/player_dev_kit/">
+            <img alt="pdk" src="../../images/pdk.png" class="pdk-logo" />
+        </a>
+        <h1>thePlatform</h1>
+        <h2>Player Development Kit</h2>
+        <h3>Adobe Pass Sample</h3>
+    </div>
+    <div class="container">
+			<div>
+                <div xmlns="" class="tpClipInfo" id="info"
+					tp:showMetadata="true"
+					tp:showTitle="true"
+					tp:showDescription="true"
+					tp:showCopyright="true"
+					tp:backgroundColor="0x000000"
+					tp:titleColor="0xFFFFFF"
+					tp:descriptionColor="0xFFFFFF"></div>
+                <div class="tpPlayer" id="player"
+                    tp:RSSURL="http://feed.theplatform.com/f/3JHsmB/TpW4aioBvs6N?form=rss"
+                    tp:plugin0="type=adcomponent|URL=../../pdk/swf/SMIL.swf|priority=3"
+                    tp:plugin1="type=auth|URL=../../pdk/swf/adobePass.swf|priority=1|accessEnablerURL=http://entitlement.auth-staging.adobe.com/entitlement/AccessEnabler.swf|requestorId=thePlatform|selectedProviderCallback=onSetProvider|displayProviderDialogCallback=displayMVPDPicker|createIFrameCallback=createMVPDIFrame|sendTrackingDataCallback=onTrackingData|setTokenCallback=traceToken|tokenRequestFailedCallback=tokenFailed|setAuthenticationStatusCallback=onAuthenticationStatus"
+                    tp:plugin2="type=auth|URL=../../pdk/js/plugins/adobePass.js|priority=2|accessEnablerURL=https://entitlement.auth-staging.adobe.com/entitlement/AccessEnabler.js|requestorId=thePlatform|selectedProviderCallback=onSetProvider|displayProviderDialogCallback=displayMVPDPicker|createIFrameCallback=createMVPDIFrame|sendTrackingDataCallback=onTrackingData|setTokenCallback=traceToken|tokenRequestFailedCallback=tokenFailed|setAuthenticationStatusCallback=onAuthenticationStatus"
+                    tp:plugin3="type=picker|URL=../../pdk/swf/mvpdPicker.swf|priority=1"
+                    tp:plugin4="type=picker|URL=../../pdk/js/plugins/mvpdPicker.js|priority=2"
+                    tp:embeddedPlayerHTML="<embed src=&quot;http://player.theplatform.com/m/3JHsmB/demo/embed/select/{releasePid}&quot; width=&quot;311&quot; height=&quot;252&quot; type=&quot;application/x-shockwave-flash&quot; allowFullScreen=&quot;true&quot; bgcolor=&quot;#131313&quot; />"
+                    tp:fp.bgcolor="0x131313"
+                    tp:wmode="opaque"
+                    tp:logLevel="warn"
+                    tp:allowFullScreen="true"
+                    tp:emailServiceURL="http://player.theplatform.com/m/3JHsmB/demo/select/{releasePid}"
+                    tp:playerURL="http://player.theplatform.com/m/3JHsmB/demo/select/{releasePid}"
+                    tp:backgroundColor="0x131313"
+                    tp:controlBackgroundColor="0x131313"
+                    tp:controlColor="0xBEBEBE"
+                    tp:controlFrameColor="0x545759"
+                    tp:controlHoverColor="0xBEBEBE"
+                    tp:controlSelectedColor="0x00CCFF"
+                    tp:frameColor="0x545759"
+                    tp:pageBackgroundColor="0x131313"
+                    tp:playProgressColor="0x00CCFF"
+                    tp:scrubberColor="0xBEBEBE"
+                    tp:scrubberFrameColor="0x00CCFF"
+                    tp:scrubTrackColor="0xBEBEBE"
+                    tp:textBackgroundColor="0x383838"
+                    tp:textColor="0xBEBEBE"
+                    tp:loadProgressColor="0x5D9070"
+                    tp:layoutUrl="../../data/metaLayout_glass.xml"></div>
+
+                <div xmlns="http://www.w3.org/1999/xhtml" id="search-video">
+                    <div class="tpSearch" id="search" tp:backgroundColor="0x131313" tp:controlBackgroundColor="0x242424" tp:controlColor="0xBEBEBE" tp:controlFrameColor="0x545759" tp:controlFrameHoverColor="0xBEBEBE" tp:controlFrameSelectedColor="0x00CCFF" tp:controlHoverColor="0xBEBEBE" tp:controlSelectedColor="0x00CCFF" tp:editBackgroundColor="0x131313" tp:editColor="0xBEBEBE" tp:frameColor="0x545759" tp:labelColor="0xBEBEBE" tp:searchLabel=""></div>
+                    <div class="tpCategoryList" id="categorylist" tp:expandedHeight="265" tp:expandedWidth="795" tp:backgroundColor="0x383838" tp:expanderColor="0xBEBEBE" tp:expanderHoverColor="0xBEBEBE" tp:expanderSelectedColor="0x00CCFF" tp:frameColor="0x545759" tp:itemBackgroundColor="0x383838" tp:itemFrameColor="0x131313" tp:itemShineSelectedColor="0x00CCFF" tp:mostPopularChoiceIndex="2" tp:mostPopularChoiceLabel="Most Popular" tp:textColor="0xBEBEBE" tp:textFrameColor="0x242424" tp:textFrameHoverColor="0xBEBEBE" tp:textFrameSelectedColor="0x00CCFF" tp:textHoverColor="0xBEBEBE" tp:textSelectedColor="0x00CCFF"></div>
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="clear: both"> </div>
+                </div>
+                <div id="browse-video">
+                    <div xmlns="" class="tpNavigation" id="navigation" tp:backgroundColor="0x131313" tp:frameColor="0x545759" tp:controlBackgroundColor="0xFF0000" tp:controlColor="0xF2F2F2" tp:controlFrameColor="0xFF0000" tp:controlFrameHoverColor="0xFF0000" tp:controlFrameSelectedColor="0xFF0000" tp:controlHoverColor="0xFFFFFF" tp:controlSelectedColor="0x00CCFF" tp:infoColor="0xFFFFFF"></div>
+                    <div class="tpReleaseList" id="releaselist" tp:thumbnailWidth="16" tp:thumbnailHeight="9" tp:showTitle="true" tp:showThumbnail="true" tp:showDescription="true" tp:showFormat="false" tp:showLength="false" tp:columns="2" tp:itemsPerPage="4" tp:backgroundColor="0x131313" tp:frameColor="0xFF0000" tp:itemBackgroundColor="0x383838" tp:itemFrameColor="0xFF0000" tp:itemShineSelectedColor="0xFF0000" tp:textBackgroundColor="0x383838" tp:textColor="0xDFDFDF" tp:textFrameColor="0x383838" tp:textHighlightHoverColor="0x00CCFF" tp:textHighlightSelectedColor="0xFFFFFF" tp:textHoverColor="0xDFDFDF" tp:textSelectedColor="0xDFDFDF" tp:thumbnailBackgroundColor="0x242424" tp:thumbnailFrameColor="0x383838" tp:thumbnailHighlightHoverColor="0x00CCFF" tp:thumbnailHighlightSelectedColor="0xFFFFFF"></div>
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="clear: both"></div>
+                </div>
+            </div>
+            <div style="clear: both"> </div>
+        </div>
+    </div>
+</body>
+</html>
+

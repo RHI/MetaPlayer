@@ -1,0 +1,483 @@
+<rss xmlns:mpf="http://developer.ramp.com/mrss" xmlns:media="http://search.yahoo.com/mrss/" version="2.0">
+    <channel>
+        <item>
+            <title>Elephant's Dream</title>
+            <description><![CDATA[Elephants Dream is the story of two strange characters exploring a capricious and seemingly infinite machine. The elder, Proog, acts as a tour-guide and protector, happily showing off the sights and dangers of the machine to his initially curious but increasingly skeptical protege Emo. As their journey unfolds we discover signs that the machine is not all Proog thinks it is, and his guiding takes on a more desperate aspect. Elephants Dream is a story about communication and fiction, made purposefully open-ended as the world’s first 3D animated “Open movie”. The film itself is released under the Creative Commons license, along with the production files used to make it (roughly 7 Gigabytes of data). The software used to make the movie is the free/open source animation suite Blender, along with other open source software, thus allowing the movie to be remade, remixed and re-purposed. 2006, Amsterdam, the Netherlands.]]></description>
+            <pubDate>Wed, 7 Mar 2012</pubDate>
+            <guid>elephant-dream</guid>
+            <source url="http://sxsw.ramp.com/hosting/feed/1626298/rss.xml">Transcoded Uploads</source>
+            <media:group>
+                <media:thumbnail url="http://publishing.ramp.com/thumbnails/cached_media/0006/0006875/0006875054/images/thumb.jpg"/>
+                <media:thumbnail url=""/>
+                <media:description>Elephants Dream is the story of two strange characters exploring a capricious and seemingly infinite machine. The elder, Proog, acts as a tour-guide and protector, happily showing off the sights and dangers of the machine to his initially curious but increasingly skeptical protege Emo. As their journey unfolds we discover signs that the machine is not all Proog thinks it is, and his guiding takes on a more desperate aspect. Elephants Dream is a story about communication and fiction, made purposefully open-ended as the world’s first 3D animated “Open movie”. The film itself is released under the Creative Commons license, along with the production files used to make it (roughly 7 Gigabytes of data). The software used to make the movie is the free/open source animation suite Blender, along with other open source software, thus allowing the movie to be remade, remixed and re-purposed. 2006, Amsterdam, the Netherlands.</media:description>
+                <media:title>Elephant's Dream</media:title>
+                <media:content url="1531130529001" type="video/brightcove" duration="653.696"/>
+                <media:content url="http://sxsw.ramp.com/hosting/media/sxsw/1626298/ed_1024_512kb.mp4" type="video/mp4" duration="653.696"/>
+                <media:subTitle type="application/x-subrip" lang="en-us" href="../data/elephants.en.srt"/>
+            </media:group>
+            <mpf:cus>
+                <mpf:cue type="tags" start="00:08:00.386">guess</mpf:cue>
+                <mpf:cue type="tags" start="00:08:00.040">Colossus of Rhodes</mpf:cue>
+                <mpf:cue type="tags" start="00:08:00.050">hanging gardens of Babylon</mpf:cue>
+                <mpf:cue type="tags" start="00:08:00.070">Babylon</mpf:cue>
+            </mpf:cus>
+            <mpf:attributes>
+                <mpf:attribute name="ramp.rampId" >52871241</mpf:attribute>
+                <mpf:attribute name="ramp.thumbnail" >http://publishing.ramp.com/thumbnails/cached_media/0006/0006875/0006875054/images/thumb.jpg</mpf:attribute>
+                <mpf:attribute name="ramp.searchapi" >http://publishing.ramp.com/sxsw/theme/7473/mp2-search?e=52871241</mpf:attribute>
+                <mpf:attribute name="ramp.searchterm" >''</mpf:attribute>
+                <mpf:attribute name="ramp.linkURL" >52871241/elephant-dream</mpf:attribute>
+                <mpf:attribute name="ramp.embedURL" >http://publishing.ramp.com/widgets/sxsw/4240/?episode=52871241</mpf:attribute>
+                <mpf:attribute name="ramp.siteSearchURL" >http://publishing.ramp.com/sxsw/search?mediatype=Video&amp;q=</mpf:attribute>
+                <mpf:attribute name="mpf.timedThumbnailRoot">http://publishing.ramp.com/thumbnails/cached_media/0006/0006875/0006875054/images/</mpf:attribute>
+                <mpf:attribute name="mpf.timedThumbnailRate">10</mpf:attribute>
+                <mpf:attribute name="mpf.timedThumbnailExt">jpg</mpf:attribute>
+                <mpf:attribute name="mpf.timedThumbnailMax">650</mpf:attribute>
+            </mpf:attributes>
+        </item>
+        <item>
+            <title>Sintel Trailer</title>
+            <description><![CDATA[“Sintel” is an independently produced short film, initiated by the Blender Foundation as a means to further improve and validate the free/open source 3D creation suite Blender. With initial funding provided by 1000s of donations via the internet community, it has again proven to be a viable development model for both open 3D technology as for independent animation film. This 15 minute film has been realized in the studio of the Amsterdam Blender Institute, by an international team of artists and developers. In addition to that, several crucial technical and creative targets have been realized online, by developers and artists and teams all over the world. “Sintel” commenced in May 2009, with producer Ton Roosendaal establishing a core team consisting of Colin Levy (director), David Revoy (concept art), Martin Lodewijk (story) and Jan Morgenstern (composer). In August script writer Esther Wouda was approached as a consultant, which resulted in her taking the responsibility for the entire screenplay. Esther then worked in close cooperation with Colin, David and Ton to deliver the final script early November. Meanwhile, Colin and David realized the first storyboards. Based on a public call for artists – with over 150 respondents – the Durian artist team got established in July 2009. They first met in a pre-production week in Amsterdam in August, and all decided to join the project per October 1st. With the final movie budget still unknown, the target then still was to finish the film within 7 months, with a team of 6 artists and 2 developers. At that time the team still had the hopes to be able to realize the script in a 6-8 minute film.]]></description>
+            <pubDate>Fri, 9 Mar 2012</pubDate>
+            <guid>sintel-trailer</guid>
+            <source url="http://sxsw.ramp.com/hosting/feed/1626298/rss.xml">Transcoded Uploads</source>
+            <media:group>
+                <media:thumbnail url="http://publishing.ramp.com/thumbnails/cached_media/0006/0006896/0006896450/images/thumb.jpg"/>
+                <media:thumbnail url=""/>
+                <media:description>“Sintel” is an independently produced short film, initiated by the Blender Foundation as a means to further improve and validate the free/open source 3D creation suite Blender. With initial funding provided by 1000s of donations via the internet community, it has again proven to be a viable development model for both open 3D technology as for independent animation film. This 15 minute film has been realized in the studio of the Amsterdam Blender Institute, by an international team of artists and developers. In addition to that, several crucial technical and creative targets have been realized online, by developers and artists and teams all over the world. “Sintel” commenced in May 2009, with producer Ton Roosendaal establishing a core team consisting of Colin Levy (director), David Revoy (concept art), Martin Lodewijk (story) and Jan Morgenstern (composer). In August script writer Esther Wouda was approached as a consultant, which resulted in her taking the responsibility for the entire screenplay. Esther then worked in close cooperation with Colin, David and Ton to deliver the final script early November. Meanwhile, Colin and David realized the first storyboards. Based on a public call for artists – with over 150 respondents – the Durian artist team got established in July 2009. They first met in a pre-production week in Amsterdam in August, and all decided to join the project per October 1st. With the final movie budget still unknown, the target then still was to finish the film within 7 months, with a team of 6 artists and 2 developers. At that time the team still had the hopes to be able to realize the script in a 6-8 minute film.</media:description>
+                <media:title>Sintel Trailer</media:title>
+                <media:content url="" medium="video" type="" codec="ffodivx"/>
+                <media:content url="" medium="video" type="" codec="ffodivx"/>
+                <media:content url="http://ftp.nluug.nl/ftp/graphics/blender/apricot/trailer/sintel_trailer-480p.mp4" type="video/mp4" duration="51.925"/>
+                <media:subTitle type="application/x-subrip" lang="en-us" href="http://api.ramp.com/v1/subtitles?format=subrip&amp;id=52975368&amp;apikey=0bb282f7f637045f1b7731f713c08ab5"/>
+            </media:group>
+            <mpf:attributes>
+                <mpf:attribute name="ramp-id">52975368</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-root">http://publishing.ramp.com/thumbnails/cached_media/0006/0006896/0006896450/images/</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-rate">10</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-ext">jpg</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-max">50</mpf:attribute>
+            </mpf:attributes>
+        </item>
+        <item>
+            <title>PS3 Hack Becomes Open Source Tracking Device Project</title>
+            <description><![CDATA[PS3 Hack Becomes Open Source Tracking Device Project What started as a tracking device for a PS3 has now become a full-fledged Kickstarter project. This open source tracking device let's you text your tech to get its coordinates. From: mashable Views: 358 19 ratings Time: 01:19 More in News & ...]]></description>
+            <pubDate>Tue, 3 Apr 2012</pubDate>
+            <guid>lXW2LxoRUZg</guid>
+            <source url="http://www.youtube.com/rss/user/mashable/videos.rss">Mashable</source>
+            <media:group>
+                <media:thumbnail url="http://publishing.ramp.com/thumbnails/cached_media/0006/0006968/0006968594/images/thumb.jpg"/>
+                <media:thumbnail url=""/>
+                <media:description>PS3 Hack Becomes Open Source Tracking Device Project What started as a tracking device for a PS3 has now become a full-fledged Kickstarter project. This open source tracking device let's you text your tech to get its coordinates. From: mashable Views: 358 19 ratings Time: 01:19 More in News &amp; ...</media:description>
+                <media:title>PS3 Hack Becomes Open Source Tracking Device Project</media:title>
+                <media:content url="http://www.youtube.com/watch?v=lXW2LxoRUZg&amp;feature=youtube_gdata" type="video/flv" duration="78.112"/>
+                <media:subTitle type="application/x-subrip" lang="en-us" href="http://api.ramp.com/v1/subtitles?format=subrip&amp;id=54002728&amp;apikey=0bb282f7f637045f1b7731f713c08ab5"/>
+            </media:group>
+            <mpf:attributes>
+                <mpf:attribute name="ramp-id">54002728</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-root">http://publishing.ramp.com/thumbnails/cached_media/0006/0006968/0006968594/images/</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-rate">10</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-ext">jpg</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-max">70</mpf:attribute>
+            </mpf:attributes>
+        </item>
+        <item>
+            <title>Spree Commerce brings flexible e-commerce platform to small businesses</title>
+            <description><![CDATA[Spree Commerce brings flexible e-commerce platform to small businesses Are you a small business? Do you want to sell things on your website? Spree Commerce has an easy-to-use platform for doing just that. Here the founder explains it to me or you can learn more at spreecommerce.com From: Scobleizer ...]]></description>
+            <pubDate>Tue, 6 Mar 2012</pubDate>
+            <guid>mFhNf8NHrCw</guid>
+            <source url="http://www.youtube.com/rss/user/Scobleizer/videos.rss">Scobleizer</source>
+            <media:group>
+                <media:thumbnail url="http://publishing.ramp.com/thumbnails/cached_media/0006/0006929/0006929769/images/thumb.jpg"/>
+                <media:thumbnail url=""/>
+                <media:description>Spree Commerce brings flexible e-commerce platform to small businesses Are you a small business? Do you want to sell things on your website? Spree Commerce has an easy-to-use platform for doing just that. Here the founder explains it to me or you can learn more at spreecommerce.com From: Scobleizer ...</media:description>
+                <media:title>Spree Commerce brings flexible e-commerce platform to small businesses</media:title>
+                <media:content url="http://www.youtube.com/watch?v=mFhNf8NHrCw&amp;feature=youtube_gdata" type="video/flv" duration="1856.134"/>
+                <media:subTitle type="application/x-subrip" lang="en-us" href="http://api.ramp.com/v1/subtitles?format=subrip&amp;id=53456177&amp;apikey=0bb282f7f637045f1b7731f713c08ab5"/>
+            </media:group>
+            <mpf:attributes>
+                <mpf:attribute name="ramp-id">53456177</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-root">http://publishing.ramp.com/thumbnails/cached_media/0006/0006929/0006929769/images/</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-rate">10</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-ext">jpg</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-max">1850</mpf:attribute>
+            </mpf:attributes>
+        </item>
+        <item>
+            <title>Sintel</title>
+            <description><![CDATA[“Sintel” is an independently produced short film, initiated by the Blender Foundation as a means to further improve and validate the free/open source 3D creation suite Blender. With initial funding provided by 1000s of donations via the internet community, it has again proven to be a viable development model for both open 3D technology as for independent animation film. This 15 minute film has been realized in the studio of the Amsterdam Blender Institute, by an international team of artists and developers. In addition to that, several crucial technical and creative targets have been realized online, by developers and artists and teams all over the world]]></description>
+            <pubDate>Thu, 8 Mar 2012</pubDate>
+            <guid>sintel</guid>
+            <source url="http://sxsw.ramp.com/hosting/feed/1626298/rss.xml">Transcoded Uploads</source>
+            <media:group>
+                <media:thumbnail url="http://publishing.ramp.com/thumbnails/cached_media/0006/0006875/0006875155/images/thumb.jpg"/>
+                <media:thumbnail url=""/>
+                <media:description>“Sintel” is an independently produced short film, initiated by the Blender Foundation as a means to further improve and validate the free/open source 3D creation suite Blender. With initial funding provided by 1000s of donations via the internet community, it has again proven to be a viable development model for both open 3D technology as for independent animation film. This 15 minute film has been realized in the studio of the Amsterdam Blender Institute, by an international team of artists and developers. In addition to that, several crucial technical and creative targets have been realized online, by developers and artists and teams all over the world</media:description>
+                <media:title>Sintel</media:title>
+                <media:content url="" medium="video" type="" codec="ffodivx"/>
+                <media:content url="" medium="video" type="" codec="ffodivx"/>
+                <media:content url="http://sxsw.ramp.com/hosting/media/sxsw/1626298/sintel-1024-surround.mp4" type="video/mp4" duration="888.043"/>
+                <media:subTitle type="application/x-subrip" lang="en-us" href="http://api.ramp.com/v1/subtitles?format=subrip&amp;id=52871540&amp;apikey=0bb282f7f637045f1b7731f713c08ab5"/>
+            </media:group>
+            <mpf:attributes>
+                <mpf:attribute name="ramp-id">52871540</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-root">http://publishing.ramp.com/thumbnails/cached_media/0006/0006875/0006875155/images/</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-rate">10</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-ext">jpg</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-max">880</mpf:attribute>
+            </mpf:attributes>
+        </item>
+        <item>
+            <title>Tube Crew Wants to Share Their Open Film and Animations with You</title>
+            <description><![CDATA[Tube Crew Wants to Share Their Open Film and Animations with You Tube is an open source film, meaning its artists are making it using open software and will make the animated characters available after production too. They've has been working on the film for three years, but they need Kickstarter support finish. Mashable owned content. From: mashable Views: 127 3 ratings Time: 01:14 More in Film & Animation]]></description>
+            <pubDate>Thu, 19 Apr 2012</pubDate>
+            <guid>ZggXjYjyuCo</guid>
+            <source url="http://www.youtube.com/rss/user/mashable/videos.rss">Mashable</source>
+            <media:group>
+                <media:thumbnail url="http://publishing.ramp.com/thumbnails/cached_media/0007/0007031/0007031393/images/thumb.jpg"/>
+                <media:thumbnail url=""/>
+                <media:description>Tube Crew Wants to Share Their Open Film and Animations with You Tube is an open source film, meaning its artists are making it using open software and will make the animated characters available after production too. They've has been working on the film for three years, but they need Kickstarter support finish. Mashable owned content. From: mashable Views: 127 3 ratings Time: 01:14 More in Film &amp; Animation</media:description>
+                <media:title>Tube Crew Wants to Share Their Open Film and Animations with You</media:title>
+                <media:content url="http://www.youtube.com/watch?v=ZggXjYjyuCo&amp;feature=youtube_gdata" type="video/flv" duration="73.282"/>
+                <media:subTitle type="application/x-subrip" lang="en-us" href="http://api.ramp.com/v1/subtitles?format=subrip&amp;id=55524435&amp;apikey=0bb282f7f637045f1b7731f713c08ab5"/>
+            </media:group>
+            <mpf:attributes>
+                <mpf:attribute name="ramp-id">55524435</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-root">http://publishing.ramp.com/thumbnails/cached_media/0007/0007031/0007031393/images/</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-rate">10</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-ext">jpg</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-max">70</mpf:attribute>
+            </mpf:attributes>
+        </item>
+        <item>
+            <title>Arduino-Based Satellite Paves Way for Open-Source Space Exploration</title>
+            <description><![CDATA[Arduino-Based Satellite Paves Way for Open-Source Space Exploration Creators of the ArduSat satellite are asking Kickstarter to help them get a Arduino-based space probe off the ground. The project gives researchers the chance to run their own space experiments using open source technology. From: ...]]></description>
+            <pubDate>Fri, 20 Jul 2012</pubDate>
+            <guid>MVrl1MbjdmY</guid>
+            <source url="http://www.youtube.com/rss/user/mashable/videos.rss">Mashable</source>
+            <media:group>
+                <media:thumbnail url="http://publishing.ramp.com/thumbnails/cached_media/0007/0007369/0007369273/images/thumb.jpg"/>
+                <media:thumbnail url=""/>
+                <media:description>Arduino-Based Satellite Paves Way for Open-Source Space Exploration Creators of the ArduSat satellite are asking Kickstarter to help them get a Arduino-based space probe off the ground. The project gives researchers the chance to run their own space experiments using open source technology. From: ...</media:description>
+                <media:title>Arduino-Based Satellite Paves Way for Open-Source Space Exploration</media:title>
+                <media:content url="http://www.youtube.com/watch?v=MVrl1MbjdmY&amp;feature=youtube_gdata" type="video/flv" duration="93.902"/>
+                <media:subTitle type="application/x-subrip" lang="en-us" href="http://api.ramp.com/v1/subtitles?format=subrip&amp;id=59634863&amp;apikey=0bb282f7f637045f1b7731f713c08ab5"/>
+            </media:group>
+            <mpf:attributes>
+                <mpf:attribute name="ramp-id">59634863</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-root">http://publishing.ramp.com/thumbnails/cached_media/0007/0007369/0007369273/images/</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-rate">10</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-ext">jpg</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-max">90</mpf:attribute>
+            </mpf:attributes>
+        </item>
+        <item>
+            <title>BugLabs new Open Source hardware, part II</title>
+            <description><![CDATA[BugLabs new Open Source hardware, part II Part II of BugLabs.net's new gadget that lets you reconfigure it by plugging in new modules. Coolest gadget for people who want to play around that I've seen. Robert Scoble video blogger: Robert Scoble From: Scobleizer Views: 46 0 ratings Time: 05:39 More ...]]></description>
+            <pubDate>Thu, 3 May 2012</pubDate>
+            <guid>NM4QyF5TyjE</guid>
+            <source url="http://www.youtube.com/rss/user/Scobleizer/videos.rss">Scobleizer</source>
+            <media:group>
+                <media:thumbnail url="http://publishing.ramp.com/thumbnails/cached_media/0007/0007064/0007064917/images/thumb.jpg"/>
+                <media:thumbnail url=""/>
+                <media:description>BugLabs new Open Source hardware, part II Part II of BugLabs.net's new gadget that lets you reconfigure it by plugging in new modules. Coolest gadget for people who want to play around that I've seen. Robert Scoble video blogger: Robert Scoble From: Scobleizer Views: 46 0 ratings Time: 05:39 More ...</media:description>
+                <media:title>BugLabs new Open Source hardware, part II</media:title>
+                <media:content url="http://www.youtube.com/watch?v=NM4QyF5TyjE&amp;feature=youtube_gdata" type="video/flv" duration="338.942"/>
+                <media:subTitle type="application/x-subrip" lang="en-us" href="http://api.ramp.com/v1/subtitles?format=subrip&amp;id=55944286&amp;apikey=0bb282f7f637045f1b7731f713c08ab5"/>
+            </media:group>
+            <mpf:attributes>
+                <mpf:attribute name="ramp-id">55944286</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-root">http://publishing.ramp.com/thumbnails/cached_media/0007/0007064/0007064917/images/</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-rate">10</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-ext">jpg</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-max">330</mpf:attribute>
+            </mpf:attributes>
+        </item>
+        <item>
+            <title>Arduino-Based Satellite Paves Way for Open-Source Space Exploration</title>
+            <description><![CDATA[Arduino-Based Satellite Paves Way for Open-Source Space Exploration Creators of the ArduSat satellite are asking Kickstarter to help them get a Arduino-based space probe off the ground. The project gives backers the chance to run their own space experiments using open source technology. From: ...]]></description>
+            <pubDate>Fri, 13 Jul 2012</pubDate>
+            <guid>-G2tRp5oOdg</guid>
+            <source url="http://www.youtube.com/rss/user/mashable/videos.rss">Mashable</source>
+            <media:group>
+                <media:thumbnail url="http://publishing.ramp.com/thumbnails/cached_media/0007/0007350/0007350264/images/thumb.jpg"/>
+                <media:thumbnail url=""/>
+                <media:description>Arduino-Based Satellite Paves Way for Open-Source Space Exploration Creators of the ArduSat satellite are asking Kickstarter to help them get a Arduino-based space probe off the ground. The project gives backers the chance to run their own space experiments using open source technology. From: ...</media:description>
+                <media:title>Arduino-Based Satellite Paves Way for Open-Source Space Exploration</media:title>
+                <media:content url="http://www.youtube.com/watch?v=-G2tRp5oOdg&amp;feature=youtube_gdata" type="video/flv" duration="93.576"/>
+                <media:subTitle type="application/x-subrip" lang="en-us" href="http://api.ramp.com/v1/subtitles?format=subrip&amp;id=59306807&amp;apikey=0bb282f7f637045f1b7731f713c08ab5"/>
+            </media:group>
+            <mpf:attributes>
+                <mpf:attribute name="ramp-id">59306807</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-root">http://publishing.ramp.com/thumbnails/cached_media/0007/0007350/0007350264/images/</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-rate">10</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-ext">jpg</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-max">90</mpf:attribute>
+            </mpf:attributes>
+        </item>
+        <item>
+            <title>A look at DotNetNuke, .NET-based open source content management system</title>
+            <description><![CDATA[A look at DotNetNuke, .NET-based open source content management system It's the leading Open Source Web Content Management Platform running on Microsoft .NET. Here we meet execs behind www.dotnetnuke.com and talk about the system, which lets companies build communities and websites, not to mention ...]]></description>
+            <pubDate>Tue, 26 Jun 2012</pubDate>
+            <guid>lsB0whleAGs</guid>
+            <source url="http://www.youtube.com/rss/user/Scobleizer/videos.rss">Scobleizer</source>
+            <media:group>
+                <media:thumbnail url="http://publishing.ramp.com/thumbnails/cached_media/0007/0007288/0007288987/images/thumb.jpg"/>
+                <media:thumbnail url=""/>
+                <media:description>A look at DotNetNuke, .NET-based open source content management system It's the leading Open Source Web Content Management Platform running on Microsoft .NET. Here we meet execs behind www.dotnetnuke.com and talk about the system, which lets companies build communities and websites, not to mention ...</media:description>
+                <media:title>A look at DotNetNuke, .NET-based open source content management system</media:title>
+                <media:content url="http://www.youtube.com/watch?v=lsB0whleAGs&amp;feature=youtube_gdata" type="video/flv" duration="843.163"/>
+                <media:subTitle type="application/x-subrip" lang="en-us" href="http://api.ramp.com/v1/subtitles?format=subrip&amp;id=58244777&amp;apikey=0bb282f7f637045f1b7731f713c08ab5"/>
+            </media:group>
+            <mpf:attributes>
+                <mpf:attribute name="ramp-id">58244777</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-root">http://publishing.ramp.com/thumbnails/cached_media/0007/0007288/0007288987/images/</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-rate">10</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-ext">jpg</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-max">840</mpf:attribute>
+            </mpf:attributes>
+        </item>
+        <item>
+            <title>Peter van Uhm: Why I chose a gun</title>
+            <description><![CDATA[Peter van Uhm: Why I chose a gun www.ted.com Peter van Uhm is the Netherlands' chief of defense, but that does not mean he is pro-war. At TEDxAmsterdam he explains how his career is one shaped by a love of peace, not a desire for bloodshed -- and why we need armies if we want peace.TEDTalks is a ...]]></description>
+            <pubDate>Mon, 30 Jan 2012</pubDate>
+            <guid>LjAsM1vAhW0</guid>
+            <source url="http://www.youtube.com/rss/user/TEDtalksDirector/videos.rss">TEDtalksDirector</source>
+            <media:group>
+                <media:thumbnail url="http://publishing.ramp.com/thumbnails/cached_media/0006/0006766/0006766758/images/thumb.jpg"/>
+                <media:thumbnail url=""/>
+                <media:description>Peter van Uhm: Why I chose a gun www.ted.com Peter van Uhm is the Netherlands' chief of defense, but that does not mean he is pro-war. At TEDxAmsterdam he explains how his career is one shaped by a love of peace, not a desire for bloodshed -- and why we need armies if we want peace.TEDTalks is a ...</media:description>
+                <media:title>Peter van Uhm: Why I chose a gun</media:title>
+                <media:content url="http://www.youtube.com/watch?v=LjAsM1vAhW0&amp;feature=youtube_gdata" type="video/flv" duration="1030.966"/>
+                <media:subTitle type="application/x-subrip" lang="en-us" href="http://api.ramp.com/v1/subtitles?format=subrip&amp;id=51816018&amp;apikey=0bb282f7f637045f1b7731f713c08ab5"/>
+            </media:group>
+            <mpf:attributes>
+                <mpf:attribute name="ramp-id">51816018</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-root">http://publishing.ramp.com/thumbnails/cached_media/0006/0006766/0006766758/images/</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-rate">10</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-ext">jpg</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-max">1020</mpf:attribute>
+            </mpf:attributes>
+        </item>
+        <item>
+            <title>Paul Conneally: Digital humanitarianism</title>
+            <description><![CDATA[Paul Conneally: Digital humanitarianism www.ted.com The disastrous earthquake in Haiti taught humanitarian groups an unexpected lesson the power of mobile devices to coordinate, inform, and guide relief efforts. At TEDxRC2, Paul Conneally shows extraordinary examples of social media and other new ...]]></description>
+            <pubDate>Fri, 17 Feb 2012</pubDate>
+            <guid>L9_c1j9VRwE</guid>
+            <source url="http://www.youtube.com/rss/user/TEDtalksDirector/videos.rss">TEDtalksDirector</source>
+            <media:group>
+                <media:thumbnail url="http://publishing.ramp.com/thumbnails/cached_media/0006/0006783/0006783227/images/thumb.jpg"/>
+                <media:thumbnail url=""/>
+                <media:description>Paul Conneally: Digital humanitarianism www.ted.com The disastrous earthquake in Haiti taught humanitarian groups an unexpected lesson the power of mobile devices to coordinate, inform, and guide relief efforts. At TEDxRC2, Paul Conneally shows extraordinary examples of social media and other new ...</media:description>
+                <media:title>Paul Conneally: Digital humanitarianism</media:title>
+                <media:content url="http://www.youtube.com/watch?v=L9_c1j9VRwE&amp;feature=youtube_gdata" type="video/flv" duration="657.38"/>
+                <media:subTitle type="application/x-subrip" lang="en-us" href="http://api.ramp.com/v1/subtitles?format=subrip&amp;id=52011365&amp;apikey=0bb282f7f637045f1b7731f713c08ab5"/>
+            </media:group>
+            <mpf:attributes>
+                <mpf:attribute name="ramp-id">52011365</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-root">http://publishing.ramp.com/thumbnails/cached_media/0006/0006783/0006783227/images/</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-rate">10</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-ext">jpg</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-max">650</mpf:attribute>
+            </mpf:attributes>
+        </item>
+        <item>
+            <title>Dutch Designer Recycles Old Plastic to Create 3D-Printed Furniture</title>
+            <description><![CDATA[Dutch Designer Recycles Old Plastic to Create 3D-Printed Furniture Dutch Designer Dirk Vander Kooij creates his "Endless" furniture collection entirely of recycled materials, like old refrigerators. Using a custom 3D printer, he can spin out a brand new chair in about three hours. From: mashable ...]]></description>
+            <pubDate>Tue, 24 Apr 2012</pubDate>
+            <guid>9YomTTLnzqk</guid>
+            <source url="http://www.youtube.com/rss/user/mashable/videos.rss">Mashable</source>
+            <media:group>
+                <media:thumbnail url="http://publishing.ramp.com/thumbnails/cached_media/0007/0007040/0007040564/images/thumb.jpg"/>
+                <media:thumbnail url=""/>
+                <media:description>Dutch Designer Recycles Old Plastic to Create 3D-Printed Furniture Dutch Designer Dirk Vander Kooij creates his "Endless" furniture collection entirely of recycled materials, like old refrigerators. Using a custom 3D printer, he can spin out a brand new chair in about three hours. From: mashable ...</media:description>
+                <media:title>Dutch Designer Recycles Old Plastic to Create 3D-Printed Furniture</media:title>
+                <media:content url="http://www.youtube.com/watch?v=9YomTTLnzqk&amp;feature=youtube_gdata" type="video/flv" duration="90.674"/>
+                <media:subTitle type="application/x-subrip" lang="en-us" href="http://api.ramp.com/v1/subtitles?format=subrip&amp;id=55657245&amp;apikey=0bb282f7f637045f1b7731f713c08ab5"/>
+            </media:group>
+            <mpf:attributes>
+                <mpf:attribute name="ramp-id">55657245</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-root">http://publishing.ramp.com/thumbnails/cached_media/0007/0007040/0007040564/images/</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-rate">10</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-ext">jpg</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-max">80</mpf:attribute>
+            </mpf:attributes>
+        </item>
+        <item>
+            <title>Mindtouch tries to reduce email load in Enterprises</title>
+            <description><![CDATA[Mindtouch tries to reduce email load in Enterprises I talk with Mindtouch CEO/Founder Aaron Fulkerson about the latest from Mindtouch which combines wiki-style functionality into an Enterprise dashboard. Really useful stuff and open source too. Used by many companies around the world. Fast Company ...]]></description>
+            <pubDate>Thu, 3 May 2012</pubDate>
+            <guid>IdM4KA141NE</guid>
+            <source url="http://www.youtube.com/rss/user/Scobleizer/videos.rss">Scobleizer</source>
+            <media:group>
+                <media:thumbnail url="http://publishing.ramp.com/thumbnails/cached_media/0007/0007065/0007065741/images/thumb.jpg"/>
+                <media:thumbnail url=""/>
+                <media:description>Mindtouch tries to reduce email load in Enterprises I talk with Mindtouch CEO/Founder Aaron Fulkerson about the latest from Mindtouch which combines wiki-style functionality into an Enterprise dashboard. Really useful stuff and open source too. Used by many companies around the world. Fast Company ...</media:description>
+                <media:title>Mindtouch tries to reduce email load in Enterprises</media:title>
+                <media:content url="http://www.youtube.com/watch?v=IdM4KA141NE&amp;feature=youtube_gdata" type="video/flv" duration="911.128"/>
+                <media:subTitle type="application/x-subrip" lang="en-us" href="http://api.ramp.com/v1/subtitles?format=subrip&amp;id=55952900&amp;apikey=0bb282f7f637045f1b7731f713c08ab5"/>
+            </media:group>
+            <mpf:attributes>
+                <mpf:attribute name="ramp-id">55952900</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-root">http://publishing.ramp.com/thumbnails/cached_media/0007/0007065/0007065741/images/</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-rate">10</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-ext">jpg</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-max">910</mpf:attribute>
+            </mpf:attributes>
+        </item>
+        <item>
+            <title>BugLabs new Open Source hardware, part I</title>
+            <description><![CDATA[BugLabs new Open Source hardware, part I The first part of BugLabs.net's new open source gadget. Really hackable and reconfigurable. This is one of the coolest things I've seen this year. Robert Scoble video blogger: Robert Scoble From: Scobleizer Views: 89 4 ratings Time: 17:48 More in Science & ...]]></description>
+            <pubDate>Thu, 3 May 2012</pubDate>
+            <guid>jPHE-fP2WHQ</guid>
+            <source url="http://www.youtube.com/rss/user/Scobleizer/videos.rss">Scobleizer</source>
+            <media:group>
+                <media:thumbnail url="http://publishing.ramp.com/thumbnails/cached_media/0007/0007065/0007065120/images/thumb.jpg"/>
+                <media:thumbnail url=""/>
+                <media:description>BugLabs new Open Source hardware, part I The first part of BugLabs.net's new open source gadget. Really hackable and reconfigurable. This is one of the coolest things I've seen this year. Robert Scoble video blogger: Robert Scoble From: Scobleizer Views: 89 4 ratings Time: 17:48 More in Science &amp; ...</media:description>
+                <media:title>BugLabs new Open Source hardware, part I</media:title>
+                <media:content url="http://www.youtube.com/watch?v=jPHE-fP2WHQ&amp;feature=youtube_gdata" type="video/flv" duration="1067.77"/>
+                <media:subTitle type="application/x-subrip" lang="en-us" href="http://api.ramp.com/v1/subtitles?format=subrip&amp;id=55945976&amp;apikey=0bb282f7f637045f1b7731f713c08ab5"/>
+            </media:group>
+            <mpf:attributes>
+                <mpf:attribute name="ramp-id">55945976</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-root">http://publishing.ramp.com/thumbnails/cached_media/0007/0007065/0007065120/images/</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-rate">10</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-ext">jpg</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-max">1060</mpf:attribute>
+            </mpf:attributes>
+        </item>
+        <item>
+            <title>How To: Browse your Instagram feed on your iPad</title>
+            <description><![CDATA[How To: Browse your Instagram feed on your iPad You can easily browse your Instagram feed on your iPad, using InstaPad. From: CNETTV Views: 4663 118 ratings Time: 02:48 More in Science & Technology]]></description>
+            <pubDate>Wed, 4 Apr 2012</pubDate>
+            <guid>yFL_fHXuFws</guid>
+            <source url="http://www.youtube.com/rss/user/CNETTV/videos.rss">CNET TV</source>
+            <media:group>
+                <media:thumbnail url="http://publishing.ramp.com/thumbnails/cached_media/0006/0006972/0006972515/images/thumb.jpg"/>
+                <media:thumbnail url=""/>
+                <media:description>How To: Browse your Instagram feed on your iPad You can easily browse your Instagram feed on your iPad, using InstaPad. From: CNETTV Views: 4663 118 ratings Time: 02:48 More in Science &amp; Technology</media:description>
+                <media:title>How To: Browse your Instagram feed on your iPad</media:title>
+                <media:content url="http://www.youtube.com/watch?v=yFL_fHXuFws&amp;feature=youtube_gdata" type="video/flv" duration="167.323"/>
+                <media:subTitle type="application/x-subrip" lang="en-us" href="http://api.ramp.com/v1/subtitles?format=subrip&amp;id=54148448&amp;apikey=0bb282f7f637045f1b7731f713c08ab5"/>
+            </media:group>
+            <mpf:attributes>
+                <mpf:attribute name="ramp-id">54148448</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-root">http://publishing.ramp.com/thumbnails/cached_media/0006/0006972/0006972515/images/</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-rate">10</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-ext">jpg</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-max">160</mpf:attribute>
+            </mpf:attributes>
+        </item>
+        <item>
+            <title>The Flying Car is Here, And There is Competition</title>
+            <description><![CDATA[The Flying Car is Here, And There is Competition Dutch company's PAL-V has successfully tested its PAL-V 1, a flying gyrocopter car. And American company Terrafugia's Transition will appear at this the New York International Auto Show Friday. Which model would you choose? From: mashable Views: 717 ...]]></description>
+            <pubDate>Wed, 4 Apr 2012</pubDate>
+            <guid>W7oTFCTdiJw</guid>
+            <source url="http://www.youtube.com/rss/user/mashable/videos.rss">Mashable</source>
+            <media:group>
+                <media:thumbnail url="http://publishing.ramp.com/thumbnails/cached_media/0006/0006971/0006971418/images/thumb.jpg"/>
+                <media:thumbnail url=""/>
+                <media:description>The Flying Car is Here, And There is Competition Dutch company's PAL-V has successfully tested its PAL-V 1, a flying gyrocopter car. And American company Terrafugia's Transition will appear at this the New York International Auto Show Friday. Which model would you choose? From: mashable Views: 717 ...</media:description>
+                <media:title>The Flying Car is Here, And There is Competition</media:title>
+                <media:content url="http://www.youtube.com/watch?v=W7oTFCTdiJw&amp;feature=youtube_gdata" type="video/flv" duration="78.762"/>
+                <media:subTitle type="application/x-subrip" lang="en-us" href="http://api.ramp.com/v1/subtitles?format=subrip&amp;id=54054308&amp;apikey=0bb282f7f637045f1b7731f713c08ab5"/>
+            </media:group>
+            <mpf:attributes>
+                <mpf:attribute name="ramp-id">54054308</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-root">http://publishing.ramp.com/thumbnails/cached_media/0006/0006971/0006971418/images/</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-rate">10</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-ext">jpg</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-max">70</mpf:attribute>
+            </mpf:attributes>
+        </item>
+        <item>
+            <title>Stussy Takes to Facebook to Reveal Its New Clothing Line and a Little Bit More</title>
+            <description><![CDATA[Stussy Takes to Facebook to Reveal Its New Clothing Line and a Little Bit More The Amsterdam fashionistas at Stϋssy are re-launching their Amsterdam Facebook page with a viral and clever social media campaign called "Strip for Likes." The tagline: "Like to see less, and share to undress." From: ...]]></description>
+            <pubDate>Wed, 11 Apr 2012</pubDate>
+            <guid>Hoh3fP1D5ks</guid>
+            <source url="http://www.youtube.com/rss/user/mashable/videos.rss">Mashable</source>
+            <media:group>
+                <media:thumbnail url="http://publishing.ramp.com/thumbnails/cached_media/0006/0006986/0006986263/images/thumb.jpg"/>
+                <media:thumbnail url=""/>
+                <media:description>Stussy Takes to Facebook to Reveal Its New Clothing Line and a Little Bit More The Amsterdam fashionistas at Stϋssy are re-launching their Amsterdam Facebook page with a viral and clever social media campaign called "Strip for Likes." The tagline: "Like to see less, and share to undress." From: ...</media:description>
+                <media:title>Stussy Takes to Facebook to Reveal Its New Clothing Line and a Little Bit More</media:title>
+                <media:content url="http://www.youtube.com/watch?v=Hoh3fP1D5ks&amp;feature=youtube_gdata" type="video/flv" duration="90.976"/>
+                <media:subTitle type="application/x-subrip" lang="en-us" href="http://api.ramp.com/v1/subtitles?format=subrip&amp;id=55043731&amp;apikey=0bb282f7f637045f1b7731f713c08ab5"/>
+            </media:group>
+            <mpf:attributes>
+                <mpf:attribute name="ramp-id">55043731</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-root">http://publishing.ramp.com/thumbnails/cached_media/0006/0006986/0006986263/images/</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-rate">10</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-ext">jpg</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-max">80</mpf:attribute>
+            </mpf:attributes>
+        </item>
+        <item>
+            <title>BugLabs new Open Source hardware, part III</title>
+            <description><![CDATA[BugLabs new Open Source hardware, part III BugLabs.net's new "reconfigurable" gadget. Robert Scoble Video Blogger: Robert Scoble From: Scobleizer Views: 32 0 ratings Time: 01:58 More in Science & Technology]]></description>
+            <pubDate>Thu, 3 May 2012</pubDate>
+            <guid>j2LtsWwTKl8</guid>
+            <source url="http://www.youtube.com/rss/user/Scobleizer/videos.rss">Scobleizer</source>
+            <media:group>
+                <media:thumbnail url="http://publishing.ramp.com/thumbnails/cached_media/0007/0007065/0007065088/images/thumb.jpg"/>
+                <media:thumbnail url=""/>
+                <media:description>BugLabs new Open Source hardware, part III BugLabs.net's new "reconfigurable" gadget. Robert Scoble Video Blogger: Robert Scoble From: Scobleizer Views: 32 0 ratings Time: 01:58 More in Science &amp; Technology</media:description>
+                <media:title>BugLabs new Open Source hardware, part III</media:title>
+                <media:content url="http://www.youtube.com/watch?v=j2LtsWwTKl8&amp;feature=youtube_gdata" type="video/flv" duration="117.447"/>
+                <media:subTitle type="application/x-subrip" lang="en-us" href="http://api.ramp.com/v1/subtitles?format=subrip&amp;id=55945975&amp;apikey=0bb282f7f637045f1b7731f713c08ab5"/>
+            </media:group>
+            <mpf:attributes>
+                <mpf:attribute name="ramp-id">55945975</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-root">http://publishing.ramp.com/thumbnails/cached_media/0007/0007065/0007065088/images/</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-rate">10</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-ext">jpg</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-max">110</mpf:attribute>
+            </mpf:attributes>
+        </item>
+        <item>
+            <title>Elizabeth Gilbert on THE PAUL HOLDENGRABER SHOW</title>
+            <description><![CDATA[Elizabeth Gilbert on THE PAUL HOLDENGRABER SHOW Elizabeth Gilbert on THE PAUL HOLDENGRABER SHOW From: IntelligentChannel Views: 8178 34 ratings Time: 20:12 More in Education]]></description>
+            <pubDate>Fri, 10 Feb 2012</pubDate>
+            <guid>C6TQNG0eQEc</guid>
+            <source url="http://www.youtube.com/rss/user/intelligentchannel/videos.rss">Intelligent Channel</source>
+            <media:group>
+                <media:thumbnail url="http://publishing.ramp.com/thumbnails/cached_media/0006/0006767/0006767085/images/thumb.jpg"/>
+                <media:thumbnail url=""/>
+                <media:description>Elizabeth Gilbert on THE PAUL HOLDENGRABER SHOW Elizabeth Gilbert on THE PAUL HOLDENGRABER SHOW From: IntelligentChannel Views: 8178 34 ratings Time: 20:12 More in Education</media:description>
+                <media:title>Elizabeth Gilbert on THE PAUL HOLDENGRABER SHOW</media:title>
+                <media:content url="http://www.youtube.com/watch?v=C6TQNG0eQEc&amp;feature=youtube_gdata" type="video/flv" duration="1211.803"/>
+                <media:subTitle type="application/x-subrip" lang="en-us" href="http://api.ramp.com/v1/subtitles?format=subrip&amp;id=51818361&amp;apikey=0bb282f7f637045f1b7731f713c08ab5"/>
+            </media:group>
+            <mpf:attributes>
+                <mpf:attribute name="ramp-id">51818361</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-root">http://publishing.ramp.com/thumbnails/cached_media/0006/0006767/0006767085/images/</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-rate">10</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-ext">jpg</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-max">1210</mpf:attribute>
+            </mpf:attributes>
+        </item>
+        <item>
+            <title>This 'Superbus' Seats 23, Reaches Speeds Up to 150 MPH</title>
+            <description><![CDATA[This 'Superbus' Seats 23, Reaches Speeds Up to 150 MPH Designed by a team from Delft University of Technology in the Netherlands, this luxury vehicle, dubbed the "Superbus", can carry up to 23 passengers and reach speeds of 250 kilometers or 150 miles per hour. From: mashable Views: 389 22 ratings ...]]></description>
+            <pubDate>Fri, 22 Jun 2012</pubDate>
+            <guid>z4IJhRUGnqw</guid>
+            <source url="http://www.youtube.com/rss/user/mashable/videos.rss">Mashable</source>
+            <media:group>
+                <media:thumbnail url="http://publishing.ramp.com/thumbnails/cached_media/0007/0007282/0007282039/images/thumb.jpg"/>
+                <media:thumbnail url=""/>
+                <media:description>This 'Superbus' Seats 23, Reaches Speeds Up to 150 MPH Designed by a team from Delft University of Technology in the Netherlands, this luxury vehicle, dubbed the "Superbus", can carry up to 23 passengers and reach speeds of 250 kilometers or 150 miles per hour. From: mashable Views: 389 22 ratings ...</media:description>
+                <media:title>This 'Superbus' Seats 23, Reaches Speeds Up to 150 MPH</media:title>
+                <media:content url="http://www.youtube.com/watch?v=z4IJhRUGnqw&amp;feature=youtube_gdata" type="video/flv" duration="53.615"/>
+                <media:subTitle type="application/x-subrip" lang="en-us" href="http://api.ramp.com/v1/subtitles?format=subrip&amp;id=58117807&amp;apikey=0bb282f7f637045f1b7731f713c08ab5"/>
+            </media:group>
+            <mpf:attributes>
+                <mpf:attribute name="ramp-id">58117807</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-root">http://publishing.ramp.com/thumbnails/cached_media/0007/0007282/0007282039/images/</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-rate">10</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-ext">jpg</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-max">50</mpf:attribute>
+            </mpf:attributes>
+        </item>
+    </channel>
+</rss>

@@ -1,0 +1,12 @@
+<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/" xmlns:mpf="http://developer.ramp.com/mrss">
+    <channel>
+        <title>MRSS Playlist Playlist</title>
+        <item>
+            <title>Elephant's Dream</title>
+            <media:thumbnail url="http://localhost/mpf/media/elephants_dream/elephant.png" />
+            <description>Elephant's Dream is the world’s first open movie, made entirely
+                with open source graphics software such as Blender.</description>
+            <mpf:attribute name="resolveUrl">http://localhost/mpf/src/core/playlist/examples/data/resolved.mrss.xml</mpf:attribute>
+        </item>
+    </channel>
+</rss>

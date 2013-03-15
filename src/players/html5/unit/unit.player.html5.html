@@ -24,9 +24,6 @@
     <!--Dependency: OKJS -->
     <script src="../../../../external/okjs/ok.js" type="text/javascript"></script>
 
-    <!-- Unit CSS -->
-    <link href="../../../unit/unit.css" rel="stylesheet" type="text/css">
-
     <!-- Unit : Player API -->
     <script src="../../../unit/html5/unit.html5.js" type="text/javascript"></script>
 
@@ -47,25 +44,27 @@
 
 
     <script type="text/javascript">
-
-        var unit = okjs({
-            exceptions: 1, // enable for debugging
-            verbose: true
-        });
-
-        var harness = PlayerUnit(unit);
-        var video;
-
-        unit.test("ramp setup", function () {
-            video = MetaPlayer.html5('#target');
-            harness.media = video;
-        });
-
-        harness.addTests();
-
         $( function () {
+            var unit = okjs({
+                exceptions: 1, // enable for debugging
+                verbose: true
+            });
+
+            var harness = PlayerUnit(unit);
+            var video;
+
+            unit.test("ramp setup", function () {
+                video = MetaPlayer.html5('#target');
+                video.preload = "none";
+                video.autoplay = false;
+                video.src = "http://media.w3.org/2010/05/sintel/trailer.mp4";
+                harness.media = video;
+            });
+
+            harness.addTests();
+
             unit.start();
-            video.src = "http://media.w3.org/2010/05/sintel/trailer.mp4";
+
         });
     </script>
 </head>

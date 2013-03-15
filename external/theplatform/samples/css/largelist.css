@@ -1,0 +1,83 @@
+@import url("global.css");
+
+html {
+	background: #FFF;
+	font-family: helvetica;
+}
+
+body {
+	margin: 5px;
+}
+
+.container {
+	width: 792px;
+}
+
+#browse-video {
+	float: left;
+	width: 786px;
+	margin: 5px 0 0 0;
+}
+
+#info {
+	float: left;
+	width: 302px;
+	height: 306px;	
+	margin: 0 5px 0 0;
+}
+
+#player {
+	float: left;
+	width: 483px;
+	height: 306px;
+}
+
+#categorylist {
+	float: left;
+	width: 200px;
+	height: 169px;
+	position: relative;
+	z-index: 1;
+	overflow: visible !important;
+	overflow: hidden;
+}
+
+#search {
+	float: left;
+	width: 200px;
+	height: 24px;
+	display: inline;
+}
+
+#navigation {  
+	width: 585px;
+	height: 24px; 
+	float: left;
+}
+
+#releaselist {
+	margin-right: auto;
+	float: left;
+	width: 785px;
+	height: 169px;
+	position: relative;
+	z-index: 2;
+	overflow: visible !important;
+	overflow: hidden;
+}
+
+.tpCategoryListExpanded {
+	z-index: 10000 !important;
+}
+
+.releaseListItemSelected a {
+
+line-height:14px;
+
+}
+
+.releaseListItem a {
+
+line-height:14px;
+
+}

@@ -5,7 +5,13 @@
     var defaults = {
     };
 
-    var MetaData = function (player, options){
+    /**
+     * Constructs the MetaData store. <br />
+     * @name API.MetaData
+     * @class Stores metadata for video items.
+     * @constructor
+     */
+    var MetaData = function (options){
         if( !(this instanceof MetaData ))
             return new MetaData(options);
 
@@ -18,28 +24,30 @@
 
     MetaPlayer.MetaData = MetaData;
 
-
     /**
      * Fired when a uri becomes the focus, broadcasting events on updates.
-     * @name FOCUS
+     * @name API.MetaData#event:FOCUS
      * @event
-     * @param uri The new focus uri
+     * @param {Event} e
+     * @param e.uri The new focus uri
      */
     MetaData.FOCUS = "focus";
 
     /**
      * Fired when MetaData needs a resource to be defined.
-     * @name LOAD
+     * @name API.MetaData#event:LOAD
      * @event
-     * @param uri Opaque string which can be used by a service to load metadata.
+     * @param {Event} e
+     * @param e.uri Opaque string which can be used by a service to load metadata.
      */
     MetaData.LOAD = "load";
 
     /**
      * Fired when new metadata is received as a result of a load() request.
-     * @name LOAD
+     * @name API.MetaData#event:DATA
      * @event
-     * @param data The metadata from a resulting load() request.
+     * @param {Event} e
+     * @param e.data The metadata from a resulting load() request.
      */
     MetaData.DATA = "data";
 
@@ -48,10 +56,14 @@
 
 
         /**
-         * Request MetaData for an uri
+         * Request MetaData for an uri.  If no callback is specified, will also
+         * set the focus uri.
+         * @name API.MetaData#load
+         * @function
          * @param uri
-         * @this {MetaData}
-         * @param callback (optional)  If specified will suppress the DATA event
+         * @param [callback] If specified will suppress the DATA event
+         * @see MetaData#event:DATA
+         * @see MetaData#event:FOCUS
          */
         load : function ( uri, callback, scope) {
             var e;
@@ -66,10 +78,17 @@
                 this.setFocusUri(uri);
             }
 
+            if( ! uri )
+                return;
+
             if( this._data[uri] ){
                 // cache hit; already loaded. respond immediately
                 if( this._data[uri]._cached ) {
-                    this._response(uri);
+                    // consistently async
+                    var self = this;
+                    setTimeout( function (){
+                        self._response(uri);
+                    },0);
                     return true;
                 }
                 // load in progress, skip
@@ -98,7 +117,10 @@
         },
 
         /**
-         * Returns the uri for which events are currently being fired.
+         * Gets the uri for which events are currently being fired.
+         * @name API.MetaData#getFocusUri
+         * @function
+         * @return {String} The current focus URI.
          */
         getFocusUri : function () {
             return this._lastUri;
@@ -106,21 +128,24 @@
 
         /**
          * Sets the uri for which events are currently being fired.
+         * @name API.MetaData#setFocusUri
+         * @function
+         * @see MetaData#event:FOCUS
          */
         setFocusUri : function (uri) {
-
-            if( this._lastUri == uri )
-                return;
-
             this._lastUri = uri;
-            e = this.createEvent();
+            this._firedDataEvent = false;
+            var e = this.createEvent();
             e.initEvent(MetaData.FOCUS, false, true);
             e.uri = uri;
             this.dispatchEvent(e);
         },
 
         /**
-         * Returns any for a URI without causing an external lookup.
+         * Returns any cached data for a URI if available. Differs from load() in that
+         * it is synchronous and will not trigger a new data lookup.
+         * @name API.MetaData#getData
+         * @function
          * @param uri Optional argument specifying media guid. Defaults to last load() uri.
          */
         getData : function ( uri ){
@@ -130,24 +155,32 @@
 
         /**
          * Sets the data for a URI, triggering DATA if the uri has focus.
-         * @param data
+         * @name API.MetaData#setData
+         * @function
+         * @param data {Object}
          * @param uri (optional) Data uri, or last load() uri.
          * @param cache (optional) allow lookup of item on future calls to load(), defaults true.
+         * @see MetaData#event:DATA
          */
         setData : function (data, uri, cache ){
             var guid = uri || this._lastUri;
-            this._data[guid] = $.extend(true, {}, this._data[guid], data);
-            this._data[guid]._cached = ( cache == null ||  cache ) ? true : false;
-            this._response(guid);
+            // dont't clobber known data with cache half-datas
+            if( !( this._data[guid] && ! cache) ){
+                this._data[guid] = $.extend(true, {}, this._data[guid], data);
+                this._data[guid]._cached = ( cache == null ||  cache ) ? true : false;
+            }
+            if( cache )
+                this._response(guid);
         },
 
         /**
          * Frees external references for manual object destruction.
+         * @name API.MetaData#destroy
+         * @function
          * @destructor
          */
         destroy : function  () {
             this.dispatcher.destroy();
-            delete this.player;
             delete this._callbacks;
             delete this._data;
             delete this.config;
@@ -164,12 +197,13 @@
         _response : function ( uri ){
              var data = this._data[uri];
 
-            if( this._lastUri == uri ) {
+            if( this._lastUri == uri && ! this._firedDataEvent) {
                 var e = this.createEvent();
                 e.initEvent(MetaData.DATA, false, true);
                 e.uri = uri;
                 e.data = data;
                 this.dispatchEvent(e);
+                this._firedDataEvent = true;
             }
 
             if( this._callbacks[uri] ) {

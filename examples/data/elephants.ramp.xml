@@ -1,0 +1,157 @@
+<smil xmlns:json="xalan://org.json.JSONObject">
+    <head>
+        <meta name="Broadcaster" content="SouthBySouthWest"/>
+    </head>
+    <body>
+        <seq xml:id="playlist">
+            <par xml:id="item1">
+                <video xml:id="v1" type="mp4" title="Elephant's Dream " src="http://sxsw.ramp.com/hosting/media/sxsw/1626298/ed_1024_512kb.mp4http://sxsw.ramp.com/hosting/media/sxsw/1626298/ed_1024_512kb.mp4">
+                    <metadata>
+                        <meta name="rampId" content="52871241"/>
+                        <meta name="duration" content="653.696"/>
+                        <meta name="thumbnail" content="http://publishing.ramp.com/thumbnails/cached_media/0006/0006875/0006875054/images/thumb.jpg"/>
+                        <meta name="searchapi" content="http://publishing.ramp.com/sxsw/theme/7473/mp2-search?e=52871241"/>
+                        <meta name="searchterm" content="''"/>
+                        <meta name="linkURL" content="52871241/elephant-dream"/>
+                        <meta name="embedURL" content="http://publishing.ramp.com/widgets/sxsw/4240/?episode=52871241"/>
+                        <meta name="siteSearchURL" content="http://publishing.ramp.com/sxsw/search?mediatype=Video&amp;q="/>
+                        <meta name="iosURL" content="http://sxsw.ramp.com/hosting/media/sxsw/1626298/ed_1024_512kb.mp4"/>
+                        <meta name="description">Elephants Dream is the story of two strange characters exploring a capricious and seemingly infinite machine. The elder, Proog, acts as a tour-guide and protector, happily showing off the sights and dangers of the machine to his initially curious but increasingly skeptical protege Emo. As their journey unfolds we discover signs that the machine is not all Proog thinks it is, and his guiding takes on a more desperate aspect. Elephants Dream is a story about communication and fiction, made purposefully open-ended as the world’s first 3D animated “Open movie”. The film itself is released under the Creative Commons license, along with the production files used to make it (roughly 7 Gigabytes of data). The software used to make the movie is the free/open source animation suite Blender, along with other open source software, thus allowing the movie to be remade, remixed and re-purposed. 2006, Amsterdam, the Netherlands.</meta>
+                        <meta name="subTitle" content="application/x-subrip">data/subtitle.sample.srt</meta>
+                        <meta name="cueTrack" content="application/x-metaq-xml">data/metaq.sample.xml</meta>
+                    </metadata>
+                </video>
+                <metadata xml:id="transcodes1">
+                    <meta type="video/brightcove" content="1531130529001"/>
+                </metadata>
+                <smilText>
+                    - At the left we can see-- we can see--At
+                    <clear begin="18.36s"/>
+                    the right we can see the head-snarlers. Everything is safe.
+                    <clear begin="23.58s"/>
+                    Perfectly safe. Emo? Emo. Emo! -Watch out! -Are you hurt?
+                    <clear begin="52.09s"/>
+                    -I don't think so. You? -I'm okay. Get up. Emo,
+                    <clear begin="59.42s"/>
+                    it's not safe here. Let's go. -What's next? -You'll see.
+                    <clear begin="67.89s"/>
+                    You'll see. Emo. This way. Follow me! Hurry Emo! -You're
+                    <clear begin="168.81s"/>
+                    not paying attention! -I just want to answer the phone.
+                    <clear begin="169.23s"/>
+                    -Emo, look, I mean listen. You have to learn to
+                    <clear begin="175.84s"/>
+                    listen. This is not some game. YOU, i mean, we,
+                    <clear begin="187.17s"/>
+                    we could easily die out here. Listen, listen to the
+                    <clear begin="192.23s"/>
+                    sounds of the machine. Listen to your breathing. -Well, don't
+                    <clear begin="267.35s"/>
+                    you ever get tired of this? -Tired?!? -Emo, the machine
+                    <clear begin="272.13s"/>
+                    is like clockwork. -One move out of place and you're
+                    <clear begin="277.31s"/>
+                    ground to a pulp. -But isn't it-- -Pulp, Emo! Is
+                    <clear begin="277.44s"/>
+                    that what you want, pulp? Emo, your goal in life,
+                    <clear begin="289.12s"/>
+                    pulp? Emo, close your eyes. -Why? - Now! -Okay. -Good.
+                    <clear begin="359.57s"/>
+                    What do you see at your left side, Emo? -Nothing.
+                    <clear begin="361.21s"/>
+                    -Really? -No, nothing at all. -Really. And at your right,
+                    <clear begin="368.89s"/>
+                    what do you see at your right side, Emo? -The
+                    <clear begin="373.80s"/>
+                    same Proog, exactly the same, nothing! -Great. Listen Proog! Do
+                    <clear begin="403.78s"/>
+                    you hear that! Can we go here? -There? It isn't
+                    <clear begin="403.98s"/>
+                    safe, Emo. -But -Trust me, it's not. -But maybe I
+                    <clear begin="421.24s"/>
+                    could-- -No. -But. -No! No! Any further questions, Emo? -No.
+                    <clear begin="424.59s"/>
+                    -Emo? -No. -Emo, why-- Emo. Why-- Why can't you see
+                    <clear begin="436.60s"/>
+                    the beauty of this place? The way it works. How
+                    <clear begin="441.80s"/>
+                    perfect it is. -No, Proog, I don't see. I don't
+                    <clear begin="447.71s"/>
+                    see because there's nothing there. And why should I trust
+                    <clear begin="452.73s"/>
+                    my life to something that isn't there? -Well can you
+                    <clear begin="455.64s"/>
+                    tell me that? Answer me! -Proog, you're a sick man!
+                    <clear begin="466.67s"/>
+                    -Emo. -Stay away from me! -Emo. No! Emo! It's a
+                    <clear begin="472.78s"/>
+                    trap! -Hah, it's a trap. At the left side you
+                    <clear begin="480.02s"/>
+                    can see the hanging gardens of Babylon . How's that for
+                    <clear begin="480.26s"/>
+                    a trap? -No, Emo. -At the right side you can
+                    <clear begin="480.38s"/>
+                    see, well guess what-- the Colossus of Rhodes ! -No! -The
+                    <clear begin="480.41s"/>
+                    Colossus of Rhodes and it is here just for you
+                    <clear begin="498.41s"/>
+                    Proog, just for you. It is there. I'm telling you,
+                    <clear begin="536.60s"/>
+                    Emo, it is. It is.
+                </smilText>
+                <seq xml:id="jumptags1" max="4">
+                    <ref begin="480.39s">
+                        <param name="term"><![CDATA[guess]]></param>
+                        <param name="type"><![CDATA[unk]]></param>
+                        <param name="score"><![CDATA[75.89273]]></param>
+                        <param name="origin"><![CDATA[contentcue]]></param>
+                        <param name="timestamps"><![CDATA[480.386]]></param>
+                    </ref>
+                    <ref begin="480.40s">
+                        <param name="term"><![CDATA[Colossus of Rhodes]]></param>
+                        <param name="type"><![CDATA[unk]]></param>
+                        <param name="score"><![CDATA[14.738152]]></param>
+                        <param name="origin"><![CDATA[namedentity]]></param>
+                        <param name="timestamps"><![CDATA[480.39676,480.4147]]></param>
+                    </ref>
+                    <ref begin="480.05s">
+                        <param name="term"><![CDATA[hanging gardens of Babylon]]></param>
+                        <param name="type"><![CDATA[unk]]></param>
+                        <param name="score"><![CDATA[11.053614]]></param>
+                        <param name="origin"><![CDATA[namedentity]]></param>
+                        <param name="timestamps"><![CDATA[480.0457]]></param>
+                    </ref>
+                    <ref begin="480.07s">
+                        <param name="term"><![CDATA[Babylon]]></param>
+                        <param name="type"><![CDATA[place]]></param>
+                        <param name="score"><![CDATA[7.4049644]]></param>
+                        <param name="origin"><![CDATA[namedentity]]></param>
+                        <param name="timestamps"><![CDATA[480.07233]]></param>
+                    </ref>
+                </seq>
+            </par>
+            <par xml:id="item2">
+                <video xml:id="v2" type="mp4" title="Sintel Trailer " src="http://ftp.nluug.nl/ftp/graphics/blender/apricot/trailer/sintel_trailer-480p.mp4">
+                    <metadata>
+                        <meta name="rampId" content="52975368"/>
+                        <meta name="duration" content="51.925"/>
+                        <meta name="thumbnail" content="http://publishing.ramp.com/thumbnails/cached_media/0006/0006896/0006896450/images/thumb.jpg"/>
+                        <meta name="searchapi" content="http://publishing.ramp.com/sxsw/theme/7473/mp2-search?e=52975368"/>
+                        <meta name="searchterm" content="''"/>
+                        <meta name="linkURL" content="52975368/sintel-trailer"/>
+                        <meta name="embedURL" content="http://publishing.ramp.com/widgets/sxsw/4240/?episode=52975368"/>
+                        <meta name="siteSearchURL" content="http://publishing.ramp.com/sxsw/search?mediatype=Video&amp;q="/>
+                        <meta name="iosURL" content="http://ftp.nluug.nl/ftp/graphics/blender/apricot/trailer/sintel_trailer-480p.mp4"/>
+                        <meta name="description">“Sintel” is an independently produced short film, initiated by the Blender Foundation as a means to further improve and validate the free/open source 3D creation suite Blender. With initial funding provided by 1000s of donations via the internet community, it has again proven to be a viable development model for both open 3D technology as for independent animation film. This 15 minute film has been realized in the studio of the Amsterdam Blender Institute, by an international team of artists and developers. In addition to that, several crucial technical and creative targets have been realized online, by developers and artists and teams all over the world. “Sintel” commenced in May 2009, with producer Ton Roosendaal establishing a core team consisting of Colin Levy (director), David Revoy (concept art), Martin Lodewijk (story) and Jan Morgenstern (composer). In August script writer Esther Wouda was approached as a consultant, which resulted in her taking the responsibility for the entire screenplay. Esther then worked in close cooperation with Colin, David and Ton to deliver the final script early November. Meanwhile, Colin and David realized the first storyboards. Based on a public call for artists – with over 150 respondents – the Durian artist team got established in July 2009. They first met in a pre-production week in Amsterdam in August, and all decided to join the project per October 1st. With the final movie budget still unknown, the target then still was to finish the film within 7 months, with a team of 6 artists and 2 developers. At that time the team still had the hopes to be able to realize the script in a 6-8 minute film.</meta>
+                        <meta name="subTitle" content="application/x-subrip">http://api.ramp.com/v1/subtitles?format=subrip&amp;id=52975368&amp;apikey=0bb282f7f637045f1b7731f713c08ab5</meta>
+                        <meta name="cueTrack" content="application/x-metaq-xml">http://api.ramp.com/v1/matches?itemId=52975368&amp;apikey=0bb282f7f637045f1b7731f713c08ab5</meta>
+                    </metadata>
+                </video>
+                <metadata xml:id="transcodes2">
+                    <meta name="ogg" content=""/>
+                    <meta name="divx" content=""/>
+                </metadata>
+            </par>
+        </seq>
+    </body>
+</smil>

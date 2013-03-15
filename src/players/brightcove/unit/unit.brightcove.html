@@ -3,6 +3,9 @@
 <head>
     <meta charset=utf-8>
 
+    <title>Brightcove Player Test | MPF</title>
+
+
     <style>
         #myExperience {
             /*width: 300px;
@@ -12,15 +15,12 @@
             top: 10px; right: 10px;
         }
     </style>
- 
+
     <!-- Dependency: jQuery -->
     <script src="../../../../external/jquery/jquery-1.6.2.js" type="text/javascript"></script>
 
-     <!--Dependency: OKJS -->
+    <!--Dependency: OKJS -->
     <script src="../../../../external/okjs/ok.js" type="text/javascript"></script>
-
-    <!-- Unit CSS -->
-    <link href="../../../unit/unit.css" rel="stylesheet" type="text/css">
 
     <!-- Unit : Player API -->
     <script src="../../../unit/html5/unit.html5.js" type="text/javascript"></script>
@@ -48,6 +48,7 @@
 </head>
 
 <body>
+<h3>MetaPlayer &raquo; Unit &raquo; Brightcove Adapter</h3>
 
 <!-- Start of Brightcove Player -->
 
@@ -62,13 +63,15 @@ found at https://accounts.brightcove.com/en/terms-and-conditions/.
 
 <object id="myExperience" class="BrightcoveExperience">
     <param name="bgcolor" value="#FFFFFF" />
-    <param name="width" value="486" />
-    <param name="height" value="412" />
-    <param name="playerID" value="1898225880" />
-    <param name="playerKey" value="AQ~~,AAAAAHEkmvY~,SRcNfxhuB9mACjhKYyTKucIsjqiB0eGm" />
+    <param name="width" value="320" />
+    <param name="height" value="240" />
+    <param name="playerID" value="1697260880001" />
+    <param name="playerKey" value="AQ~~,AAAAAHEkmvY~,SRcNfxhuB9ngUGOWRgbkOhrH903XJ0w8" />
     <param name="isVid" value="true" />
+    <param name="isSlim" value="true" />
     <param name="dynamicStreaming" value="true" />
     <param name="includeAPI" value="true" />
+    <param name="wmode" value="transparent" />
     <param name="templateLoadHandler" value="myTemplateLoaded" />
 </object>
 
@@ -83,40 +86,33 @@ the rest of the HTML is processed and the page load is complete, remove the line
 
 <script>
 
-var harness;
+    var harness;
 
-    function myTemplateLoaded(experienceID) {   
-        var unit = okjs({
-            exceptions: 1,
-            verbose: true
-        });
+    function myTemplateLoaded(experienceID) {
+        $( function () {
 
-        harness = PlayerUnit( unit );
-        var video;
+            var unit = okjs();
+
+            harness = PlayerUnit( unit );
+            var video, player;
 
 
-        unit.test("ramp setup", function() {
-            //ramp services
-            video = MetaPlayer.brightcove(brightcove, { 
-                autoplay: false,
-                preload: false,
-                playerVars: {
-                    experienceID: experienceID
-                }
+            unit.test("ramp setup", function() {
+                //ramp services
+                video = MetaPlayer.brightcove("myExperience");
+
+                video.preload = "none";
+                video.autoplay = false;
+                video.src = '1531130529001';
+                harness.media = video;
+
             });
 
-            //video.src = '1531130529001';
-            harness.media = video;            
-            harness.src = '1531130529001';
+            harness.addTests();
 
-        });
-
-        harness.addTests();
-
-        $( function () {
             unit.start();
         });
-    };
+    }
 
 </script>
 

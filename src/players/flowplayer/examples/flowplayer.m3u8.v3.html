@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset=utf-8>
+
+    <title>Flowplayer Plugin | Metaplayer</title>
+
+    <!--Dependency: jQuery-->
+    <script src="../../../../external/jquery/jquery-1.7.1.js" type="text/javascript"></script>
+
+    <!--Dependency: Flowplayer-->
+    <script src="../../../../external/flowplayer/flowplayer-3.2.11.min.js"></script>
+    <script src="../../../../external/flowplayer/flowplayer.ipad-3.2.2-ramp.js"></script>
+
+    <!--Dependency: Popcorn -->
+    <script src="../../../../external/popcorn/popcorn.js" type="text/javascript"></script>
+
+    <!-- Core: Ramp -->
+    <script src="../../../core/metaplayer.js"></script>
+    <script src="../../../core/utils/util.event.js"></script>
+    <script src="../../../core/utils/util.proxy.js"></script>
+    <script src="../../../core/utils/util.script.js"></script>
+    <script src="../../../core/utils/util.timer.js"></script>
+    <script src="../../../core/utils/util.format.js"></script>
+    <script src="../../../core/utils/util.ui.js"></script>
+    <script src="../../../core/playlist/player.playlist.js"></script>
+    <script src="../../../core/layout/core.layout.js"></script>
+    <script src="../../../core/metadata/core.metadata.js"></script>
+    <script src="../../../core/search/core.search.js"></script>
+    <script src="../../../core/cues/core.cues.js"></script>
+
+    <link href="../../../core/layout/core.layout.css" rel="stylesheet" type="text/css">
+
+    <!-- Service Plugin: RAMP -->
+    <script src="../../../services/ramp/service.ramp.js"></script>
+
+    <!-- Media : HTML5 -->
+    <script src="../../../players/html5/player.html5.js"></script>
+
+    <!-- Media Plugin: Flowplayer -->
+    <script src="../../../players/flowplayer/player.flowplayer.js"></script>
+
+    <!-- UI: Controls -->
+    <script src="../../../ui/controlbar/ui.controlbar.js"></script>
+    <link href="../../../ui/controlbar/theme/ui.controlbar.css" rel="stylesheet"  type="text/css">
+
+    <!-- UI: TrackTip -->
+    <script src="../../../ui/tracktip/ui.tracktip.js"></script>
+    <link href="../../../ui/tracktip/theme/ui.tracktip.css" rel="stylesheet"  type="text/css">
+
+
+    <style>
+        #target {
+            width: 600px;
+            height: 300px;
+            background:  gray;
+        }
+    </style>
+
+    <script type="text/javascript">
+        var fp, player;
+        $(function () {
+
+            fp = $f( 'target',
+                    {
+                        src: "../../../../external/flowplayer/flowplayer-3.2.7.swf",
+                        wmode: "transparent"
+                    },
+                    {
+                        plugins : {
+                            controls: null,
+                            play: null,
+                            httpstreaming : {
+                                url : "../../../../external/flowplayer/flowplayer.httpstreaminghls-3.2.10-ramp.swf"
+                            }
+                        },
+                        clip : {
+                            scaling : "fit"
+                        },
+                        playlist : []
+                    });
+            fp.ipad();
+            fp.load();
+
+
+            MetaPlayer.DEBUG="flowplayer event";
+
+            mpf = MetaPlayer(fp)
+                    .controlbar({ fullscreen : true });
+
+            mpf.addEventListener(MetaPlayer.READY, function (e) {
+                var data = {
+                    "guid": 1234,
+                    "content": [
+                        {
+                            "type": "application/vnd.apple.mpegURL",
+                            "url": "http://publishing.ramp.com/thumbnails/cached_media/0006/0006684/0006684332/6684332_ios.stream/6684332enc_24286603.m3u8"
+                        }
+                    ]
+                };
+                mpf.playlist.setPlaylist([ 1234 ]);
+                mpf.metadata.setFocusUri(1234);
+                mpf.metadata.setData(data, 1234, true);
+            });
+
+//            mpf.video.autoplay = true;
+            mpf.video.preload = "none"
+
+            mpf.load();
+        })
+    </script>
+
+</head>
+<body>
+
+<div class="container">
+
+    <div id='target'></div>
+
+</div>
+
+</body>
+</html>

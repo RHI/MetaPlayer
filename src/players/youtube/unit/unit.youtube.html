@@ -5,29 +5,32 @@
     <title>YouTube Plugin Test | MetaPlayer</title>
 
     <style>
-        #target {
+        #metaplayer {
             width: 300px;
             height: 150px;
             background:  #333;
             position: fixed;
             top: 10px; right: 10px;
         }
+        #target {
+            width: 100%;
+            height: 100%;
+        }
     </style>
 
-    <!--Dependency: Flowplayer-->
-    <script src="../../../../external/swfobject/swfobject.js"></script>
+    <!--Test Harness: OKJS -->
+    <script src="../../../../external/okjs/ok.js" type="text/javascript"></script>
+
+
+    <!-- Test Unit : HTML5 Video API -->
+    <script src="../../../unit/html5/unit.html5.js" type="text/javascript"></script>
+
+    <!-- Dependency: YouTube -->
+    <script src="http://www.youtube.com/player_api" type="text/javascript"></script>
 
     <!--Dependency: jQuery-->
     <script src="../../../../external/jquery/jquery-1.6.2.js" type="text/javascript"></script>
 
-    <!--Dependency: OKJS -->
-    <script src="../../../../external/okjs/ok.js" type="text/javascript"></script>
-
-    <!-- Unit CSS -->
-    <link href="../../../unit/unit.css" rel="stylesheet" type="text/css">
-
-    <!-- Unit : Player API -->
-    <script src="../../../unit/html5/unit.html5.js" type="text/javascript"></script>
 
     <!-- Core: Ramp -->
     <script src="../../../core/metaplayer.js"></script>
@@ -44,38 +47,54 @@
     <!-- Media Plugin: youtube -->
     <script src="../../../players/youtube/player.youtube.js"></script>
 
+
+
     <script type="text/javascript">
+        var video, yt;
 
-        var unit = okjs({
-            exceptions: 1, // enable for debugging
-            verbose: true
-        });
+        function onYouTubePlayerAPIReady() {
+            $( function () {
 
-        var harness = PlayerUnit( unit );
-        var video;
+                yt = new YT.Player('target', {
+//                    videoId: 'II1Lrxz2Lgg',
+                    playerVars: {
+                        wmode: "opaque",
+                        controls : 1,
+                        showInfo: 0,
+                        rel : 0
+                    }
+                });
 
-        unit.test("ramp setup", function () {
-           // ramp services
-            video = MetaPlayer.youtube('#target', {
-                preload: false,
-                autoplay: false
+
+                var unit = okjs({
+                    exceptions: 1, // enable for debugging
+                    verbose: true
+                });
+
+                var harness = PlayerUnit( unit );
+
+                unit.test("ramp setup", function () {
+                    // ramp services
+                    video = MetaPlayer.youtube(yt);
+                    video.preload = "none";
+                    video.src = "http://www.youtube.com/v/II1Lrxz2Lgg?version=3";
+                    harness.media = video;
+                });
+
+                harness.addTests();
+
+                unit.start();
             });
-            video.src = "http://www.youtube.com/v/II1Lrxz2Lgg?version=3";
-            harness.media = video;
-        });
-
-        harness.addTests();
-
-        $( function () {
-            unit.start();
-        });
+        }
     </script>
 </head>
 <body>
 
 <h3>Unit Test &raquo;MetaPlayer &raquo; YouTube Plugin</h3>
 
-<div id='target'></div>
+<div class="metaplayer">
+    <div id='target'></div>
+</div>
 
 </body>
 </html>

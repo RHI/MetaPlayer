@@ -1,0 +1,284 @@
+<!doctype html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+    <title>TLC  MPF</title>
+
+
+    <!-- Dependency: jQuery -->
+    <script src="../../../../external/jquery/jquery-1.7.1.js" type="text/javascript"></script>
+    <script src="../../../../external/jquery/jquery-ui-1.8.17..min.js" type="text/javascript"></script>
+
+    <!--Dependency: Popcorn -->
+    <script src="../../../../external/popcorn/popcorn.js" type="text/javascript"></script>
+
+    <!-- Core: Ramp -->
+    <script src="../../../core/metaplayer.js"></script>
+    <script src="../../../core/utils/util.event.js"></script>
+    <script src="../../../core/utils/util.proxy.js"></script>
+    <script src="../../../core/utils/util.script.js"></script>
+    <script src="../../../core/utils/util.timer.js"></script>
+    <script src="../../../core/utils/util.format.js"></script>
+    <script src="../../../core/utils/util.ui.js"></script>
+    <script src="../../../core/utils/util.progress.js"></script>
+    <script src="../../../core/playlist/player.playlist.js"></script>
+    <script src="../../../core/layout/core.layout.js"></script>
+    <script src="../../../core/metadata/core.metadata.js"></script>
+    <script src="../../../core/search/core.search.js"></script>
+    <script src="../../../core/cues/core.cues.js"></script>
+
+    <link href="../../../core/layout/core.layout.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Service Plugin: RAMP -->
+    <script src="../../../services/ramp/service.ramp.js"></script>
+
+    <!-- Media : HTML5 -->
+    <script src="../../../players/html5/player.html5.js"></script>
+
+    <!-- UI: embed -->
+    <script src="../../../ui/embed/ui.embed.js"></script>
+    <link href="../../../ui/embed/ui.embed.css" rel="stylesheet" type="text/css">
+    <link href="../../../themes/mp2/theme.embed.css" rel="stylesheet" type="text/css">
+
+
+    <!-- UI: social -->
+    <script src="../../../ui/social/ui.social.js"></script>
+    <link href="../../../ui/social/ui.social.css" rel="stylesheet" type="text/css">
+
+    <!-- UI: tlc -->
+    <script src="../../../ui/tlc/ui.tlc.js"></script>
+    <script src="../../../ui/tlc/ui.textselect.js"></script>
+    <link href="../../../ui/tlc/theme/ui.tlc.css" rel="stylesheet" type="text/css">
+
+    <style>
+        body {
+            background:  #eee;
+            font-family: Verdana;
+            font-size: 14px;
+        }
+
+        #target {
+            float: left;
+            /*position: absolute;*/
+            /*top: 100px;*/
+            /*left: 10px;*/
+            /*right: 10px;*/
+            width: 1000px;
+            height: 560px;
+            background: black;
+            margin: 4px;
+        }
+
+        .panel {
+            float: left;
+            padding: 10px;
+            background: white;
+            width: 475px;
+            margin: 5px;
+        }
+        .quote-sub {
+            font-size: .9em;
+            font-style: italic;
+            text-align: center;
+            padding-left: 100px;
+            margin: 4px;
+        }
+
+        .quote-panel {
+            height: 300px;
+            overflow: auto;
+        }
+        .quote {
+            font-size: 1em;
+            text-align: center;
+            font-weight: bold;
+
+        }
+        .quote-time {
+            font-style: normal;
+        }
+
+        .quote-tip {
+            font-size: .9em;
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+        .quote-share {
+            text-align: right;
+            margin-bottom: 8px;
+        }
+
+        .quote-share-btn {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 4px;
+            background: rgba(0,0,255,.7);
+            color: white;
+            font-size: 1.05em;
+            text-decoration: none;
+        }
+        .quote-share-btn:active {
+            background: rgba(0,0,255,1);
+        }
+
+        .quote-results {
+            display: none;
+        }
+        #tx {
+            background: white;
+            overflow: auto;
+            height: 300px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<h3>MetaPlayer &raquo; TLC </h3>
+
+
+<div id='target'></div>
+
+
+<div class="panel quote-panel">
+   <div class="quote-tip">
+       Select text from the transcript to share a video clip:
+   </div>
+
+    <div class="quote-results ">
+        <div class="quote">
+            &ldquo;<span class="quote-text"></span>&rdquo;
+        </div>
+
+        <div class="quote-sub">
+            at <a class="quote-time" href="javascript:false">123</a>
+        </div>
+
+        <div class="quote-share">
+            <a class="quote-share-btn" href="javascript:false">Share</a>
+        </div>
+    </div>
+</div>
+
+<div class="panel">
+    <div id="tx"></div>
+</div>
+
+
+<script type="text/javascript">
+    var player, ts;
+    $(function () {
+        player = MetaPlayer( "#target")
+                .tlc()
+                .ramp("f455a86b28160bc0682fec3662e39d3b", "52871241");
+        player.load();
+
+        ts = TextSelector('#tx', function (text, time) {
+            $('.quote-text')
+                    .text(text);
+            $('.quote-time')
+                    .data('time', time)
+                    .text( MetaPlayer.format.seconds( time ) );
+
+            $('.quote-results').show();
+        });
+
+        $('.quote-time').click( function () {
+            player.video.currentTime = $('.quote-time').data('time');
+        });
+
+        player.cues.listen("cues", function (e) {
+            if(e.plugin == "captions" )
+                ts.captions( player.cues.getCaptions() );
+        });
+
+        player.playlist.autoAdvance = false;
+
+        player.cues.setCues("tlc", [
+            {
+                start: 1,
+                type : "video",
+                label : "Vanilla Cake Recipe, Buddy Style",
+                thumb : "../theme/tlc/cake-pic-250.png",
+                term : "video"
+            },
+            {
+                start: 20,
+                type : "recipe",
+                label : "Chocolate Cake Recipe, Buddy Style",
+                thumb : "../theme/tlc/chocolatecake-pic-250.png",
+                term : "recipe"
+            },
+            {
+                start: 60*2,
+                type : "person",
+                term : "person",
+                label : "Buddy Valastro",
+                thumb : "../theme/tlc/buddy-pic-250.png"
+            },
+            {
+                start: 60*3,
+                type : "article",
+                label : "Sample Article",
+                thumb : "../theme/tlc/thumb-quote.png",
+                term : "article"
+            },
+            {
+                start: 60*4,
+                type : "quote",
+                term : "quote",
+                label : "&#8220;This Recipe is Sure to Impress! Bada Bing, Bada Boom!&#8221;",
+                thumb : "../theme/tlc/thumb-quote.png"
+            },
+            {
+                start: 60*5,
+                type : "photo",
+                label : "&#8220;This Recipe is Sure to Impress! Bada Bing, Bada Boom!&#8221;",
+                thumb : "../theme/tlc/chocolatecake-pic-250.png",
+                term : "photo"
+            },
+            {
+                start: 60*6,
+                type : "wiki",
+                label : "&#8220;This Recipe is Sure to Impress! Bada Bing, Bada Boom!&#8221;",
+                thumb : "../theme/tlc/thumb-quote.png",
+                term : "wiki"
+            },
+            {
+                start: 60*7,
+                type : "interactive",
+                thumb : "../theme/tlc/chocolatecake-pic-250.png",
+                label : "&#8220;This Recipe is Sure to Impress! Bada Bing, Bada Boom!&#8221;",
+                term : "interactive"
+            },
+            {
+                start: 60*8,
+                type : "sponsored",
+                term : "sponsored",
+                label : "&#8220;This Recipe is Sure to Impress! Bada Bing, Bada Boom!&#8221;",
+                thumb : "../theme/tlc/cakeboss-ad-250.png"
+            },
+            {
+                start: 645,
+                type : "recipe",
+                label : "&#8220;This Recipe is Sure to Impress! Bada Bing, Bada Boom!&#8221;",
+                thumb : "../theme/tlc/chocolatecake-pic-250.png",
+                term : "recipe"
+            }
+        ], "ramp:52871241");
+    });
+
+
+</script>
+
+
+
+</div>
+</body>
+</html>

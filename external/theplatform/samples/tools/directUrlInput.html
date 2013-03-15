@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:tp="http://player.theplatform.com/" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-language" content="en" />
+	<title>Direct URL Input</title>
+
+	<!-- ************************************************ -->
+	<!-- This is the Feed Url for the videos on this page -->
+	<!-- ************************************************ -->
+	<!-- This is the site stylesheet and doesn't care about the PDK -->
+	<link rel="stylesheet" href="../css/video.css" type="text/css" media="screen" />
+
+	<script type="text/javascript" src="../../pdk/tpPdk.js"></script> 
+	
+	<!-- RELEASE URL INPUT ITEMS -->
+	<!-- releaseUrl input css -->
+	<style type="text/css">
+		.inputVal {
+			position:absolute;
+			top: 391px;
+			left: 5px;
+		}	
+	</style>
+	<script type="text/javascript">
+        tpLogLevel="debug";
+		function setSmilCall()
+		{
+			var val = document.getElementById('smil').value;
+			val = val.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
+			var smil = "<smil xmlns='http://www.w3.org/2005/SMIL21/Language'><body><ref src='" + val + "'/></body></smil>"
+			$pdk.controller.setSmil(smil);
+		}
+	</script>	
+</head>
+<body>
+	<div id="player" class="tpPlayer"
+		tp:fp.bgcolor="0x131313"
+        tp:wmode="direct"
+		tp:logLevel="debug"
+		tp:allowFullScreen="true"
+		tp:skinUrl="../../pdk/swf/skinCinematic.swf"
+		tp:plugin0="type=adcomponent|URL=../../pdk/swf/SMIL.swf|priority=3"
+		tp:emailServiceURL="http://player.theplatform.com/m/3JHsmB/demo/select/{releasePid}"
+		tp:playerURL="http://player.theplatform.com/m/3JHsmB/demo/select/{releasePid}"
+		tp:embeddedPlayerHTML="&lt;embed src=&quot;http://player.theplatform.com/m/3JHsmB/demo/embed/select/{releasePid}&quot; width=&quot;311&quot; height=&quot;252&quot; type=&quot;application/x-shockwave-flash&quot; allowFullScreen=&quot;true&quot; bgcolor=&quot;#131313&quot; /&gt;"
+		tp:backgroundColor="0x131313"
+		tp:controlBackgroundColor="0x131313"
+        tp:useStageVideo="true"
+		tp:controlColor="0xBEBEBE"
+		tp:controlFrameColor="0x545759"
+		tp:controlHoverColor="0xBEBEBE"
+		tp:controlSelectedColor="0x00CCFF"
+		tp:frameColor="0x545759"
+		tp:pageBackgroundColor="0x131313"
+		tp:playProgressColor="0x00CCFF"
+		tp:scrubberColor="0xBEBEBE"
+		tp:scrubberFrameColor="0x00CCFF"
+		tp:scrubTrackColor="0xBEBEBE"
+		tp:textBackgroundColor="0x383838"
+		tp:textColor="0xBEBEBE"
+		tp:loadProgressColor="0x5D9070"
+		tp:layoutUrl="../../data/metaLayout.xml">
+	</div>
+	<div class="inputVal" style="font:8pt Verdana;color:#000000">
+			Direct Url: <input style="width:400px;font:8pt Verdana;color:#BEBEBE;background-color:#131313" type="text" name="smil" id="smil" value="http://ne.edgecastcdn.net/0008B0/mps/BradNieto/142/884/finding_nemo_ch16_1050Kb_480__470370.flv">&nbsp;<button onclick="setSmilCall();" style="width:40px;font:8pt Verdana;color:#BEBEBE;background-color:#131313">Play</button>
+		</div>
+</body>
+</html>

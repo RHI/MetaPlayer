@@ -1,0 +1,438 @@
+.mpf-tlc {
+    position: relative;
+    top: -100%;
+}
+
+.mpf-tlc-panel {
+    position: relative;
+    background: rgba(0,0,0,.85);
+    margin-left: 0px;
+    margin-right: 0px;
+    border: 1px solid #494949;
+    overflow: hidden;
+}
+
+.mpf-tlc-overlay .mpf-tlc-panel {
+    margin-left: 22px;
+    margin-right: 22px;
+}
+
+ /* panels */
+
+.mpf-tlc-panel-captions {
+    position: relative;
+    left: 0;
+    top: 0;
+}
+
+.mpf-tlc-panel-track {
+    padding-top: 16px;
+    position: relative;
+    left: 0px;
+    top: 0;
+    right: 0px;
+}
+
+.mpf-tlc-panel-controls {
+    border-top: 1px solid #494949;
+    position: relative;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    font-family: Arial;
+    font-size: 10px;
+    color: #cccccc;
+    height: 28px;
+}
+
+/* panel-track */
+
+.mpf-tlc-cue-track {
+    position: relative;
+    margin: 0px 16px 0px 16px;
+    background: #413d3b;
+    height: 2px;
+}
+
+.mpf-tlc-track {
+    position: relative;
+    margin: 9px 16px;
+    background: #767676;
+    height: 6px;
+}
+
+
+.mpf-tlc-track-fill {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    width: 10%;
+    background: #940700;
+    cursor: pointer;
+
+}
+
+.mpf-tlc-track-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    width: 100%;
+}
+
+
+/* panel-controls */
+.mpf-tlc-controls-left {
+    position: absolute;
+    left: 0;
+    height: 100%;
+}
+
+.mpf-tlc-controls-right {
+    position: absolute;
+    right: 0;
+    height: 100%;
+}
+
+.mpf-tlc-controls-left .mpf-tlc-button {
+    border-right: 1px solid #494949;
+}
+.mpf-tlc-controls-right .mpf-tlc-button {
+    border-left: 1px solid #494949;
+}
+.mpf-tlc-button {
+    float: left;
+    position: relative;
+    top: 0; left: 0;
+    width: 45px;
+    height: 28px;
+    line-height: 28px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.mpf-tlc-button:hover {
+    color: #ffffff;
+}
+
+.mpf-tlc-button-icon {
+    margin-left: auto;
+    margin-right: auto;
+    background: url("tlc/video-controls-sprite.png") no-repeat 0px 0px;
+    height: 28px;
+    width: 24px;
+}
+
+.mpf-tlc-time {
+    width: 95px;
+    cursor: inherit;
+}
+.mpf-tlc-time:hover {
+    color: inherit;
+}
+
+.mpf-tlc-button-icon-pause {
+    width: 27px;
+    background-position: -1px -113px;
+}
+.mpf-tlc-button-icon-pause:hover {
+    background-position: -1px -141px;
+}
+
+.mpf-tlc-button-icon-play {
+    width: 27px;
+    background-position: -25px -113px;
+}
+
+.mpf-tlc-button-icon-play:hover {
+    background-position: -25px -141px;
+}
+
+.mpf-tlc-button-icon-back {
+    width: 27px;
+    background: url("tlc/back-15sec.png") no-repeat 0px 0px;
+    background-position: 5px 5px;
+}
+
+.mpf-tlc-button-icon-share {
+    background: none;
+}
+
+.mpf-tlc-button-icon-cc {
+    width: 27px;
+    background-position: -77px -113px;
+}
+.mpf-tlc-button-icon-cc:hover {
+    background-position: -77px -141px;
+}
+
+.mpf-tlc-button-mute {
+    width: 28px;
+}
+.mpf-tlc-button-icon-mute {
+     width: 27px;
+     background-position: 0 0;
+ }
+
+.mpf-tlc-vol0 .mpf-tlc-button-icon {
+    background-position: -151px -113px;
+}
+.mpf-tlc-vol0:hover .mpf-tlc-button-icon {
+    background-position: -151px -141px;
+}
+
+.mpf-tlc-vol1 .mpf-tlc-button-icon {
+    background-position: -127px -113px;
+}
+.mpf-tlc-vol1:hover .mpf-tlc-button-icon {
+    background-position: -127px -141px;
+}
+
+.mpf-tlc-vol2 .mpf-tlc-button-icon {
+    background-position: -103px -113px;
+}
+.mpf-tlc-vol2:hover .mpf-tlc-button-icon {
+    background-position: -103px -141px;
+}
+
+.mpf-tlc-volume {
+    float: left;
+    position: relative;
+    background: url("tlc/video-controls-sprite.png") no-repeat;
+    height: 28px;
+    width: 24px;
+    background-position: -182px -1px;
+    margin-right: 12px;
+}
+.mpf-tlc-volume-fill {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    width: 50%;
+    cursor: pointer;
+    background: url("tlc/video-controls-sprite.png") no-repeat;
+    background-position: -182px -141px;
+}
+
+.mpf-tlc-button-icon-zoom {
+    width: 27px;
+    background-position: -214px -113px;
+}
+.mpf-tlc-button-icon-zoom:hover {
+    background-position: -214px -141px;
+}
+
+.mpf-tlc-button-icon-unzoom {
+    width: 27px;
+    background-position: -244px -113px;
+}
+.mpf-tlc-button-icon-unzoom:hover {
+    background-position: -244px -141px;
+}
+
+/*captions*/
+
+.mpf-tlc .mp-cc-frame {
+    padding-top: 6px;
+    text-align: center;
+    color: white;
+    font-family: Verdana, sans-serif;
+}
+.mpf-tlc .mp-cc-text span {
+    font-size: 20px;
+}
+
+/* cues */
+.mpf-tlc-cue {
+    position: absolute;
+    height: 18px;
+    width: 20px;
+    background-repeat: no-repeat;
+}
+
+.mpf-tlc-cue-video {
+    background-image: url("tlc/category-icons-sprite.png");
+    background-position: -0px -20px;
+}
+.mpf-tlc-cue-video.mpf-tlc-cue-active {
+    background-position: -0px -1px;
+}
+
+.mpf-tlc-cue-recipe {
+    background-image: url("tlc/category-icons-sprite.png");
+    background-position: -22px -22px;
+    height: 18px;
+}
+.mpf-tlc-cue-recipe.mpf-tlc-cue-active {
+    background-position: -22px -3px;
+}
+
+.mpf-tlc-cue-person {
+    background-image: url("tlc/category-icons-sprite.png");
+    background-position: -40px -20px;
+}
+.mpf-tlc-cue-person.mpf-tlc-cue-active {
+    background-position: -40px -1px;
+}
+
+.mpf-tlc-cue-article {
+    background-image: url("tlc/category-icons-sprite.png");
+    background-position: -61px -20px;
+}
+.mpf-tlc-cue-article.mpf-tlc-cue-active {
+    background-position: -61px -1px;
+}
+
+.mpf-tlc-cue-quote {
+    background-image: url("tlc/category-icons-sprite.png");
+    background-position: -80px -20px;
+}
+.mpf-tlc-cue-quote.mpf-tlc-cue-active {
+    background-position: -80px -1px;
+}
+
+.mpf-tlc-cue-photo {
+    background-image: url("tlc/category-icons-sprite.png");
+    background-position: -101px -20px;
+}
+.mpf-tlc-cue-photo.mpf-tlc-cue-active {
+    background-position: -101px -1px;
+}
+
+.mpf-tlc-cue-wiki {
+    background-image: url("tlc/category-icons-sprite.png");
+    background-position: -120px -20px;
+}
+.mpf-tlc-cue-wiki.mpf-tlc-cue-active {
+    background-position: -120px -1px;
+}
+
+.mpf-tlc-cue-interactive {
+    background-image: url("tlc/category-icons-sprite.png");
+    background-position: -141px -18px;
+    height: 20px;
+}
+.mpf-tlc-cue-interactive.mpf-tlc-cue-active {
+    background-position: -141px 1px;
+}
+
+.mpf-tlc-cue-sponsored {
+    background-image: url("tlc/category-icons-sprite.png");
+    background-position: -161px -20px;
+    width: 21px;
+}
+.mpf-tlc-cue-sponsored.mpf-tlc-cue-active {
+    background-position: -161px -1px;
+    width: 21px;
+}
+
+.mpf-tlc-cue-tip {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1000;
+
+}
+.mpf-tlc-cue-tip-tail {
+    position: relative;
+    left: 10px;
+    border-top: 5px solid #a7ce30;
+    border-left: 5px solid rgba(0,0,0,0);
+    border-right: 5px solid rgba(0,0,0,0);
+    height: 0px;
+    width: 0px;
+}
+
+.mpf-tlc-cue-tip-body {
+    background: #a7ce30;
+    background: -webkit-gradient(linear, left top, left bottom, from(#6e9102), to(#a7ce30)); /* for webkit browsers */
+    background: -moz-linear-gradient(top,  #a7ce30,  #6e9102); /* for firefox 3.6+ */
+    border: 1px solid #a7ce30;
+    border-radius: 3px;
+    padding: 5px;
+    text-align: left;
+    width: 230px;
+}
+.mpf-tlc-cue-tip-icon {
+    margin-right: 4px;
+    height: 18px;
+    width: 20px;
+    background-repeat: no-repeat;
+    float: left;
+}
+.mpf-tlc-cue-tip-icon.mpf-tlc-cue-interactive {
+    height: 20px;
+}
+
+.mpf-tlc-cue-tip-text {
+    font-family: Maven Pro, sans-serif;
+    font-weight: bold;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #ffffff;
+    text-shadow: 1px 1px #6e9102;
+    line-height: 20px;
+    margin-right: 4px;
+}
+.mpf-tlc-cue-tip-thumb {
+    float: left;
+    margin-right: 4px;
+    background:white;
+    height: 55px;
+    max-width: 75px;
+    border: 2px solid #ffffff;
+}
+
+.mpf-tlc-clear {
+    clear: both;
+    font-size: 1px;
+    line-height: 1px;
+}
+
+/* share menu */
+
+.mpf-tlc-share-menu {
+    position: absolute;
+    z-index: 500;
+    right: 22px;
+    top: -104px;
+    width: 225px;
+    height: 100px;
+    background: rgba(0,0,0,.85);
+    border: 1px solid #494949;
+}
+
+.mpf-tlc-share-buttons {
+    padding: 8px  8px  4px  8px;
+    height: 20px;
+}
+
+.mpf-tlc-share-close {
+    background: url("tlc/back-button-sprite.png") no-repeat  0 -21px;
+    height: 15px;
+    width: 15px;
+    position: absolute;
+    background-size: 100%;
+    right: 8px;
+    top: 8px;
+    cursor: pointer;
+}
+.mpf-tlc-share-row {
+    line-height: 25px;
+    padding: 4px 8px;
+}
+.mpf-tlc-share-label {
+    font-family: Maven Pro, sans-serif;
+    float: left;
+    width: 75px;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+}
+.mpf-tlc-share-menu input {
+    background: black;
+    color: white;
+    border: 1px solid #494949;
+    padding: 2px 4px;
+    vertical-align: baseline;
+    width: 120px;
+}

@@ -1,9 +1,6 @@
-
 /**
  * @fileOverview A media player framework for HTML5/JavaScript for use with RAMP services.
- * @author Greg Kindel <greg@gkindel.com>
- * @version 1.0
- */
+*/
 
 (function () {
 
@@ -21,7 +18,7 @@
     };
 
     /**
-     * Create a MetaPlyer instance. Sets up core player plugins, and DOM scaffolding.
+     * Create a MetaPlayer instance. Sets up core player plugins, and DOM scaffolding.
      * By default, search, metadata, and cues interfaces are queued for load(). If a DOM element is passed,
      * then the layout and playlist interfaces are queued as well.
      *
@@ -42,7 +39,7 @@
      *
      * @name MetaPlayer
      * @constructor
-     * @this {MetaPlayer}
+     * @augments Util.EventDispatcher
      * @param {MediaElement,String} [video] An HTML5 Media element, a DIV element, or jQuery selector string.
      * @param {Object} [options] A map of configuration options
      * @param {Object} options.layout Default options passed in to Layout module, defaults to empty object.
@@ -50,18 +47,19 @@
      * @param {Object} options.search Default options passed in to Search module, defaults to empty object.
      * @param {Object} options.cues Default options passed in to Cues module, defaults to empty object.
      */
-    var MetaPlayer = function (video, options ) {
+    var MetaPlayer = function (media, options ) {
 
         if( ! (this instanceof MetaPlayer) )
-            return new MetaPlayer( video, options );
+            return new MetaPlayer( media, options );
 
-        this.config = $.extend({}, defaults, options );
+
+        this.config = $.extend({}, defaults, options, MetaPlayer.script.query("^mp."));
 
         MetaPlayer.dispatcher(this);
 
         this._plugins = {};
         this._loadQueue = [];
-        this.target = video;
+        this.target = media;
 
         // autodetect, or manual set for testing
         this.isTouchDevice = ( this.config.isTouchDevice != null )
@@ -80,26 +78,14 @@
         if( this.config.cues )
             this.cues = new MetaPlayer.Cues(this, this.config );
 
-        // resolve video element from string, popcorn instance, or direct reference
-        if( typeof video == "string")
-            video = $(video).get(0);
-
-        if( video ) {
-            if( video.getTrackEvents instanceof Function ) {
-                // is popcorn instance
-                this.video = video.media;
-                this.popcorn = video;
-            }
-
-            else if( video.play instanceof Function ) {
-                // is already a media element
-                this.video = video;
-            }
-        }
+        // resolve html5 player adapter
+        this.video = this.adaptMedia(media);
 
         // optional layout disabling, use at own risk for player UI layout
-        if( video && this.config.layout ) {
-            this.layout = MetaPlayer.layout(video, this.config.layout);
+        if( this.config.layout && (this.video || typeof media == "string") ){
+            this.layout = MetaPlayer.layout(this.video || media, this.config.layout);
+            if( this.config.maximize )
+                this.layout.maximize();
         }
 
         // start loading after this execution block, can be triggered earlier by load()
@@ -110,15 +96,21 @@
         }, 0);
     };
 
+    MetaPlayer.DEBUG = "error,warning";
+
     /**
      * Fired when all plugins are loaded.
-     * @constant
+     * @event
+     * @name MetaPlayer#event:READY
+     * @param {Event} e
      */
     MetaPlayer.READY = "ready";
 
     /**
      * Fired when player destructor called to allow plugins to clean up.
-     * @constant
+     * @event
+     * @name MetaPlayer#event:DESTROY
+     * @param {Event} e
      */
     MetaPlayer.DESTROY = "destroy";
 
@@ -127,38 +119,39 @@
 
         /**
          * Initializes requested player plugins, optionally begins playback.
-         * @this {MetaPlayer}
+         * @name MetaPlayer#load
+         * @function
          */
         load : function () {
             this._load();
             return this;
         },
 
+        adaptMedia :  function ( media ) {
+            var video;
+            var self = this;
+            $.each( MetaPlayer.Players, function (key, adapter) {
+                // break loop if adapter return true
+                video = adapter(media, self);
+                if( video )
+                    return false;
+            });
+            return video;
+        },
+
         /**
          * Disabled MP instance, frees up memory resources. Fires DESTROY event for plugin notification.
-         * @this {MetaPlayer}
+         * @name MetaPlayer#destroy
+         * @function
          */
         destroy : function () {
             this.dispatcher.dispatch( MetaPlayer.DESTROY );
 
             delete this.plugins;
             delete this._loadQueue;
-
-            // todo: iterate plugins, call destroy() if def
-            // these should be made plugins
-
             delete this.layout;
             delete this.popcorn;
 
-        },
-
-        log : function (args, tag ){
-            if( this.config.debug.indexOf(tag) < 0 )
-                return;
-
-            var arr = Array.prototype.slice.apply(args);
-            arr.unshift( tag.toUpperCase() );
-            console.log.apply(console, arr);
         },
 
         _load : function () {
@@ -167,31 +160,73 @@
                 // load() was already called
                 return;
             }
+            var self = this;
             this._loaded = true;
 
             // fill in core interfaces were not implemented
             if( ! this.video && this.layout )
                 this.html5();
 
-            if( this.video && ! this.playlist )
-                this.playlist = new MetaPlayer.Playlist(this, this.config.playlist);
+            if( this.config.preload != null )
+                this.video.preload = this.config.preload;
 
             if( this.video && ! this.popcorn && Popcorn != null )
                 this.popcorn = Popcorn(this.video);
 
+            if( this.video ){
+                this.playlist = new MetaPlayer.Playlist(this);
+            }
+
+            if( this.video && this.config.linkAdvance ) {
+                this.video.addEventListener("trackchange", function () {
+                    var link = self.metadata.getData().link;
+                    if( link && self.video.getIndex() > 0)
+                        window.top.location = link;
+                });
+            }
+
+
 
             // run the plugins, any video will have been initialized by now
-            var self = this;
-            $( this._loadQueue ).each(function (i, plugin) {
-                    plugin.fn.apply(self, plugin.args);
-            });
-            this._loadQueue = [];
+            var plugin;
+            while( this._loadQueue.length ) {
+                plugin = this._loadQueue.shift();
+                plugin.fn.apply(this, plugin.args);
+            }
 
             this.ready = true;
 
             // let plugins do any setup which requires other plugins
             this.dispatcher.dispatch( MetaPlayer.READY );
 
+        },
+
+        error : function (code, message, type) {
+            var e = this.createEvent();
+            e.initEvent("error", false, true);
+            e.code = code;
+            e.message = message;
+            this.dispatchEvent(e);
+            var args = Array.prototype.slice.call(arguments);
+            args.unshift("MPF");
+            try {
+                console.error( args.join(" :: ") );
+            }
+            catch(e){};
+        },
+
+        warn : function (code, message) {
+            var e = this.createEvent();
+            e.initEvent("warning", false, true);
+            e.code = code;
+            e.message = message;
+            this.dispatchEvent(e);
+            var args = Array.prototype.slice.call(arguments);
+            args.unshift("MPF");
+            try {
+                console.warn( args.join(" :: ") );
+            }
+            catch(e){};
         }
 
     };
@@ -233,6 +268,8 @@
 
 
     /**
+     * @deprecated
+     * @description
      * Registers a function as a playback plugin.  Playback plugins are initialized earlier than other plugins.
      *
      * For example:
@@ -254,13 +291,80 @@
 
         p[keyword] = function () {
             callback.apply(this, arguments);
+            this.layout.addVideo(this.video);
             return this;
         };
     };
 
+    MetaPlayer.iOS =  /iPad|iPhone|iPod/i.test(navigator.userAgent);
+
+    /**
+     * @name API
+     * @namespace MetaPlayer Interfaces: MetaData, Cues, Search, Layout
+     */
+    MetaPlayer.Core = {};
+
+    /**
+     * @name Services
+     * @namespace MetaData and Search providers
+     */
+    MetaPlayer.Services = {};
+
+    /**
+     * @name Players
+     * @namespace Player HTML5 adapters
+     */
+    MetaPlayer.Players = {};
+
+    /**
+     * @name UI
+     * @namespace Player Controls and Page Widgets
+     */
+    MetaPlayer.UI = {};
+
+    /**
+     * @name Util
+     * @namespace Utility libraries and widgets.
+     */
+    MetaPlayer.Util = {};
+
+    /**
+     * @name Metrics
+     * @namespace Utility libraries and widgets.
+     */
+    MetaPlayer.Metrics = {};
+
+
+    MetaPlayer.log = function (type, rest) {
+        var args = Array.prototype.slice.call(arguments);
+
+        // memoise string DEBUG into objects for quick lookup
+        if( typeof MetaPlayer.DEBUG == "string" ){
+            var types = MetaPlayer.DEBUG.split(/[,\s]+/);
+            MetaPlayer.DEBUG = {};
+            $.each(types, function (i,val){
+                MetaPlayer.DEBUG[val] = true;
+            })
+        }
+
+        if( MetaPlayer.DEBUG && (MetaPlayer.DEBUG == true || MetaPlayer.DEBUG[type]) ) {
+            args.unshift("MPF");
+            try{
+                console.log(args.join(" :: "));
+            }
+            catch(e){}
+        }
+    };
+
+    /**
+     * @name Popcorn
+     * @class PopcornJS plugins provided by the MetaPlayer Framework
+     */
     window.MetaPlayer = MetaPlayer;
-    window.Ramp = MetaPlayer;
+    window.MetaPlayerFramework = MetaPlayer;
     window.MPF = MetaPlayer;
+
+
 
 })();
 

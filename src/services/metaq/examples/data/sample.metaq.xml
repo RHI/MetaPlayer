@@ -1,0 +1,63 @@
+<Response>
+    <Matches>
+        <Match>
+            <Actions>
+                <Action>
+                    <Attributes>
+                        <Attribute>
+                            <Name>term</Name>
+                            <Value>Orange</Value>
+                        </Attribute>
+                    </Attributes>
+                    <Type>tags</Type>
+                    <Description>An action description</Description>
+                    <Id>6</Id>
+                    <SiteId>12345</SiteId>
+                </Action>
+            </Actions>
+            <Occurrence>
+                <StartTime>15.00</StartTime>
+            </Occurrence>
+        </Match>
+        <Match>
+            <Actions>
+                <Action>
+                    <Attributes>
+                        <Attribute>
+                            <Name>term</Name>
+                            <Value>Apple</Value>
+                        </Attribute>
+                    </Attributes>
+                    <Type>tags</Type>
+                    <Description>An action description</Description>
+                    <Id>6</Id>
+                    <SiteId>12345</SiteId>
+                </Action>
+            </Actions>
+            <Occurrence>
+                <StartTime>30.0</StartTime>
+            </Occurrence>
+        </Match>
+        <Match>
+            <Actions>
+                <Action>
+                    <Attributes>
+                        <Attribute>
+                            <Name>url</Name>
+                            <Value>http://www.example.com/framefeed/term=foo</Value>
+                        </Attribute>
+                    </Attributes>
+                    <Type>framefeed</Type>
+                    <Description>An action description</Description>
+                    <Id>7</Id>
+                    <SiteId>12345</SiteId>
+                </Action>
+            </Actions>
+            <Occurrence>
+                <StartTime>5</StartTime>
+                <EndTime>10</EndTime>
+            </Occurrence>
+        </Match>
+    </Matches>
+</Response>
+

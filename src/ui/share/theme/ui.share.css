@@ -1,0 +1,73 @@
+/* share menu */
+
+.mpf-share-panel {
+    position: absolute;
+    z-index: 1500;
+    right: 10px;
+    bottom: 10px;
+    width: 225px;
+    height: 100px;
+    background: #424549;
+    background: -webkit-gradient(linear, left top, left bottom, from(#424549), to(#2e3034)); /* for webkit browsers */
+    background: -moz-linear-gradient(top,  #424549,  #2e3034); /* for firefox 3.6+ */
+    border: 1px solid #494949;
+}
+
+.mpf-share-button {
+    color: white;
+    font-size: 12px;
+    display: inline-block;
+    float: left;
+    text-align: center;
+    padding: 1px 8px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+.mpf-share-button:hover {
+    color: white;
+    font-size: 12px;
+    display: inline-block;
+    float: left;
+    text-align: center;
+    padding: 1px 8px;
+    opacity: .9;
+}
+
+
+.mpf-share-buttons {
+    padding: 8px  8px  4px  8px;
+    height: 20px;
+}
+
+.mpf-share-close {
+    text-align: center;
+    font-family: sans-serif;
+    color: white;
+    height: 15px;
+    width: 15px;
+    position: absolute;
+    background-size: 100%;
+    right: 8px;
+    top: 8px;
+    cursor: pointer;
+}
+.mpf-share-row {
+    line-height: 25px;
+    padding: 4px 8px;
+}
+.mpf-share-label {
+    font-family: Maven Pro, sans-serif;
+    float: left;
+    width: 75px;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+}
+.mpf-share-panel input {
+    background: black;
+    color: white;
+    border: 1px solid #494949;
+    padding: 2px 4px;
+    vertical-align: baseline;
+    width: 120px;
+}

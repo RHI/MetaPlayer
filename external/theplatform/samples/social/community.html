@@ -1,0 +1,220 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--
+Based off of Cinematic, this host page demonstrates the PDK's community controls.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:tp="http://player.theplatform.com/" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+	<title>Community Controls</title>
+	<!-- ************************************************* -->
+	<!-- This is the feed URL for the videos on this page. -->
+	<!-- The PDK will automatically use this feed in the release list -->
+	<!-- without having to explicitly define it in the component configuration.-->
+	<!-- ************************************************* -->
+	<link rel="alternate" href="http://feed.theplatform.com/f/3JHsmB/TpW4aioBvs6N?form=rss" type="application/rss+xml" />
+
+	<!-- styles for layout -->
+	<link rel="stylesheet" href="../css/communityLayout.css" type="text/css" media="screen" />
+
+	<!-- shared components for community widgets -->
+	<script type="text/javascript" src="../../pdk/community/js/jquery-1.2.3.pack.js"></script>
+	<script type="text/javascript" src="../../pdk/community/js/serviceConfig.js"></script>
+	<script type="text/javascript" src="../../pdk/community/js/communityManager.js"></script>
+	<script type="text/javascript" src="../../pdk/community/js/communityWidgetManager.js"></script>
+
+	<!-- individual community widgets -->
+	<script type="text/javascript" src="../../pdk/community/js/profile.js"></script>
+	<script type="text/javascript" src="../../pdk/community/js/comments.js"></script>
+	<script type="text/javascript" src="../../pdk/community/js/rating.js"></script>
+	<script type="text/javascript" src="../../pdk/community/js/topRated.js"></script>
+	<script type="text/javascript" src="../../pdk/community/js/favorite.js"></script>
+
+	<script type="text/javascript">
+		// Configure the Community Manager communication object.
+		var tpCommunityManager = new CommunityManager("http://mps.theplatform.com/data/Account/1722839671", "76oMlL0fD6aEcwBU");
+		// The "tpCommunityWidgetManager" is automatically instantiated when you include its .js file.
+		tpCommunityWidgetManager.setCommunityManager( tpCommunityManager );
+
+		// Register the widget locations on the page.
+		tpCommunityWidgetManager.registerWidgetDiv( tpCommunityWidgetManager.ratingWidgetTypeName, "#ratings" );
+		tpCommunityWidgetManager.registerWidgetDiv( tpCommunityWidgetManager.commentWidgetTypeName, "#comments" );
+		tpCommunityWidgetManager.registerWidgetDiv( tpCommunityWidgetManager.profileWidgetTypeName, "#profile" );
+	</script>
+
+	<!-- This is the PDK glass css, for the navigation component on non-flash browsers -->
+	<link rel="stylesheet" href="../../pdk/skins/glass/main.css" type="text/css" media="screen" />
+
+	<!-- styles for community widgets -->
+	<style type="text/css">@import url(../../pdk/community/css/communityManager.css);</style>
+	<style type="text/css">@import url(../../pdk/community/css/colors_midnight.css);</style>
+
+	<!-- page styles -->
+	<style type="text/css">
+		html {
+			background: #131313 url(../../images/tile.jpg) repeat-y top left ;
+			font-family: helvetica;
+			color: #FFFFFF;
+		}
+	</style>
+
+	<script type="text/javascript" src="../../pdk/tpPdk.js"></script>
+</head>
+<body>
+	<div id="profile"></div>
+	<div style="clear: both"></div>
+	<div id="community-video">
+		<div id="player" class="tpPlayer"
+			tp:fp.bgcolor="#131313"
+			tp:wmode="opaque"
+			tp:logLevel="warn"
+			tp:allowFullScreen="true"
+			tp:skinUrl="../../pdk/swf/skinCinematic.swf"
+			tp:plugin0="type=adcomponent|URL=../../pdk/swf/SMIL.swf|priority=3"
+			tp:linkHeight="600"
+			tp:linkWidth="800"
+			tp:showAdCountdown="false"
+			tp:emailServiceURL="http://player.theplatform.com/m/3JHsmB/demo/select/{releasePid}"
+			tp:playerURL="http://player.theplatform.com/m/3JHsmB/demo/select/{releasePid}"
+			tp:embeddedPlayerHTML="&lt;embed src=&quot;http://player.theplatform.com/m/3JHsmB/demo/embed/select/{releasePid}&quot; width=&quot;311&quot; height=&quot;252&quot; type=&quot;application/x-shockwave-flash&quot; allowFullScreen=&quot;true&quot; bgcolor=&quot;#131313&quot; /&gt;"
+			tp:RSSURL="http://feed.theplatform.com/f/3JHsmB/TpW4aioBvs6N?form=rss"
+			tp:backgroundColor="0x131313"
+			tp:controlBackgroundColor="0x131313"
+			tp:controlColor="0xBEBEBE"
+			tp:controlFrameColor="0x545759"
+			tp:controlHoverColor="0xBEBEBE"
+			tp:controlSelectedColor="0x00CCFF"
+			tp:frameColor="0x545759"
+			tp:pageBackgroundColor="0x131313"
+			tp:playProgressColor="0x00CCFF"
+			tp:scrubberColor="0xBEBEBE"
+			tp:scrubberFrameColor="0x00CCFF"
+			tp:scrubTrackColor="0xBEBEBE"
+			tp:textBackgroundColor="0x383838"
+			tp:textColor="0xBEBEBE"
+			tp:loadProgressColor="0x5D9070">
+		</div>
+		<div id="ratings" ></div>
+		<div id="comments" ></div>
+	</div>
+	<div id="browse-video">
+		<div id="info" class="tpClipInfo"
+			tp:skinUrl="../../pdk/swf/skinCinematic.swf"
+			tp:showAuthor="false"
+			tp:showBanners="true"
+			tp:showCopyright="true"
+			tp:showDescription="true"
+			tp:showTitle="false"
+			tp:showMetadata="true"
+			tp:bannerAlignment="bottom"
+			tp:bannerRegions=""
+			tp:useBannerQueuing="true"
+			tp:backgroundColor="0x383838"
+			tp:descriptionColor="0xBEBEBE"
+			tp:frameColor="0x545759"
+			tp:titleColor="0x00CCFF">
+		</div>
+		<div id="categorylist" class="tpCategoryList"
+			tp:skinUrl="../../pdk/swf/skinCinematic.swf"
+			tp:expandedHeight="270"
+			tp:expandedWidth="302"
+			tp:flow="horizontal"
+			tp:allChoiceIndex="1"
+			tp:allChoiceLabel="All"
+			tp:mostPopularChoiceIndex="2"
+			tp:mostPopularChoiceLabel="Most Popular"
+			tp:topRatedChoiceIndex="3"
+			tp:topRatedChoiceLabel="Top Rated"
+			tp:favoritesChoiceIndex="4"
+			tp:favoritesChoiceLabel="My Favs"
+			tp:backgroundColor="0x383838"
+			tp:expanderColor="0xBEBEBE"
+			tp:expanderHoverColor="0xFFFFFF"
+			tp:expanderSelectedColor="0x00CCFF"
+			tp:frameColor="0x545759"
+			tp:itemBackgroundColor="0x383838"
+			tp:itemFrameColor="0x131313"
+			tp:itemShineSelectedColor="0x00CCFF"
+			tp:textColor="0xBEBEBE"
+			tp:textFrameColor="0x242424"
+			tp:textFrameHoverColor="0xFFFFFF"
+			tp:textFrameSelectedColor="0x00CCFF"
+			tp:textHoverColor="0xFFFFFF"
+			tp:textSelectedColor="0x00CCFF">
+		</div>
+		<div id="search-video">
+			<div id="search" class="tpSearch"
+				tp:skinUrl="../../pdk/swf/skinCinematic.swf"
+				tp:searchLabel="Search"
+				tp:searchHint="Search..."
+				tp:backgroundColor="0x131313"
+				tp:controlBackgroundColor="0x242424"
+				tp:controlColor="0xBEBEBE"
+				tp:controlFrameColor="0x545759"
+				tp:controlFrameHoverColor="0xFFFFFF"
+				tp:controlFrameSelectedColor="0x00CCFF"
+				tp:controlHoverColor="0xFFFFFF"
+				tp:controlSelectedColor="0x00CCFF"
+				tp:editBackgroundColor="0x131313"
+				tp:editColor="0xBEBEBE"
+				tp:frameColor="0x545759"
+				tp:labelColor="0xBEBEBE">
+			</div>
+			<div id="navigation" class="tpNavigation"
+				tp:skinUrl="../../pdk/swf/skinCinematic.swf"
+				tp:itemsPerPage="6"
+				tp:backgroundColor="0x131313"
+				tp:controlBackgroundColor="0x242424"
+				tp:controlColor="0xBEBEBE"
+				tp:controlFrameColor="0x242424"
+				tp:controlFrameHoverColor="0xFFFFFF"
+				tp:controlFrameSelectedColor="0x00CCFF"
+				tp:controlHoverColor="0xFFFFFF"
+				tp:controlSelectedColor="0x00CCFF"
+				tp:frameColor="0x545759"
+				tp:infoColor="0xBEBEBE">
+			</div>
+		</div>
+		<div id="releaselist" class="tpReleaseList"
+			tp:skinUrl="../../pdk/swf/skinCinematic.swf"
+			tp:columns="2"
+			tp:itemsPerPage="6"
+			tp:allowScrolling="false"
+			tp:animation="slideVertical"
+			tp:showAirdate="false"
+			tp:showAuthor="false"
+			tp:showBitrate="false"
+			tp:showDescription="false"
+			tp:showFormat="false"
+			tp:showLength="false"
+			tp:showThumbnail="true"
+			tp:showTitle="false"
+			tp:thumbnailHeight="90"
+			tp:thumbnailWidth="160"
+			tp:autoPlay="false"
+			tp:playAll="true"
+			tp:autoPage="true"
+			tp:backgroundColor="0x242424"
+			tp:frameColor="0x545759"
+			tp:itemBackgroundColor="0x383838"
+			tp:itemFrameColor="0x131313"
+			tp:itemShineSelectedColor="0x00CCFF"
+			tp:textBackgroundColor="0x383838"
+			tp:textColor="0xBEBEBE"
+			tp:textFrameColor="0x242424"
+			tp:textHighlightHoverColor="0xFFFFFF"
+			tp:textHighlightSelectedColor="0x00CCFF"
+			tp:textHoverColor="0xFFFFFF"
+			tp:textSelectedColor="0x00CCFF"
+			tp:thumbnailBackgroundColor="0x242424"
+			tp:thumbnailFrameColor="0x242424"
+			tp:thumbnailHighlightHoverColor="0xFFFFFF"
+			tp:thumbnailHighlightSelectedColor="0x00CCFF">
+		</div>
+	</div>
+
+	<script type="text/javascript">
+	</script>
+
+</body>
+</html>

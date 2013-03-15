@@ -1,0 +1,36 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<!--
+This host page demonstrates the use of a compiled SWF that hosts
+PDK components in a single distributable file.
+
+Refer to the PDK Developer's Guide for information on building a SWF
+comprised of PDK components.
+
+Typically you want to use a SWF like this for distributing an entire
+player in a single embed tag; so this sample shows this directly
+-->
+
+<head>
+	<!--
+
+		template: promoplayer.html
+		additional plugins: 
+		player config: tp:controls = false
+		Runtimes: Flash, Silverlight
+		Markup style: embed tag to promoplayer.swf
+
+	-->
+	<title>All in one SWF example</title>
+</head>
+<body>
+	<embed
+		height="344"
+		width="302"
+		allowFullScreen="true"
+		flashvars="player.overlayImageUrl=../../images/logo_bug.png&amp;logLevel=warn&amp;player.skinUrl=../../pdk/swf/skinCinematic.swf&amp;clipinfo.skinUrl=../../pdk/swf/skinCinematic.swf&amp;releaselist.skinUrl=../../pdk/swf/skinCinematic.swf&amp;navigation.skinUrl=../../pdk/swf/skinCinematic.swf"
+		bgcolor="#ffffff"
+		src="../../pdk/swf/promoPlayer.swf"
+	/>
+</body>
+</html>

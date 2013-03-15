@@ -1,4 +1,4 @@
-(function() { 
+(function() {
     var $ = jQuery;
 
     var defaults = {
@@ -7,31 +7,30 @@
         loop: false,
         updateMsec: 500,
         playerVars: {
-            experienceID: null
         }
     };
 
-    var BrightcovePlayer = function(brightcove, options) {
+    var BrightcovePlayer = function(experienceID, options) {
+
         this.config = $.extend(true, {}, defaults, options);
 
         /* Brightcove Values */
-        this.experienceID = this.config.playerVars.experienceID;
+        this.experienceID = experienceID;
 
         /* HTML5 specific attributes */
         
-        // Display 
+        // Display
         this._src = "";
         //this.poster = ""; Is this supported?
         //this.controls = false;  Is this supported?
         //this.videoWidth = 640;  Supported?
         //this.videoHeight = 480; Supported?
 
-        // Playback 
+        // Playback
         this._currentTime = 0;
         this._duration = NaN;
         this._paused = true;
         this._ended = false;
-        this._autoplay = true;
         this._loop = false;
         this._autobuffer = true;
         this._seeking = false;
@@ -43,7 +42,7 @@
 
         // Ot_her Player Attributes
         this._volume = 1;
-        this._muted = false; 
+        this._muted = false;
         this._readyState = 0;
         //this.networkState;
         //this.error;
@@ -54,139 +53,194 @@
         this._preload = this.config.preload;
         this._loop = this.config.loop;
 
-        // other object vars
-//        this._timeCheckInterval = null;
 
         MetaPlayer.dispatcher( this );
 
-        this.brightcove = brightcove;
-        this.brightcovePlayer = this.brightcove.api.getExperience(this.experienceID);
-        this.brightcoveVideoPlayer = this.brightcovePlayer.getModule(brightcove.api.modules.APIModules.VIDEO_PLAYER);
-        this.brightcoveContent = this.brightcovePlayer.getModule(brightcove.api.modules.APIModules.CONTENT);
-        this.brightcoveExperience = this.brightcovePlayer.getModule(brightcove.api.modules.APIModules.EXPERIENCE);
-        this.brightcoveExperience = this.brightcovePlayer.getModule(brightcove.api.modules.APIModules.CUE_POINTS);
 
-        //this.container = $(this.config.container).get(0);
-        this.addListeners();
+        var objectElement = $("#"+experienceID);
+        this.container = objectElement.get(0);
+        this.video = MetaPlayer.proxy.proxyPlayer(this, this.container);
 
-        this.video = MetaPlayer.proxy.proxyPlayer(this);
-        
+        this.initCheck()
     };
 
-    MetaPlayer.addPlayer("brightcove", function (brightcove, options) {
+    MetaPlayer.Players.Brightcove = function ( bcExperienceId ) {
+        if( ! window.brightcove )
+            return;
 
-        // single arg form 
-        if ( ! options && brightcove instanceof Object) {
-            options = brightcove;
-            brightcove = null;
+        var bc_object = document.getElementById(bcExperienceId);
+        if( ! bc_object || bc_object.getAttribute("class") == "BrightcoveExperience" )
+            return;
+
+        return MetaPlayer.brightcove(bcExperienceId);
+    };
+
+    MetaPlayer.addPlayer("brightcove", function (bc, options) {
+        // single arg form
+        if ( ! options && bc instanceof Object) {
+            options = bc;
+            bc = null;
         }
 
         if ( ! options ) {
             options = {};
         }
 
-//        if ( ! brightcove ) {
-            // not sure yet.
-//        }
-
-        if (! this.video) {
-            var bc = new BrightcovePlayer(brightcove, options);
-            this.video = bc.video;  
-            this.brightcove = bc;            
+        if ( ! bc ) {
+            bc = $("<div></div>")
+                .prependTo(this.layout.base);
         }
-        
+
+        var bCove = new BrightcovePlayer(bc, options);
+        this.video = bCove.video;
+        this.brightcove = bCove;
     });
 
-    MetaPlayer.brightcove = function (brightcove, options) {
-        var bc = new BrightcovePlayer(brightcove, options);
-        return bc.video;
-    }
+    MetaPlayer.brightcove = function (bcExperienceId, options) {
+        var bCove = new BrightcovePlayer(bcExperienceId);
+        return bCove.video;
+    };
 
     BrightcovePlayer.prototype =  {
-        
-        init : function() {
+        initCheck : function () {
+            MetaPlayer.log("brightcove", "initcheck...")
+            var self = this;
+            if( brightcove.api && brightcove.internal._instances[this.experienceID] ) {
+                try {
+                    this.brightcovePlayer = brightcove.api.getExperience(this.experienceID);
+                    this.brightcoveVideoPlayer = this.brightcovePlayer.getModule(brightcove.api.modules.APIModules.VIDEO_PLAYER);
+                    this.addListeners();
+                    MetaPlayer.log("brightcove", "initcheck ok")
+                    clearInterval( this._readyInterval );
+                    self.init();
 
+                }
+                catch(e){}
+            }
+            else if( ! this._readyInterval ) {
+                MetaPlayer.log("brightcove", "initcheck start interval")
+                this._readyInterval = setInterval( function (e) {
+                    self.initCheck();
+                }, 250);
+            }
+        },
+        init : function() {
+            try {
+            this.brightcovePlayer = brightcove.api.getExperience(this.experienceID);
+            this.brightcoveVideoPlayer = this.brightcovePlayer.getModule(brightcove.api.modules.APIModules.VIDEO_PLAYER);
+            } catch(e){
+                debugger;
+            }
+            this.addListeners();
+            this.startVideo();
         },
 
         isReady : function() {
-            return this.brightcove && this.brightcovePlayer.getModule(this.brightcove.api.modules.APIModules.VIDEO_PLAYER);
+            return this.brightcovePlayer;
         },
 
-        addListeners : function() { 
+        addListeners : function() {
             var bcvp = this.brightcoveVideoPlayer;
             var self = this;
 
-            bcvp.addEventListener("mediaBegin", function(e) { 
+            bcvp.addEventListener("mediaBegin", function(e) {
                 self.onMediaBegin(e);
             });
 
-            bcvp.addEventListener("mediaChange", function(e) { 
+            bcvp.addEventListener("mediaChange", function(e) {
                 self.onMediaChange(e);
-            });            
+            });
 
-            bcvp.addEventListener("mediaComplete", function(e) { 
+            bcvp.addEventListener("mediaComplete", function(e) {
                 self.onMediaComplete(e);
-            });            
+            });
 
-            bcvp.addEventListener("mediaError", function(e) { 
+            bcvp.addEventListener("mediaError", function(e) {
                 self.onMediaError(e);
-            });            
+            });
 
-            bcvp.addEventListener("mediaPlay", function(e) { 
+            bcvp.addEventListener("mediaPlay", function(e) {
                 self.onMediaPlay(e);
-            });            
+            });
 
-            bcvp.addEventListener("mediaProgress", function(e) { 
+            bcvp.addEventListener("mediaProgress", function(e) {
                 self.onMediaProgress(e);
-            });            
+            });
 
-            bcvp.addEventListener("mediaSeekNotify", function(e) { 
+            bcvp.addEventListener("mediaSeekNotify", function(e) {
                 self.onMediaSeekNotify(e);
-            });            
+            });
 
-            bcvp.addEventListener("mediaStop", function(e) { 
+            bcvp.addEventListener("mediaStop", function(e) {
                 self.onMediaStop(e);
-            });            
+            });
         },
 
-        onMediaBegin : function(e) {
-            
-        },
 
         onMediaChange : function(e) {
+            this._src = e.media.id;
+            this._duration = e.duration / 1000;
+            this._currentTime = 0;
+            this._seekOnPlay = null;
+            this._hasBegun = false;
+
+
             if ( this._autoplay ) {
                 this._paused = false;
             }
             else {
                 this._paused = true;
             }
-            this._duration = e.duration * .001;
-            this.dispatch('durationchange');
+            this._readyState = 4;
+            this.dispatch("canplay");
             this.dispatch('loadedmetadata');
-
             this.dispatch('loadeddata');
+            this.dispatch("durationchange");
         },
 
         onMediaComplete : function(e) {
             this._ended = true;
-            this._duration = NaN;
-            this.dispatch("ended");
+            this._paused = true;
+            var self = this;
+            // re-entry problems
+            setTimeout( function () {
+                self.dispatch("ended");
+            }, 0);
         },
 
         onMediaError : function(e) {
-
         },
 
         onMediaPlay : function(e) {
             this._ended = false;
             this._paused = false;
-            this.dispatch("play");
-            this.dispatch("playing");
+            this._hasBegun = true;
+
+            this._currentTime = e.position;
+
+            var self = this;
+            // brightcove has re-entry problems if seek is called during play event
+            setTimeout( function () {
+                self.dispatch("play");
+                self.dispatch("playing");
+            },250);
+        },
+
+        onMediaBegin : function(e) {
+            this._hasBegun = true;
         },
 
         onMediaProgress : function(e) {
-            this._currentTime = e.position;
-            this.dispatch("timeupdate");
+            var update = e.position - this._currentTime;
+            if( isNaN(update) || update > .2 ) {
+             // throttle to no more than 5/sec, BC seems to do about 25/sec
+                this._currentTime = e.position;
+                this.dispatch("timeupdate");
+            }
+
+            // onBegin is too soon to seek (it gets ignored), so we do it here
+            if( this._seekOnPlay )
+                this.doSeek(this._seekOnPlay )
         },
 
         onMediaSeekNotify : function(e) {
@@ -212,53 +266,55 @@
             }
         },
 
-        startVideo : function() {   
+        startVideo : function() {
             if ( ! this.isReady()) {
                 return;
             }
 
-            this._ended = false;
+            if ( this._preload == "none")
+                return;
 
-//            if ( this._muted ) {
-                // mute brightcove - not supported
-//            }
+            if( this._ended )
+                this.currentTime(0);
+
+            this._ended = false;
+            this.muted( this._muted );
 
             var src = this._src;
-
             if ( !src ) {
                 return;
             }
-            
-            if ( this._readyState < 4) {
-                this._readyState = 4;
-                this.dispatch("loadstart");
-                this.dispatch("canplay");
-            }
 
-            // TODO: Pull out ID if URL passed for SRC
+            this.dispatch("loadstart");
 
-            if (this._autoplay) {                
+            // "http://link.brightcove.com/services/link/bcpid1745093542/bclid1612710147/bctid1697210143001?src=mrss"
+            var longForm = src.toString().match(/^http:\/\/link.brightcove.com.*bctid(\d+)\?/);
+            if( longForm )
+                src = parseInt( longForm[1] );
+
+            if (this._autoplay)
                 this.brightcoveVideoPlayer.loadVideoByID(src);
-            }
-            else if (this._preload) {                
-                this.load();
-            }
-
-
+            else
+                this.brightcoveVideoPlayer.cueVideoByID(src);
         },
 
-        doSeek : function(time) {    
-            this._seeking = true;
-            this.dispatch("seeking");
-            this.brightcoveVideoPlayer.seek(time);
+        doSeek : function(time) {
             this._currentTime = time;
 
-            var self = this;
+            if(! this._hasBegun ){
+                this._seekOnPlay = time;
+            }
+
+            this._seeking = true;
+            this._seekOnPlay = null;
+            this.dispatch("seeking");
+            this.brightcoveVideoPlayer.seek(time);
 
             // onMediaSeekNotify callback doesn't fire when
             // programmatically seeking
-            
-            setTimeout(function () { 
+
+            var self = this;
+            setTimeout(function () {
                 self._currentTime = time;
                 self._seeking = false;
                 self.dispatch("seeked");
@@ -269,36 +325,26 @@
         /* Media Interface */
 
         load : function() {
-            this._preload = true;
-
-            if ( ! this.isReady() ) {
-                return;
-            }
-
-            this.brightcoveVideoPlayer.cueVideoByID(this._src);            
-
+            this._preload = "auto";
+            this.startVideo();
         },
 
         play : function() {
+            this._preload = "auto";
             this._autoplay = true;
-            if ( ! this.isReady() ) {
 
-                return;
-            }
-
-            this.brightcoveVideoPlayer.play();
-
+            if( this._readyState == 4 )
+                this.brightcoveVideoPlayer.play();
+            else
+                this.startVideo();
         },
 
         pause : function() {
-            if ( ! this.isReady() ) {
-                return;
-            }
-
-            this.brightcoveVideoPlayer.pause();
+            this.isReady() && this.brightcoveVideoPlayer.pause();
         },
 
-        canPlayType : function() {
+        canPlayType : function( type) {
+            MetaPlayer.log("brightcove", "canPlayType?", type)
             return Boolean  ( type.match(/\/brightcove$/ ) );
         },
 
@@ -306,26 +352,27 @@
             return this._paused;
         },
 
-        duration : function() {            
+        duration : function() {
             return this._duration;
         },
 
-        seeking : function() {  
+        seeking : function() {
             return this._seeking;
         },
 
-        ended : function() { 
+        ended : function() {
             if ( ! this.isReady() ) {
                 return false;
-            }                        
+            }
             return this._ended;
         },
 
         currentTime: function(val) {
             if (! this.isReady() ) {
+                this._currentTime = val || 0;
                 return 0;
             }
-            if ( val != undefined ) {
+            if ( val !== undefined ) {
                 this._ended = false;
                 this.doSeek(val);
             }
@@ -333,30 +380,27 @@
         },
 
         muted : function( val ) {
-            if ( val != null ) {
+            if ( val !== undefined ) {
                 this._muted = val;
                 if ( ! this.isReady() ) {
                     return val;
                 }
-//                if ( val ) {
-                    // mute brightcove - not supported
-//                }
-//                else {
-                    // unmute brightcove - not supported
-//                }
+                // note: BC does not have a documented mute api
+                this.brightcoveVideoPlayer._callMethod("mute", [ Boolean(val) ]);
                 this.dispatch("volumechange");
                 return val;
             }
             return this._muted;
         },
 
-        volume : function( val ) {   
-            if ( val != null ) {
+        volume : function( val ) {
+            if ( val !== undefined ) {
                 this._volume = val;
                 if ( ! this.isReady() ) {
                     return val;
                 }
-                // set brightcove volume - not supported
+                // note: BC does not have a documented volume api
+                this.brightcoveVideoPlayer._callMethod("setVolume", [ val ]);
                 this.dispatch("volumechange");
             }
             return this._volume;
@@ -365,15 +409,30 @@
         src : function (id) {
             if (id !== undefined) {
                 this._src = id;
+                this._readyState = 0;
+                this._duration = NaN;
+                this._currentTime = 0;
                 this.startVideo();
             }
             return this._src;
+        },
+
+        autoplay : function ( val ) {
+            if( val != null)
+                this._autoplay = Boolean(val);
+            return this._autoplay;
+        },
+
+        preload : function ( val ) {
+            if( val != null)
+                this._preload = val;
+            return this._preload;
         },
 
         readyState: function() {
             return this._readyState;
         }
 
-    }
+    };
 
 })();

@@ -1,0 +1,118 @@
+@import url("global.css");
+
+html {
+	background: #FFF;
+	font-family: helvetica;
+}
+
+body {
+	margin: 5px;	
+}
+
+img {
+	border: 0;
+}
+
+.container {
+	width: 792px;
+	clear: both;
+}
+
+#play-video {
+	float: left;
+	width: 330px;
+	margin: 0 5px 0 0;
+}
+
+#browse-video {
+	float: left;
+	width: 455px;
+	height: 100px;
+	margin: 0;	
+}
+
+#header {
+	width: 790px;
+	height: 80px;
+	color: #666;
+	font-size: 14px;
+	margin-bottom: 5px;
+}   
+
+#header * {
+	vertical-align: middle;
+}
+
+#header .pdk-logo {
+	float: left;
+	margin-right: 10px;
+}
+
+#header .tp-logo {
+	float: right;
+}
+
+h1 {
+	font-size: 14px;
+	margin: 2px;
+	padding: 0;
+}
+
+h2 {
+	font-size: 12px;
+	margin: 2px;
+	padding: 0;
+}
+
+h3 {
+	font-size: 11px;
+	margin: 2px;
+	padding: 0;
+}
+
+#info {
+	float: left;
+	width: 330px;
+	height: 250px;
+}
+
+#player {
+	float: left;
+	width: 330px;
+	height: 250px;
+	margin-bottom: 5px;
+}
+
+#categorylist {
+	float: left;
+	width: 455px;
+	height: 22px;
+	margin-bottom: 5px;
+	position: relative;
+	z-index: 1;
+	overflow: visible !important;
+	overflow: hidden;
+}
+
+#search {
+	float: left;
+	width: 455px;
+	height: 20px;
+	margin: 0 0 5px 0;
+}
+
+#navigation {  
+	width: 455px;
+	height: 24px; 
+	float: left;
+}
+
+#releaselist {
+	margin-right: auto;
+	float: left;
+	width: 455px;
+	height: 480px;
+	position: relative;	
+	z-index: 2;
+}
+

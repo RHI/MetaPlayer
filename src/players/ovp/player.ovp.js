@@ -69,7 +69,7 @@
 
     if( window.MetaPlayer ) {
         MetaPlayer.addPlayer("ovp", function ( options ) {
-            var target = $("<div></div>").appendTo(this.layout.stage);
+            var target = $("<div></div>").appendTo(this.layout.base);
             this.ovp = OVPlayer(target, options);
             this.video = this.ovp.video;
         });
@@ -93,11 +93,11 @@
         
         _addEventListeners : function () {
             // start ovp player status check
-            this._loadtimer = Ramp.timer(this.config.status_timer);
+            this._loadtimer = MetaPlayer.timer(this.config.status_timer);
             this._loadtimer.listen('time', this._onBeforeLoad, this);
             this._loadtimer.start();
             
-            this._statustimer = Ramp.timer(this.config.status_timer);
+            this._statustimer = MetaPlayer.timer(this.config.status_timer);
             this._statustimer.listen('time', this._onStatus, this);
         },
         _onBeforeLoad : function () {

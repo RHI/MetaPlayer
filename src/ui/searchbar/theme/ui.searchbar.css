@@ -1,0 +1,212 @@
+.mpf-searchbar {
+    height: 28px;
+    line-height: 28px;
+    position: relative;
+    font-size: 15px;
+    font-family: Arial;
+    /*background: #5B7D97;*/
+    background: url("searchbar/tag-bar-slice.png") repeat-x;
+    color: white;
+}
+
+/* next up */
+
+.mpf-searchbar-nextup {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    color: #3b3b3b;
+    text-shadow: #ffffff .0em .05em .05em;
+    background: url("searchbar/next-arrow.png") no-repeat;
+    width: 78px;
+    padding-right: 6px;
+    height: 28px;
+    text-align: center;
+    font-size: 12px;
+}
+
+.mpf-searchbar-nextup-label {
+    display: inline;
+}
+
+.mpf-searchbar-nextup-countdown {
+    display: inline;
+}
+
+/* tags */
+
+.mpf-searchbar-tags {
+    position: relative;
+    left: 0;
+    top: 0;
+    overflow: hidden;
+    height: 100%;
+    margin-left: 84px;
+    margin-right: 164px;
+    color: #9abbcf;
+    text-shadow: #30485C .0em .1em .1em;
+}
+
+.mpf-searchbar-tags-scroll {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 999999px; /*need fixed with to prevent wrap*/
+}
+
+.mpf-searchbar-tag-selected {
+    color: white;
+}
+
+.mpf-searchbar-tag-spacer {
+    float: left;
+}
+
+.mpf-searchbar-tag {
+    float: left;
+    margin: 0 8px;
+    cursor: pointer;
+}
+
+.mpf-searchbar-tags-fade {
+    background:  url("searchbar/tag-bar-fade.png") no-repeat;
+    width: 21px;
+    height: 28px;
+    position: absolute;
+    right: 164px;
+    top: 0;
+    z-index: 1;
+
+}
+
+/* arrow nav */
+
+.mpf-searchbar-nav {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50px;
+    right: 128px;
+    text-align: right;
+    color: #5B7D97;
+}
+
+.mpf-searchbar-nav-prev,
+.mpf-searchbar-nav-next {
+    width: 18px;
+    height: 28px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.mpf-searchbar-nav-prev {
+    background: url("searchbar/previous-tag-button.png") no-repeat 4px 7px;;
+}
+
+.mpf-searchbar-nav-next {
+    background: url("searchbar/next-tag-button.png") no-repeat 4px 7px;
+}
+
+/* search */
+
+.mpf-searchbar-search {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 128px;
+    font-size: 12px;
+}
+
+.mpf-searchbar-search-inputbox {
+    position: absolute;
+    left: 4px;
+    right: 30px;
+    top: 4px;
+    bottom: 4px;
+}
+
+.mpf-searchbar-search-input {
+    width: 100%;
+    display: block;
+    height: 12px;
+    border: 0;
+    outline-width: 0;
+    margin: 0 !important;
+    padding: 4px 0 4px 8px !important;
+    border-top-left-radius: 16px;
+    border-bottom-left-radius: 16px;
+    background: #414e5a;
+    color:white;
+}
+
+.mpf-searchbar-search-submit {
+    position: absolute;
+    right: 2px;
+    width: 20px;
+    top: 4px;
+    bottom: 4px;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+    background: #414e5a  url("searchbar/search-icon.png") no-repeat 2px 4px;
+    cursor: pointer;
+}
+
+
+/* results */
+
+.mpf-searchbar-results {
+    position: absolute;
+    display: none;
+    left: 0;
+    top: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    height: 100%;
+    right: 164px;
+    color: #ffffff;
+    text-shadow: #30485C .0em .1em .1em;
+    font-size: 12px;
+}
+
+
+.mpf-searchbar-results-clear {
+    display:inline-block;
+    width: 15px;
+    height: 16px;
+    background: url("searchbar/clear-search-icon.png") no-repeat;
+    margin: -4px 8px;
+    cursor: pointer;
+}
+.mpf-searchbar-results-query {
+    margin-right: 8px;
+    font-weight: bold;
+    display:inline-block;
+}
+
+.mpf-searchbar-results-list {
+    display:inline-block;
+    white-space: nowrap;;
+}
+
+.mpf-searchbar-results-label {
+    color: #c6c6c6;
+    display:inline-block;
+}
+.mpf-searchbar-results-item {
+    display:inline-block;
+    margin-left: 12px;
+    cursor:pointer;
+}
+
+.mpf-searchbar-tags-fade {
+    background:  url("searchbar/tag-bar-fade.png") no-repeat;
+    width: 21px;
+    height: 28px;
+    position: absolute;
+    right: 164px;
+    top: 0;
+    z-index: 1;
+}

@@ -1,0 +1,209 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:tp="http://player.theplatform.com/" xml:lang="en" lang="en">
+<head>
+	<meta name="viewport" content="width=device-width" />
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-language" content="en" />
+
+	<title>PDK :: Markup / write()</title>
+
+	<!-- This is the site stylesheet and doesn't care about the PDK -->
+	<link rel="stylesheet" href="../css/everything.css" type="text/css" media="screen" />
+
+	<script type="text/javascript" src="../../pdk/tpPdk.js"></script> 
+
+	<!-- PDK Glass skin css -->
+	<link rel="stylesheet" href="../../pdk/skins/glass/main.css" type="text/css" media="screen" />
+
+</head>
+<body>
+	<div id="header">
+		<a href="http://www.theplatform.com/"><img class="tp-logo" src="../../images/thePlatformLarge.png" /></a>
+		<a href="http://www.theplatform.com/products/product_detail/type/player_dev_kit/"><img class="pdk-logo" src="../../images/pdk.png" /></a>
+		<h1>thePlatform</h1>
+		<h2>Player Dev Kit</h2>
+		<h3>Markup / write()</h3>
+	</div>
+	<div class="container">
+		<div id="info">
+			<script type="text/javascript">
+				var info = new ClipInfo("info");
+				info.showMetadata = "true";
+				info.showTitle = "true";
+				info.showDescription = "true";
+				info.showCopyright = "true";
+				info.backgroundColor = "0x000000";
+				info.titleColor = "0xFFFFFF";
+				info.descriptionColor = "0xFFFFFF";
+				info.write();
+			</script>
+		</div>
+		
+		<div id="player">
+			<script type="text/javascript">
+				var player = new Player("player");
+				player.fp.bgcolor = "0x131313";
+				player.fp.wmode = "opaque";
+				player.logLevel = "warn";
+				player.allowFullScreen = "true";
+				player.plugin0 = "type=adcomponent|URL=../../pdk/swf/SMIL.swf|priority=3";
+				player.emailServiceURL = "http://player.theplatform.com/m/3JHsmB/demo/select/{releasePid}";
+				player.playerURL = "http://player.theplatform.com/m/3JHsmB/demo/select/{releasePid}";
+				player.embeddedPlayerHTML = "<embed src=\"http://player.theplatform.com/m/3JHsmB/demo/embed/select/{releasePid}\" width=\"311\" height=\"252\" type=\"application/x-shockwave-flash\" allowFullScreen=\"true\" bgcolor=\"#131313\" />";
+				player.RSSURL = "http://feed.theplatform.com/f/3JHsmB/TpW4aioBvs6N?form=rss";
+				player.backgroundColor = "0x131313";
+				player.controlBackgroundColor = "0x131313";
+				player.controlColor = "0xBEBEBE";
+				player.controlFrameColor = "0x545759";
+				player.controlHoverColor = "0xBEBEBE";
+				player.controlSelectedColor = "0x00CCFF";
+				player.frameColor = "0x545759";
+				player.pageBackgroundColor = "0x131313";
+				player.playProgressColor = "0x00CCFF";
+				player.scrubberColor = "0xBEBEBE";
+				player.scrubberFrameColor = "0x00CCFF";
+				player.scrubTrackColor = "0xBEBEBE";
+				player.textBackgroundColor = "0x383838";
+				player.textColor = "0xBEBEBE";
+				player.loadProgressColor = "0x5D9070";
+				player.layoutUrl = "../../data/metaLayout_glass.xml";
+				player.write();
+			</script>
+		</div>
+		
+		<div id="search-video">
+			<div id="search">
+				<script type="text/javascript">
+					var search = new Search("search");
+					search.backgroundColor = "0x131313";
+					search.controlBackgroundColor = "0x242424";
+					search.controlColor = "0xBEBEBE";
+					search.controlFrameColor = "0x545759";
+					search.controlFrameHoverColor = "0xBEBEBE";
+					search.controlFrameSelectedColor = "0x00CCFF";
+					search.controlHoverColor = "0xBEBEBE";
+					search.controlSelectedColor = "0x00CCFF";
+					search.editBackgroundColor = "0x131313";
+					search.editColor = "0xBEBEBE";
+					search.frameColor = "0x545759";
+					search.labelColor = "0xBEBEBE";
+					search.searchLabel = "";
+					search.write();
+			</script>
+			</div>
+			
+			<div id="categorylist">
+				<script type="text/javascript">
+					var categorylist = new CategoryList("categorylist");
+					categorylist.expandedHeight = "265";
+					categorylist.expandedWidth = "795";
+					categorylist.backgroundColor = "0x383838";
+					categorylist.expanderColor = "0xBEBEBE";
+					categorylist.expanderHoverColor = "0xBEBEBE";
+					categorylist.expanderSelectedColor = "0x00CCFF";
+					categorylist.frameColor = "0x545759";
+					categorylist.itemBackgroundColor = "0x383838";
+					categorylist.itemFrameColor = "0x131313";
+					categorylist.itemShineSelectedColor = "0x00CCFF";
+					categorylist.mostPopularChoiceIndex = "2";
+					categorylist.mostPopularChoiceLabel = "Most Popular";
+					categorylist.textColor = "0xBEBEBE";
+					categorylist.textFrameColor = "0x242424";
+					categorylist.textFrameHoverColor = "0xBEBEBE";
+					categorylist.textFrameSelectedColor = "0x00CCFF";
+					categorylist.textHoverColor = "0xBEBEBE";
+					categorylist.textSelectedColor = "0x00CCFF";		
+					categorylist.write();
+				</script>
+			</div>
+			
+			<div style="clear: both"></div>
+		</div>
+		<div id="browse-video">
+			<div id="navigation">
+				<script type="text/javascript">
+					var navigation = new Navigation();
+					navigation.itemsPerPage = "4";
+					navigation.backgroundColor = "0x131313";
+					navigation.frameColor = "0x545759";
+					navigation.itemBackgroundColor = "0x383838";
+					navigation.itemFrameColor = "0xFF0000";
+					navigation.itemShineSelectedColor = "0xFF0000";
+					navigation.textBackgroundColor = "0x383838";
+					navigation.textColor = "0xDFDFDF";
+					navigation.textFrameColor = "0x383838";
+					navigation.textHighlightHoverColor = "0x00CCFF";
+					navigation.textHighlightSelectedColor = "0xFFFFFF";
+					navigation.textHoverColor = "0xDFDFDF";
+					navigation.textSelectedColor = "0xDFDFDF";
+					navigation.thumbnailBackgroundColor = "0x242424";
+					navigation.thumbnailFrameColor = "0x383838";
+					navigation.thumbnailHighlightHoverColor = "0x00CCFF";
+					navigation.thumbnailHighlightSelectedColor = "0xFFFFFF";
+					navigation.controlBackgroundColor = "0xFF0000";
+					navigation.controlColor = "0xF2F2F2";
+					navigation.controlFrameColor = "0xFF0000";
+					navigation.controlFrameHoverColor = "0xFF0000";
+					navigation.controlFrameSelectedColor = "0xFF0000";
+					navigation.controlHoverColor = "0xFFFFFF";
+					navigation.controlSelectedColor = "0x00CCFF";
+					navigation.infoColor = "0xFFFFFF";		
+					navigation.write();
+				</script>
+			</div>
+			<div id="releaselist">
+				<script type="text/javascript">
+					var releaselist = new ReleaseList("releaselist");
+					releaselist.thumbnailWidth = "16";
+					releaselist.thumbnailHeight = "9";
+					releaselist.showTitle = "true";
+					releaselist.showThumbnail = "true";
+					releaselist.showDescription = "true";
+					releaselist.showFormat = "false";
+					releaselist.showLength = "false";
+					releaselist.columns = "2";
+					releaselist.itemsPerPage = "4";
+					releaselist.backgroundColor = "0x131313";
+					releaselist.frameColor = "0xFF0000";
+					releaselist.itemBackgroundColor = "0x383838";
+					releaselist.itemFrameColor = "0xFF0000";
+					releaselist.itemShineSelectedColor = "0xFF0000";
+					releaselist.textBackgroundColor = "0x383838";
+					releaselist.textColor = "0xDFDFDF";
+					releaselist.textFrameColor = "0x383838";
+					releaselist.textHighlightHoverColor = "0x00CCFF";
+					releaselist.textHighlightSelectedColor = "0xFFFFFF";
+					releaselist.textHoverColor = "0xDFDFDF";
+					releaselist.textSelectedColor = "0xDFDFDF";
+					releaselist.thumbnailBackgroundColor = "0x242424";
+					releaselist.thumbnailFrameColor = "0x383838";
+					releaselist.thumbnailHighlightHoverColor = "0x00CCFF";
+					releaselist.thumbnailHighlightSelectedColor = "0xFFFFFF";
+					releaselist.write();
+				</script>
+			</div>
+			<div style="clear: both"></div>
+		</div>	
+		<div style="clear: both"></div>
+		<div id="releasemodel">
+			<script type="text/javascript">
+				var releasemodel = new ReleaseModel("releasemodel");
+				releasemodel.feedsServiceUrl = "http://feed.theplatform.com/f/3JHsmB/TpW4aioBvs6N";
+				releasemodel.startIndex = 1;
+				releasemodel.endIndex = 4;
+				releasemodel.params = "byContent=" + escape("byFormat=MPEG4");
+				releasemodel.write();
+			</script>
+		</div>
+		<div id="categorymodel">
+			<script type="text/javascript">
+				var categorymodel = new CategoryModel("categorymodel");
+				categorymodel.feedsServiceUrl = "http://feed.theplatform.com/f/3JHsmB/TpW4aioBvs6N/categories";
+				categorymodel.write();
+			</script>
+		</div>
+	</div>
+
+</body>
+</html>

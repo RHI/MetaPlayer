@@ -16,6 +16,10 @@
     <!--Dependency: jQuery-->
     <script src="../../../../external/jquery/jquery-1.7.1.js" type="text/javascript"></script>
 
+    <!--Dependency: jQuery-->
+    <script src="../../../../external/json2html/json2html.js" type="text/javascript"></script>
+	<link href="../../../../external/json2html/json2html.css" rel="stylesheet" />
+
     <!-- Core: Ramp -->
     <script src="../../../core/metaplayer.js"></script>
 
@@ -31,11 +35,15 @@
     <script src="../../../core/search/core.search.js"></script>
     <script src="../../../core/cues/core.cues.js"></script>
 
+
+	<!-- Service Plugin: RAMP -->
+	<script src="../../../services/ramp/service.ramp.js"></script>
+
 </head>
 <body>
     <h3>Metaplayer &raquo; MetaData Plugin</h3>
 
-
+	<div id="out"></div>
 
     <script type="text/javascript">
         var data = {
@@ -75,18 +83,17 @@
             }
         };
 
-        var player = MetaPlayer().load();
+        var player = MetaPlayer();
 
-        player.metadata().listen( MetaPlayer.MetaData.LOAD, function (e) {
-            console.log([e.type, e.uri, e.metadata, e]);
-            player.metadata().data( e.uri, data);
+		player.ramp( "http://sxsw.ramp.com//theme/6734/mp2-playlist?e=52871241" );
+
+
+        player.metadata.listen( MetaPlayer.MetaData.DATA, function (e) {
+			json2html("#out", e.data);
         });
 
-        player.metadata().listen( MetaPlayer.MetaData.DATA, function (e) {
-            console.log([e.type, e.data, e]);
-        });
+		player.load();
 
-        player.metadata().load( "http://www.example.com/foo/" );
 
     </script>
 

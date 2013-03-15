@@ -1,0 +1,92 @@
+@import url("global.css");
+
+html {
+	background: #FFFFFF;
+	font-family: helvetica;
+}
+
+body {
+	margin: 5px;
+}
+
+#search-video {
+	float: left;
+	width: 590px;
+	margin: 0 0 -1px 0;
+}
+
+#browse-video {
+	float: left;
+	width: 586px;
+}
+
+#header {
+	width: 788px;
+	height: 78px;
+	background: #FFF url(../../images/lightsPale.jpg) no-repeat top left ;
+	border: 1px solid #E0E0E0;
+	margin: 0 0 5px 0;
+}
+
+#info {
+	float: left;
+	width: 302px;
+	height: 300px;	
+	margin: 0 5px 10px 0;
+}
+
+#player {
+	float: left;
+	width: 483px;
+	height: 300px;
+	margin: 0 0 10px 0;
+}
+
+#categorylist {
+	float: left;
+	width: 200px;
+	height: 193px;
+	position: relative;
+	margin: 0 5px 0 0;
+	z-index: 1;
+	overflow: visible !important;
+	overflow: hidden;
+}
+
+#search {
+	float: left;
+	width: 292px;
+	height: 20px;
+	position: relative;
+	display: inline;
+	z-index: 2;
+}
+
+#navigation {  
+	width: 295px;
+	height: 20px; 
+	position: relative;
+	float: left;
+	margin: 0 0 0 -1px;
+	z-index: 2;
+}
+
+#releaselist {
+	float: left;
+	width: 586px;
+	height: 174px;
+	position: relative;	
+	z-index: 2;
+}
+
+.releaseListItemSelected a {
+
+line-height:14px;
+
+}
+
+.releaseListItem a {
+
+line-height:14px;
+
+}

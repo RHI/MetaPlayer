@@ -1,0 +1,52 @@
+<rss xmlns:mpf="http://developer.ramp.com/mrss" xmlns:media="http://search.yahoo.com/mrss/" version="2.0">
+    <channel>
+
+        <item>
+            <title>PS3 Hack Becomes Open Source Tracking Device Project</title>
+            <description><![CDATA[PS3 Hack Becomes Open Source Tracking Device Project What started as a tracking device for a PS3 has now become a full-fledged Kickstarter project. This open source tracking device let's you text your tech to get its coordinates. From: mashable Views: 358 19 ratings Time: 01:19 More in News & ...]]></description>
+            <pubDate>Tue, 3 Apr 2012</pubDate>
+            <guid>lXW2LxoRUZg</guid>
+            <source url="http://www.youtube.com/rss/user/mashable/videos.rss">Mashable</source>
+            <media:group>
+                <media:thumbnail url="http://publishing.ramp.com/thumbnails/cached_media/0006/0006968/0006968594/images/thumb.jpg"/>
+                <media:thumbnail url=""/>
+                <media:description>PS3 Hack Becomes Open Source Tracking Device Project What started as a tracking device for a PS3 has now become a full-fledged Kickstarter project. This open source tracking device let's you text your tech to get its coordinates. From: mashable Views: 358 19 ratings Time: 01:19 More in News &amp; ...</media:description>
+                <media:title>PS3 Hack Becomes Open Source Tracking Device Project</media:title>
+                <media:content url="lXW2LxoRUZg" type="video/youtube" duration="78.112"/>
+                <media:subTitle type="application/x-subrip" lang="en-us" href="../data/mashable.en.srt"/>
+            </media:group>
+            <mpf:attributes>
+                <mpf:attribute name="ramp-id">54002728</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-root">http://publishing.ramp.com/thumbnails/cached_media/0006/0006968/0006968594/images/</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-rate">10</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-ext">jpg</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-max">70</mpf:attribute>
+            </mpf:attributes>
+        </item>
+
+        <item>
+            <title>Spree Commerce brings flexible e-commerce platform to small businesses</title>
+            <description><![CDATA[Spree Commerce brings flexible e-commerce platform to small businesses Are you a small business? Do you want to sell things on your website? Spree Commerce has an easy-to-use platform for doing just that. Here the founder explains it to me or you can learn more at spreecommerce.com From: Scobleizer ...]]></description>
+            <pubDate>Tue, 6 Mar 2012</pubDate>
+            <guid>mFhNf8NHrCw</guid>
+            <source url="http://www.youtube.com/rss/user/Scobleizer/videos.rss">Scobleizer</source>
+            <media:group>
+                <media:thumbnail url="http://publishing.ramp.com/thumbnails/cached_media/0006/0006929/0006929769/images/thumb.jpg"/>
+                <media:thumbnail url=""/>
+                <media:description>Spree Commerce brings flexible e-commerce platform to small businesses Are you a small business? Do you want to sell things on your website? Spree Commerce has an easy-to-use platform for doing just that. Here the founder explains it to me or you can learn more at spreecommerce.com From: Scobleizer ...</media:description>
+                <media:title>Spree Commerce brings flexible e-commerce platform to small businesses</media:title>
+                <media:content url="mFhNf8NHrCw" type="video/youtube" duration="78.112"/>
+
+                <media:subTitle type="application/x-subrip" lang="en-us" href="http://api.ramp.com/v1/subtitles?format=subrip&amp;id=53456177&amp;apikey=0bb282f7f637045f1b7731f713c08ab5"/>
+            </media:group>
+            <mpf:attributes>
+                <mpf:attribute name="ramp-id">53456177</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-root">http://publishing.ramp.com/thumbnails/cached_media/0006/0006929/0006929769/images/</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-rate">10</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-ext">jpg</mpf:attribute>
+                <mpf:attribute name="timed-thumbnail-max">1850</mpf:attribute>
+            </mpf:attributes>
+        </item>
+
+    </channel>
+</rss>

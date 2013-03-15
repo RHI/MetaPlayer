@@ -49,10 +49,6 @@
 
 <body>
 
-<!-- Start of Brightcove Player -->
-
-<div id="player"></div>
-
 <!--
 By use of this code snippet, I agree to the Brightcove Publisher T and C 
 found at https://accounts.brightcove.com/en/terms-and-conditions/. 
@@ -70,19 +66,25 @@ video.src = <button onclick="video.src = '1531130529001'">1531130529001</button>
 <button onclick="video.currentTime += 2;">video.currentTime += 2</button>
 <br><br>
 
-<object id="myExperience" class="BrightcoveExperience">
-    <param name="bgcolor" value="#FFFFFF" />
-    <param name="width" value="486" />
-    <param name="height" value="412" />
-    <param name="playerID" value="1898225880" />
-    <param name="playerKey" value="AQ~~,AAAAAHEkmvY~,SRcNfxhuB9mACjhKYyTKucIsjqiB0eGm" />
-    <param name="isVid" value="true" />
-    <param name="dynamicStreaming" value="true" />
-    <param name="includeAPI" value="true" />
-    <param name="templateLoadHandler" value="myTemplateLoaded" />
-</object>
+<div class="metaplayer">
+    <div class="metaplayer-video">
+        <!--<object id="myExperience" class="BrightcoveExperience">-->
+            <!--<param name="bgcolor" value="#FFFFFF" />-->
+            <!--<param name="width" value="486" />-->
+            <!--<param name="height" value="412" />-->
+            <!--<param name="playerID" value="1898225880" />-->
+            <!--<param name="playerKey" value="AQ~~,AAAAAHEkmvY~,SRcNfxhuB9mACjhKYyTKucIsjqiB0eGm" />-->
+            <!--<param name="isVid" value="true" />-->
+            <!--<param name="dynamicStreaming" value="true" />-->
+            <!--<param name="includeAPI" value="true" />-->
+            <!--<param name="templateLoadHandler" value="myTemplateLoaded" />-->
+        <!--</object>-->
 
-<!-- 
+    </div>
+</div>
+
+<object id="flashObj" width="600" height="300" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,47,0"><param name="movie" value="http://c.brightcove.com/services/viewer/federated_f9?isSlim=1" /><param name="bgcolor" value="#FFFFFF" /><param name="flashVars" value="playerID=1697260879001&playerKey=AQ~~,AAAAAHEkmvY~,SRcNfxhuB9lyJL7GzGGqtmdx12NRNhvd&domain=embed&dynamicStreaming=true" /><param name="base" value="http://admin.brightcove.com" /><param name="seamlesstabbing" value="false" /><param name="allowFullScreen" value="true" /><param name="swLiveConnect" value="true" /><param name="allowScriptAccess" value="always" /><embed src="http://c.brightcove.com/services/viewer/federated_f9?isSlim=1" bgcolor="#FFFFFF" flashVars="playerID=1697260879001&playerKey=AQ~~,AAAAAHEkmvY~,SRcNfxhuB9lyJL7GzGGqtmdx12NRNhvd&domain=embed&dynamicStreaming=true" base="http://admin.brightcove.com" name="flashObj" width="600" height="300" seamlesstabbing="false" type="application/x-shockwave-flash" allowFullScreen="true" swLiveConnect="true" allowScriptAccess="always" pluginspage="http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash"></embed></object>
+    <!--
 This script tag will cause the Brightcove Players defined above it to be created as soon
 as the line is read by the browser. If you wish to have the player instantiated only after
 the rest of the HTML is processed and the page load is complete, remove the line.
@@ -94,7 +96,7 @@ the rest of the HTML is processed and the page load is complete, remove the line
 <script>
 
     // Store reference to the player
-    var bc, video;
+    var bc, video, player;
 
     // This method is called when the player loads with the ID of the player
     // We can use that ID to get a reference to the player, and then the modules
@@ -104,13 +106,16 @@ the rest of the HTML is processed and the page load is complete, remove the line
     function myTemplateLoaded(experienceID) {   
         var config = { 
             autoplay: false,
-            preload: false,
+            preload: true,
             playerVars: {
                 experienceID: experienceID
             }
         };
 
-        video = MetaPlayer.brightcove(brightcove, config);
+        player = MetaPlayer('.metaplayer', { playlist: { selectSource: false, sourceTags: false } } )
+            .brightcove('.metaplayer-video', config);
+
+        video = player.video;
         video.src = '983586956001';
 
     };

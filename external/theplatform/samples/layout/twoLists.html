@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:tp="http://player.theplatform.com/" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-language" content="en" />
+	<title>PDK :: Two Lists</title>
+
+	<!-- ************************************************ -->
+	<!-- This is the main feed URL for the videos on this page. -->
+	<!-- The primary release list uses this URL for its feed content. -->
+	<!-- The secondary release list is paired with a release model -->
+	<!-- that has been configured with a separate URL for its feed. -->
+	<!-- ************************************************ -->
+	<link rel="alternate" href="http://feed.theplatform.com/f/3JHsmB/TpW4aioBvs6N?form=rss" type="application/rss+xml" />
+
+	<!-- This is the site stylesheet and doesn't care about the PDK -->
+	<link rel="stylesheet" href="../css/twoLists.css" type="text/css" media="screen" />
+
+	<script type="text/javascript" src="../../pdk/tpPdk.js"></script> 
+
+	<!-- PDK Glass skin css -->
+	<link rel="stylesheet" href="../../pdk/skins/glass/main.css" type="text/css" media="screen" />
+
+</head>
+<body>	
+	<div id="header">
+		<a href="http://www.theplatform.com/"><img class="tp-logo" src="../../images/thePlatformLarge.png" /></a>
+		<a href="http://www.theplatform.com/products/product_detail/type/player_dev_kit/"><img class="pdk-logo" src="../../images/pdk.png" /></a>
+		<h1>thePlatform</h1>
+		<h2>Player Dev Kit</h2>
+		<h3>Layout / Two Lists Sample</h3>
+	</div>	
+	<div class="container">
+		<div id="play-video">
+			<div id="player" class="tpPlayer"
+				tp:fp.bgcolor="0x131313"
+				tp:wmode="opaque"
+				tp:logLevel="warn"
+				tp:allowFullScreen="true"
+				tp:plugin0="type=adcomponent|URL=../../pdk/swf/SMIL.swf|priority=3"
+				tp:emailServiceURL="http://player.theplatform.com/m/3JHsmB/demo/select/{releasePid}"
+				tp:playerURL="http://player.theplatform.com/m/3JHsmB/demo/select/{releasePid}"
+				tp:embeddedPlayerHTML="&lt;embed src=&quot;http://player.theplatform.com/m/3JHsmB/demo/embed/select/{releasePid}&quot; width=&quot;412&quot; height=&quot;329&quot; type=&quot;application/x-shockwave-flash&quot; allowFullScreen=&quot;true&quot; bgcolor=&quot;#131313&quot; /&gt;"
+				tp:RSSURL="http://feed.theplatform.com/f/3JHsmB/TpW4aioBvs6N?form=rss"
+				tp:layoutUrl="../../data/metaLayout_glass.xml"
+				tp:backgroundColor="0x131313"
+				tp:controlBackgroundColor="0x131313"
+				tp:controlColor="0xBEBEBE"
+				tp:controlFrameColor="0x545759"
+				tp:controlHoverColor="0xBEBEBE"
+				tp:controlSelectedColor="0x00CCFF"
+				tp:frameColor="0x545759"
+				tp:pageBackgroundColor="0x131313"
+				tp:playProgressColor="0x00CCFF"
+				tp:scrubberColor="0xBEBEBE"
+				tp:scrubberFrameColor="0x00CCFF"
+				tp:scrubTrackColor="0xBEBEBE"
+				tp:textBackgroundColor="0x383838"
+				tp:textColor="0xBEBEBE"
+				tp:loadProgressColor="0x5D9070">
+			</div>     
+			<div id="info" class="tpClipInfo"
+				tp:backgroundColor="0x000000"
+				tp:titleColor="0xFFFFFF"
+				tp:descriptionColor="0xFFFFFF">
+			</div>
+		</div>	
+		<div id="browse-video">		
+			<div id="categorylist" class="tpCategoryList"
+				tp:expandedHeight="500"
+				tp:expandedWidth="405"
+				tp:flow="horizontal"
+				tp:mostPopularChoiceIndex="2"
+				tp:mostPopularChoiceLabel="Most Popular"
+				tp:backgroundColor="0x383838"
+				tp:expanderColor="0xBEBEBE"
+				tp:expanderHoverColor="0xBEBEBE"
+				tp:expanderSelectedColor="0x00CCFF"
+				tp:frameColor="0x545759"
+				tp:itemBackgroundColor="0x383838"
+				tp:itemFrameColor="0x131313"
+				tp:itemShineSelectedColor="0x00CCFF"
+				tp:textColor="0xBEBEBE"
+				tp:textFrameColor="0x242424"
+				tp:textFrameHoverColor="0xBEBEBE"
+				tp:textFrameSelectedColor="0x00CCFF"
+				tp:textHoverColor="0xBEBEBE"
+				tp:textSelectedColor="0x00CCFF">
+			</div>		
+			<div id="search" class="tpSearch"
+				tp:backgroundColor="0x131313"
+				tp:controlBackgroundColor="0x242424"
+				tp:controlColor="0xBEBEBE"
+				tp:controlFrameColor="0x545759"
+				tp:controlFrameHoverColor="0xBEBEBE"
+				tp:controlFrameSelectedColor="0x00CCFF"
+				tp:controlHoverColor="0xBEBEBE"
+				tp:controlSelectedColor="0x00CCFF"
+				tp:editBackgroundColor="0x131313"
+				tp:editColor="0xBEBEBE"
+				tp:frameColor="0x545759"
+				tp:labelColor="0xBEBEBE">
+			</div>
+			<div id="releaselist" class="tpReleaseList"
+				tp:autoPlay="true"
+				tp:thumbnailWidth="160"
+				tp:thumbnailHeight="90"
+				tp:columns="1"
+				tp:itemsPerPage="500"
+				tp:allowScrolling="true"
+				tp:showThumbnail="true"
+				tp:showTitle="true"
+				tp:showDescription="true"
+				tp:backgroundColor="0x131313"
+				tp:frameColor="0x131313"
+				tp:itemBackgroundColor="0x383838"
+				tp:itemFrameColor="0xFF0000"
+				tp:itemShineSelectedColor="0xFF0000"
+				tp:textBackgroundColor="0x383838"
+				tp:textColor="0xDFDFDF"
+				tp:textFrameColor="0x383838"
+				tp:textHighlightHoverColor="0x00CCFF"
+				tp:textHighlightSelectedColor="0xFFFFFF"
+				tp:textHoverColor="0xDFDFDF"
+				tp:textSelectedColor="0xDFDFDF"
+				tp:thumbnailBackgroundColor="0x242424"
+				tp:thumbnailFrameColor="0x383838"
+				tp:thumbnailHighlightHoverColor="0x00CCFF"
+				tp:thumbnailHighlightSelectedColor="0xFFFFFF">
+			</div>		
+			<div id="message">Click an item in this secondary release list to view one of its clips in the player. Once that clip ends, control will remain with the second list.</div>		
+			<div id="releaselist2" class="tpReleaseList"
+				tp:autoPlay="false"
+				tp:autoLoad="false"
+				tp:thumbnailWidth="160"
+				tp:thumbnailHeight="90"
+				tp:columns="1"
+				tp:itemsPerPage="500"
+				tp:allowScrolling="true"
+				tp:showThumbnail="true"
+				tp:showTitle="true"
+				tp:showDescription="true"
+				tp:backgroundColor="0x131313"
+				tp:frameColor="0x131313"
+				tp:itemBackgroundColor="0x383838"
+				tp:itemFrameColor="0xFF0000"
+				tp:itemShineSelectedColor="0xFF0000"
+				tp:textBackgroundColor="0x383838"
+				tp:textColor="0xDFDFDF"
+				tp:textFrameColor="0x383838"
+				tp:textHighlightHoverColor="0x00CCFF"
+				tp:textHighlightSelectedColor="0xFFFFFF"
+				tp:textHoverColor="0xDFDFDF"
+				tp:textSelectedColor="0xDFDFDF"
+				tp:thumbnailBackgroundColor="0x242424"
+				tp:thumbnailFrameColor="0x383838"
+				tp:thumbnailHighlightHoverColor="0x00CCFF"
+				tp:thumbnailHighlightSelectedColor="0xFFFFFF"
+				tp:scopes="secondary,player">
+			</div>
+
+			<div id="releaseModel" class="tpReleaseModel"
+				tp:scopes="secondary"
+				tp:feedsServiceURL="http://feed.theplatform.com/f/3JHsmB/pjb5l27K_bp6"
+				tp:startIndex="1"
+				tp:endIndex="100">
+			</div>
+		</div>	
+		<div style="clear: both"></div>	
+	</div>
+</body>
+</html>

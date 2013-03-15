@@ -1,0 +1,39 @@
+<!--
+  
+	template: videoonly.html
+	additional plugins: 
+	Runtimes: doesn't matter
+	Markup style: embed tag pointing directly to FLV as well as embediframe.html (via method described in Alan's HTML5 white paper)
+
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<!--
+  This host page demonstrates a single player component in a host page and the use of
+  remote flashvar data from a separate file on a Web server. In this example, there
+  is no release model or release list. The player can only be told what to play using
+  the releaseURL Flashvar
+-->
+
+<head>
+<title>Embedded player with remote flashvars.</title>
+</head>
+
+<body>
+<p>The following player is embedded in the HTML file as a lone SWF. The FlashVars for configuration are
+       loaded remotely from a file on the server in the data directory. </p>
+
+<!--
+You can edit the settings for the player by changing the contents of the vars.txt
+file in the data directory of the PDK file set.
+-->
+
+<embed
+	src="../../pdk/swf/flvPlayer.swf"
+	width="500"
+	height="392"
+	allowFullScreen="true"
+	flashvars="v=../../data/vars.txt"/>
+</body>
+</html>

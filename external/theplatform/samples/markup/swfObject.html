@@ -1,0 +1,329 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:tp="http://player.theplatform.com/" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-language" content="en" />
+
+	<title>PDK :: Markup / SwfObject</title>
+
+	<!-- This is the site stylesheet and doesn't care about the PDK -->
+	<link rel="stylesheet" href="../css/swfObject.css" type="text/css" media="screen" />
+
+	<script type="text/javascript" src="../../pdk/js/swfobject.js"></script> 
+	<script type="text/javascript" src="../../pdk/js/util.js"></script> 
+</head>
+<body>
+	<div id="header">
+		<a href="http://www.theplatform.com/"><img class="tp-logo" src="../../images/thePlatformLarge.png" /></a>
+		<a href="http://www.theplatform.com/products/product_detail/type/player_dev_kit/"><img class="pdk-logo" src="../../images/pdk.png" /></a>
+		<h1>thePlatform</h1>
+		<h2>Player Dev Kit</h2>
+		<h3>Markup / SwfObject</h3>
+	</div>
+	<div class="container">
+		<div id="info">
+		</div>
+		
+		<div id="player">
+			<p style="color: white">You'll need Adobe Flash 10.0 or greater to display videos using the PDK with SWFObject.  Contact support for information on upgrading your PDK player to support both Flash and HTML video elements.</p>
+		</div>
+		
+		<div id="search-video">
+			<div id="search">
+			</div>
+			
+			<div id="categorylist">
+			</div>
+			
+			<div style="clear: both"></div>
+		</div>
+		<div id="browse-video">
+			<div id="navigation">
+			</div>
+			<div id="releaselist">
+			</div>
+			<div style="clear: both"></div>
+		</div>	
+		<div style="clear: both"></div>
+		<div id="categorymodel"></div>
+		<div id="releasemodel"></div>
+	</div>
+	
+	<script type="text/javascript">
+		<!--
+		tpSetCommManagerID("communicationwidget", true);
+	
+		tpRegisterID("_info");
+		tpRegisterID("_player");
+		tpRegisterID("_categorylist");
+		tpRegisterID("_releaselist");
+		tpRegisterID("_navigation");
+		tpRegisterID("_search");
+		tpRegisterID("_releasemodel");
+		tpRegisterID("_categorymodel");
+
+		var so = new SWFObject("../../pdk/swf/info.swf", "_info", "100%", "100%", "10.0.0.0");
+		so.addParam("wmode", "transparent");
+		so.addParam("scale", "noscale");
+		so.addParam("salign", "tl");
+		so.addParam("menu", "true");
+
+		so.addVariable("ID", "_info");
+		so.addVariable("skinUrl", "../../pdk/swf/skinGlass.swf");
+		so.addVariable("showMetadata", "true");
+		so.addVariable("showTitle", "true");
+		so.addVariable("showDescription", "true");
+		so.addVariable("showCopyright", "true");
+		so.addVariable("backgroundColor", "0x000000");
+		so.addVariable("titleColor", "0xFFFFFF");
+		so.addVariable("descriptionColor", "0xFFFFFF");
+
+		so.write("info");
+
+		var so = new SWFObject("../../pdk/swf/flvPlayer.swf", "_player", "100%", "100%", "10.0.0.0");
+		so.addParam("scale", "noscale");
+		so.addParam("salign", "tl");
+		so.addParam("menu", "true");
+        so.addParam("allowFullScreen", "true");
+		
+		so.addParam("bgcolor", "0x131313");
+		so.addParam("wmode", "opaque");
+		
+		so.addVariable("ID", "_player");
+		so.addVariable("skinUrl", "../../pdk/swf/skinGlass.swf");
+		so.addVariable("logLevel", "warn");
+		so.addVariable("allowFullScreen", "true");
+		so.addVariable("plugin0", "type=adcomponent|URL=../../pdk/swf/SMIL.swf|priority=3");
+		so.addVariable("emailServiceURL", "http://player.theplatform.com/m/3JHsmB/demo/select/{releasePid}");
+		so.addVariable("playerURL", "http://player.theplatform.com/m/3JHsmB/demo/select/{releasePid}");
+		so.addVariable("embeddedPlayerHTML", "<embed src=\"http://player.theplatform.com/m/3JHsmB/demo/embed/select/{releasePid}\" width=\"412\" height=\"329\" type=\"application/x-shockwave-flash\" allowFullScreen=\"true\" bgcolor=\"#131313\" />");
+		so.addVariable("RSSURL", "http://feed.theplatform.com/f/3JHsmB/TpW4aioBvs6N?form=rss");
+		so.addVariable("backgroundColor", "0x131313");
+		so.addVariable("controlBackgroundColor", "0x131313");
+		so.addVariable("controlColor", "0xBEBEBE");
+		so.addVariable("controlFrameColor", "0x545759");
+		so.addVariable("controlHoverColor", "0xBEBEBE");
+		so.addVariable("controlSelectedColor", "0x00CCFF");
+		so.addVariable("frameColor", "0x545759");
+		so.addVariable("pageBackgroundColor", "0x131313");
+		so.addVariable("playProgressColor", "0x00CCFF");
+		so.addVariable("scrubberColor", "0xBEBEBE");
+		so.addVariable("scrubberFrameColor", "0x00CCFF");
+		so.addVariable("scrubTrackColor", "0xBEBEBE");
+		so.addVariable("textBackgroundColor", "0x383838");
+		so.addVariable("textColor", "0xBEBEBE");
+		so.addVariable("loadProgressColor", "0x5D9070");
+		so.addVariable("layoutUrl", "../../data/metaLayout_glass.xml");
+		so.write("player");
+
+		var so = new SWFObject("../../pdk/swf/search.swf", "_search", "100%", "100%", "10.0.0.0");
+		so.addParam("scale", "noscale");
+		so.addParam("salign", "tl");
+		so.addParam("menu", "true");  
+		
+		so.addParam("bgcolor", "0x131313");
+		so.addParam("wmode", "transparent");
+		
+		so.addVariable("ID", "_search");
+		so.addVariable("skinUrl", "../../pdk/swf/skinGlass.swf");
+		so.addVariable("backgroundColor", "0x131313");
+		so.addVariable("controlBackgroundColor", "0x242424");
+		so.addVariable("controlColor", "0xBEBEBE");
+		so.addVariable("controlFrameColor", "0x545759");
+		so.addVariable("controlFrameHoverColor", "0xBEBEBE");
+		so.addVariable("controlFrameSelectedColor", "0x00CCFF");
+		so.addVariable("controlHoverColor", "0xBEBEBE");
+		so.addVariable("controlSelectedColor", "0x00CCFF");
+		so.addVariable("editBackgroundColor", "0x131313");
+		so.addVariable("editColor", "0xBEBEBE");
+		so.addVariable("frameColor", "0x545759");
+		so.addVariable("labelColor", "0xBEBEBE");
+		so.addVariable("searchLabel", "");
+        so.addVariable("searchHint", "Search...")
+		so.write("search");
+		
+		var so = new SWFObject("../../pdk/swf/categoryList.swf", "_categorylist", "100%", "100%", "10.0.0.0");
+		so.addParam("scale", "noscale");
+		so.addParam("salign", "tl");
+		so.addParam("menu", "true");  
+		so.addParam("wmode", "transparent");
+		
+		so.addVariable("ID", "_categorylist");
+		so.addVariable("divID", "categorylist");
+		so.addVariable("skinUrl", "../../pdk/swf/skinGlass.swf");
+		so.addVariable("expandedcssclass", "tpCategoryListExpanded");
+		so.addVariable("width", "200");
+		so.addVariable("height", "169");
+        //fix an IE9 bug that the non-swfObject code handles automatically
+        var isIE9 = navigator.userAgent.indexOf("Trident/5") >= 0;//cheap test here, you can use more stringent tests if you require greater reliability
+        var eHeight = isIE9 ? "169" : "198";//if IE9 use the width and height
+        var eWidth = isIE9 ? "200" : "795";//rather than a separate exandedWidht/Height
+		so.addVariable("expandedHeight", eHeight);
+		so.addVariable("expandedWidth", eWidth);
+		so.addVariable("backgroundColor", "0x383838");
+		so.addVariable("expanderColor", "0xBEBEBE");
+		so.addVariable("expanderHoverColor", "0xBEBEBE");
+		so.addVariable("expanderSelectedColor", "0x00CCFF");
+		so.addVariable("frameColor", "0x545759");
+		so.addVariable("itemBackgroundColor", "0x383838");
+		so.addVariable("itemFrameColor", "0x131313");
+		so.addVariable("itemShineSelectedColor", "0x00CCFF");
+		so.addVariable("mostPopularChoiceIndex", "2");
+		so.addVariable("mostPopularChoiceLabel", "Most Popular");
+		so.addVariable("textColor", "0xBEBEBE");
+		so.addVariable("textFrameColor", "0x242424");
+		so.addVariable("textFrameHoverColor", "0xBEBEBE");
+		so.addVariable("textFrameSelectedColor", "0x00CCFF");
+		so.addVariable("textHoverColor", "0xBEBEBE");
+		so.addVariable("textSelectedColor", "0x00CCFF");		
+		so.write("categorylist");
+		
+		var so = new SWFObject("../../pdk/swf/nav.swf", "_navigation", "100%", "100%", "10.0.0.0");
+		so.addParam("scale", "noscale");
+		so.addParam("salign", "tl");
+		so.addParam("menu", "true");  
+		so.addParam("wmode", "transparent");
+		
+		so.addVariable("ID", "_navigation");
+		so.addVariable("skinUrl", "../../pdk/swf/skinGlass.swf");
+		so.addVariable("itemsPerPage", "4");
+		so.addVariable("backgroundColor", "0x131313");
+		so.addVariable("frameColor", "0x545759");
+		so.addVariable("itemBackgroundColor", "0x383838");
+		so.addVariable("itemFrameColor", "0xFF0000");
+		so.addVariable("itemShineSelectedColor", "0xFF0000");
+		so.addVariable("textBackgroundColor", "0x383838");
+		so.addVariable("textColor", "0xDFDFDF");
+		so.addVariable("textFrameColor", "0x383838");
+		so.addVariable("textHighlightHoverColor", "0x00CCFF");
+		so.addVariable("textHighlightSelectedColor", "0xFFFFFF");
+		so.addVariable("textHoverColor", "0xDFDFDF");
+		so.addVariable("textSelectedColor", "0xDFDFDF");
+		so.addVariable("thumbnailBackgroundColor", "0x242424");
+		so.addVariable("thumbnailFrameColor", "0x383838");
+		so.addVariable("thumbnailHighlightHoverColor", "0x00CCFF");
+		so.addVariable("thumbnailHighlightSelectedColor", "0xFFFFFF");
+		so.addVariable("controlBackgroundColor", "0xFF0000");
+		so.addVariable("controlColor", "0xF2F2F2");
+		so.addVariable("controlFrameColor", "0xFF0000");
+		so.addVariable("controlFrameHoverColor", "0xFF0000");
+		so.addVariable("controlFrameSelectedColor", "0xFF0000");
+		so.addVariable("controlHoverColor", "0xFFFFFF");
+		so.addVariable("controlSelectedColor", "0x00CCFF");
+		so.addVariable("infoColor", "0xFFFFFF");		
+		so.write("navigation");
+		
+		var so = new SWFObject("../../pdk/swf/releaseList.swf", "_releaselist", "585", "169", "10.0.0.0");
+		so.addParam("scale", "noscale");
+		so.addParam("salign", "tl");
+		so.addParam("menu", "true");  
+		so.addParam("wmode", "transparent");
+		
+		so.addVariable("ID", "_releaselist");
+		so.addVariable("width", "585");
+		so.addVariable("height", "169");
+		so.addVariable("skinUrl", "../../pdk/swf/skinGlass.swf");
+		so.addVariable("thumbnailWidth", "16");
+		so.addVariable("thumbnailHeight", "9");
+		so.addVariable("showTitle", "true");
+		so.addVariable("showThumbnail", "true");
+		so.addVariable("showDescription", "true");
+		so.addVariable("showFormat", "false");
+		so.addVariable("showLength", "false");
+		so.addVariable("columns", "2");
+		so.addVariable("itemsPerPage", "4");
+		so.addVariable("backgroundColor", "0x131313");
+		so.addVariable("frameColor", "0xFF0000");
+		so.addVariable("itemBackgroundColor", "0x383838");
+		so.addVariable("itemFrameColor", "0xFF0000");
+		so.addVariable("itemShineSelectedColor", "0xFF0000");
+		so.addVariable("textBackgroundColor", "0x383838");
+		so.addVariable("textColor", "0xDFDFDF");
+		so.addVariable("textFrameColor", "0x383838");
+		so.addVariable("textHighlightHoverColor", "0x00CCFF");
+		so.addVariable("textHighlightSelectedColor", "0xFFFFFF");
+		so.addVariable("textHoverColor", "0xDFDFDF");
+		so.addVariable("textSelectedColor", "0xDFDFDF");
+		so.addVariable("thumbnailBackgroundColor", "0x242424");
+		so.addVariable("thumbnailFrameColor", "0x383838");
+		so.addVariable("thumbnailHighlightHoverColor", "0x00CCFF");
+		so.addVariable("thumbnailHighlightSelectedColor", "0xFFFFFF");
+		so.write("releaselist");
+		
+		// The next line creates the component object in memory.
+		// The first parameter is the path to the component's Flash movie file.
+		// The second parameter is the component's registration name.
+		// The third and fourth parameters are the width and height of the component.
+		// Even though the component isn't visible, it still has to have a nonzero size.
+		// The fifth parameter sets the minimum required Adobe Flash player version.
+		var so = new SWFObject("../../pdk/swf/categoryModel.swf", "categorymodelwidget", "1", "1", "10.0.0.0");
+
+		// There's no UI for this component, so make it transparent
+		so.addParam("wmode", "transparent");
+
+		// Next come the variables for the component itself.
+
+		// Tell the component what its unique ID is.
+		so.addVariable("ID", "categorymodelwidget");
+
+		// Set the logging level for the component.
+		// This is equivalent to the default.
+		so.addVariable("logLevel", "warn");
+
+		// Next we tell the component where to obtain its feed data.
+		so.addVariable("feedsServiceURL", "http://feed.theplatform.com/f/3JHsmB/TpW4aioBvs6N/categories");
+
+		// The last step is to write the settings information into the HTML document.
+		so.write("categorymodel");
+
+		// The next line creates the component object in memory.
+		// The first parameter is the path to the component's Flash movie file.
+		// The second parameter is the component's registration name.
+		// The third and fourth parameters are the width and height of the component.
+		// Even though the component isn't visible, it still has to have a nonzero size.
+		// The fifth parameter sets the minimum required Adobe Flash player version.
+		var so = new SWFObject("../../pdk/swf/releaseModel.swf", "releasemodelwidget", "1", "1", "10.0.0.0");
+
+		// There's no UI for this component, so make it transparent
+		so.addParam("wmode", "transparent");
+
+		// Next come the variables for the component itself.
+
+		// Tell the component what its unique ID is.
+		so.addVariable("ID", "releasemodelwidget");
+
+		// Set the logging level for the component.
+		// This is equivalent to the default.
+		so.addVariable("logLevel", "warn");
+
+		// Next we tell the component where to obtain its feed data.
+		so.addVariable("feedsServiceURL", "http://feed.theplatform.com/f/3JHsmB/TpW4aioBvs6N");
+
+		// Next we have to tell the model how many releases will be visible
+		// in each page of the ReleaseList in the player. This is based off of
+		// some of the ReleaseList FlashVar values.
+		so.addVariable("startIndex", 1);
+		so.addVariable("endIndex", 4);
+
+		// Let's limit our feed content to Flash Video.
+		// This assumes our feed might have other formats available.
+		so.addVariable("params", "byContent=byFormat%3DMPEG4");
+
+		// Use this if you wanted to limit the contents of the release model
+		// to those items from a single category.
+		//so.addVariable("category", "Local");
+
+		// Next you can add sort parameters if you want.
+		// This would sort items alphabetically by title.
+		// The component normally arranges them in
+		// the order they are provided by the Feeds Service.
+		//so.addVariable("sortDescending", "true");
+		//so.addVariable("sortField", "title");
+
+		// The last step is to write the settings information into the HTML document.
+		so.write("releasemodel");
+		//-->
+	</script>
+</body>
+</html>

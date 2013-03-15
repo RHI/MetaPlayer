@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:tp="http://player.theplatform.com/" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-language" content="en" />
+	<title>Public URL Input</title>
+
+	<!-- ************************************************ -->
+	<!-- This is the Feed Url for the videos on this page -->
+	<!-- ************************************************ -->
+	<!-- This is the site stylesheet and doesn't care about the PDK -->
+	<link rel="stylesheet" href="../css/video.css" type="text/css" media="screen" />
+
+	<script type="text/javascript" src="../../pdk/tpPdk.js"></script> 
+	
+	<!-- RELEASE URL INPUT ITEMS -->
+	<!-- releaseUrl input css -->
+	<style type="text/css">
+		.inputVal {
+			position:absolute;
+			top: 391px;
+			left: 5px;
+		}	
+	</style>
+	<script type="text/javascript">
+		function setReleaseCall()	
+		{		
+			var val = document.getElementById('url').value;		
+			$pdk.controller.setReleaseURL(val);		
+		}
+	</script>	
+</head>
+<body>
+	<div id="player" class="tpPlayer"
+		tp:fp.bgcolor="0x131313"
+		tp:wmode="opaque"
+		tp:logLevel="debug"
+		tp:allowFullScreen="true"
+		tp:skinUrl="../../pdk/swf/skinCinematic.swf"
+		tp:plugin1="type=Format|URL=../../pdk/swf/akamaiHD.swf|priority=4|hosts=stgzeri01.qa.testlab.com"
+		tp:emailServiceURL="http://player.theplatform.com/m/3JHsmB/demo/select/{releasePid}"
+		tp:playerURL="http://player.theplatform.com/m/3JHsmB/demo/select/{releasePid}"
+		tp:embeddedPlayerHTML="&lt;embed src=&quot;http://player.theplatform.com/m/3JHsmB/demo/embed/select/{releasePid}&quot; width=&quot;311&quot; height=&quot;252&quot; type=&quot;application/x-shockwave-flash&quot; allowFullScreen=&quot;true&quot; bgcolor=&quot;#131313&quot; /&gt;"
+		tp:backgroundColor="0x131313"
+		tp:controlBackgroundColor="0x131313"
+		tp:controlColor="0xBEBEBE"
+		tp:controlFrameColor="0x545759"
+		tp:controlHoverColor="0xBEBEBE"
+		tp:controlSelectedColor="0x00CCFF"
+		tp:frameColor="0x545759"
+		tp:pageBackgroundColor="0x131313"
+		tp:playProgressColor="0x00CCFF"
+		tp:scrubberColor="0xBEBEBE"
+		tp:scrubberFrameColor="0x00CCFF"
+		tp:scrubTrackColor="0xBEBEBE"
+		tp:textBackgroundColor="0x383838"
+		tp:textColor="0xBEBEBE"
+		tp:loadProgressColor="0x5D9070"
+		tp:layoutUrl="../../data/metaLayout.xml">
+	</div>
+	<div class="inputVal" style="font:8pt Verdana;color:#000000">
+			Public URL: <input style="width:400px;font:8pt Verdana;color:#BEBEBE;background-color:#131313" type="text" name="url" id="url" value="http://link.theplatform.com/s/3JHsmB/jMhfa0o7u2jyeh2iPORTPRBWUclv9H6E">&nbsp;<button onclick="setReleaseCall();" style="width:40px;font:8pt Verdana;color:#BEBEBE;background-color:#131313">Play</button>
+		</div>
+</body>
+</html>

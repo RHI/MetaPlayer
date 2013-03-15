@@ -1,0 +1,29 @@
+<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/">
+    <channel>
+        <title>Test</title>
+        <link>http://www.examples.com</link>
+        <description>A test MRSS feed.</description>
+        <item>
+            <title>HTML5 Video Events and API</title>
+            <link>view-source:http://www.w3.org/2010/05/video/mediaevents.html</link>
+            <media:thumbnail url="http://media.w3.org/2010/05/sintel/poster.png" />
+            <media:content url="http://media.w3.org/2010/05/sintel/trailer.mp4" type="video/mp4" />
+            <media:content url="http://media.w3.org/2010/05/sintel/trailer.ogv" type="video/ogg"  />
+            <guid>example-guid</guid>
+            <mpf:cue type="tags" start="00:00:05.000" end="00:00:10.000">Tag One</mpf:cue>
+            <mpf:cue type="tags" start="00:00:10.000" end="00:00:15.000">Two</mpf:cue>
+
+            <mpf:cue type="footnote" start="00:00:05.000" end="00:00:10.000">Sync'd with Tag One</mpf:cue>
+            <mpf:cue type="footnote" start="00:00:10.000" end="00:00:15.000">Sync'd with Tag Two</mpf:cue>
+            <mpf:cue type="footnote" start="00:00:15.000" end="00:00:20.000">Three</mpf:cue>
+            <mpf:cue type="footnote" format="json" start="00:00:30.000"  end="00:00:35.000">{ "text" : "First" }</mpf:cue>
+            <mpf:cue type="footnote" format="json" start="00:00:35.000" end="00:00:40.000">{ "text" : "Second" }</mpf:cue>
+            <mpf:cue type="footnote" format="json" start="00:00:40.000">{ "text" : "This cue has no end." }</mpf:cue>
+
+            <!-- test malformed cue handling -->
+            <mpf:cue start="00:00:33.000">This has no type.</mpf:cue>
+            <mpf:cue format="json"  start="00:00:30.000">This is not JSON</mpf:cue>
+
+        </item>
+    </channel>
+</rss>

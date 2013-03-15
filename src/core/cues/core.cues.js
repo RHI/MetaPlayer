@@ -5,6 +5,12 @@
     var defaults = {
     };
 
+    /**
+     * @class Stores all timed metadata, integrates with PopcornJS to schedule cues. <br/>
+     * @constructor
+     * @name API.Cues
+     * @param {MetaPlayer} player
+     */
     var Cues = function (player, options){
 
         this.config = $.extend({}, defaults, options);
@@ -13,7 +19,7 @@
 
         this._rules = {
             // default rule mapping "captions" to popcorn "subtitle"
-            "subtitle" : { clone : "captions" }
+            "subtitle" : { clone : "captions", enabled : true }
         };
 
         this.player = player;
@@ -24,24 +30,31 @@
 
     /**
      * Fired when cues are available for the focus uri.
-     * @name CUES
+     * @name API.Cues#event:CUES
      * @event
-     * @param data The cues from a resulting load() request.
-     * @param uri The focus uri
-     * @param plugin The cue type
+     * @param {Event} e
+     * @param e.data The cues from a resulting load() request.
+     * @param e.uri The focus uri
+     * @param e.plugin The cue type
      */
     Cues.CUES = "cues";
 
     /**
      * Fired when cue list reset, usually due to a track change
-     * @name CLEAR
+     * @name API.Cues#event:CLEAR
      * @event
+     * @param {Event} e
      */
     Cues.CLEAR = "clear";
+    Cues.RENDER = "render";
+    Cues.ENABLE = "enable";
+    Cues.DISABLE = "disable";
 
     Cues.prototype = {
         /**
          * Bulk adding of cue lists to a uri.
+         * @name API.Cues#setCueLists
+         * @function
          * @param cuelists a dictionary of cue arrays, indexed by type.
          * @param uri (optional) Data uri, or last load() uri.
          */
@@ -54,6 +67,8 @@
 
         /**
          * Returns a dictionary of cue arrays, indexed by type.
+         * @name API.Cues#getCueLists
+         * @function
          * @param uri (optional) Data uri, or last load() uri.
          */
         getCueLists : function ( uri) {
@@ -64,6 +79,8 @@
         /**
          * For a given cue type, adds an array of cues events, triggering a CUE event
          * if the uri has focus.
+         * @name API.Cues#setCues
+         * @function
          * @param type The name of the cue list (eg: "caption", "twitter", etc)
          * @param cues An array of cue obects.
          * @param uri (optional) Data uri, or last load() uri.
@@ -76,13 +93,25 @@
 
             if( ! this._cues[guid][type] )
                 this._cues[guid][type] = [];
-            this._cues[guid][type] = this._cues[guid][type].concat(cues);
 
-            this._dispatchCues(guid, type)
+            this._cues[guid][type] = cues;
+
+            // data normalization
+            $.each(cues, function (i, val) {
+                if( typeof val.start == "string" )
+                    val.start = parseFloat(val.start);
+                if( typeof val.end == "string" )
+                    val.start = parseFloat(val.end);
+            });
+
+            if( uri == this.player.metadata.getFocusUri() )
+                this._renderCueType(type);
         },
 
         /**
          * Returns an array of caption cues events. Shorthand for getCues("caption")
+         * @name API.Cues#getCaptions
+         * @function
          * @param uri (optional) Data uri, or last load() uri.
          */
         getCaptions : function ( uri ){
@@ -92,6 +121,8 @@
         /**
          * Returns an array of cue objects for a given type. If no type specified, acts
          * as alias for getCueLists() returning a dictionary of all cue types and arrays.
+         * @name API.Cues#getCues
+         * @function
          * @param type The name of the cue list (eg: "caption", "twitter", etc)
          * @param uri (optional) Data uri, or last load() uri.
          */
@@ -114,35 +145,60 @@
 
         /**
          * Enables popcorn events for a cue type
+         * @name API.Cues#enable
+         * @function
          * @param type Cue type
          * @param overrides Optional object with properties to define in each popcorn event, such as target
          * @param rules (advanced) Optional rules hash for cloning, sequencing, and more.
          */
         enable : function (type, overrides, rules) {
             var r = $.extend({}, this._rules[type], rules);
+            if(r.enabled )
+                return;
             r.overrides = $.extend({}, r.overrides, overrides);
             r.enabled = true;
             this._rules[type] = r;
 
-            this._renderCues(type, this.getCues( r.clone || type) )
+            var event = this.createEvent();
+            event.initEvent(Cues.ENABLE, false, true);
+            event.action = type;
+            this.dispatchEvent(event);
+
+            this._scheduleCues(type, this.getCues( r.clone || type) )
         },
 
         /**
          * Disables popcorn events for a cue type
+         * @name API.Cues#disable
+         * @function
          * @param type Cue type
          */
         disable : function (type) {
             if( ! type )
                 return;
 
-            if( this._rules[type] )
-                this._rules[type].enabled = false;
+            if(! this._rules[type] )
+                this._rules[type] = {};
+
+            this._rules[type].enabled = false;
+
+            var event = this.createEvent();
+            event.initEvent(Cues.DISABLE, false, true);
+            event.action = type;
+            this.dispatchEvent(event);
 
             this._removeEvents(type);
         },
 
+        isEnabled : function (type) {
+            var r = this._rules[type]
+            return Boolean(r && r.enabled);
+        },
+
         /**
          * Frees external references for manual object destruction.
+         * @name API.Cues#destroy
+         * @function
          * @destructor
          */
         destroy : function  () {
@@ -153,45 +209,15 @@
 
         /* "private" */
 
-        // broadcasts cue data available for guid, if it matches the current focus uri
-        // defaults to all known cues, or can have a single type specified
-        // triggers attachment of popcorn events
-        _dispatchCues : function ( guid, type ) {
-
-            // only focus uri causes events
-            if( guid != this.player.metadata.getFocusUri() ) {
-                return;
-            }
-
-            var self = this;
-            var types = [];
-
-            // specific cue type to be rendered
-            if( type ) {
-                types.push(type)
-            }
-
-            // render all cues
-            else if( this._cues[guid] ){
-                types = $.map(this._cues[guid], function(cues, type) {
-                    return type;
-                });
-            }
-
-            $.each(types, function(i, type) {
-                var cues = self.getCues(type);
-
-                var e = self.createEvent();
-                e.initEvent(Cues.CUES, false, true);
-                e.uri = guid;
-                e.plugin = type;
-                e.cues = cues;
-
-                if( self.dispatchEvent(e) ) {
-                   // allow someone to cancel, blocking popcorn scheduling
-                    self._renderCues(type, cues)
-                }
-            });
+        _renderCueType : function (type){
+            var guid = this.player.metadata.getFocusUri();
+            var cues = this.getCues(type, guid);
+            this._renderCues(type, cues)
+            this.event(Cues.CUES, {
+                uri : guid,
+                plugin: type,
+                cues : cues
+            })
         },
 
         _addListeners : function () {
@@ -199,6 +225,7 @@
             var metadata = player.metadata;
             player.listen( MetaPlayer.DESTROY, this.destroy, this);
             metadata.listen( MetaPlayer.MetaData.FOCUS, this._onFocus, this)
+            metadata.listen( MetaPlayer.MetaData.DATA, this._onData, this)
         },
 
         _onFocus : function (e) {
@@ -209,8 +236,19 @@
             var event = this.createEvent();
             event.initEvent(Cues.CLEAR, false, true);
             this.dispatchEvent(event);
+        },
 
-            this._dispatchCues( e.uri );
+        _onData : function (e) {
+            // render all cues
+            var self = this;
+            $.map(this._cues[e.uri] || [], function(cues, type) {
+                self._renderCueType(type);
+            });
+
+            var event = this.createEvent();
+            event.initEvent(Cues.RENDER, false, true);
+            event.uri = e.uri;
+            this.dispatchEvent(event);
         },
 
         _removeEvents : function ( type ) {
@@ -240,6 +278,8 @@
         _scheduleCues : function (type, cues) {
             var rules = this._rules[type] || {};
             var lastCue;
+
+            this._removeEvents(type);
 
             if(! rules.enabled ) {
                 return;

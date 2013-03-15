@@ -13,7 +13,33 @@
         seekBeforeSec : 1,
         hideOnEnded : true
     };
-
+    /**
+     * @name UI.Overlay
+     * @class The MetaPlayer information overlay player widget.
+     * @constructor
+     * @param {MetaPlayer} player A MetaPlayer instance.
+     * @param {Object} [options]
+     * @param {Boolean} [options.autoHide=true] Overlay closes on mouse-out. If false, or on iOS,\
+     * a close button is rendered instead.
+     * @param {Boolean} [options.captions=false] Whether captions are on by default.
+     * @param {Number} [options.mouseDelayMsec=1000] Delay in mouse-over before overlay opens.
+     * @param {Number} [options.seekBeforeSec=1] When clicking search results, how many seconds prior to result to seek.
+     * @param {Boolean} [options.hideOnEnd=true] Hides the overlay when the video ends, not conflicting with an endcap screen.
+     * @example
+     * MetaPlayer( video)
+     *       .ramp("http://api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440")
+     *       .captions({
+     *          autoHide : true.
+     *          captions : false,
+     *          mouseDelayMsec : 1000,
+     *          seekBeforeSec : 1,
+     *          hideOnEnd : true
+     *       })
+     *       .overlay()
+     *       .load();
+     * @example
+     * <iframe style="width: 100%; height: 375px" src="http://jsfiddle.net/ramp/Pux7K/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+     */
     var Overlay = function (player, options) {
 
         if( !(this instanceof Overlay ))
@@ -41,6 +67,22 @@
         this.video.overlay = this;
     };
 
+    /**
+     * @name MetaPlayer#overlay
+     * @function
+     * @description
+     * Creates a {@link UI.Overlay} instance with the given options.
+     * @param {Object} [options]
+     * @example
+     * MetaPlayer( video)
+     *       .ramp("http://api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440")
+     *       .captions()
+     *       .overlay()
+     *       .load();
+     * @see <a href="http://jsfiddle.net/ramp/Pux7K/">Live Example</a>
+     * @see UI.Overlay
+     * @requires  metaplayer-complete.js
+     */
     MetaPlayer.addPlugin("overlay", function (options) {
         this.overlay = Overlay(this, options);
     });
@@ -52,11 +94,13 @@
             this.addPlaylistListeners();
             this.addPopcornListeners();
             this.addServiceListeners();
+            this.addVideoListeners();
 
             //  render initial state
             this.onVolumeChange();
             this.onPlayStateChange();
             this.setCaptions(this.config.captions);
+            this.adPlaying = false;
 
             if( this.player.isTouchDevice || ! this.config.autoHide )
                 this.find('close-btn').show();
@@ -72,10 +116,10 @@
 
         getMarkup : function () {
             var root = $("<div></div>")
-                .addClass("metaplayer-overlay")
+                .addClass("metaplayer-overlay");
 
             var container = $("<div></div>")
-                .addClass("metaplayer-overlay-container")
+                .addClass("metaplayer-overlay-container");
         },
 
         addUIListeners : function () {
@@ -126,7 +170,7 @@
                 self.onVolumeDrag(e);
             });
 
-            if( this.player.isTouchDevice )
+            if( MetaPlayer.iOS )
                 this._addTouchListeners();
             else
                 this._addMouseListeners();
@@ -138,11 +182,10 @@
 
         _addTouchListeners : function () {
             var self = this;
-            var video = $(this.container ).find( 'video'  );
+            var video = $(this.player.video );
             video.bind('touchstart', function () {
-                console.log("touch start " + video);
                 if( ! self._ended )
-                    self.delayedToggle(true)
+                    self.delayedToggle(true);
             });
         },
 
@@ -151,19 +194,33 @@
 
             var containers = $([ this.container, this.player.video ]);
             containers.bind('mouseenter', function (e) {
-                if( ! self._ended )
-                    self.delayedToggle(true)
+                if( ! self._ended && ! self.adPlaying )
+                    self.delayedToggle(true);
             });
 
             containers.bind('mouseleave', function (e) {
                 if( ! self._ended )
-                    self.delayedToggle(false)
+                    self.delayedToggle(false);
             });
         },
 
         addServiceListeners : function () {
             var metadata = this.player.metadata;
             metadata.listen(MetaPlayer.MetaData.DATA, this.onTags, this);
+        },
+
+        addVideoListeners : function () {
+            var self = this;
+
+            $(this.video).bind('adstart adstop', function(e){
+                if (e.type == "adstart") {
+                    self.toggle(false);
+                    self.adPlaying = true;
+                }
+                else {
+                    self.adPlaying = false;
+                }
+            });
         },
 
         onTags : function (e) {
@@ -179,19 +236,22 @@
 
         renderNextUp : function (){
             var metadata = this.player.metadata;
-            var nextTrack = this.playlist.nextTrack();
-            if( nextTrack )
-                metadata.load( nextTrack, this.onNextData, this)
+            var nextTrack = this.playlist.getItem( this.playlist.getIndex() + 1 );
+
+            if(! nextTrack )
+                return;
+
+            var data = metadata.getData(nextTrack);
+            if( data )
+                this.onNextData( data );
+            else
+                metadata.load(nextTrack, this.onNextData, this);
         },
 
         onNextData : function (data) {
             this.find('preview-thumb').attr('src', data.thumbnail);
             this.find('preview-title').text(data.title);
             this.find('next').show();
-        },
-
-        onPlaylistChange : function () {
-            this.renderNextUp()
         },
 
         onTrackChange : function () {
@@ -201,7 +261,7 @@
             $('.' + this.cssName('tag') ).remove();
             this.find('next').hide();
 
-            this.renderNextUp()
+            this.renderNextUp();
         },
 
         createTag : function ( term ) {
@@ -264,7 +324,7 @@
             });
 
             var time = this.create('result-time');
-            time.text( Ramp.format.seconds( result.start) );
+            time.text( MetaPlayer.format.seconds( result.start) );
             el.append(time);
 
             var phrase = this.create('result-text');
@@ -298,6 +358,12 @@
             });
         },
 
+        /**
+         * Toggles the captions and associated overlay button.
+         * @name UI.Overlay#setCaptions
+         * @function
+         * @param {Boolean} bool True for captions enabled
+         */
         setCaptions : function ( bool ){
             var pop = this.player.popcorn;
 
@@ -307,7 +373,7 @@
                 pop.disable('captions');
 
             this.find('cc').toggle(bool);
-            this.find('cc-off').toggle(!bool)
+            this.find('cc-off').toggle(!bool);
         },
 
 
@@ -318,7 +384,7 @@
             video.bind('canplay', function(e){
                 // check if volume adjustment is not supported (eg. iOS)
                 var hold = self.video.volume;
-                var test =  .5;
+                var test =  0.5;
                 self.video.volume = test;
                 if(self.video.volume !=  test)
                     self.hideVolumeControls();
@@ -340,9 +406,10 @@
         },
 
         addPlaylistListeners : function (){
-            var playlist = this.player.playlist;
-            playlist.listen("trackchange", this.onTrackChange, this);
-            playlist.listen("playlistchange", this.onPlaylistChange, this);
+            var self = this;
+            this.player.metadata.addEventListener("data", function (e) {
+                self.onTrackChange(e);
+            });
             this.player.search.listen(MetaPlayer.Search.QUERY, this.onSearchStart, this);
             this.player.search.listen(MetaPlayer.Search.RESULTS, this.onSearchResult, this);
         },
@@ -405,7 +472,7 @@
         },
 
         onPlayStateChange : function (e) {
-            this._ended = false;
+            this._ended = this.video.ended;
             // manage our timers based on play state
             // don't use toggle(); triggers layout quirks in chrome
             if( this.video.paused ) {
@@ -450,9 +517,15 @@
             setTimeout( function () {
                 if( this.__opened != self._delayed )
                     self.toggle(self._delayed);
-            }, this.config.mouseDelayMsec)
+            }, this.config.mouseDelayMsec);
         },
 
+        /**
+         * Toggles the overlay's visibility.
+         * @name UI.Overlay#toggle
+         * @function
+         * @param {Boolean} bool True for visible.
+         */
         toggle : function ( bool ) {
             this.__opened = bool;
 
@@ -460,7 +533,7 @@
             var height = this.find('container').height();
             if( bool )
                 node.animate({height: height}, 500, function () {
-                    node.height('')
+                    node.height('');
                 });
             else
                 node.animate({height: 0}, 500);

@@ -1,5 +1,8 @@
 #  MetaPlayer Framework Makefile
 
+#  NOTE: If you're on WINDOWS, you'll have to install CYGWIN to get a better "find.exe"
+#        and then make sure the cygwin /bin directory comes first in your path, because
+#        this make file doesn't work with Windows' version of "find"
 
 # > make
 # > make all
@@ -29,6 +32,9 @@
 # > make external
 #   .. copies over third party dependencies into the build/output folder
 
+# > make docs
+#   .. builds the JSDoc documentation into ./docs/api/
+
 # > make minify
 #   .. creates minified copies of all JS in the build.  Call before 'external' to avoid third party errors.
 
@@ -43,7 +49,7 @@
 #   .. removes all build output
 
 
-CLOSURE = java -jar  ./external/closure/closure-compiler-20111114.jar
+CLOSURE = java -jar ./external/closure/closure-compiler-20111114.jar
 CLOSURE_FLAGS= 
 
 LICENSE=LICENSE
@@ -53,27 +59,36 @@ BUILD_DIR=build
 
 
 CORE_JS=$(BUILD_DIR)/metaplayer.js
-CORE_CSS=$(BUILD_DIR)/metaplayer.css
+CORE_CSS=$(BUILD_DIR)/theme/metaplayer.css
 
 ALL_JS=$(BUILD_DIR)/metaplayer-complete.js
 
 PLAYERS_JS=$(BUILD_DIR)/metaplayer-players.js
-ALL_PLAYERS=player.html5 player.flowplayer player.youtube player.ovp player.jwplayer player.brightcove
+ALL_PLAYERS=player.html5 player.flowplayer player.youtube player.ovp player.jwplayer \
+ player.brightcove player.theplatform player.html5 player.kaltura player.ooyala player.strobe
 
 UI_JS=$(BUILD_DIR)/metaplayer-ui.js
 UI_CSS=$(BUILD_DIR)/metaplayer-ui.css
-ALL_UI=ui.controls ui.overlay ui.transcript ui.captions ui.searchbox ui.videojs ui.endcap ui.social ui.embed ui.framefeed ui.headlines ui.carousel
+ALL_UI=ui.controls ui.overlay ui.transcript ui.captions ui.searchbox ui.videojs ui.endcap \
+ ui.social ui.embed ui.framefeed ui.headlines ui.carousel ui.controlbar ui.searchbar ui.tracktip \
+ ui.captionconfig ui.script ui.timeQ ui.share
+
 
 SERVICES_JS=$(BUILD_DIR)/metaplayer-services.js
-ALL_SERVICES=service.mrss service.ramp
+ALL_SERVICES=service.mrss service.ramp service.srt service.metaq
 
 ALL_THEMES=theme.mp2
+
+ALL_METRICS=metrics.sitecatalyst metrics.gat
 
 ALL_EXTERNALS=external/jquery external/popcorn
 
 DATE = $(shell date +'%Y%m%d')
 VERSION = $(shell cat ./src/VERSION).$(DATE)
 LICENSE=LICENSE
+
+JSDOC_DIR=external/jsdoc-toolkit/
+JSDOC_TARGET=docs/api
 
 compile=$(CLOSURE) $(CLOSURE_FLAGS) --js=$1 >  $2
 license=cat $(LICENSE) $1 | sed 's/{{VERSION}}/$(VERSION)/' > $1.tmp; mv $1.tmp $1
@@ -88,7 +103,7 @@ verbose: clean core services players ui themes license externals
 	@@echo "Build complete. "
 
 
-.PHONY : clean license ui complete externals
+.PHONY : clean license ui complete externals docs metrics
 
 core: $(BUILD_DIR) $(CORE_CSS) $(CORE_JS) services
 	@@echo $@
@@ -108,6 +123,9 @@ players: $(ALL_PLAYERS)
 		cat $$f >> $(PLAYERS_JS); \
 	done
 
+metrics: $(ALL_METRICS)
+
+
 ui: $(ALL_UI)
 	@@echo $(UI_JS)
 	@for f in `find $(BUILD_DIR)/ui -type f -name "*js" -mindepth 1`; do \
@@ -120,8 +138,13 @@ ui: $(ALL_UI)
 
 themes : $(ALL_THEMES)
 
+docs :
+	@@echo $(JSDOC_TARGET)
+	@java -jar ${JSDOC_DIR}/jsrun.jar ${JSDOC_DIR}/app/run.js -t=${JSDOC_DIR}/templates/jsdoc \
+		-r=5 -n -d=${JSDOC_TARGET} src/
+
 # all js (core, ui, players, services) in one file
-complete : $(CORE_JS) $(ALL_PLAYERS) $(ALL_SERVICES) $(ALL_UI) $(ALL_THEMES)
+complete : $(CORE_JS) $(ALL_PLAYERS) $(ALL_SERVICES) $(ALL_METRICS) $(ALL_UI) $(ALL_THEMES)
 	@@echo $(ALL_JS);
 	@cat $(CORE_JS) >> $(ALL_JS);
 	@for f in `find $(BUILD_DIR) -type f -name "*js" -mindepth 2`; do \
@@ -138,7 +161,7 @@ externals :
 
 # cleans the intermediate individual plugin files not needed for a non-verbose build
 teardown : $(BUILD_DIR)
-	@for f in build/players build/services build/ui; do \
+	@for f in build/players build/services build/metrics build/ui build/theme; do \
 		rm -rf $$f; \
 	done
 
@@ -182,29 +205,45 @@ player.%: $(BUILD_DIR)
 	@mkdir -p build/players/$*;
 	@cat src/players/$*/*js >> build/players/$*/metaplayer.$*.js
 
-ui.%: $(BUILD_DIR)
+ui.%: $(BUILD_DIR) $(CORE_CSS)
 	@echo $@
 	@mkdir -p build/ui/$*;
 	@cat src/ui/$*/*js >> build/ui/$*/metaplayer.$*.js
-	@cat src/ui/$*/*css >> build/ui/$*/metaplayer.$*.css
+	@if test -e src/ui/$*/ui.$*.css; then \
+		cat src/ui/$*/ui.$*.css >> $(CORE_CSS); \
+		fi
 	@if test -d src/ui/$*/templates; then \
 		cp src/ui/$*/templates/*\.tmpl\.* $(BUILD_DIR)/templates; \
+		fi
+	@if test -e src/ui/$*/theme/ui.$*.css; then \
+		cat src/ui/$*/theme/ui.$*.css >> $(CORE_CSS); \
+		cat src/ui/$*/theme/ui.$*.css >> build/ui/$*/metaplayer.$*.css; \
+		fi
+	@if test -d src/ui/$*/theme/$*; then \
+		cp -r src/ui/$*/theme/$* $(BUILD_DIR)/theme/$*; \
 		fi
 
 theme.%: $(CORE_CSS) $(ALL_UI)
 	@echo $(BUILD_DIR)/$*
 	@mkdir $(BUILD_DIR)/$*
-	@cat $(CORE_CSS) > $(BUILD_DIR)/$*/theme.$*.css
-	@cat $(BUILD_DIR)/ui/*/*css >> $(BUILD_DIR)/$*/theme.$*.css 2>/dev/null
+	@cp -r $(BUILD_DIR)/theme/* $(BUILD_DIR)/$*/ 2>/dev/null
+	@mv $(BUILD_DIR)/$*/metaplayer.css $(BUILD_DIR)/$*/theme.$*.css 2>/dev/null
 	@cat src/themes/$*/*css >> $(BUILD_DIR)/$*/theme.$*.css 2>/dev/null
 	@cp -r src/themes/$*/assets $(BUILD_DIR)/$*/ 2>/dev/null
+
+metrics.%: $(BUILD_DIR)
+	@echo $@
+	@mkdir -p build/metrics/$*;
+	@cat src/metrics/$*/*js >> build/metrics/$*/metaplayer.$*.js
 
 $(BUILD_DIR):
 	@echo $@/
 	@mkdir  $@
 	@mkdir  $@/templates
+	@mkdir  $@/theme
 
 clean: 
 	@echo "Cleaning up previous builds..."
 	@rm -rf $(BUILD_DIR);
+	@rm -rf ./$(JSDOC_TARGET);
 

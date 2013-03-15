@@ -1,118 +1,160 @@
 
+var TestPLaylist = function (unit, video, items ) {
+    var lastIndex = items.length - 1;
+    var setTrack = function (i) {
+        unit.test(" set track " + i, function () {
+            video.autoAdvance = true;
+            video.loop = false;
+            video.autoplay = false;
+            video.preload = "metadata";
 
-var PlaylistUnit = function (){
-    if( ! ( this instanceof PlaylistUnit ))
-        return new PlaylistUnit();
-
-    this.nearTimeSec = 1;
-    this.media = null;
-};
-
-PlaylistUnit.prototype = {
-
-    getCurrentTitle : function () {
-        return this.media.tracks()[ this.media.index ].title;
-    },
-
-    addTests : function (unit) {
-        var self = this;
-        unit.test("service setup",  function () {
-            unit.nequal( self.media, undefined, "media instance not null");
-            self.media.onRelated( unit.callback("related event", null, function(related){
-                self.related = related;
-            }));
-            unit.event("canplay", self.media, "canplay event");
-        }, {postDelay : 0});
-
-        unit.test("media setup",  function () {
-            unit.equal( self.getCurrentTitle(), "Video 1", "first video title matches");
-        });
-
-        unit.test("intial state", function () {
-            unit.equal( self.media.index, 0, "default index is 0");
-            unit.equal(self.media.nextTrackIndex(), 1, "nextTrackIndex: 1");
-            self.media.load();
-
-        }, {postDelay : 1000    });
-
-        unit.test("buffer to end", function () {
-            unit.equal( self.media.paused, true, "media.paused is true");
-            unit.event("playing", self.media, "playing event");
-            self.media.play();
-        }, {postDelay : 0});
-
-        unit.test("seek to end, autoadvance", function () {
-            unit.equal(self.media.index, 0, "now on first video");
-            unit.event("seeking", self.media, "seeking event");
-            unit.event("seeked", self.media, "seeked event", function (){
-                unit.event("ended", self.media, "ended event");
-                unit.event("trackChange", self.media, "trackChange event", function () {
-                    unit.equal(self.media.index, 1, "now on second video");
-                    unit.equal( self.getCurrentTitle(), "Video 2", "second video title matches");
-                }, 10000);
-            }, 30000); // clip might take a while to download that far
-            self.media.currentTime = self.media.duration - 3;
-        }, {postDelay : 5000});
-
-        unit.test("index assign", function () {
-            unit.equal(self.media.index, 1, "now on second video");
-            unit.event("trackChange", self.media, "trackChange event", function () {
-                unit.equal(self.media.index, 0, "now on first video");
+            unit.event("trackchange event", video, "trackchange", function () {
+                unit.assert('index is ' + i, video.getIndex(), i);
+                unit.assert('guid ok', video.getItem(), items[i].guid);
+                unit.assert("not playing", video.paused );
+                unit.event("canplay event", video, "canplay");
             });
-            self.media.index = 0;
+            video.setIndex(i);
+        })
+    };
+
+    video.muted = true;
+
+    unit.test("initial setup", function () {
+        unit.assert("not playing", video.paused );
+        unit.assert("looping off", ! video.loop);
+        unit.assert("playlist advance on", video.autoAdvance);
+        unit.assert("playlist has length", video.getPlaylist().length > 0);
+        unit.assert('index is 0', video.getIndex(), 0);
+        unit.assert('guid is first', video.getItem(), items[0].guid);
+    });
+
+    unit.test("setIndex", function () {
+        unit.event("trackchange event", video, "trackchange", function () {
+            unit.assert('guid ok', video.getItem(), items[1].guid);
+            unit.assert("not playing", video.paused );
+            unit.assert('index is 1', video.getIndex(), 1);
         });
 
-        unit.test("nextTrack()", function () {
-            unit.equal(self.media.index, 0, "now on first video");
-            unit.event("trackChange", self.media, "trackChange event", function () {
-                unit.equal(self.media.index, 1, "now on second video");
+        unit.assert('index is 0', video.getIndex(), 0);
+        unit.assert('set index 1', video.setIndex(1), true);
+    });
+
+    unit.test("previous", function () {
+        unit.event("trackchange event", video, "trackchange", function () {
+            unit.assert('index ok', video.getIndex(), 0);
+            unit.assert('guid ok', video.getItem(), items[0].guid);
+        });
+        unit.assert('index is 1', video.getIndex(), 1);
+        unit.assert('previous()', video.previous(), true);
+    });
+
+
+  unit.test("next", function () {
+      unit.event("trackchange event", video, "trackchange", function () {
+          unit.assert('index is 1', video.getIndex(), 1);
+          unit.assert('guid ok', video.getItem(), items[1].guid);
+        });
+      unit.assert('index is 0', video.getIndex(), 0);
+      unit.assert('next()', video.next() , true);
+    });
+
+    setTrack(0);
+
+    unit.test("advancing", function () {
+        unit.assert('index is 0', video.getIndex(), 0);
+        unit.assert("has duration", video.duration);
+
+        unit.event("playing event", video, "playing", function () {
+            unit.assert("seek to end", video.currentTime = video.duration - 5);
+        });
+
+        unit.event("has seeked", video, "seeked", null, 30000);
+
+        unit.event("ended event", video, "ended", function () {
+            unit.event("trackchange event", video, "trackchange", function () {
+                unit.assert('index ok', video.getIndex(), 1);
+                unit.assert('guid ok', video.getItem(), items[1].guid);
             });
-            self.media.next();
+
+        }, 30000);
+
+        unit.assert("not playing", video.paused );
+        unit.assert("autoadvance is enabled", video.autoAdvance , true);
+        video.play();
+    });
+
+    setTrack(0);
+
+    unit.test("advancing disabled", function () {
+        unit.assert('index is 0', video.getIndex(), 0);
+        unit.assert("not playing", video.paused );
+
+        unit.event("playing event", video, "playing", function () {
+            unit.assert('index is 0', video.getIndex(), 0);
+            unit.assert("seek to end", video.currentTime = video.duration - 5);
         });
 
-        unit.test("previousTrack()", function () {
-            unit.equal(self.media.index, 1, "now on second video");
-            unit.event("trackChange", self.media, "trackChange event", function () {
-                unit.equal(self.media.index, 0, "now on first video");
-            });
-            self.media.previous();
+        unit.event("has ended", video, "ended", function () {
+            setTimeout(
+                unit.callback("trackchange timeout", function () {
+                    unit.assert('index ok', video.getIndex(), 0);
+                    unit.assert('guid ok', video.getItem(), items[0].guid);
+                    unit.assert("not playing", video.paused );
+                }, this),
+                2000
+            );
+        }, 30000);
+        video.autoAdvance = false;
+        unit.assert("autoadvance is disabled", video.autoAdvance , false);
+        video.play();
+    });
+
+    setTrack(lastIndex);
+
+    unit.test("looping", function () {
+        unit.event("playing event", video, "playing", function () {
+            unit.assert('playing index is last: ' + lastIndex, video.getIndex(), lastIndex);
+            unit.assert("playing seek to end", video.currentTime = video.duration - 5);
         });
 
-        unit.test("previousTrack() loops ", function () {
-            unit.equal(self.media.index, 0, "now on first video");
-            unit.event("trackChange", self.media, "trackChange event", function () {
-                unit.equal(self.media.index, 1, "now on second video");
-            });
-            unit.equal(self.media.nextTrackIndex(), 1, "nextTrackIndex: 1");
-            self.media.previous()
+        unit.event("has ended", video, "ended", function () {
+            unit.event("track advance", video, "trackchange", function () {
+                unit.assert('index ok', video.getIndex(), 0);
+                unit.assert('guid ok', video.getItem(), items[0].guid);
+            }, 10000);
+        }, 30000);
+
+        unit.assert('index is last: ' + lastIndex, video.getIndex(), lastIndex);
+        video.loop = true;
+        unit.assert("looping is enabled", video.loop , true);
+        unit.assert("has autoadvance", video.autoAdvance);
+        video.play();
+    });
+
+    setTrack(lastIndex);
+
+    unit.test("looping disabled", function () {
+        unit.event("playing event", video, "playing", function () {
+            unit.assert('index is last: ' + lastIndex, video.getIndex(), lastIndex);
+            unit.assert("seek to end", video.currentTime = video.duration - 5);
         });
 
-        unit.test("nextTrack() loops ", function () {
-            unit.equal(self.media.index, 1, "now on second video");
-            unit.event("trackChange", self.media, "trackChange event", function () {
-                unit.equal(self.media.index, 0, "now on first video");
-            });
-            unit.equal(self.media.nextTrackIndex(), 0, "nextTrackIndex: 0");
-            self.media.next()
-        });
+        unit.event("has ended", video, "ended", function () {
+            setTimeout(
+                unit.callback("trackchange timeout", function () {
+                    unit.assert('index ok', video.getIndex(), lastIndex);
+                    unit.assert('guid ok', video.getItem(), items[lastIndex].guid);
+                    unit.assert("not playing", video.paused );
+                }, this),
+                3000
+            );
+        }, 30000);
 
-        unit.test("ended loops ", function () {
-            unit.equal(self.media.index, 0, "now on first video");
-            unit.event("trackChange", self.media, "trackChange event", function () {
-                unit.event("loadedata", self.media, "canplay event", function () {
-                    unit.equal(self.media.index, self.media.playlist.length - 1, "now on last video");
-                    unit.event("seeked", self.media, "seeked event", function (){
-                        unit.event("ended", self.media, "ended event");
-                        unit.event("trackChange", self.media, "trackChange event", function () {
-                            unit.equal(self.media.index, 0, "now on first video");
-                        });
-                    });
-                    self.media.currentTime = self.media.duration - 3;
-                    self.media.play();
-                });
-            });
-            self.media.index = self.media.tracks().length - 1;
-        });
+        video.loop = false;
+        unit.assert("looping is disabled", video.loop , false);
+        unit.assert("has autoadvance", video.autoAdvance);
+        video.play();
+    });
 
-    }
 };

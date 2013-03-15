@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:tp="http://player.theplatform.com/" xml:lang="en" lang="en">
+<head>
+	<meta name="viewport" content="width=device-width" />
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-language" content="en" />
+
+	<title>PDK :: Akamai HD Network</title>
+
+	<meta name="tp:PreferredRuntimes" content="Flash" /> 
+	<meta name="tp:PreferredFormats" content="F4M" /> 
+
+	<!-- ********************************************************* -->
+	<!-- This is the public URL for the sample video on this page. -->
+	<!-- The player will automatically use this link for its source -->
+	<!-- video without having to explicitly declare it in the component configuration. -->
+	<!-- ********************************************************* -->
+	<link rel="alternate" href="http://link.theplatform.com/s/osPeoB/eJpM7NiyMVu_cIiuUC8NdkxXcjzbN7W0?mbr=true" type="application/smil+xml" />
+
+	<!-- This is the site stylesheet and doesn't care about the PDK -->
+	<link rel="stylesheet" href="../css/everything.css" type="text/css" media="screen" />
+	<!--
+
+		template: everything.html
+		additional plugins: flashAccess, F4mParser, adobeHttpDynamicStreaming, identity
+		DRM config:
+		Markup style: tp:attribute
+		feed category: drm/flashaccess
+
+	-->		
+	<script type="text/javascript" src="../../pdk/tpPdk.js"></script> 
+
+	<!-- PDK Glass skin css -->
+	<link rel="stylesheet" href="../../pdk/skins/glass/main.css" type="text/css" media="screen" />
+
+</head>
+<body>
+	<div id="header">
+		<a href="http://www.theplatform.com/"><img class="tp-logo" src="../../images/thePlatformLarge.png" /></a>
+		<a href="http://www.theplatform.com/products/product_detail/type/player_dev_kit/"><img class="pdk-logo" src="../../images/pdk.png" /></a>
+		<h1>thePlatform</h1>
+		<h2>Player Dev Kit</h2>
+		<h3>Media / Akamai HD Network</h3>
+	</div>
+	<div class="container">
+		<div id="info" class="tpClipInfo"
+			tp:showMetadata="true"
+			tp:showTitle="true"
+			tp:showDescription="true"
+			tp:showCopyright="true"
+			tp:backgroundColor="0x000000"
+			tp:titleColor="0xFFFFFF"
+			tp:descriptionColor="0xFFFFFF">
+		</div>
+		<div id="player" class="tpPlayer"
+			tp:fp.bgcolor="0x131313"
+			tp:wmode="opaque"
+			tp:logLevel="warn"
+			tp:allowFullScreen="true"
+			tp:plugin1="type=Format|URL=../../pdk/swf/akamaiHD.swf|priority=4|hosts=stgzeri01.qa.testlab.com"
+			tp:emailServiceURL="http://player.theplatform.com/m/3JHsmB/demo/select/{releasePid}"
+			tp:playerURL="http://player.theplatform.com/m/3JHsmB/demo/select/{releasePid}"
+			tp:embeddedPlayerHTML="&lt;embed src=&quot;http://player.theplatform.com/m/3JHsmB/demo/embed/select/{releasePid}&quot; width=&quot;412&quot; height=&quot;329&quot; type=&quot;application/x-shockwave-flash&quot; allowFullScreen=&quot;true&quot; bgcolor=&quot;#131313&quot; /&gt;"
+			tp:RSSURL="http://feed.theplatform.com/f/3JHsmB/TpW4aioBvs6N?form=rss"
+			tp:backgroundColor="0x131313"
+			tp:controlBackgroundColor="0x131313"
+			tp:controlColor="0xBEBEBE"
+			tp:controlFrameColor="0x545759"
+			tp:controlHoverColor="0xBEBEBE"
+			tp:controlSelectedColor="0x00CCFF"
+			tp:frameColor="0x545759"
+			tp:pageBackgroundColor="0x131313"
+			tp:playProgressColor="0x00CCFF"
+			tp:scrubberColor="0xBEBEBE"
+			tp:scrubberFrameColor="0x00CCFF"
+			tp:scrubTrackColor="0xBEBEBE"
+			tp:textBackgroundColor="0x383838"
+			tp:textColor="0xBEBEBE"
+			tp:loadProgressColor="0x5D9070"
+			tp:layoutUrl="../../data/metaLayout_glass.xml">
+		</div>     	
+		<div style="clear: both"></div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,30 @@
+/*
+ * Glass color scheme
+ */
+
+/* Ratings ------------------------------------------------------------------ */
+
+.communityManagerRatingWidget {
+	border: none;
+}
+.communityManagerRatingWidget .cmTextSpace {
+	display: none;
+	font-family: verdana, sans-serif;
+	color: #BEBEBE;
+}
+.communityManagerRatingWidget .cmStarSet .darkStar {
+	background: url(../images/star_dark_glass.png) 0px 0px no-repeat;
+	margin: 0px 2px 2px 0px;
+}
+.communityManagerRatingWidget .cmStarSet .star {
+	background: url(../images/star_glass.png) 0px 0px no-repeat;
+	margin: 0px 2px 2px 0px;
+}
+.communityManagerRatingWidget .cmStarSet .halfStar {
+	background: url(../images/star_half_glass.png) 0px 0px no-repeat;
+	margin: 0px 2px 2px 0px;
+}
+.communityManagerRatingWidget .cmStarSet .brightStar {
+	background: url(../images/star_bright_glass.png) 0px 0px no-repeat;
+	margin: 0px 2px 2px 0px;
+}

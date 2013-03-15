@@ -1,0 +1,166 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--
+  This host page demonstrates a chromeless player, with no dependency on a skin SWF.
+-->
+
+<head>
+
+<!-- Include the following script files to create a host page. -->
+<script type="text/javascript" src="../../pdk/js/swfobject.js"></script>
+<script type="text/javascript" src="../../pdk/js/util.js"></script>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>PDK :: Player / Chromeless Player</title>
+
+<!--
+  The following script implements the Javascript buttons for controlling the player.
+  Note that you can do these same exact buttons for a normal, non-chromeless player.
+-->
+<script type="text/javascript">
+	var played = false;
+	var paused = false;
+	var muted = false;
+
+	function pause()
+	{
+		if (!played)
+		{
+			tpController.clickPlayButton();
+			played = true;
+			paused = false;
+			document.getElementById("play").innerHTML = "Pause"
+			return;
+		}
+		paused = !paused;
+		if (paused)
+		{
+			document.getElementById("play").innerHTML = "Play"
+		}
+		else
+		{
+			document.getElementById("play").innerHTML = "Pause"
+		}
+		tpController.pause(paused)
+	}
+
+	function mute()
+	{
+		muted = !muted;
+		if (muted)
+		{
+			document.getElementById("mute").innerHTML = "Unmute"
+		}
+		else
+		{
+			document.getElementById("mute").innerHTML = "Mute"
+		}
+		tpController.mute(muted)
+	}
+</script>
+
+<!-- These styles handle basic component position and background settings. -->
+<style type="text/css">
+body {
+	margin: 5px;
+	background-color: #ffffff;
+}
+.player {
+}
+button {
+	width: 60px;
+	font: 8pt Verdana;
+	color: #BEBEBE;
+	background-color: #131313
+}
+</style>
+</head>
+
+<body>
+	<div class="player" id="playerDiv"><p style="font:8pt Verdana;color:#BEBEBE">To view this site, you need to have Flash Player 10.0.0 or later installed. Click <a href='http://www.macromedia.com/go/getflashplayer/' target='_blank' style="color:#BEBEBE">here</a> to get the latest Flash player.</p></div>
+
+<script type="text/javascript">
+	// First, set the ID for the communication manager.
+	// This function also initializes the PDK internals.
+	// Do this before doing anything else with PDK components.
+	tpSetCommManagerID("communicationwidget", true);
+</script>
+
+<script type="text/javascript">
+	// The first line registers the component name with the framework
+	tpRegisterID("playerwidget");
+
+	// The next line creates the component object in memory.
+	// The first parameter is the path to the component's Flash movie file.
+	// The second parameter is the component's registration name.
+	// The third and fourth parameters are the width and height of the component.
+	// The fifth parameter sets the minimum required Adobe Flash player version.
+	// The sixth parameter sets the background color. The color appears in areas
+	// where the component does not fill the space of the control.
+	var so = new SWFObject("../../pdk/swf/chromelessPlayer.swf", "playerwidget", "322", "259", "10.0.0.0", "#131313");
+	so.addParam("scale", "noscale");
+	so.addParam("salign", "tl");
+	so.addParam("menu", "true");
+	// This is an important one for the FLVPlayer, but not the other components.
+	so.addParam("allowFullScreen", "true");
+
+	// Some player plug-ins use JavaScript calls to interact with the containing page.
+	// If you're using one of those plug-ins, you must grant script access.
+	so.addParam("allowScriptAccess", "always");
+
+	// Next come the variables for the component itself.
+
+	// Tell the component what its unique ID is.
+	so.addVariable("ID", "playerwidget");
+
+	// Set the logging level for the component.
+	// This is equivalent to the default.
+	so.addVariable("logLevel", "warn");
+
+	// Even though we told the Flash control to allow full screen,
+	// we also have to tell the component itself.
+	so.addVariable("allowFullScreen", "true");
+
+	// Earlier we told the Flash control what its size is.
+	// Now we also have to tell the component how big to be.
+	so.addVariable("height", 259);
+	so.addVariable("width", 322);
+
+	// Let the user start playback by clicking the play overlay.
+	so.addVariable("autoPlay", "false");
+
+	// To use a custom preview image, set the previewImageURL FlashVar
+	//so.addVariable("previewImageURL","http://ne.edgecastcdn.net/0008B0/mps/PSAPI/998/1014/Random_Stuff_101_400x300.png");
+
+	// Select a release for playback.
+	so.addVariable("releaseURL", "http://link.theplatform.com/s/3JHsmB/_zyip9ah4U6YAm1Gi_kyZlRNxKOmvDbE");
+
+	// Set a "bug" overlay image in the lower-right
+	so.addVariable("overlayImageURL", "../../images/logo_bug.png");
+
+	// Near the end we set color values for the items in the component and the skin.
+	so.addVariable("backgroundColor", "0x131313");
+	so.addVariable("controlBackgroundColor", "0x131313");
+	so.addVariable("controlColor", "0xBEBEBE");
+	so.addVariable("controlFrameColor", "0x545759");
+	so.addVariable("controlHoverColor", "0x00CCFF");
+	so.addVariable("controlSelectedColor", "0x00CCFF");
+	so.addVariable("frameColor", "0x545759");
+	so.addVariable("pageBackgroundColor", "0x131313");
+	so.addVariable("playProgressColor", "0x00CCFF");
+	so.addVariable("scrubberColor", "0xBEBEBE");
+	so.addVariable("scrubberFrameColor", "0x00CCFF");
+	so.addVariable("scrubTrackColor", "0xBEBEBE");
+	so.addVariable("loadProgressColor", "0xcc6600");
+	so.addVariable("textBackgroundColor", "0x383838");
+	so.addVariable("textColor", "0xBEBEBE");
+
+	// The last step is to write the settings information into the HTML document.
+	so.write("playerDiv");
+</script>
+
+<br/>
+
+<button id="play" onclick="pause()">Start</button>&nbsp;<button id="mute" onclick="mute()">Mute</button>
+
+</body>
+</html>

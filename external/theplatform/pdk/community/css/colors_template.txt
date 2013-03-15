@@ -1,0 +1,172 @@
+/*
+ * This template lets you create a color scheme.  Replace the following strings
+ * with the colors you want to use:
+ * - COMPONENT_BACKGROUND
+ * - COMPONENT_BORDER
+ * - ITEM_BACKGROUND
+ * - ITEM_BORDER
+ * - MOUSE_OVER
+ * - SELECTION
+ * - TEXT_AND_ICONS
+ */
+
+/* Profile ------------------------------------------------------------------ */
+
+.communityManagerProfileWidget {
+	border-color: COMPONENT_BORDER;
+	background-color: ITEM_BACKGROUND;
+}
+.communityManagerProfileWidget .profileTitle {
+	font-family: verdana, sans-serif;
+	color: TEXT_AND_ICONS;
+}
+#profileSignInForm .signingIn {
+	background: url(../images/loading16x16.gif) 0px 0px no-repeat;
+}
+.communityManagerProfileOpen .communityManagerProfile {
+	border-top-color: COMPONENT_BORDER;
+	border-left-color: COMPONENT_BORDER;
+	background-color: ITEM_BACKGROUND;
+}
+.communityManagerProfileView {
+	border-color: COMPONENT_BORDER;
+	background-color: ITEM_BACKGROUND;
+}
+.communityManagerAvatar {
+	border-color: COMPONENT_BORDER;
+}
+.communityManagerProfileView input,
+.communityManagerProfileView label,
+.communityManagerProfileWidget input,
+.communityManagerProfileWidget label {
+	font-family: verdana, sans-serif;
+	color: TEXT_AND_ICONS;
+}
+.communityManagerProfileView input,
+.communityManagerProfileWidget input {
+	background-color: COMPONENT_BACKGROUND;
+  	border-color: COMPONENT_BORDER;
+}
+.communityManagerSignInLink,
+.communityManagerCancelSignInLink,
+.communityManagerProfileLink,
+.communityManagerSignOutLink,
+.communityManagerProfileSave,
+.communityManagerProfileCancel {
+	font-family: verdana, sans-serif;
+	color: TEXT_AND_ICONS;
+}
+.communityManagerSignInLink:hover,
+.communityManagerCancelSignInLink:hover,
+.communityManagerProfileLink:hover,
+.communityManagerSignOutLink:hover,
+.communityManagerProfileSave:hover,
+.communityManagerProfileCancel:hover {
+	color: MOUSE_OVER;
+}
+.communityManagerSignInError {
+	font-family: verdana, sans-serif;
+	color: SELECTION;
+}
+
+/* Ratings ------------------------------------------------------------------ */
+
+.communityManagerRatingWidget {
+	border-color: COMPONENT_BORDER;
+	background-color: ITEM_BACKGROUND;
+}
+.communityManagerRatingWidget .cmTextSpace {
+	font-family: verdana, sans-serif;
+	color: TEXT_AND_ICONS;
+}
+.communityManagerRatingWidget .cmStarSet .darkStar {
+	background: url(../images/star_dark_pale.png) 0px 0px no-repeat;
+}
+.communityManagerRatingWidget .cmStarSet .star {
+	background: url(../images/star.png) 0px 0px no-repeat;
+}
+.communityManagerRatingWidget .cmStarSet .halfStar {
+	background: url(../images/star_half_pale.png) 0px 0px no-repeat;
+}
+.communityManagerRatingWidget .cmStarSet .brightStar {
+	background: url(../images/star_bright.png) 0px 0px no-repeat;
+}
+
+/* Favorites ---------------------------------------------------------------- */
+
+.communityManagerRatingWidget .removeFromFavorites {
+	background: url(../images/heart_minus.png) 0px 0px no-repeat;
+}
+.communityManagerRatingWidget .addToFavorites {
+	background: url(../images/heart_add.png) 0px 0px no-repeat;
+}
+
+/* Tags --------------------------------------------------------------------- */
+
+.communityManagerTagWidget 
+{
+	font-family: Verdana, Sans-Serif;
+	color: TEXT_AND_ICONS;
+	border-color: COMPONENT_BORDER;
+	background-color: ITEM_BACKGROUND;
+}
+.addTagsField {
+	font-family: verdana, sans-serif;
+	color: TEXT_AND_ICONS;
+	background-color: COMPONENT_BACKGROUND;
+  	border-color: COMPONENT_BORDER;
+}
+.communityManagerTagWidget .lessTagsLink:hover,
+.communityManagerTagWidget .moreTagsLink:hover,
+.deleteTagLink:hover,
+.addTagsLink:hover,
+.addTagLink:hover,
+.doneTaggingLink:hover {
+	color: MOUSE_OVER;
+}
+
+/* Comments ----------------------------------------------------------------- */
+
+.communityManagerCommentsWidget {
+	font-family: Verdana, Sans-Serif;
+	color: TEXT_AND_ICONS;
+	border-color: COMPONENT_BORDER;
+	background-color: ITEM_BACKGROUND;
+}
+.communityManagerCommentHeader {
+	border-top-color: ITEM_BORDER;
+}
+.communityManagerCommentsWidget .commentAvatar {
+	border-color: COMPONENT_BORDER;
+}
+.communityManagerCommentUserName,
+.communityManagerCommentsWidget .lessCommentsLink,
+.communityManagerCommentsWidget .moreCommentsLink
+.communityManagerCommentsWidget .commentDeleteLink  {
+	color: TEXT_AND_ICONS;
+}
+.communityManagerCommentHeader a:hover,
+.communityManagerCommentsWidget .lessCommentsLink:hover,
+.communityManagerCommentsWidget .moreCommentsLink:hover,
+.communityManagerCommentsWidget .commentDeleteLink:hover {
+	color: MOUSE_OVER;
+}
+.communityManagerCommentsFormHeader {
+	border-top-color: ITEM_BORDER;
+}
+.communityManagerCommentsFormInput,
+.communityManagerCommentsFormTextArea {
+  	font-family: verdana, sans-serif;
+	border-color: COMPONENT_BORDER;
+  	color: TEXT_AND_ICONS;
+	background-color: COMPONENT_BACKGROUND;
+}
+.communityManagerCommentsFormButton {
+  	font-family: verdana, sans-serif;
+  	color: TEXT_AND_ICONS;
+  	background-color: ITEM_BACKGROUND;
+  	border-color: COMPONENT_BORDER;
+}
+.communityManagerCommentsFormButton:hover {
+	color: MOUSE_OVER;
+}

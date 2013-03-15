@@ -11,6 +11,7 @@
             background:  #333;
             position: fixed;
             top: 10px; right: 10px;
+            color: orange;
         }
     </style>
 
@@ -20,29 +21,24 @@
     <!--Dependency: OKJS -->
     <script src="../../../external/okjs/ok.js" type="text/javascript"></script>
 
-    <!-- Unit CSS -->
-    <link href="../unit.css" rel="stylesheet" type="text/css">
-
-
     <!-- Test Unit : Player API -->
     <script src="unit.html5.js" type="text/javascript"></script>
 
     <script type="text/javascript">
-
-        var unit = okjs({
-            exceptions: 0, // enable for debugging
-            verbose: true
-        });
-
-        var harness = PlayerUnit(unit);
-
-        unit.test("test setup", function () {
-            harness.media = document.getElementById('video');
-        });
-
-        harness.addTests();
-
+        var video;
         $( function () {
+            var unit = okjs();
+
+            var harness = PlayerUnit(unit);
+
+            unit.test("test setup", function () {
+                video = document.getElementById('video');
+                harness.media = video;
+                harness.media.src = "http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.mp4";
+            });
+
+            harness.addTests();
+
             unit.start();
         });
     </script>
@@ -52,12 +48,10 @@
 <body>
 
 <h3>Unit Test &raquo;Metaplayer &raquo; HTML5 Player API</h3>
-<div>All implemented player adapters must pass this MediaController API Test<div>
+<div>All implemented player adapters must pass this MediaController API Test</div>
 
-<video id="video" controls="controls" preload="true" >
-    <source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.mp4" type="video/mp4">
-    <source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.webm" type="video/webM">
-    <source src="http://videos.mozilla.org/serv/webmademovies/wtfpopcorn.ogv" type="video/ogg">
-</video>
+    <video id="video" controls="controls" preload="none" >
+    </video>
+
 </body>
 </html>

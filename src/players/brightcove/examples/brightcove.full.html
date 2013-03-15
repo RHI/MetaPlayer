@@ -77,50 +77,38 @@
     <!-- Service Plugin: RAMP -->
     <script src="../../../services/ramp/service.ramp.js"></script>
 
+    <!-- Service Plugin: srt -->
+    <script src="../../../services/srt/service.srt.js"></script>
+
+    <!-- Service Plugin: metaq -->
+    <script src="../../../services/metaq/service.metaq.js"></script>
+
+    <!-- Service Plugin: MRSS -->
+    <script src="../../../services/mrss/service.mrss.js"></script>
+
+    <!-- Media: html5 -->
+    <script src="../../../players/html5/player.html5.js"></script>
+
     <!-- Media: Brightcove -->
     <script src="../../../players/brightcove/player.brightcove.js"></script>
-
-    <!-- UI: Searchbox -->
-    <script src="../../../ui/searchbox/ui.searchbox.js"></script>
-    <link href="../../../ui/searchbox/ui.searchbox.css" rel="stylesheet"  type="text/css">
-
-    <!-- UI: Framefeed -->
-    <script src="../../../ui/framefeed/ui.framefeed.js"></script>
-    <link href="../../../ui/framefeed/ui.framefeed.css" rel="stylesheet"  type="text/css">
-
 
     <!-- UI: Captions -->
     <script src="../../../ui/captions/ui.captions.js"></script>
     <link href="../../../ui/captions/ui.captions.css" rel="stylesheet"  type="text/css">
     <link href="../../../themes/mp2/theme.captions.css" rel="stylesheet"  type="text/css">
 
-    <!-- UI: Social -->
-    <script src="../../../ui/social/ui.social.js"></script>
-    <link href="../../../ui/social/ui.social.css" rel="stylesheet"  type="text/css">
-
-    <!-- UI: Social -->
+    <!-- UI: transcript -->
     <script src="../../../ui/transcript/ui.transcript.js"></script>
     <link href="../../../ui/transcript/ui.transcript.css" rel="stylesheet"  type="text/css">
 
-    <!-- UI: Embed -->
-    <script src="../../../ui/embed/ui.embed.js"></script>
-    <link href="../../../ui/embed/ui.embed.css" rel="stylesheet"  type="text/css">
-    <link href="../../../themes/mp2/theme.embed.css" rel="stylesheet"  type="text/css">
+    <!-- UI: tracktip -->
+    <script src="../../../ui/tracktip/ui.tracktip.js"></script>
+    <link href="../../../ui/tracktip/theme/ui.tracktip.css" rel="stylesheet"  type="text/css">
 
-    <!-- UI: Controls -->
-    <script src="../../../ui/controls/ui.controls.js"></script>
-    <link href="../../../ui/controls/ui.controls.css" rel="stylesheet"  type="text/css">
-    <link href="../../../themes/mp2/theme.controls.css" rel="stylesheet"  type="text/css">
+    <!-- UI: controlbar -->
+    <script src="../../../ui/controlbar/ui.controlbar.js"></script>
+    <link href="../../../ui/controlbar/theme/ui.controlbar.css" rel="stylesheet"  type="text/css">
 
-    <!-- UI: Overlay -->
-    <script src="../../../ui/overlay/ui.overlay.js"></script>
-    <link href="../../../ui/overlay/ui.overlay.css" rel="stylesheet"  type="text/css">
-    <link href="../../../themes/mp2/theme.overlay.css" rel="stylesheet"  type="text/css">
-
-    <!-- UI: Endcap -->
-    <script src="../../../ui/endcap/ui.endcap.js"></script>
-    <link href="../../../ui/endcap/ui.endcap.css" rel="stylesheet"  type="text/css">
-    <link href="../../../themes/mp2/theme.endcap.css" rel="stylesheet"  type="text/css">
 
 </head>
 
@@ -131,8 +119,6 @@
 <br>
 
 <!-- Start of Brightcove Player -->
-
-<div id="player"></div>
 
 <!--
 By use of this code snippet, I agree to the Brightcove Publisher T and C 
@@ -151,23 +137,24 @@ video.src = <button onclick="video.src = '1531130529001'">1531130529001</button>
 <button onclick="video.currentTime += 2;">video.currentTime += 2</button>
 
 <br><br>
-
-<style> .metaplayer { width: 486px; height: 412px ; }</style>
-
-<div class="metaplayer">
-    <object id="myExperience" class="BrightcoveExperience">
-        <param name="bgcolor" value="#FFFFFF" />
-        <param name="width" value="100%" />
-        <param name="height" value="100%" />
-        <param name="playerID" value="1898225880" />
-        <param name="playerKey" value="AQ~~,AAAAAHEkmvY~,SRcNfxhuB9mACjhKYyTKucIsjqiB0eGm" />
-        <param name="isVid" value="true" />
-        <param name="wmode" value="transparent" />
-        <param name="dynamicStreaming" value="true" />
-        <param name="includeAPI" value="true" />
-        <param name="templateLoadHandler" value="myTemplateLoaded" />
-    </object>
-</div>
+<style>
+    #myExperience {
+        width: 486px;
+        height: 412px;
+    }
+</style>
+<object id="myExperience" class="BrightcoveExperience">
+    <param name="bgcolor" value="#FFFFFF" />
+    <param name="width" value="100%" />
+    <param name="height" value="100%" />
+    <param name="playerID" value="1898225880" />
+    <param name="playerKey" value="AQ~~,AAAAAHEkmvY~,SRcNfxhuB9mACjhKYyTKucIsjqiB0eGm" />
+    <param name="isVid" value="true" />
+    <param name="dynamicStreaming" value="true" />
+    <param name="includeAPI" value="true" />
+    <param name="templateLoadHandler" value="myTemplateLoaded" />
+    <param name="wmode" value="opaque" />
+</object>
 
 <br><br>
 
@@ -180,14 +167,7 @@ video.src = <button onclick="video.src = '1531130529001'">1531130529001</button>
 
 </div>
 
-<br><br>
-
-<div id="metaplayer-search">
-
-</div>
-
-
-<!-- 
+<!--
 This script tag will cause the Brightcove Players defined above it to be created as soon
 as the line is read by the browser. If you wish to have the player instantiated only after
 the rest of the HTML is processed and the page load is complete, remove the line.
@@ -197,47 +177,20 @@ the rest of the HTML is processed and the page load is complete, remove the line
 <!-- End of Brightcove Player -->
 
 <script>
-
-    // Store reference to the player
+//    MetaPlayer.DEBUG = "event brightcove";
     var bc, video, player;
 
-    // This method is called when the player loads with the ID of the player
-    // We can use that ID to get a reference to the player, and then the modules
-    // The name of this method can vary but should match the value you specified
-    // in the player publishing code for “templateLoadHandler”.
-    function myTemplateLoaded(experienceID) {   
-        var config = { 
-            autoplay: false,
-            preload: true,
-            selectSource: false,
-            playerVars: {
-                experienceID: experienceID
-            }
-        };
+    video = MetaPlayer.brightcove("myExperience");
 
-        
-        video = MetaPlayer.brightcove(brightcove, config);
-        player = MetaPlayer( video , { selectSource : false, appendSources : false} )            
-        .endcap()   
-        .transcript('#transcript')
-        .searchbox("#metaplayer-search", {
-             strings: {
-                 searchPlaceholder: "Search within video",
-                 resultsHeader: "{{count}} search {{results}}",
-                 ellipsis: "",
-                 clear: ""
-             }
-         })
-        .framefeed('#metaplayer-framefeed', {
-            revealMs: 1500,
-            baseUrl: "http://sxsw.ramp.com/themename/1.0/"
-        })
-        .ramp("http://api.ramp.com/v1/mp2/playlist?e=52896312&apikey=0302cd28e05e0800f752e0db235d5440")
-        .load();
-    
-        video.src = '1545219064001';
+    player = MetaPlayer( video )
+            .metaq()
+            .srt()
+            .controlbar()
+            .transcript('#transcript')
+            .mrss("data/sample.mrss.xml")
+            .load();
 
-    };
+    video.autoplay = false;
 
 </script>
 

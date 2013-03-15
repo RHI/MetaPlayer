@@ -49,18 +49,24 @@
     <!-- Service Plugin: RAMP -->
     <script src="../../../services/ramp/service.ramp.js"></script>
 
-    <!-- Media Plugin: YouTube -->
+    <!-- Media : HTML5 -->
+    <script src="../../../players/html5/player.html5.js"></script>
+
+    <!-- Media : youtube -->
     <script src="../../../players/youtube/player.youtube.js"></script>
 
     <!-- UI: Carousel -->
     <script src="../../../ui/carousel/ui.carousel.js"></script>
     <link href="../../../ui/carousel/ui.carousel.css" rel="stylesheet" type="text/css">
 
+    <!-- UI: caption -->
+    <script src="../../captions/ui.captions.js"></script>
+    <link href="../../captions/ui.captions.css" rel="stylesheet" type="text/css">
+    <link href="../../../themes/mp2/theme.captions.css" rel="stylesheet" type="text/css">
 
-    <!-- UI: Controls -->
-    <script src="../../../ui/controls/ui.controls.js"></script>
-    <link href="../../../ui/controls/ui.controls.css" rel="stylesheet" type="text/css">
-    <link href="../../../themes/mp2/theme.controls.css" rel="stylesheet"  type="text/css">
+    <!-- UI: controlbar -->
+    <script src="../../../ui/controlbar/ui.controlbar.js"></script>
+    <link href="../../../ui/controlbar/theme/ui.controlbar.css" rel="stylesheet" type="text/css">
 
 
 </head>
@@ -76,13 +82,11 @@
 
 <script type="text/javascript">
     var player = MetaPlayer('#target')
-//            .youtube({ chromeless : false })
-            .youtube()
-            .controls({
-                renderTags: false
+            .controlbar({
+                annotations : "carousel"
             })
             .carousel("#carousel")
-            .ramp( "http://api.ramp.com/v1/mp2/playlist?e=52345506&apikey=0302cd28e05e0800f752e0db235d5440" )
+            .ramp( "http://api.ramp.com/v1/mp2/playlist?e=52871241&apikey=f455a86b28160bc0682fec3662e39d3b" )
             .load();
 
     player.video.autoplay = true;
@@ -90,6 +94,7 @@
     player.cues.setCues("carousel", [
         {
             topic: "anchovy",
+            term : "anchovy",
             start: 1,
             url : "http://publishing.ramp.com/recipe/theme/6367/api-meta?q=anchovy"
         },
@@ -105,14 +110,49 @@
 
         // duplicates, by default, don't render more dots but still catch focus events
         {
-            start: 15,
+            start: 35,
             url : "http://publishing.ramp.com/recipe/theme/6367/api-meta?q=anchovy"
         },
         {
-            start: 20,
+            start: 40,
             html : "<b>one</b>!"
         }
-    ], "52345506" );
+    ], "ramp:52871241" );
+
+
+    player.cues.setCues("carousel", [
+        {
+            topic: "anchovy",
+            term : "anchovy",
+            start: 1,
+            html : "http://publishing.ramp.com/recipe/theme/6367/api-meta?q=anchovy"
+        },
+        {
+            topic: "one",
+            start: 5,
+            html : "<b>one</b>!"
+        },
+        {
+            start: 10,
+            html : "<b>two</b>!"
+        },
+        {
+            topic : "three",
+            start: 15,
+            url : "http://www.example.com/" // iframes support
+        },
+
+        // duplicates, by default, don't render more dots but still catch focus events
+        {
+            start: 35,
+            html : "http://publishing.ramp.com/recipe/theme/6367/api-meta?q=anchovy"
+        },
+        {
+            start: 40,
+            html : "<b>one</b>!"
+        }
+
+    ], "ramp:52871241" );
 
 
 

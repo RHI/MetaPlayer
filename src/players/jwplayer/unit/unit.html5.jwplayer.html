@@ -2,7 +2,7 @@
 <html>
 <head>
 
-    <title>JWPlayer HTML5 Plugin Test | Metaplayer</title>
+    <title>JWPlayer HTML5 Test | MetaPlayer</title>
 
     <style>
         #target {
@@ -16,15 +16,12 @@
 
     <!--Dependency: jQuery-->
     <script src="../../../../external/jquery/jquery-1.6.2.js" type="text/javascript"></script>
-    
+
     <!--Dependency: JwPlayer -->
     <script src="../../../../external/jwplayer/jwplayer.js"></script>
 
     <!--Dependency: OKJS -->
     <script src="../../../../external/okjs/ok.js" type="text/javascript"></script>
-
-    <!-- Unit CSS -->
-    <link href="../../../unit/unit.css" rel="stylesheet" type="text/css">
 
     <!-- Unit : Player API -->
     <script src="../../../unit/html5/unit.html5.js" type="text/javascript"></script>
@@ -44,45 +41,55 @@
     <script src="../../../core/layout/core.layout.js"></script>
     <link href="../../../core/layout/core.layout.css" rel="stylesheet" type="text/css">
 
-    <!-- Media Plugin: Flowplayer -->
+    <!-- Media Plugin: jwplayer -->
     <script src="../../../players/jwplayer/player.jwplayer.js"></script>
 
     <script type="text/javascript">
-
-        var unit = okjs({
-            exceptions: 1, // enable for debugging
-            verbose: true
-        });
-
-        var harness = PlayerUnit( unit );
-        var video;
-
-        unit.test("ramp setup", function () {
-           // ramp services
-            video = MetaPlayer.jwplayer("#target", {
-                id          : 'jwplayer',
-                autostart   : false,
-                controlbar  : "none",
-                file        : "../../../../media/elephants_dream/elephant.ogv",
-                modes       : [{type: 'html5'}],
-                image       : "",
-                volume      : 100
-            });
-            harness.media = video;
-        });
-
-        harness.addTests();
-
+        var video, jwp;
         $( function () {
+
+            var unit = okjs({
+                exceptions: 1, // enable for debugging
+                verbose: true
+            });
+
+            var harness = PlayerUnit( unit );
+
+            unit.test("jwplayer setup", function () {
+
+                jwp = jwplayer('jwtarget').setup({
+                    height: '150',
+                    width:  '300',
+                    autostart   : false,
+                    autobuffer   : false,
+                    modes       : [{type: 'html5'}],
+                    image       : "",
+                    volume      : 0
+                });
+
+                jwp.onReady( unit.callback("jwp ready", function () {
+                    video = MetaPlayer.jwplayer( jwp );
+                    video.autoplay = false;
+                    video.preload = "none";
+                    video.src = '../../../../media/elephants_dream/elephant.mp4';
+                    harness.media = video;
+                }))
+
+            });
+
+            harness.addTests();
+
             unit.start();
         });
     </script>
 </head>
 <body>
 
-<h3>Unit Test &raquo;Metaplayer &raquo; JWPlayer HTML5 Plugin</h3>
+<h3>Unit Test &raquo;MetaPlayer &raquo; JWPlayer Adapter</h3>
 
-<div id='target'></div>
+<div id='target'>
+    <div id='jwtarget'></div>
+</div>
 
 </body>
 </html>

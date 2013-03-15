@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset=utf-8>
+
+    <!-- Dependency: jQuery -->
+    <script src="../../../../external/jquery/jquery-1.6.2.js" type="text/javascript"></script>
+
+    <!-- Core: Ramp -->
+    <script src="../../../core/metaplayer.js"></script>
+    <script src="../../../core/utils/util.event.js"></script>
+    <script src="../../../core/utils/util.proxy.js"></script>
+    <script src="../../../core/utils/util.script.js"></script>
+    <script src="../../../core/utils/util.timer.js"></script>
+    <script src="../../../core/utils/util.format.js"></script>
+    <script src="../../../core/utils/util.ui.js"></script>
+    <script src="../../../core/playlist/player.playlist.js"></script>
+    <script src="../../../core/layout/core.layout.js"></script>
+    <script src="../../../core/metadata/core.metadata.js"></script>
+    <script src="../../../core/search/core.search.js"></script>
+    <script src="../../../core/cues/core.cues.js"></script>
+
+    <!-- Service Plugin: RAMP -->
+    <script src="../../../services/ramp/service.ramp.js"></script>
+
+    <!-- Media: Ooyala -->
+    <script src="../../../players/ooyala/player.ooyala.js"></script>
+
+</head>
+
+<body>
+
+<!-- Sample Control Buttons -->
+video.src = <button onclick="video.src = '8wNTqa-6MkpEB1c7fNGOpoSJytLptmm9'">8wNTqa-6MkpEB1c7fNGOpoSJytLptmm9</button>
+<button onclick="video.src = 'dmbHViOgvgZMqXtY40DWmh4DuW6Ie6I6';"> dmbHViOgvgZMqXtY40DWmh4DuW6Ie6I6</button>
+<br><br>
+<button onClick="video.load()">video.load()</button>
+<button onclick="video.play()">video.play()</button>
+<button onclick="video.pause()">video.pause()</button>
+<button onclick="video.currentTime += 2;">video.currentTime += 2</button>
+<br><br>
+
+
+<!-- This JS embeds the Ooyala player -->
+<!-- Note playerId, which will be the ID of the object tag -->
+<!-- and the callback which will be the name of a function created on the window object -->
+<!-- you'll also need to wrap the player instantiation in the callback function below -->
+<!-- MPF will then take over that function for events -->
+<script src="//player.ooyala.com/player.js?callback=receiveOoyalaEvent&playerId=ooyalaPlayer&width=480&height=360&embedCode=8wNTqa-6MkpEB1c7fNGOpoSJytLptmm9&version=2"></script>
+
+
+<script>
+
+var video, player;
+
+function receiveOoyalaEvent(playerId, eventName, eventArgs) {
+    if (eventName == "apiReady") {
+        var config = { 
+            autoplay: false,
+            preload: true
+        };
+
+        video = MetaPlayer.ooyala({ playlist: { selectSource: false, sourceTags: false } } )
+
+        player = MetaPlayer(video, { autoplay: false, preload: true });
+
+        video = player.video;
+
+        video.src = '8wNTqa-6MkpEB1c7fNGOpoSJytLptmm9';
+    }
+}
+</script>
+
+</body>
+</html>

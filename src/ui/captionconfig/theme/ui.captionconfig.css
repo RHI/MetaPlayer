@@ -1,0 +1,296 @@
+
+.mp-cc-config {
+    position: absolute;
+    top: 0; left: 0;
+    background: rgba(33,33,33,.5);
+    font-family: Arial;
+    color: #ffffff;
+    /*height: 100%;*/
+    width: 100%;
+    text-align: center;
+    z-index: 101;
+}
+
+.mp-cc-config-panel {
+    padding-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+    width: 480px;
+    position: relative;
+    /*background: rgba(99,0,99,.5);*/
+}
+
+.mp-cc-config-header {
+    line-height: 23px;
+    position: relative;
+}
+.mp-cc-config-badge {
+    display: inline-block;
+    background: url("captionconfig/CC-settings-icon.png");
+    width: 33px;
+    height: 23px;
+    margin-right: 10px;
+    vertical-align: bottom;
+}
+.mp-cc-config-title {
+    display: inline;
+}
+.mp-cc-config-header-right {
+    position: absolute;
+    right: 0px;
+    top: 0;
+    height: 2em;
+    text-align: right;
+}
+.mp-cc-config-save,
+.mp-cc-config-reset {
+    font-size: .9em;
+    display: inline;
+    padding: .25em;
+    cursor: pointer;
+}
+.mp-cc-config-separator {
+    display: inline-block;
+    background: #999999;
+    width: .1em;
+    height: 1em;
+    margin: 0 10px;
+    vertical-align: middle;
+}
+.mp-cc-config-save {
+    font-family: "Arial Bold";
+    font-weight: bold;
+}
+
+.mp-cc-config-hr {
+    margin-top: 10px;
+    width: 100%;
+    border-top: 1px solid #000000;
+    border-bottom: 1px solid #979797;
+    opacity: .9;
+}
+
+.mp-cc-config-body {
+    padding-top: 10px;
+    width: 100%;
+}
+
+.mp-cc-config-left {
+    width: 60%;
+    float: left;
+}
+
+
+.mp-cc-config-right {
+    width: 40%;
+    float: right;
+}
+.mp-cc-config-footer {
+    display: none;
+    position: relative;
+    /*height: 45px;*/
+    /*background: url("captionconfig/frame-opacity-thumb.gif") repeat-x;*/
+    /*background-size: cover;*/
+    font-size: 20px;
+}
+
+.mp-cc-config-footer .mp-cc-frame {
+    position: absolute;
+    line-height: normal;
+    text-align: center;
+    top: 4px;
+    left: 0;
+    right: 0;
+}
+
+.mp-cc-config-row {
+    line-height: 24px;
+    padding-bottom: 10px;
+    position: relative;
+}
+.mp-cc-config-label {
+    font-size: 14px;
+    color: #b5b5b5;
+    text-align: right;
+    width: 95px;
+}
+.mp-cc-config-row-body {
+    position: absolute;
+    left: 105px;
+    top: 0;
+    right: 0;
+    vertical-align: middle;
+}
+
+/* left column needs less room for labels, but needs more for boxes */
+.mp-cc-config-left .mp-cc-config-label {
+    width: 80px;
+}
+.mp-cc-config-left .mp-cc-config-row-body {
+    left: 90px;
+}
+
+.mp-cc-config-row-body select,
+.mp-cc-config-colorbox {
+    width: 100%;
+}
+
+.mp-cc-config-color {
+    border: 2px solid rgba(0,0,0,0);
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 1px;
+}
+.mp-cc-config-color-selected {
+    border-color: red;
+}
+.mp-cc-config-fill {
+    border: 1px solid #cccccc;
+    width: 18px;
+    height: 18px;
+}
+
+.mp-cc-config-clear{
+    line-height: 1px;
+    height: 1px;
+    font-size: 1px;
+    clear: both;
+}
+
+.mp-cc-config-carousel {
+    position: relative;
+    height: 24px;
+}
+
+.mp-cc-config-carousel-next {
+    width: 11px;
+    height: 18px;
+    position: absolute;
+    right: 0;
+    top: 2px;
+    background: url("captionconfig/settings-arrow-right.png") no-repeat;
+    background-size: contain;
+    cursor: pointer;
+}
+
+.mp-cc-config-carousel-previous {
+    width: 11px;
+    height: 18px;
+    position: absolute;
+    left: 0;
+    top: 2px;
+    background: url("captionconfig/settings-arrow-left.png") no-repeat;
+    background-size: contain;
+    cursor: pointer;
+}
+
+.mp-cc-config-carousel-body {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    top: 2px;
+    text-align: center;
+}
+
+.mp-cc-config-row-empty {
+    height: 34px;
+}
+.mp-cc-config-text-size,
+.mp-cc-config-text-edge,
+.mp-cc-config-text-opacity {
+    height: 24px;
+    line-height: 24px;
+    font-size: 14px;
+    width: 100%;
+}
+.mp-cc-config-text-template {
+    background: gray;
+    line-height: 18px;
+    height: 18px;
+}
+.mp-cc-config-text-opacity .mp-cc-config-text-template,
+.mp-cc-config-frame-opacity {
+    background: url("captionconfig/frame-opacity-thumb.gif") repeat-x;
+    background-size: 100%;
+    height: 18px;
+    width: 100%;
+}
+.mp-cc-config-frame-fill {
+    background: rgba(0,0,0,1);
+    position: absolute;;
+    top: 3px;
+    bottom: 3px;
+    left: 3px;
+    right: 3px;
+}
+
+.mp-cc-config-text-size-50 {
+    font-size: .5em;
+}
+.mp-cc-config-text-size-100 {
+    font-size: 1em;
+}
+.mp-cc-config-text-size-150 {
+    font-size: 1.5em;
+}
+.mp-cc-config-text-size-200 {
+    font-size: 2em;
+}
+
+.mp-cc-config-text-edge-none div  {
+    text-shadow: none;
+    filter: none;
+}
+.mp-cc-config-text-edge-drop div {
+    text-shadow: #000000 .1em .1em 2px;
+    filter: progid:DXImageTransform.Microsoft.DropShadow(offX=1,offY=1,color=000000);
+}
+.mp-cc-config-text-edge-outline div {
+    color: #ffffff;
+    text-shadow: #000000 1px 1px 0, #000000 -1px -1px 0, #000000 1px -1px 0, #000000 -1px 1px 0;
+    filter: glow(color=black,strength=3);
+}
+.mp-cc-config-text-edge-raised div {
+    color: #000000;
+    text-shadow: #ffffff -1px -1px 0;
+    filter: progid:DXImageTransform.Microsoft.DropShadow(offX=-1,offY=-1,color=ffffff);
+
+}.mp-cc-config-text-edge-depressed div {
+     color: #000000;
+     text-shadow: #ffffff 1px 1px 0;
+     filter: progid:DXImageTransform.Microsoft.DropShadow(offX=1,offY=1,color=ffffff);
+ }
+.mp-cc-config-text-edge-uniform div {
+    color: #000000;
+    text-shadow: #ffffff 1px 1px 0, #ffffff -1px -1px 0, #ffffff 1px -1px 0, #ffffff -1px 1px 0;
+    filter: glow(color=white,strength=3);
+}
+
+.mp-cc-config-text-opacity-normal div {
+    opacity: 1;
+}
+.mp-cc-config-text-opacity-semi div {
+    opacity: .75;
+}
+
+.mp-cc-config-frame-opacity-trans div{
+    opacity: 0;
+}
+.mp-cc-config-frame-opacity-semi div{
+    opacity: .5;
+}
+.mp-cc-config-frame-opacity-opaque div{
+    opacity: 1;
+}
+
+.mp-cc-settings-btn {
+    height: 29px;
+    margin-right: 10px;
+    width: 20px;
+    height: 29px;
+    display: inline-block;
+    float: left;
+    cursor: pointer;
+    background: url("captionconfig/settings-button.png") no-repeat 0 6px;
+}

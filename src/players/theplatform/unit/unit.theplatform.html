@@ -22,9 +22,6 @@
     <!--Dependency: OKJS -->
     <script src="../../../../external/okjs/ok.js" type="text/javascript"></script>
 
-    <!-- Unit CSS -->
-    <link href="../../../unit/unit.css" rel="stylesheet" type="text/css">
-
     <!-- Unit : Player API -->
     <script src="../../../unit/html5/unit.html5.js" type="text/javascript"></script>
 
@@ -41,6 +38,9 @@
     <script src="../../../core/metadata/core.metadata.js"></script>
     <script src="../../../core/search/core.search.js"></script>
     <script src="../../../core/cues/core.cues.js"></script>
+
+    <!-- Media : html5 -->
+    <script src="../../../players/html5/player.html5.js"></script>
 
     <!-- Service Plugin: RAMP -->
     <script src="../../../services/ramp/service.ramp.js"></script>
@@ -80,69 +80,63 @@
 
 
 <div class="metaplayer">
-    <div id="player" class="tpPlayer"
-            tp:fp.bgcolor="0x131313"
-            tp:wmode="opaque"
-            tp:logLevel="warn"
-            tp:allowFullScreen="true"
-            tp:skinUrl="../../../../external/theplatform/pdk/swf/skinCinematic.swf"
-            tp:plugin0="type=adcomponent|URL=../../../../external/theplatform/pdk/swf/SMIL.swf|priority=3"
-            tp:emailServiceURL="http://player.theplatform.com/m/3JHsmB/demo/select/{releasePid}"
-            tp:playerURL="http://player.theplatform.com/m/3JHsmB/demo/select/{releasePid}"
-            tp:embeddedPlayerHTML="&lt;embed src=&quot;http://player.theplatform.com/m/3JHsmB/demo/embed/select/{releasePid}&quot; width=&quot;311&quot; height=&quot;252&quot; type=&quot;application/x-shockwave-flash&quot; allowFullScreen=&quot;true&quot; bgcolor=&quot;#131313&quot; /&gt;"
-            tp:RSSURL="http://feed.theplatform.com/f/3JHsmB/TpW4aioBvs6N?form=rss"
-            tp:backgroundColor="0x131313"
-            tp:controlBackgroundColor="0x131313"
-            tp:controlColor="0xBEBEBE"
-            tp:controlFrameColor="0x545759"
-            tp:controlHoverColor="0xBEBEBE"
-            tp:controlSelectedColor="0x00CCFF"
-            tp:frameColor="0x545759"
-            tp:pageBackgroundColor="0x131313"
-            tp:playProgressColor="0x00CCFF"
-            tp:scrubberColor="0xBEBEBE"
-            tp:scrubberFrameColor="0x00CCFF"
-            tp:scrubTrackColor="0xBEBEBE"
-            tp:textBackgroundColor="0x383838"
-            tp:textColor="0xBEBEBE"
-            tp:loadProgressColor="0x5D9070"
-            tp:layoutUrl="../../../../external/theplatform/data/metaLayout.xml">
-    </div>  
+    <div class="mp-stage">
+        <div id="player" class="tpPlayer"
+                tp:fp.bgcolor="0x131313"
+                tp:wmode="opaque"
+                tp:logLevel="warn"
+                tp:allowFullScreen="true"
+                tp:skinUrl="../../../../external/theplatform/pdk/swf/skinCinematic.swf"
+                tp:plugin0="type=adcomponent|URL=../../../../external/theplatform/pdk/swf/SMIL.swf|priority=3"
+                tp:emailServiceURL="http://player.theplatform.com/m/3JHsmB/demo/select/{releasePid}"
+                tp:playerURL="http://player.theplatform.com/m/3JHsmB/demo/select/{releasePid}"
+                tp:embeddedPlayerHTML="&lt;embed src=&quot;http://player.theplatform.com/m/3JHsmB/demo/embed/select/{releasePid}&quot; width=&quot;311&quot; height=&quot;252&quot; type=&quot;application/x-shockwave-flash&quot; allowFullScreen=&quot;true&quot; bgcolor=&quot;#131313&quot; /&gt;"
+                tp:RSSURL="http://feed.theplatform.com/f/3JHsmB/TpW4aioBvs6N?form=rss"
+                tp:backgroundColor="0x131313"
+                tp:controlBackgroundColor="0x131313"
+                tp:controlColor="0xBEBEBE"
+                tp:controlFrameColor="0x545759"
+                tp:controlHoverColor="0xBEBEBE"
+                tp:controlSelectedColor="0x00CCFF"
+                tp:frameColor="0x545759"
+                tp:pageBackgroundColor="0x131313"
+                tp:playProgressColor="0x00CCFF"
+                tp:scrubberColor="0xBEBEBE"
+                tp:scrubberFrameColor="0x00CCFF"
+                tp:scrubTrackColor="0xBEBEBE"
+                tp:textBackgroundColor="0x383838"
+                tp:textColor="0xBEBEBE"
+                tp:loadProgressColor="0x5D9070"
+                tp:layoutUrl="../../../../external/theplatform/data/metaLayout.xml">
+        </div>  
+    </div>
 </div>
 
 <script>
-
-    var harness;
-
-    var unit = okjs({
-        exceptions: 1,
-        verbose: true
-    });
-
-    harness = PlayerUnit( unit );
-    var video;
-
-
-    unit.test("ramp setup", function() {
-        //ramp services
-        video = MetaPlayer.theplatform($pdk, { 
-            autoplay: false,
-            preload: false,
-        });
-
-        //video.src = '1531130529001';
-        harness.media = video;            
-        harness.src = 'http://link.theplatform.com/s/3JHsmB/_zyip9ah4U6YAm1Gi_kyZlRNxKOmvDbE';
-
-    });
-
-    harness.addTests();
+    var harness, video, player;
 
     $( function () {
-        unit.start();
+
+        var unit = okjs({
+            exceptions: 1
+        });
+
+        harness = PlayerUnit( unit );
+    
+        tpController.addEventListener("OnPlayerLoaded", function(a) {
+
+            unit.test("ramp setup", function() {
+                //ramp services
+                video = MetaPlayer.theplatform(a.data[0].id);
+
+                harness.media = video;
+                video.src = 'http://link.theplatform.com/s/3JHsmB/_zyip9ah4U6YAm1Gi_kyZlRNxKOmvDbE';
+            });
+            harness.addTests();
+            unit.start();
+        });
+
     });
-
-
 </script>
 
 </body>

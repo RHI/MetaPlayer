@@ -1,6 +1,6 @@
 /**
 
-MetaPlayer Framework  v0.2.20120405
+MetaPlayer Framework  v3.2.20130313
 
 A standards-based, multiple player, UI and Event framework for JavaScript.
 
@@ -18,12 +18,9 @@ furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in
 all copies or substantial portions of the Software.
 */
-
 /**
  * @fileOverview A media player framework for HTML5/JavaScript for use with RAMP services.
- * @author Greg Kindel <greg@gkindel.com>
- * @version 1.0
- */
+*/
 
 (function () {
 
@@ -41,7 +38,7 @@ all copies or substantial portions of the Software.
     };
 
     /**
-     * Create a MetaPlyer instance. Sets up core player plugins, and DOM scaffolding.
+     * Create a MetaPlayer instance. Sets up core player plugins, and DOM scaffolding.
      * By default, search, metadata, and cues interfaces are queued for load(). If a DOM element is passed,
      * then the layout and playlist interfaces are queued as well.
      *
@@ -62,7 +59,7 @@ all copies or substantial portions of the Software.
      *
      * @name MetaPlayer
      * @constructor
-     * @this {MetaPlayer}
+     * @augments Util.EventDispatcher
      * @param {MediaElement,String} [video] An HTML5 Media element, a DIV element, or jQuery selector string.
      * @param {Object} [options] A map of configuration options
      * @param {Object} options.layout Default options passed in to Layout module, defaults to empty object.
@@ -70,18 +67,19 @@ all copies or substantial portions of the Software.
      * @param {Object} options.search Default options passed in to Search module, defaults to empty object.
      * @param {Object} options.cues Default options passed in to Cues module, defaults to empty object.
      */
-    var MetaPlayer = function (video, options ) {
+    var MetaPlayer = function (media, options ) {
 
         if( ! (this instanceof MetaPlayer) )
-            return new MetaPlayer( video, options );
+            return new MetaPlayer( media, options );
 
-        this.config = $.extend({}, defaults, options );
+
+        this.config = $.extend({}, defaults, options, MetaPlayer.script.query("^mp."));
 
         MetaPlayer.dispatcher(this);
 
         this._plugins = {};
         this._loadQueue = [];
-        this.target = video;
+        this.target = media;
 
         // autodetect, or manual set for testing
         this.isTouchDevice = ( this.config.isTouchDevice != null )
@@ -100,26 +98,14 @@ all copies or substantial portions of the Software.
         if( this.config.cues )
             this.cues = new MetaPlayer.Cues(this, this.config );
 
-        // resolve video element from string, popcorn instance, or direct reference
-        if( typeof video == "string")
-            video = $(video).get(0);
-
-        if( video ) {
-            if( video.getTrackEvents instanceof Function ) {
-                // is popcorn instance
-                this.video = video.media;
-                this.popcorn = video;
-            }
-
-            else if( video.play instanceof Function ) {
-                // is already a media element
-                this.video = video;
-            }
-        }
+        // resolve html5 player adapter
+        this.video = this.adaptMedia(media);
 
         // optional layout disabling, use at own risk for player UI layout
-        if( video && this.config.layout ) {
-            this.layout = MetaPlayer.layout(video, this.config.layout);
+        if( this.config.layout && (this.video || typeof media == "string") ){
+            this.layout = MetaPlayer.layout(this.video || media, this.config.layout);
+            if( this.config.maximize )
+                this.layout.maximize();
         }
 
         // start loading after this execution block, can be triggered earlier by load()
@@ -130,15 +116,21 @@ all copies or substantial portions of the Software.
         }, 0);
     };
 
+    MetaPlayer.DEBUG = "error,warning";
+
     /**
      * Fired when all plugins are loaded.
-     * @constant
+     * @event
+     * @name MetaPlayer#event:READY
+     * @param {Event} e
      */
     MetaPlayer.READY = "ready";
 
     /**
      * Fired when player destructor called to allow plugins to clean up.
-     * @constant
+     * @event
+     * @name MetaPlayer#event:DESTROY
+     * @param {Event} e
      */
     MetaPlayer.DESTROY = "destroy";
 
@@ -147,38 +139,39 @@ all copies or substantial portions of the Software.
 
         /**
          * Initializes requested player plugins, optionally begins playback.
-         * @this {MetaPlayer}
+         * @name MetaPlayer#load
+         * @function
          */
         load : function () {
             this._load();
             return this;
         },
 
+        adaptMedia :  function ( media ) {
+            var video;
+            var self = this;
+            $.each( MetaPlayer.Players, function (key, adapter) {
+                // break loop if adapter return true
+                video = adapter(media, self);
+                if( video )
+                    return false;
+            });
+            return video;
+        },
+
         /**
          * Disabled MP instance, frees up memory resources. Fires DESTROY event for plugin notification.
-         * @this {MetaPlayer}
+         * @name MetaPlayer#destroy
+         * @function
          */
         destroy : function () {
             this.dispatcher.dispatch( MetaPlayer.DESTROY );
 
             delete this.plugins;
             delete this._loadQueue;
-
-            // todo: iterate plugins, call destroy() if def
-            // these should be made plugins
-
             delete this.layout;
             delete this.popcorn;
 
-        },
-
-        log : function (args, tag ){
-            if( this.config.debug.indexOf(tag) < 0 )
-                return;
-
-            var arr = Array.prototype.slice.apply(args);
-            arr.unshift( tag.toUpperCase() );
-            console.log.apply(console, arr);
         },
 
         _load : function () {
@@ -187,31 +180,73 @@ all copies or substantial portions of the Software.
                 // load() was already called
                 return;
             }
+            var self = this;
             this._loaded = true;
 
             // fill in core interfaces were not implemented
             if( ! this.video && this.layout )
                 this.html5();
 
-            if( this.video && ! this.playlist )
-                this.playlist = new MetaPlayer.Playlist(this, this.config.playlist);
+            if( this.config.preload != null )
+                this.video.preload = this.config.preload;
 
             if( this.video && ! this.popcorn && Popcorn != null )
                 this.popcorn = Popcorn(this.video);
 
+            if( this.video ){
+                this.playlist = new MetaPlayer.Playlist(this);
+            }
+
+            if( this.video && this.config.linkAdvance ) {
+                this.video.addEventListener("trackchange", function () {
+                    var link = self.metadata.getData().link;
+                    if( link && self.video.getIndex() > 0)
+                        window.top.location = link;
+                });
+            }
+
+
 
             // run the plugins, any video will have been initialized by now
-            var self = this;
-            $( this._loadQueue ).each(function (i, plugin) {
-                    plugin.fn.apply(self, plugin.args);
-            });
-            this._loadQueue = [];
+            var plugin;
+            while( this._loadQueue.length ) {
+                plugin = this._loadQueue.shift();
+                plugin.fn.apply(this, plugin.args);
+            }
 
             this.ready = true;
 
             // let plugins do any setup which requires other plugins
             this.dispatcher.dispatch( MetaPlayer.READY );
 
+        },
+
+        error : function (code, message, type) {
+            var e = this.createEvent();
+            e.initEvent("error", false, true);
+            e.code = code;
+            e.message = message;
+            this.dispatchEvent(e);
+            var args = Array.prototype.slice.call(arguments);
+            args.unshift("MPF");
+            try {
+                console.error( args.join(" :: ") );
+            }
+            catch(e){};
+        },
+
+        warn : function (code, message) {
+            var e = this.createEvent();
+            e.initEvent("warning", false, true);
+            e.code = code;
+            e.message = message;
+            this.dispatchEvent(e);
+            var args = Array.prototype.slice.call(arguments);
+            args.unshift("MPF");
+            try {
+                console.warn( args.join(" :: ") );
+            }
+            catch(e){};
         }
 
     };
@@ -253,6 +288,8 @@ all copies or substantial portions of the Software.
 
 
     /**
+     * @deprecated
+     * @description
      * Registers a function as a playback plugin.  Playback plugins are initialized earlier than other plugins.
      *
      * For example:
@@ -274,13 +311,80 @@ all copies or substantial portions of the Software.
 
         p[keyword] = function () {
             callback.apply(this, arguments);
+            this.layout.addVideo(this.video);
             return this;
         };
     };
 
+    MetaPlayer.iOS =  /iPad|iPhone|iPod/i.test(navigator.userAgent);
+
+    /**
+     * @name API
+     * @namespace MetaPlayer Interfaces: MetaData, Cues, Search, Layout
+     */
+    MetaPlayer.Core = {};
+
+    /**
+     * @name Services
+     * @namespace MetaData and Search providers
+     */
+    MetaPlayer.Services = {};
+
+    /**
+     * @name Players
+     * @namespace Player HTML5 adapters
+     */
+    MetaPlayer.Players = {};
+
+    /**
+     * @name UI
+     * @namespace Player Controls and Page Widgets
+     */
+    MetaPlayer.UI = {};
+
+    /**
+     * @name Util
+     * @namespace Utility libraries and widgets.
+     */
+    MetaPlayer.Util = {};
+
+    /**
+     * @name Metrics
+     * @namespace Utility libraries and widgets.
+     */
+    MetaPlayer.Metrics = {};
+
+
+    MetaPlayer.log = function (type, rest) {
+        var args = Array.prototype.slice.call(arguments);
+
+        // memoise string DEBUG into objects for quick lookup
+        if( typeof MetaPlayer.DEBUG == "string" ){
+            var types = MetaPlayer.DEBUG.split(/[,\s]+/);
+            MetaPlayer.DEBUG = {};
+            $.each(types, function (i,val){
+                MetaPlayer.DEBUG[val] = true;
+            })
+        }
+
+        if( MetaPlayer.DEBUG && (MetaPlayer.DEBUG == true || MetaPlayer.DEBUG[type]) ) {
+            args.unshift("MPF");
+            try{
+                console.log(args.join(" :: "));
+            }
+            catch(e){}
+        }
+    };
+
+    /**
+     * @name Popcorn
+     * @class PopcornJS plugins provided by the MetaPlayer Framework
+     */
     window.MetaPlayer = MetaPlayer;
-    window.Ramp = MetaPlayer;
+    window.MetaPlayerFramework = MetaPlayer;
     window.MPF = MetaPlayer;
+
+
 
 })();
 
@@ -292,6 +396,12 @@ all copies or substantial portions of the Software.
     var defaults = {
     };
 
+    /**
+     * @class Stores all timed metadata, integrates with PopcornJS to schedule cues. <br/>
+     * @constructor
+     * @name API.Cues
+     * @param {MetaPlayer} player
+     */
     var Cues = function (player, options){
 
         this.config = $.extend({}, defaults, options);
@@ -300,7 +410,7 @@ all copies or substantial portions of the Software.
 
         this._rules = {
             // default rule mapping "captions" to popcorn "subtitle"
-            "subtitle" : { clone : "captions" }
+            "subtitle" : { clone : "captions", enabled : true }
         };
 
         this.player = player;
@@ -311,24 +421,31 @@ all copies or substantial portions of the Software.
 
     /**
      * Fired when cues are available for the focus uri.
-     * @name CUES
+     * @name API.Cues#event:CUES
      * @event
-     * @param data The cues from a resulting load() request.
-     * @param uri The focus uri
-     * @param plugin The cue type
+     * @param {Event} e
+     * @param e.data The cues from a resulting load() request.
+     * @param e.uri The focus uri
+     * @param e.plugin The cue type
      */
     Cues.CUES = "cues";
 
     /**
      * Fired when cue list reset, usually due to a track change
-     * @name CLEAR
+     * @name API.Cues#event:CLEAR
      * @event
+     * @param {Event} e
      */
     Cues.CLEAR = "clear";
+    Cues.RENDER = "render";
+    Cues.ENABLE = "enable";
+    Cues.DISABLE = "disable";
 
     Cues.prototype = {
         /**
          * Bulk adding of cue lists to a uri.
+         * @name API.Cues#setCueLists
+         * @function
          * @param cuelists a dictionary of cue arrays, indexed by type.
          * @param uri (optional) Data uri, or last load() uri.
          */
@@ -341,6 +458,8 @@ all copies or substantial portions of the Software.
 
         /**
          * Returns a dictionary of cue arrays, indexed by type.
+         * @name API.Cues#getCueLists
+         * @function
          * @param uri (optional) Data uri, or last load() uri.
          */
         getCueLists : function ( uri) {
@@ -351,6 +470,8 @@ all copies or substantial portions of the Software.
         /**
          * For a given cue type, adds an array of cues events, triggering a CUE event
          * if the uri has focus.
+         * @name API.Cues#setCues
+         * @function
          * @param type The name of the cue list (eg: "caption", "twitter", etc)
          * @param cues An array of cue obects.
          * @param uri (optional) Data uri, or last load() uri.
@@ -363,13 +484,25 @@ all copies or substantial portions of the Software.
 
             if( ! this._cues[guid][type] )
                 this._cues[guid][type] = [];
-            this._cues[guid][type] = this._cues[guid][type].concat(cues);
 
-            this._dispatchCues(guid, type)
+            this._cues[guid][type] = cues;
+
+            // data normalization
+            $.each(cues, function (i, val) {
+                if( typeof val.start == "string" )
+                    val.start = parseFloat(val.start);
+                if( typeof val.end == "string" )
+                    val.start = parseFloat(val.end);
+            });
+
+            if( uri == this.player.metadata.getFocusUri() )
+                this._renderCueType(type);
         },
 
         /**
          * Returns an array of caption cues events. Shorthand for getCues("caption")
+         * @name API.Cues#getCaptions
+         * @function
          * @param uri (optional) Data uri, or last load() uri.
          */
         getCaptions : function ( uri ){
@@ -379,6 +512,8 @@ all copies or substantial portions of the Software.
         /**
          * Returns an array of cue objects for a given type. If no type specified, acts
          * as alias for getCueLists() returning a dictionary of all cue types and arrays.
+         * @name API.Cues#getCues
+         * @function
          * @param type The name of the cue list (eg: "caption", "twitter", etc)
          * @param uri (optional) Data uri, or last load() uri.
          */
@@ -401,35 +536,60 @@ all copies or substantial portions of the Software.
 
         /**
          * Enables popcorn events for a cue type
+         * @name API.Cues#enable
+         * @function
          * @param type Cue type
          * @param overrides Optional object with properties to define in each popcorn event, such as target
          * @param rules (advanced) Optional rules hash for cloning, sequencing, and more.
          */
         enable : function (type, overrides, rules) {
             var r = $.extend({}, this._rules[type], rules);
+            if(r.enabled )
+                return;
             r.overrides = $.extend({}, r.overrides, overrides);
             r.enabled = true;
             this._rules[type] = r;
 
-            this._renderCues(type, this.getCues( r.clone || type) )
+            var event = this.createEvent();
+            event.initEvent(Cues.ENABLE, false, true);
+            event.action = type;
+            this.dispatchEvent(event);
+
+            this._scheduleCues(type, this.getCues( r.clone || type) )
         },
 
         /**
          * Disables popcorn events for a cue type
+         * @name API.Cues#disable
+         * @function
          * @param type Cue type
          */
         disable : function (type) {
             if( ! type )
                 return;
 
-            if( this._rules[type] )
-                this._rules[type].enabled = false;
+            if(! this._rules[type] )
+                this._rules[type] = {};
+
+            this._rules[type].enabled = false;
+
+            var event = this.createEvent();
+            event.initEvent(Cues.DISABLE, false, true);
+            event.action = type;
+            this.dispatchEvent(event);
 
             this._removeEvents(type);
         },
 
+        isEnabled : function (type) {
+            var r = this._rules[type]
+            return Boolean(r && r.enabled);
+        },
+
         /**
          * Frees external references for manual object destruction.
+         * @name API.Cues#destroy
+         * @function
          * @destructor
          */
         destroy : function  () {
@@ -440,45 +600,15 @@ all copies or substantial portions of the Software.
 
         /* "private" */
 
-        // broadcasts cue data available for guid, if it matches the current focus uri
-        // defaults to all known cues, or can have a single type specified
-        // triggers attachment of popcorn events
-        _dispatchCues : function ( guid, type ) {
-
-            // only focus uri causes events
-            if( guid != this.player.metadata.getFocusUri() ) {
-                return;
-            }
-
-            var self = this;
-            var types = [];
-
-            // specific cue type to be rendered
-            if( type ) {
-                types.push(type)
-            }
-
-            // render all cues
-            else if( this._cues[guid] ){
-                types = $.map(this._cues[guid], function(cues, type) {
-                    return type;
-                });
-            }
-
-            $.each(types, function(i, type) {
-                var cues = self.getCues(type);
-
-                var e = self.createEvent();
-                e.initEvent(Cues.CUES, false, true);
-                e.uri = guid;
-                e.plugin = type;
-                e.cues = cues;
-
-                if( self.dispatchEvent(e) ) {
-                   // allow someone to cancel, blocking popcorn scheduling
-                    self._renderCues(type, cues)
-                }
-            });
+        _renderCueType : function (type){
+            var guid = this.player.metadata.getFocusUri();
+            var cues = this.getCues(type, guid);
+            this._renderCues(type, cues)
+            this.event(Cues.CUES, {
+                uri : guid,
+                plugin: type,
+                cues : cues
+            })
         },
 
         _addListeners : function () {
@@ -486,6 +616,7 @@ all copies or substantial portions of the Software.
             var metadata = player.metadata;
             player.listen( MetaPlayer.DESTROY, this.destroy, this);
             metadata.listen( MetaPlayer.MetaData.FOCUS, this._onFocus, this)
+            metadata.listen( MetaPlayer.MetaData.DATA, this._onData, this)
         },
 
         _onFocus : function (e) {
@@ -496,8 +627,19 @@ all copies or substantial portions of the Software.
             var event = this.createEvent();
             event.initEvent(Cues.CLEAR, false, true);
             this.dispatchEvent(event);
+        },
 
-            this._dispatchCues( e.uri );
+        _onData : function (e) {
+            // render all cues
+            var self = this;
+            $.map(this._cues[e.uri] || [], function(cues, type) {
+                self._renderCueType(type);
+            });
+
+            var event = this.createEvent();
+            event.initEvent(Cues.RENDER, false, true);
+            event.uri = e.uri;
+            this.dispatchEvent(event);
         },
 
         _removeEvents : function ( type ) {
@@ -527,6 +669,8 @@ all copies or substantial portions of the Software.
         _scheduleCues : function (type, cues) {
             var rules = this._rules[type] || {};
             var lastCue;
+
+            this._removeEvents(type);
 
             if(! rules.enabled ) {
                 return;
@@ -588,27 +732,66 @@ all copies or substantial portions of the Software.
         sizeMsec : 250
     };
 
+    /**
+     * @name API.Layout
+     * @class Manages the MetaPlayer DOM elements, video & panel arrangment.
+     * @constructor
+     * @param {String|Element} target The DOM element to decorate, or jQuery selector there of.
+     * @param {Object} [options]  A dictionary of configuration properties.
+     * @param {Boolean} [options.adoptVideo=true]  If no parent element is a "metaplayer" class,
+     * create one and re-parent the video.
+     * @param {Boolean} [options.sizeVideo=true]  Allow re-sizing of the video element.
+     * @param {Number} [options.sizeMsec=250] When animating panels, the duration of the animation.
+     */
     MetaPlayer.Layout = function (target, options){
         this.config = $.extend({}, defaults, options);
 
         this.target = $(target).get(0);
         this.panels = [];
+        MetaPlayer.dispatcher(this);
 
-        // the base is for controls, stage
-        if( this.target.play instanceof Function )
-            this.base = this._setupVideo();
+        /**
+         * The root DOM element of the MetaPlayer instance, with class="metaplayer".
+         * @name API.Layout#base
+         * @type {Element}
+         */
 
-        else if( this.target )
-            this.base = this._setupContainer();
+        /**
+         * A container for video overlays.
+         * @name API.Layout#stage
+         * @type {Element}
+         */
+        this.target = $(target)[0]; // normalize
+        this._setup();
 
-        // the stage is a container for all overlays
-        if( this.base )
-            this.stage = this._addStage();
+        var self = this;
+        $(document.documentElement).bind('fullscreenchange webkitfullscreenchange', function (e){
+            self.onFullScreen(e);
+
+        });
+        $(document).bind('mozfullscreenchange', function (e){
+            self.onFullScreen(e);
+        });
+
+        $(window).bind('resize', function (e) {
+            if( self.isMaximized )
+                self.maximize();
+        });
+
+        $(window).bind("mousewheel DOMMouseScroll touchmove", function (e) {
+            if( self.isMaximized ) {
+                e.stopPropagation();
+                e.preventDefault();
+            }
+        });
+
+        this.isFullScreen = document.fullscreen || document.mozFullScreen || document.webkitIsFullScreen;
     };
 
     MetaPlayer.layout = function  (target, options){
         return new MetaPlayer.Layout(target, options);
     };
+
 
     MetaPlayer.Layout.PANEL_OPTIONS = {
         top : 0,
@@ -621,20 +804,53 @@ all copies or substantial portions of the Software.
 
     MetaPlayer.Layout.prototype =  {
 
-        addPanel : function (options) {
+        /**
+         * Adds a panel to the layout.  A panel is something that should indent the video from the
+         * DOM bounding box, usually a control bar or info panel.
+         * @name API.Layout#addPanel
+         * @function
+         * @param {Object} panelConfig Contains configuration.
+         * @param panelConfig.id A unique name for the panel, used for later access.
+         * @param [panelConfig.top=0] The top video margin required for panel to not cover video.
+         * @param [panelConfig.right=0] The right video margin.
+         * @param [panelConfig.bottom=0] The bottom video margin.
+         * @param [panelConfig.enabled=true] Whether the panel is enabled by default.
+         * @param [panelConfig.video=true] Whether the panel should resize the video in addition to panels.
+         * @example
+         *  mp.layout.addPanel({
+         *    id : "controls",
+         *    bottom: 32,
+         *    video: false
+         *  });
+         */
+        addPanel : function (panelConfig) {
             var box = $.extend({},
                 MetaPlayer.Layout.PANEL_OPTIONS,
-                options);
+                panelConfig);
 
             this.panels.push( box );
             this._renderPanels(0);
             return (this.panels.length - 1);
         },
 
+        /**
+         * Returns the panel spec for a panel id.
+         * @name API.Layout#getPanel
+         * @function
+         * @param {String} id The panel id
+         */
         getPanel : function (id) {
             return this.panels[id] || null;
         },
 
+        /**
+         * Toggles the visibility of a panel, animating if a duration is specified.
+         * @name API.Layout#togglePanel
+         * @function
+         * @param {String} id The panel id
+         * @param {Boolean} bool The target visibility state, true for visible.
+         * @param {Number} [duration] The animation duration, in seconds, or undefined to disable.
+         */
         togglePanel : function (id, bool, duration) {
             var p = this.getPanel(id);
             if( ! p )
@@ -643,10 +859,25 @@ all copies or substantial portions of the Software.
             this._renderPanels(duration);
         },
 
+        /**
+         * Updates a panel specification, usually to a new height or width.
+         * @name API.Layout#updatePanel
+         * @function
+         * @param {String} id The panel id
+         * @param {Object} options The panel spec. See {@link Layout#addPanel}.
+         * @param {Number} [duration] The animation duration, in seconds, or undefined to disable.
+         * @
+         */
         updatePanel : function (id, options, duration) {
             var box = $.extend( this.getPanel(id),
                 options);
             this._renderPanels(duration);
+        },
+
+
+        render : function (duration) {
+            this._renderPanels(duration);
+            this.dispatch("resize");
         },
 
         _renderPanels : function (duration)  {
@@ -671,7 +902,7 @@ all copies or substantial portions of the Software.
                     video.left += box.left || 0;
                     video.bottom += box.bottom || 0;
                     video.right += box.right || 0;
-                    }
+                }
 
                 overlays.top += box.top || 0;
                 overlays.left += box.left || 0;
@@ -683,6 +914,135 @@ all copies or substantial portions of the Software.
 
         },
 
+        maximize : function () {
+            this._maximize();
+            this._secondSize();
+        },
+
+        _maximize : function () {
+            var c = $(this.base);
+            var win =  $(window);
+            if( ! this._restore ){
+                this._restore = {
+                    width: c.width(),
+                    height: c.height(),
+                    offset :c.offset(),
+                    position : c.css('position')
+                };
+            }
+            $('body').css('margin', 0).css('padding', 0);
+
+            if( ! this.restoreZ )
+                this.restoreZ = c.css('z-index');
+
+            c.css('position', 'fixed')
+                .width("100%")
+                .addClass("mp-fullscreen")
+                .height("100%")
+                .css({
+                    'z-index' :  (-1 >>> 1) // max int, 2147483647 in chrome
+                })
+                .offset({
+                    top: win.scrollTop(), left: win.scrollLeft()
+                });
+
+            $("html,body").css("overflow","hidden");
+
+            this._renderPanels();
+
+            if(! this.isMaximized ) {
+                this.isMaximized = true;
+                this.dispatch("maximize");
+            }
+            this.dispatch("resize");
+        },
+
+        fullscreen : function () {
+            var docElm = document.documentElement;
+
+            if (docElm.requestFullscreen) {
+                docElm.requestFullscreen();
+            }
+            else if (docElm.mozRequestFullScreen) {
+                docElm.mozRequestFullScreen();
+            }
+            else if (docElm.webkitRequestFullScreen) {
+                docElm.webkitRequestFullScreen();
+            }
+            else {
+                this.maximize();
+                this._secondSize();
+            }
+        },
+
+        window : function () {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+            else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            }
+            else if (document.webkitCancelFullScreen) {
+                document.webkitCancelFullScreen();
+            }
+        },
+
+        onFullScreen : function (e) {
+            this.isFullScreen = document.fullscreen || document.mozFullScreen || document.webkitIsFullScreen;
+            if( this.isFullScreen ) {
+                this.dispatch("fullscreen");
+                delete this._restore;
+                this.maximize();
+            }
+            else {
+                this.restore();
+            }
+            this._secondSize();
+        },
+
+        restore : function () {
+
+            this.window();
+
+            if( ! this._restore )
+                return;
+
+            // restore size
+            var c = $(this.base);
+            var r = this._restore;
+
+            var win =  $(window);
+            $('body').css('margin', '').css('padding', '');
+            c.css('position', r.position)
+                .offset({ top: r.offset.top, left: r.offset.left})
+                .width(r.width)
+                .css({
+                    'z-index' :  this.restoreZ  || 'inherit'
+                })
+                .removeClass("mp-fullscreen")
+                .height(r.height);
+
+            $("html,body").css("overflow","auto");
+
+            this._renderPanels();
+            if( this.isMaximized ) {
+                this.isMaximized = false;
+                this.dispatch("restore");
+                this.dispatch("resize");
+
+            }
+        },
+
+        _secondSize : function () { // some browsers need a second resize
+            var self = this;
+            var fn =  function () {
+                if( self.isMaximized )
+                    self._maximize();
+                else
+                    self.restore();
+            };
+            setTimeout(fn, 500);
+        },
 
         _sizeVideo : function (box, duration) {
             if( !(this.config.sizeVideo && this.video) )
@@ -700,59 +1060,84 @@ all copies or substantial portions of the Software.
             if( this.video.mpf_resize instanceof Function )
                 this.video.mpf_resize(w, h);
 
-            v.stop().animate({
+            var css = {
                 'margin-top': box.top,
                 'margin-left': box.left,
-                'width' : w,
-                'height' : h
-            }, msec);
-        },
+                'width' : (w / c.width() * 100) + "%", // allows for liquid resizing, sorta
+                'height' : (h / c.height() * 100) + "%"
+            };
 
-        // deprecated: removed to allow click-through
-        _sizeOverlays : function (box, duration) {
-            var msec = (duration != null) ? duration : this.config.sizeMsec;
-
-            $(this.base).find('.mp-stage')
-                .stop()
-                .animate({
-                    top : box.top,
-                    right : box.right,
-                    bottom : box.bottom,
-                    left : box.left
-                }, msec);
-        },
-
-        _setupContainer : function (container) {
-            return $(this.target)
-                .addClass("metaplayer")
-                .get(0);
-        },
-
-        _setupVideo : function () {
-
-            this.video = this.target;
-            var v = $(this.video);
-            var container = v.parents(".metaplayer");
-
-            if( ! container.length ) {
-                if( ! this.config.adoptVideo )
-                    return;
-                container = $("<div></div>")
-                    .addClass("metaplayer")
-                    .insertAfter(v)
-                    .append(v);
+            if( duration ) {
+                this.stage.stop().animate(css, msec);
             }
-            container.width( v.width() );
-            container.height( v.height() );
+            else {
+                this.stage.css(css)
+            }
 
-            return container.get(0);
+        },
+
+        _setup : function () {
+            var target = this.target;
+
+
+            var el = $(target);
+            var v;
+            // target is the video, we need to wrap
+            if( target.play instanceof Function ) {
+                this.video = target;
+                v = $(this.video._proxyFor || this.video );
+            }
+
+            // target is a metaplayer-classed div
+            if( el.is(".metaplayer") )
+                this.base = el;
+
+            // target child of metaplayer div or just some random div without a base
+            else
+                this.base = el.parents(".metaplayer").first();
+
+            // target becomes base if not found
+            if( ! this.base.length ) {
+                this.base = $("<div/>")
+                    .addClass("metaplayer")
+                    .insertAfter(v);
+            }
+
+            this.stage = this.base.children(".mp-stage").first();
+
+            if( ! this.stage.length ) {
+                this.stage = $("<div />")
+                    .addClass("mp-stage")
+                    .css({ position : "relative" })
+                    .appendTo(this.base);
+            }
+
+            if( v ) {
+                this.base.css({
+                    height: v.height(),
+                    width:  v.width()
+                });
+                this.addVideo()
+            }
+            this._renderPanels();
+        },
+
+        addVideo : function (video) {
+            if( video )
+                this.video = video;
+            var v = $(this.video._proxyFor || this.video );
+            v.css({
+                height: "100%",
+                width: "100%"
+            });
+            if( this.config.adoptVideo )
+                this.stage.append(v);
+            this._renderPanels();
         },
 
         _addStage : function () {
             return $("<div></div>").addClass("mp-stage").appendTo(this.base).get(0);
         }
-
-
     };
 
 
@@ -763,7 +1148,13 @@ all copies or substantial portions of the Software.
     var defaults = {
     };
 
-    var MetaData = function (player, options){
+    /**
+     * Constructs the MetaData store. <br />
+     * @name API.MetaData
+     * @class Stores metadata for video items.
+     * @constructor
+     */
+    var MetaData = function (options){
         if( !(this instanceof MetaData ))
             return new MetaData(options);
 
@@ -776,28 +1167,30 @@ all copies or substantial portions of the Software.
 
     MetaPlayer.MetaData = MetaData;
 
-
     /**
      * Fired when a uri becomes the focus, broadcasting events on updates.
-     * @name FOCUS
+     * @name API.MetaData#event:FOCUS
      * @event
-     * @param uri The new focus uri
+     * @param {Event} e
+     * @param e.uri The new focus uri
      */
     MetaData.FOCUS = "focus";
 
     /**
      * Fired when MetaData needs a resource to be defined.
-     * @name LOAD
+     * @name API.MetaData#event:LOAD
      * @event
-     * @param uri Opaque string which can be used by a service to load metadata.
+     * @param {Event} e
+     * @param e.uri Opaque string which can be used by a service to load metadata.
      */
     MetaData.LOAD = "load";
 
     /**
      * Fired when new metadata is received as a result of a load() request.
-     * @name LOAD
+     * @name API.MetaData#event:DATA
      * @event
-     * @param data The metadata from a resulting load() request.
+     * @param {Event} e
+     * @param e.data The metadata from a resulting load() request.
      */
     MetaData.DATA = "data";
 
@@ -806,10 +1199,14 @@ all copies or substantial portions of the Software.
 
 
         /**
-         * Request MetaData for an uri
+         * Request MetaData for an uri.  If no callback is specified, will also
+         * set the focus uri.
+         * @name API.MetaData#load
+         * @function
          * @param uri
-         * @this {MetaData}
-         * @param callback (optional)  If specified will suppress the DATA event
+         * @param [callback] If specified will suppress the DATA event
+         * @see MetaData#event:DATA
+         * @see MetaData#event:FOCUS
          */
         load : function ( uri, callback, scope) {
             var e;
@@ -824,10 +1221,17 @@ all copies or substantial portions of the Software.
                 this.setFocusUri(uri);
             }
 
+            if( ! uri )
+                return;
+
             if( this._data[uri] ){
                 // cache hit; already loaded. respond immediately
                 if( this._data[uri]._cached ) {
-                    this._response(uri);
+                    // consistently async
+                    var self = this;
+                    setTimeout( function (){
+                        self._response(uri);
+                    },0);
                     return true;
                 }
                 // load in progress, skip
@@ -856,7 +1260,10 @@ all copies or substantial portions of the Software.
         },
 
         /**
-         * Returns the uri for which events are currently being fired.
+         * Gets the uri for which events are currently being fired.
+         * @name API.MetaData#getFocusUri
+         * @function
+         * @return {String} The current focus URI.
          */
         getFocusUri : function () {
             return this._lastUri;
@@ -864,21 +1271,24 @@ all copies or substantial portions of the Software.
 
         /**
          * Sets the uri for which events are currently being fired.
+         * @name API.MetaData#setFocusUri
+         * @function
+         * @see MetaData#event:FOCUS
          */
         setFocusUri : function (uri) {
-
-            if( this._lastUri == uri )
-                return;
-
             this._lastUri = uri;
-            e = this.createEvent();
+            this._firedDataEvent = false;
+            var e = this.createEvent();
             e.initEvent(MetaData.FOCUS, false, true);
             e.uri = uri;
             this.dispatchEvent(e);
         },
 
         /**
-         * Returns any for a URI without causing an external lookup.
+         * Returns any cached data for a URI if available. Differs from load() in that
+         * it is synchronous and will not trigger a new data lookup.
+         * @name API.MetaData#getData
+         * @function
          * @param uri Optional argument specifying media guid. Defaults to last load() uri.
          */
         getData : function ( uri ){
@@ -888,24 +1298,32 @@ all copies or substantial portions of the Software.
 
         /**
          * Sets the data for a URI, triggering DATA if the uri has focus.
-         * @param data
+         * @name API.MetaData#setData
+         * @function
+         * @param data {Object}
          * @param uri (optional) Data uri, or last load() uri.
          * @param cache (optional) allow lookup of item on future calls to load(), defaults true.
+         * @see MetaData#event:DATA
          */
         setData : function (data, uri, cache ){
             var guid = uri || this._lastUri;
-            this._data[guid] = $.extend(true, {}, this._data[guid], data);
-            this._data[guid]._cached = ( cache == null ||  cache ) ? true : false;
-            this._response(guid);
+            // dont't clobber known data with cache half-datas
+            if( !( this._data[guid] && ! cache) ){
+                this._data[guid] = $.extend(true, {}, this._data[guid], data);
+                this._data[guid]._cached = ( cache == null ||  cache ) ? true : false;
+            }
+            if( cache )
+                this._response(guid);
         },
 
         /**
          * Frees external references for manual object destruction.
+         * @name API.MetaData#destroy
+         * @function
          * @destructor
          */
         destroy : function  () {
             this.dispatcher.destroy();
-            delete this.player;
             delete this._callbacks;
             delete this._data;
             delete this.config;
@@ -922,12 +1340,13 @@ all copies or substantial portions of the Software.
         _response : function ( uri ){
              var data = this._data[uri];
 
-            if( this._lastUri == uri ) {
+            if( this._lastUri == uri && ! this._firedDataEvent) {
                 var e = this.createEvent();
                 e.initEvent(MetaData.DATA, false, true);
                 e.uri = uri;
                 e.data = data;
                 this.dispatchEvent(e);
+                this._firedDataEvent = true;
             }
 
             if( this._callbacks[uri] ) {
@@ -940,205 +1359,217 @@ all copies or substantial portions of the Software.
     };
 
 
-})();
+})();/**
+ * Playlist functionality for HTML5 video
+ */
 (function () {
 
     var $ = jQuery;
 
-
     var defaults = {
-        sourceTags : true,
-        selectSource : true,
-        linkAdvance : false,
         autoAdvance : true,
-        autoBuffer : true,
-        related: true,
-        loop : false
+        loop : false,
+        selectSource: true,
+        appendSources: false
     };
 
 
     /**
-     *
-     * @name MetaPlayer.Playlist
+     * @name API.Playlist
+     * @class Defines a  interface for playlist navigation and management.
      * @constructor
-     * @param player
-     * @param options
+     * @param {Object} [options]  A dictionary of configuration properties.
+     * @param {Number} [options.autoAdvance=true] Automatically advance the playlist when the current video ends.
+     * @param {Number} [options.selectSource=true] Automatically select the resource when a track is selected.
+     * @param {Number} [options.loop=false] If true, the playlist is circular and will repeat,
      */
-     var Playlist = function (player, options ){
+    var Playlist = function (player, options) {
+
+        // check if already implements Playlist API
+        var media = player.video;
 
         this.config = $.extend({}, defaults, options);
         this.player = player;
-        this._tracks = [];
-        this._index = 0;
 
-        this.loop = this.config.loop;
-        this.preload = this.config.autoBuffer;
-        this.advance = this.config.autoAdvance;
-        this.linkAdvance = this.config.linkAdvance;
+        if( !( media.getPlaylist || media.getItem) ){
+            this._playlist = [];
+            this._index = 0;
+            this.loop = this.config.loop;
+            this.autoAdvance = this.config.autoAdvance;
+            this.selectSource = this.config.selectSource;
 
-        MetaPlayer.dispatcher(this);
+            MetaPlayer.dispatcher(this);
+
+            // extends the video into a playlist via mix-in
+            Playlist.proxy(this, this.player.video);
+
+            this._addProxyListeners();
+        }
 
         this._addListeners();
+
+        return media;
     };
 
     MetaPlayer.Playlist = Playlist;
 
+    /**
+     * Fires when the current track index/guid changes (but possibly before a src is selected).
+     * @name API.Playlist.TRACK_CHANGE
+     * @event
+     */
+    Playlist.TRACK_CHANGE = "trackchange";
+
+    /**
+     * Fires when the playlist is modified, via append or replace.
+     * @name API.Playlist.PLAYLIST_CHANGE
+     * @event
+     */
+    Playlist.PLAYLIST_CHANGE = "playlistchange";
+
+
+    /**
+     * Utility for applying the getters and setters associated with the Playlist API.
+     * @name API.Playlist.proxy
+     * @function
+     * @param {Object} playlist A playlist implementation.
+     * @param {Object} target A DOM element or JS object to which the properties should be applied.
+     */
+    Playlist.proxy = function (playlist, target) {
+        MetaPlayer.proxy.mapProperty("loop autoAdvance selectSource", target, playlist);
+        MetaPlayer.proxy.proxyFunction("getIndex setIndex getItem updateItem getPlaylist setPlaylist next previous",
+            playlist, target);
+        MetaPlayer.proxy.proxyEvent( Playlist.TRACK_CHANGE, playlist, target);
+        MetaPlayer.proxy.proxyEvent( Playlist.PLAYLIST_CHANGE, playlist, target);
+    };
+
     Playlist.prototype = {
 
-        index : function ( i ) {
-            i = this._resolveIndex(i);
-            if( i != null ) {
-                this._index = i;
-                this._select( this.track() );
-            }
-            return this._index;
-        },
-
-        queue : function ( tracks ) {
-            if( ! (tracks instanceof Array) )
-                tracks = [tracks];
-
-            var wasEmpty = (this._tracks.length == 0);
-
+        _addProxyListeners : function () {
             var self = this;
-            $(tracks).each( function (i, track) {
-                self._addTrack(track, true)
+            this.player.video.addEventListener("ended", function (e) {
+                self._onEnded(e);
             });
-            this.dispatcher.dispatch("playlistchange");
+            this.player.video.addEventListener("error", function (e) {
+                self._onEnded(e);
+            });
 
-            if( wasEmpty )
-                this._select( this.track() )
-        },
-
-        // begins the process of changing video source, starting with fetching metadata
-        _select : function ( uri ) {
-            this.dispatcher.dispatch("trackchange");
-            this.player.video.pause();
-            if(! this.player.metadata.load(uri) ){
-                // if have no data, and no one will look it up, just play the url
-                this._setSrc( uri );
-            }
-        },
-
-        empty : function ( tracks ) {
-            if(! this.config.selectSource ){
-                return;
-            }
-
-            this.player.video.pause();
-            this.player.video.src = "";
-            this._tracks = [];
-            this.transcodes = null;
-            this._index = 0;
-            this.dispatcher.dispatch("playlistchange");
-            this.dispatcher.dispatch("trackchange");
-        },
-
-        next  : function () {
-
-            var i = this._index + 1;
-            var t = this.track(i);
-
-            if( this.linkAdvance ) {
-                var data = this.player.metadata.getData();
-                if( data.link ) {
-                    window.top.location = data.link;
-                    return;
-                }
-            }
-
-            this.index(i )
-        },
-
-        previous : function () {
-            this.index( this._index - 1 )
-        },
-
-        track : function (i){
-            if( i === undefined )
-                i = this.index();
-            return this._tracks[ this._resolveIndex(i) ];
-        },
-
-        nextTrack : function () {
-            return this.track( this._index + 1);
-        },
-
-        tracks : function () {
-            return this._tracks;
-        },
-
-        _addTrack : function ( track, silent ) {
-            this._tracks.push(track);
-            if( ! silent )
-                this.dispatcher.dispatch("playlistchange");
-        },
-
-        _resolveIndex : function (i) {
-            if( i == null)
-                return null;
-            var pl = this.tracks();
-            if( i < 0  )
-                i = pl.length + i;
-            if( this.loop )
-                i = i % pl.length;
-            if( i >= pl.length || i < 0) {
-                return null;
-            }
-            return i;
         },
 
         _addListeners : function () {
-            var player = this.player;
-            var metadata = this.player.metadata;
-            var video = this.player.video;
-
-            player.listen(MetaPlayer.DESTROY, this.destroy, this);
-            metadata.listen(MetaPlayer.MetaData.DATA, this._onMetaData, this);
-
             var self = this;
-            $(player.video).bind('ended error', function(e) {
-                self._onEnded()
+            this.player.addEventListener("destroy", function (e) {
+                self._destroy();
+            });
+            this.player.video.addEventListener( "loadstart", function (e) {
+                self.player.video.preload = "auto";
+            });
+            this.player.video.addEventListener( "playing", function (e) {
+//                self.player.video.autoplay = true;
+            });
+            this.player.video.addEventListener( "pause", function (e) {
+//                self.player.video.autoplay = false;
+            });
+            this.player.video.addEventListener( Playlist.TRACK_CHANGE, function (e) {
+                self._onTrackChange(e);
+            });
+            this.player.metadata.addEventListener("data", function (e) {
+                self._onData(e);
             });
         },
 
+        _onEnded : function () {
+            if( this.autoAdvance ) {
+                var self = this;
+                // has to occur after ended event
+                setTimeout(function () {
+                    self.next();
+                }, 0)
 
-        _onMetaData : function (e) {
-            if( e.uri != this.track() ){
+            }
+        },
+
+        _onData : function  (e) {
+            if( this.config.appendSources )
+                this._appendSources(e.data);
+            this.player.video.updateItem(e.uri, e.data);
+        },
+
+        /**
+         * Callback which is fired when a track changes and metadata (and resource urls) becomes available. Will
+         * select media source.
+         * @name API.Playlist#updateItem
+         * @function
+         * @param {String} uri The content guid
+         * @param {Object} metadata An object representing the metadata for this content.
+         */
+        updateItem : function (uri, metadata, already_resolved) {
+            if( this._index == null || uri != this.getItem() )
+                return;
+
+            if( metadata.resolveUrl && ! already_resolved){
+                this._applyResolver(uri, metadata.resolveUrl);
                 return;
             }
 
-            this.transcodes = e.data.content;
+            var v = this.player.video;
+            var src = this._selectResource( metadata.content );
 
-            if( this.config.sourceTags )
-                this.addSourceTags();
+            if( src ) {
+                v.pause();
+                this._applySource(src);
+            }
 
-            if( this.config.selectSource )
-                this.selectSource();
+            if( metadata.thumbnail && (v.preload == "none" || ! v.autoplay) )  // avoid flicker if loading anyway
+                this.player.video.poster = metadata.thumbnail;
         },
 
-        addSourceTags : function  () {
+        _applyResolver : function (guid, lookup_url) {
             var self = this;
-            var video = this.player.video;
-            $.each(this.transcodes, function (i, source) {
-                video.appendChild( self._createSource(source.url, source.type) );
+            MetaPlayer.mrss(lookup_url, function (playlist) {
+                if( playlist.length > 0 ) {
+                    self.updateItem(guid, playlist[0], true)
+                }
             });
         },
 
-        selectSource : function () {
-            // sticky, for playlists
-            this.config.selectSource = true;
+        _applySource : function (src) {
+            if( ! this.selectSource )
+                return;
+            var v = this.player.video;
+            v.src = src;
 
+            // video element should do this on src assign, but is racey
+            if( v.autoplay )
+                v.play();
+
+            else if( v.preload != "none" )
+                v.load();
+        },
+
+        _appendSources : function (data) {
+            var v = this.player.video;
+            $(v).empty();
+
+            $.each(data.content, function (i, item) {
+                $('<source>')
+                    .attr('src', item.url)
+                    .attr('type', item.type)
+                    .appendTo(v);
+            });
+        },
+
+        _selectResource : function (transcodes) {
             var self = this;
             var video = this.player.video;
             var probably = [];
             var maybe = [];
 
-            if( ! this.transcodes )
+            if( ! transcodes )
                 return;
 
-            $.each(this.transcodes, function (i, source) {
-                var canPlay = video.canPlayType(source.type);
+            $.each(transcodes, function (i, source) {
+                var canPlay = video.canPlayType(source.type || self._resolveType(source.url) );
                 if( ! canPlay )
                     return;
                 if( canPlay == "probably" )
@@ -1147,43 +1578,140 @@ all copies or substantial portions of the Software.
                     maybe.push(source.url);
             });
 
-            var src = probably.shift() || maybe .shift();
-            if( src )
-                this._setSrc(src);
+            return probably.shift() || maybe.shift();
         },
 
-        _setSrc : function ( src ) {
-            var video = this.player.video;
-            video.src = src;
-            if( video.autoplay || this.index() > 0 ) {
-                video.play();
-            }
-            else if( video.preload ) {
-                video.load()
-            }
-        },
-
-        _createSource : function (url, type) {
-            var src = $('<source>')
-                .attr('type', type || '')
-                .attr('src', url) ;
-            return src[0];
-        },
-
-        _onEnded : function () {
-            if(! this.advance )
-                return;
-
-            if( this.index() == this.tracks().length - 1 ) {
-                this.dispatcher.dispatch('playlistComplete');
-            }
-
-            this.next();
-        },
-
-        destroy : function () {
+        _destroy : function () {
             this.dispatcher.destroy();
             delete this.player;
+        },
+
+        /**
+         * Returns an Array of content guids, representing the play order.
+         * @name API.Playlist#getPlaylist
+         * @function
+         * @return {Array} An array of guids.
+         */
+        getPlaylist : function () {
+            return this._playlist;
+        },
+
+        /**
+         * Accepts an array of content guids, representing the play order.
+         * @name API.Playlist#setPlaylist
+         * @function
+         * @param {Array} items  An array of GUIDs.
+         * @param {boolean} items If true, will append to the current playlist instead of replacing it.
+         */
+        setPlaylist : function ( items, append ) {
+            if( ! (items instanceof Array) )
+                items = [ items ];
+
+            if( ! append ){
+                this._playlist = [];
+            }
+
+            var i;
+            var pl = this._playlist;
+            for( i = 0; i< items.length; i++) {
+                pl.push( items[i] );
+            }
+
+            this.dispatch(Playlist.PLAYLIST_CHANGE);
+
+            if( ! append )
+                this.setIndex(0, true);
+        },
+
+
+        /**
+         * Returns the current playlist position.
+         * @name API.Playlist#getIndex
+         * @function
+         * @return {Integer}
+         */
+        getIndex : function ( i ) {
+            // internal: will also resolve an index passed in with respect to the loop attribute
+            var pl = this._playlist;
+
+            if( i == null)
+                return this._index;
+
+            if( i < 0  && this.loop)
+                i = pl.length + i;
+
+            if( !this.loop && (i >= pl.length || i < 0) ){
+                return null
+            }
+
+            return  i % pl.length;
+        },
+
+
+        /**
+         * Assigns the current index. If looping is enabled, then index will wrap.
+         * @name API.Playlist#setIndex
+         * @function
+         * @param {Integer} i Sets the current index, triggering a track change;
+         */
+        setIndex : function (i, force) {
+            i = this.getIndex(i);
+
+            if(! force && (i == null || i == this._index) )
+                return false;
+
+            this._index = i;
+
+            this.dispatch(Playlist.TRACK_CHANGE);
+            return true;
+        },
+
+        _onTrackChange : function (e) {
+            var guid = this.player.playlist.getItem();
+            if(! this.player.metadata.load(guid) ){
+                // if have no data, and no one will look it up, just play the url
+                this._applySource(guid);
+            }
+        },
+
+        /**
+         * Returns a GUID for the current video by default, or another video if specified.
+         * @name API.Playlist#getItem
+         * @function
+         * @param {Integer} [i] An optional index, defaults to the current video.
+         * @return {String} The item GUID.
+         */
+        getItem : function ( i ) {
+            if(i == null )
+                i = this._index;
+            return this._playlist[ this.getIndex(i) ];
+        },
+
+        next : function () {
+            return this.setIndex( this.getIndex() + 1 );
+        },
+
+        previous : function () {
+            return this.setIndex( this.getIndex() - 1 );
+        },
+
+
+        _resolveType : function ( url ) {
+            var ext = url.substr( url.lastIndexOf('.') + 1 );
+
+            if( url.match("www.youtube.com") ) {
+                return "video/youtube"
+            }
+
+            if( ext == "ogv")
+                return "video/ogg";
+
+            // none of these seem to work on ipad4
+            // http://developer.apple.com/library/ios/#technotes/tn2235/_index.html
+            if( ext == "m3u8" )
+                return  "application/application.vnd.apple.mpegurl";
+
+            return "video/"+ext.toLowerCase();
         }
 
     };
@@ -1194,9 +1722,19 @@ all copies or substantial portions of the Software.
     var $ = jQuery;
 
     var defaults = {
-        forceRelative : false
+        forceRelative : false,
+        useCache: true
     };
 
+    /**
+     * Creates a Search interface for use with MetaPlayer and RAMP services.
+     * @name API.Search
+     * @class Provides search servies for the currently video. <br />
+     * @constructor
+     * @augments Util.EventDispatcher
+     * @param {MetaPlayer} player A MetaPlayer instance containing a MetaData reference.
+     * @see MetaData
+     */
     var Search = function (player, options){
         this.config = $.extend({}, defaults, options);
 
@@ -1205,10 +1743,70 @@ all copies or substantial portions of the Software.
         MetaPlayer.dispatcher(this);
 
         this.player.listen(MetaPlayer.DESTROY, this.destroy, this);
+
     };
 
+    /**
+     * Fired when a search is initiated.
+     * @name API.Search#event:QUERY
+     * @event
+     * @param {Event} e
+     * @param {String} e.query The current search string
+     * @example
+     * mpf.search.addEventListener( MetaPlayer.Search.RESULTS , function (e) {
+     *    console.log("Searched initiated for: " + e.query);
+     * });
+     */
+    Search.QUERY = "query";
 
-    Search.QUERY = "QUERY";
+    /**
+     * Fired when search results are available.
+     * @name API.Search#event:RESULTS
+     * @event
+     * @param {Event} e
+     * @param {String} e.query The current search string
+     * @param {Object} e.data  The search results
+     * @example
+     * mpf.search.addEventListener( MetaPlayer.Search.RESULTS , function (e) {
+     *   console.log("Results for: " + e.query);
+     *   console.log(JSON.stringify(e.data, null, "  "));
+     * });
+     * mpf.search.query("Babylon");
+     * @example
+     * Results for: Babylon
+     *{
+     *  "query": [
+     *    "Babylon"
+     *  ],
+     *  "results": [
+     *    {
+     *      "start": "473.964",
+     *      "words": [
+     *        {
+     *          "match": false,
+     *          "start": "480.0457",
+     *          "text": "hanging"
+     *        },
+     *        {
+     *          "match": false,
+     *          "start": "480.05457",
+     *          "text": "gardens"
+     *        },
+     *        {
+     *          "match": false,
+     *          "start": "480.06345",
+     *          "text": "of"
+     *        },
+     *        {
+     *          "match": true,
+     *          "start": "480.07233",
+     *          "text": "\nBabylon."
+     *        }
+     *      ]
+     *    }
+     *  ]
+     *}
+     */
     Search.RESULTS = "results";
 
     MetaPlayer.Search = Search;
@@ -1217,11 +1815,116 @@ all copies or substantial portions of the Software.
         return new Search(this);
     });
 
+
+    Search.context = function ( str, offset, count, maxbuffer) {
+        // returns *count words of context starting at offset
+        // if count is negative, looks bacward from offset
+        // if maxbuffer is less than a word size, it will be split into two words (default: 256)
+        // returns an array of objects in the form of
+        // eg: [ { text : "first word", offset : 0 }, ... ]
+
+        var o = offset;
+        var words = [],
+            match;
+        if( count == null )
+            count = 10;
+
+        if( maxbuffer == null )
+            maxbuffer = 256;
+
+        var re, sub;
+        if( count > 0 ){
+            re = /^\s*(\S+)/;
+            sub = str.substr(o, maxbuffer)
+        }
+        else {
+            re = /(\S+)\s*$/;
+            if( o >= maxbuffer )
+                sub = str.substr(  o - maxbuffer, maxbuffer);
+            else
+                sub = str.substr(0, o);
+        }
+
+        var word;
+        while( words.length < Math.abs(count) && (match = sub.match(re) ) ){
+            if( count > 0 ){
+                words.push({
+                    text : match[1],
+                    offset: o
+                });
+                o += match[0].length;
+                sub = str.substr(o, maxbuffer)
+            }
+            else {
+                o -= match[0].length;
+                words.unshift({
+                    text : match[1],
+                    offset: o
+                });
+                if( o >= maxbuffer )
+                    sub = str.substr(  o - maxbuffer, maxbuffer);
+                else
+                    sub = str.substr(0, o);
+            }
+        }
+        return words;
+    };
+
+    Search.search = function (str, query, count) {
+
+        if(! query.length )
+            return [];
+
+        var escaped = query.replace(/(\W)/g, '\\$1')
+            .replace(/(\\\s)+/g, '\\s+');
+        var re = new RegExp("(\\b\\S*" + escaped + "\\S*\\b)", "i");
+        var match;
+        var o = 0;
+        var c;
+        var sub = str.substr(o);
+        var start, after, before, words;
+
+        if( count == null)
+            count = 6;
+
+        var results = [];
+        while( match = sub.match(re) ) {
+            start = o + match.index;
+            after = Search.context(str, start + match[1].length, 10);
+            before = Search.context(str, start, -10);
+            words = [{
+                match : true,
+                text : match[1],
+                offset: start
+            }];
+            words.offset = start;
+
+            c = 0;
+            while( words.length < count && (before.length || after.length) ){
+                c++;
+                if( before.length && c % 2 == 0 )
+                    words.unshift( before.pop() );
+                else if( after.length )
+                    words.push( after.shift() );
+            }
+
+            o = start + 1;
+            sub = str.substr(o);
+            results.push(words);
+        }
+        return results;
+    };
+
     Search.prototype = {
+
+        /**
+         * Initiates a search.
+         * @name API.Search#query
+         * @function
+         * @param {String} query A search phrase.
+         */
         query : function (query, callback, scope) {
             var data = this.player.metadata.getData();
-            if(! data.ramp.searchapi )
-                throw "no searchapi available";
 
 
             var e = this.createEvent();
@@ -1229,12 +1932,76 @@ all copies or substantial portions of the Software.
             e.query = query;
             this.dispatchEvent(e);
 
-            this._queryAPI(data.ramp.searchapi, query, callback, scope)
+            if (this.config.useCache) {
+                this.searchLocal(query, callback, scope);
+            }
+            else {
+                if(! data.ramp.searchapi )
+                    throw "no searchapi available";
+                this._queryAPI(data.ramp.searchapi, query, callback, scope);
+            }
         },
 
+        /**
+         * Disables the instance and frees memory references.
+         * @name API.Search#destroy
+         * @function
+         */
         destroy : function () {
             this.dispatcher.destroy();
             delete this.player;
+        },
+
+        searchLocal : function(query, callback, scope) {
+            var captions = this.player.cues.getCaptions();
+
+            var corpus = "";  // full text
+            var metadata = []; // index of offsets => timestamps
+
+            var o; // position in corpus of last needle match
+            var needles = query.replace(/(^\s|\s$)/, '').toLowerCase().split(/\s+/);
+
+            // build index/corups
+            $.each(captions, function (i, cue) {
+                metadata.push({
+                    start : cue.start,
+                    offset : corpus.length
+                });
+                corpus += cue.text + " ";
+            });
+
+            var timeOffset = function (offset) {
+                var last = 0;
+                for(var t = 0; t < metadata.length; t++ ){
+                    if( offset < metadata[t].offset )
+                        break;
+                    last = metadata[t].start
+                }
+                return last;
+            };
+
+            var matches = Search.search(corpus, query);
+            var ret = {
+                usingCues: true,
+                query : query,
+                results : []
+            };
+
+            $.each(matches, function (i, match) {
+                ret.results.push({
+                    offset: match.offset,
+                    start: timeOffset( match.offset ),
+                    words :$.map(match, function (word) {
+                        return {
+                            offset: word.offset,
+                            text : word.text,
+                            match : Boolean(word.match),
+                            start : timeOffset( word.offset )
+                        }
+                    })
+                })
+            });
+            this.setResults(ret, query, callback, scope);
         },
 
         _queryAPI : function (url, query, callback, scope) {
@@ -1307,7 +2074,7 @@ all copies or substantial portions of the Software.
                         match : Boolean( el.find('MQ').length ),
                         start : el.attr('s'),
                         text : self._deSmart( el.text() )
-                    })
+                    });
                 });
                 ret.results.push(s);
             });
@@ -1317,13 +2084,56 @@ all copies or substantial portions of the Software.
         _deSmart : function (text) {
             return text.replace(/\xC2\x92/, "\u2019" );
         }
-    }
+    };
+
+    /**
+     * @example
+     * Results for: Babylon
+     *{
+     *  "query": [
+     *    "Babylon"
+     *  ],
+     *  "results": [
+     *    {
+     *      "start": "473.964",
+     *      "words": [
+     *        {
+     *          "match": false,
+     *          "start": "480.0457",
+     *          "text": "hanging"
+     *        },
+     *        {
+     *          "match": false,
+     *          "start": "480.05457",
+     *          "text": "gardens"
+     *        },
+     *        {
+     *          "match": false,
+     *          "start": "480.06345",
+     *          "text": "of"
+     *        },
+     *        {
+     *          "match": true,
+     *          "start": "480.07233",
+     *          "text": "\nBabylon."
+     *        }
+     *      ]
+     *    }
+     *  ]
+     *}
+     */
 
 })();
 
 (function () {
     var $ = jQuery;
 
+    /**
+     * Creates a dispatcher property on an object, and mixes in a DOM style event API.
+     * @name Util.EventDispatcher
+     * @constructor
+     * @param source A JS object, or DOM node
+     */
     var EventDispatcher = function (source){
 
         if( source && source.dispatcher instanceof EventDispatcher)
@@ -1338,30 +2148,14 @@ all copies or substantial portions of the Software.
 
     MetaPlayer.dispatcher = EventDispatcher;
 
-    EventDispatcher.Event = function () {
-        this.cancelBubble = false;
-        this.defaultPrevented = false;
-    };
-
-    EventDispatcher.Event.prototype = {
-        initEvent : function (type, bubbles, cancelable)  {
-            this.type = type;
-            this.cancelable = cancelable;
-        },
-        stopPropagation : function () {
-            this.cancelBubble  = true;
-        },
-        stopImmediatePropagation : function () {
-            this.cancelBubble  = true;
-        },
-        preventDefault : function () {
-            if( this.cancelable )
-                this.defaultPrevented = true;
-        }
-    },
-
     EventDispatcher.prototype = {
 
+        /**
+         * Extend <code>source</code> with eventDispatcher properties, via mix-in pattern.
+         * @name Util.EventDispatcher#attach
+         * @function
+         * @param source
+         */
         attach : function (source) {
             if(!  source )
                 return;
@@ -1379,12 +2173,17 @@ all copies or substantial portions of the Software.
             }
 
             // and add our convenience functions
-            MetaPlayer.proxy.proxyFunction ( "listen forget dispatch createEvent",
+            MetaPlayer.proxy.proxyFunction ( "listen forget dispatch createEvent event",
                 this, source);
 
             source.dispatcher = this;
         },
 
+        /**
+         * disables object, frees memory references
+         * @name Util.EventDispatcher#destroy
+         * @function
+         */
         destroy : function () {
             delete this._listeners;
             delete this.addEventListener;
@@ -1393,6 +2192,14 @@ all copies or substantial portions of the Software.
             this.__destroyed = true; // for debugging / introspection
         },
 
+        /**
+         * A an alias for addEventListener which allows for setting scope
+         * @name Util.EventDispatcher#listen
+         * @function
+         * @param eventType
+         * @param {Function} callback An anonymous function
+         * @param [scope] The object to set as <code>this</code> when executing the callback.
+         */
         listen : function ( eventType, callback, scope) {
             this.addEventListener(eventType, function (e) {
                 callback.call(scope, e, e.data);
@@ -1403,6 +2210,15 @@ all copies or substantial portions of the Software.
             this.removeEventListener(type, callback);
         },
 
+        /**
+         * An convenience alias for dispatchEvent which creates an event of eventType,
+         * sets event.data, and dispatches the event.
+         * @name Util.EventDispatcher#dispatch
+         * @function
+         * @param {String} eventType An event name
+         * @param data A value to be set to event.data before dispatching
+         * @returns {Boolean} <code>true</code> if event was not cancelled.
+         */
         dispatch : function (eventType, data) {
             var eventObject = this.createEvent();
             eventObject.initEvent(eventType, true, true);
@@ -1410,13 +2226,35 @@ all copies or substantial portions of the Software.
             return this.dispatchEvent(eventObject);
         },
 
-        // traditional event apis
+        event : function ( type, obj ) {
+            var eventObject = this.createEvent();
+            eventObject.initEvent(type, true, true);
+            $.extend( eventObject, obj );
+            return this.dispatchEvent(eventObject);
+        },
+
+        /* traditional event apis */
+
+        /**
+         * Registers a callback function to be executed every time an event of evenType fires.
+         * @name Util.EventDispatcher#addEventListener
+         * @function
+         * @param {String} eventType An event name
+         * @param {Function} callback An anonymous function
+         */
         addEventListener : function (eventType, callback) {
             if( ! this._listeners[eventType] )
                 this._listeners[eventType] = [];
             this._listeners[eventType].push(callback);
         },
 
+        /**
+         * Un-registers a callback function previously passed to addEventListener
+         * @name Util.EventDispatcher#removeEventListener
+         * @function
+         * @param {String} eventType An event name
+         * @param {Function} callback An anonymous function
+         */
         removeEventListener : function (type, callback) {
             var l = this._listeners[type] || [];
             var i;
@@ -1427,19 +2265,36 @@ all copies or substantial portions of the Software.
             }
         },
 
-        createEvent : function (type) {
+        /**
+         * Creates an Event object which can be configured and dispatched with dispatchEvent
+         * @name Util.EventDispatcher#createEvent
+         * @function
+         * @param {String} eventType An event name
+         */
+        createEvent : function (eventType) {
             if( document.createEvent )
-                return document.createEvent(type || 'Event');
+                return document.createEvent(eventType || 'Event');
 
             return new EventDispatcher.Event();
         },
 
+        /**
+         * Triggers any callbacks associated with eventObject.type
+         * @name Util.EventDispatcher#dispatchEvent
+         * @function
+         * @param {Event} eventObject created with createEvent
+         * @returns {Boolean} <code>true</code> if event was not cancelled.
+         */
         dispatchEvent : function (eventObject) {
 
-//            if( eventObject.type != "timeupdate")
-//                   console.log(eventObject.type, eventObject);
+            if(! eventObject.type.match(/^time/) )
+                MetaPlayer.log("event", eventObject.type, eventObject);
+            else
+                MetaPlayer.log("time", eventObject.type, eventObject);
 
-            var l = this._listeners[eventObject.type] || [];
+            // copy so that removeEventListener doesn't break iteration
+            var l = ( this._listeners[eventObject.type] || [] ).concat();
+
             for(var i=0; i < l.length; i++ ){
                 if( eventObject.cancelBubble ) // via stopPropagation()
                     break;
@@ -1448,52 +2303,354 @@ all copies or substantial portions of the Software.
             return ! eventObject.defaultPrevented;
         }
 
-    }
+    };
+
+    /**
+     * Used as an Event object in browsers which do not support document.createEvent
+     * @name Util.Event
+     * @constructor
+     */
+    EventDispatcher.Event = function () {
+        this.cancelBubble = false;
+        this.defaultPrevented = false;
+    };
+
+    EventDispatcher.dispatch = function (dispatcher, eventType, data ) {
+        var eventObject;
+        if( document.createEvent )
+            eventObject = document.createEvent('Event');
+        else
+            eventObject =  new EventDispatcher.Event();
+
+        eventObject.initEvent(eventType, true, true);
+        if( data instanceof Object )
+            $.extend(eventObject, data);
+        return dispatcher.dispatchEvent(eventObject);
+    };
+
+    EventDispatcher.Event.prototype = {
+        /**
+         * Sets event properties
+         * @name Util.Event#initEvent
+         * @function
+         * @param {String} eventType An event name
+         * @param {Boolean} bubbles  Not used by non-DOM dispatchers
+         * @param {Boolean} cancelable  Enables preventDefault()
+         */
+        initEvent : function (eventType, bubbles, cancelable)  {
+            this.type = eventType;
+            this.cancelable = cancelable;
+        },
+
+        /**
+         * Cancels the event from firing any more callbacks.
+         * @name Util.Event#stopPropagation
+         * @function
+         */
+        stopPropagation : function () {
+            this.cancelBubble  = true;
+        },
+
+        /**
+         * Cancels the event. For non-DOM object, same as stopPropegation()
+         * @name Util.Event#stopImmediatePropagation
+         * @function
+         */
+        stopImmediatePropagation : function () {
+            this.cancelBubble  = true;
+        },
+
+        /**
+         * Indicates a default action should be skipped, by causing dispatchEvent()
+         * to return false.
+         * @name Util.Event#preventDefault
+         * @function
+         */
+        preventDefault : function () {
+            if( this.cancelable )
+                this.defaultPrevented = true;
+        }
+    };
+
 
 })();
 (function () {
 
+    var $ = jQuery;
+
     MetaPlayer.format = {
-        seconds : function (time) {
-            var zpad = function (val, len) {
-                var r = String(val);
-                while( r.length < len ) {
-                    r = "0" + r;
-                }
-                return r;
+
+        zpad : function (val, len) {
+            var r = String(val);
+            while( r.length < len ) {
+                r = "0" + r;
+            }
+            return r;
+        },
+        seconds : function (time, options) {
+            var defaults = {
+                minutes : true,
+                seconds : true,
+                hours   : false // auto
             };
+            var config = $.extend({}, defaults, options);
+
+            var zpad = MetaPlayer.format.zpad;
+
             var hr = Math.floor(time / 3600);
             var min = Math.floor( (time %  3600) / 60);
             var sec = Math.floor(time % 60);
-            var parts = [
-                zpad(min, 2),
-                zpad(sec, 2)
-            ];
-            if( hr )
+            var parts = [];
+
+            if( config.seconds || min || hr )
+                parts.unshift( zpad(sec, 2) );
+            else if( sec > 0)
+                parts.unshift(sec);
+
+            if( config.minutes || hr )
+                parts.unshift( zpad(min, 2) );
+            else if( min > 0)
+                parts.unshift(min);
+
+            if( config.hours )
+                parts.unshift( zpad(hr, config.hours) );
+            else if(  hr > 0)
                 parts.unshift(hr);
+
             return parts.join(":");
         },
 
         replace : function (template, dict) {
-            return template.replace( /\{\{(\w+)\}\}/g,
-                function(str, match) {
-                    var ret;
-                    if( dict[match] instanceof Function ){
-                        ret = dict[match](dict);
-                    }
-                    else if( dict[match] != null ){
-                        ret = dict[match]
-                    }
-                    else {
-                        return "{!!!" + match + "!!!}"
-                    }
-                    return MetaPlayer.format.replace( ret.toString(), dict )
-                });
-        }
-    };
+        return template.replace( /\{\{(\w+)\}\}/g,
+            function(str, match) {
+                var ret;
+                if( dict[match] instanceof Function ){
+                    ret = dict[match](dict);
+                }
+                else if( dict[match] != null ){
+                    ret = dict[match]
+                }
+                else {
+                    return "{!!!" + match + "!!!}"
+                }
+                return MetaPlayer.format.replace( ret.toString(), dict )
+            });
+    }
+};
 
 })();
 
+
+(function () {
+
+    var $ = jQuery;
+
+    var defaults = {
+        steps : null,
+        throttleMs : 250,
+        max : 100,
+        min : 0,
+        value : 25,
+        draggable: true
+    };
+
+    var ProgressBar = function (parent, options) {
+
+        if( ! (this instanceof  ProgressBar))
+            return new ProgressBar(parent, options);
+
+        var config = $.extend({}, defaults, options);
+        this._steps = config.steps;
+        this._throttleMs = config.throttleMs;
+        this._max = config.max;
+        this._min = config.min;
+        this._value = config.value;
+        this.ui = {};
+        this.createMarkup(parent);
+        this._render();
+        this.setDraggable(config.draggable);
+
+        MetaPlayer.dispatcher(this);
+    };
+
+    MetaPlayer.ProgressBar = ProgressBar;
+
+    ProgressBar.prototype = {
+
+        createMarkup : function (parent) {
+            this.ui.track = $("<div></div>")
+                .css({
+                    position : "relative",
+                    top : 0,
+                    left : 0
+                })
+                .bind("mousedown touchstart", this.bind( this._onDragStart ))
+                .appendTo(parent);
+
+            this.ui.fill = $("<div></div>")
+                .css({
+                    position : "absolute",
+                    top : 0,
+                    left : 0,
+                    height: "100%"
+                })
+                .appendTo(this.ui.track);
+        },
+
+
+        getPercent : function () {
+            return this._value / this._range();
+        },
+
+        getValue : function () {
+            return this._value;
+        },
+
+        getStep : function () {
+            return Math.ceil( this.getPercent() * this._steps);
+        },
+
+        setValue : function ( val ) {
+            this._value = val;
+            this._render();
+        },
+
+        setDraggable : function (bool) {
+            this._draggable = Boolean(bool);
+            this.ui.track.css("cursor", this._draggable ? "pointer" : 'inherit');
+        },
+
+        setMin : function ( min ){
+            this._min = min;
+            this._render();
+        },
+
+        setMax : function ( max ){
+            this._max = max;
+            this._render();
+        },
+
+        _range : function () {
+            return this._max - this._min;
+        },
+
+        _render : function (percent) {
+            if( percent == null )
+                percent = this.getPercent();
+
+            if( this._dragging && arguments[0] == null)
+                return;
+
+            if( this._steps > 0 )
+                percent = this.getStep() / this._steps;
+
+            this.ui.fill.width( (percent * 100) + "%" );
+        },
+
+        _onDragStart : function (e) {
+
+            if( ! this._draggable )
+                return;
+
+            this._dragging =  {
+                move : this.bind(this._onDragMove),
+                stop :  this.bind(this._onDragStop)
+            };
+
+            this.dispatch("dragstart");
+
+            $(document)
+                .bind("mousemove touchmove", this._dragging.move)
+                .bind("mouseup touchend", this._dragging.stop);
+
+            this._onDragMove(e);
+        },
+
+        _onDragStop : function (e) {
+            if( ! this._dragging )
+                return;
+
+            $(document)
+                .unbind("mousemove touchmove", this._dragging.move)
+                .unbind("mouseup touchend", this._dragging.stop);
+
+            // ensure we get a last move with the final value
+            this._lastFire = null;
+
+            this._onDragMove(e);
+
+            this._dragging = null;
+
+            this.dispatch("dragstop");
+        },
+
+        _onDragMove : function (e) {
+            var p = this._dragPercent(e, this.ui.track );
+
+
+            if(!  isNaN(p) ) { // touchend has no position info
+                this._value = p * this._range() ;
+                this._lastP = p;
+            }
+            else {
+                p = this._lastP;
+            }
+
+            if( p === 0 || p > 0 )
+                this._render( p );
+
+            e.preventDefault();
+
+            var now = (new Date()).getTime();
+            if( ! this._lastFire || (now - this._lastFire > this._throttleMs) ){
+                this._onThrottle();
+                return;
+            }
+
+            if( ! this._timeout )
+                this._timeout = setTimeout( this.bind(this._onThrottle), this._throttleMs)
+        },
+
+        _onThrottle : function () {
+            clearTimeout(this._timeout);
+            this._timeout = null;
+            this._lastFire = (new Date()).getTime();
+            this.dispatch("dragmove");
+        },
+
+        /* util */
+        bind : function ( fn ) {
+            var self = this;
+            return function () {
+                return fn.apply(self, arguments);
+            }
+        },
+
+        _dragPercent : function (event, el) {
+            var oe = event.originalEvent;
+            var pageX = event.pageX;
+
+            if( oe.targetTouches ) {
+                if( ! oe.targetTouches.length )
+                    return NaN;
+                pageX = oe.targetTouches[0].pageX;
+            }
+
+            var bg = this.ui.track;
+            var x =  pageX - bg.offset().left;
+
+            var p = x / bg.width();
+            if( p < 0 )
+                p = 0;
+            else if( p > 1 )
+                p = 1;
+            return p
+        }
+    };
+
+
+
+})();
 (function () {
     var $ = jQuery;
 
@@ -1517,13 +2674,13 @@ all copies or substantial portions of the Software.
         proxyEvent : function (types, source, target ){
             // emulate if old non-standard event model
             if( ! target.addEventListener ) {
-                Ramp.dispatcher(target);
+                MetaPlayer.dispatcher(target);
             }
             $.each(types.split(/\s+/g), function (i, type) {
                 source.addEventListener(type, function (e) {
                     // if emulated, just use type
                     if( target.dispatch ) {
-                        target.dispatch(e.type);
+                        target.dispatch(e.type, e.data);
                         return;
                     }
                     // else use standard model
@@ -1567,6 +2724,7 @@ all copies or substantial portions of the Software.
         },
 
         define : function (obj, prop, descriptor) {
+            descriptor.configurable = true;
             try {
                 // modern browsers
                 return Object.defineProperty(obj, prop, descriptor);
@@ -1578,8 +2736,9 @@ all copies or substantial portions of the Software.
             // older, pre-standard implementations
             if( obj.__defineGetter && descriptor.get )
                 obj.__defineGetter__( prop, descriptor.get);
-            if( descriptor.set && obj.__defineSetter__ )
+            if( descriptor.set && obj.__defineSetter__ ) {
                 obj.__defineSetter__( prop, descriptor.set);
+            }
 
             // ie7 and other old browsers fail silently
         },
@@ -1588,59 +2747,333 @@ all copies or substantial portions of the Software.
         // IE8: can't do javascript objects
         // iOS: can't do DOM objects
         // use DOM where possible
-        getProxyObject : function ( dom ) {
+        getProxyObject : function ( source ) {
 
-            // All modern browsers (and ie8)
-            if( ! dom )
-                dom = document.createElement("div");
+            // if already a proxy object
+            if( source && source._proxyFor )
+                return source;
+
+            var dom = document.createElement("div");
+            var proxy;
 
             try {
-                Object.defineProperty(dom, "__proptest", {} );
-                return dom;
+                // 1) Proxy can be a DOM node (CR/FF4+/IE8+)  !iOS !IE7
+                // iOS4 throws error on any dom element
+                // iOS4 throws error specifically on parentElement
+                // ie7 has no setter support whatsoever
+                proxy = dom;
+                Object.defineProperty(proxy, "parentElement", {
+                    get : function () {
+                        return source.parentElement;
+                    },
+                    configurable : true
+                });
             }
+
             catch(e){
+                // 2) Proxy is a JS Object, (CR/FF/IE9/iOS) !IE7, !IE8
+                // ie8 only supports getters on DOM elements.
+                proxy = {};
+                Proxy.mapProperty("children", proxy, dom);
+                Proxy.proxyFunction("appendChild removeChild prependChild", dom, proxy);
             }
 
-            // iOS, fake as best we can, adding props as needed
-            var target = {
-                _proxyNode : dom,
-                parentNode : dom.parentNode,
-                tagName : dom.tagName,
-                ownerDocument : dom.ownerDocument,
-                style : dom.style,
-                appendChild : function() { dom.appendChild.apply(dom, arguments) }
-            };
-            try {
-                Object.defineProperty(target, "__proptest", {} );
-                return target;
+            if( source ) {
+                // proxy the source element in attributes the best we can.
+//                we only care about standard dom properties, and FF blows up when you iterate an object tag
+
+//                $.map(dom,  function (val, key) {
+                var key, val;
+                for( key in dom ) {
+
+                    // skip some, either because we don't want to proxy them (append child, etc)
+                    // or because they break (eg. dom["filters"] throws an error in IE8)
+                    if( key.match(/filters|child|textContent|nodeName|nodeType/i) )
+                        continue;
+
+                    val = undefined;
+                    try {
+                        val = dom[key];  // document.createElement('p').offsetParent throws exception in ie8
+                    }
+                    catch(e){}
+
+                    if( val && val instanceof Function )
+                        Proxy.proxyFunction(key, source, proxy);
+                    else
+                        Proxy.mapProperty(key, proxy, source);
+                }
             }
-            catch(e){
+
+            if( proxy !== dom ){
+                // map child methods so as not to modify original dom node
+                // here we lie to jQuery: it refuses to bind nodeType "object"
+                Proxy.mapProperty("nodeName nodeType children textContent", proxy, dom);
+                Proxy.proxyFunction("appendChild removeChild prependChild", dom, proxy);
             }
 
-            throw "Object.defineProperty not defined";
-        },
-
-        proxyPlayer : function (source, target) {
-            var proxy = Ramp.proxy.getProxyObject(target);
-
-            Proxy.mapProperty("duration currentTime volume muted seeking" +
-                " paused controls autoplay preload src ended readyState ad",
-                proxy, source);
-
-            Proxy.proxyFunction("load play pause canPlayType" ,source, proxy);
-
-            // MetaPlayer Optional Extensions
-            Proxy.proxyFunction("mpf_resize" ,source, proxy);
-
-            Proxy.proxyPlayerEvents(source, proxy);
-
+            proxy._proxyFor = source;
             return proxy;
         },
 
-        proxyPlayerEvents : function (source, target){
+        /**
+         *
+         * @name Util.ProxyPlayer
+         * @class ProxyPlayer contains a substantial a subset of the Media Element properties.  If provided
+         * a target DOM node, the media attributes will be applied to that DOM node, if possible.  In iOS, where DOM
+         * getters functions cannot be defined, a JavaScript object will be provided with both media element properties and
+         * proxyed DOM element properties.
+         * @see Documentation ported from: <a href=http://www.w3.org/TR/html5/media-elements.html#media-elements">W3.Org Media Elements</a>
+         * @param source A JavaScript object containing an HTML5 MediaController interface.  Getter/setter properties
+         * such as currentTime and src can be defined as function (eg: currentTime(time), src(src).
+         * @param [target] A DOM element upon which to define the MediaController interface, clobbering any
+         * existing properties (such as readyState). If not defined, the iOS fallback JS object is returned.
+         * @description
+         * This utility function hides browser-specific complexity of mapping a video player wrapper onto a DOM node,
+         * and returns an object which can be used as if it were a <code>&lt;video></code> element.  Usually, this is
+         * the DOM element passed in, with the exception being iOS in which a JS object is returned.
+         * @example
+         *         var myWrapper = {
+         *              __time : 0,
+         *              currenTime : function (val) {
+         *                  if( val != null)
+         *                      this.__time = val;
+         *                  return this.__time;
+         *              }
+         *         };
+         *         var video = MetaPlayer.proxy.proxyPlayer( myWrapoer,
+         *              document.getElementById("#myDif") );
+         */
+
+        /**
+         * @name Util.ProxyPlayer#duration
+         * @type Number
+         * @description Returns the difference between the earliest playable moment and the latest playable moment (not considering whether the data in question is actually buffered or directly seekable, but not including time in the future for infinite streams). Will return zero if there is no media.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#currentTime
+         * @type Number
+         * @description Returns the current playback position, in seconds, as a position between zero time and the
+         * current duration. Can be set, to seek to the given time.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#paused
+         * @type Boolean
+         * @description Returns true if playback is paused; false otherwise. When this attribute is true, any media element slaved to this controller will be stopped.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#volume
+         * @type Number
+         * @description Returns the current playback volume multiplier, as a number in the range 0.0 to 1.0, where 0.0 is the quietest and 1.0 the loudest. Can be set, to change the volume multiplier.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#muted
+         * @type Boolean
+         * @description Returns true if all audio is muted (regardless of other attributes either on the controller or on any media elements slaved to this controller), and false otherwise. Can be set, to change whether the audio is muted or not.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#seeking
+         * @type Boolean
+         * @description Returns true if the user agent is currently seeking.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#controls
+         * @type Boolean
+         * @description If false, render no controls.  If true render the default playback controls.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#autoplay
+         * @type Boolean
+         * @description Automatically loads and plays the video when a source is available.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#preload
+         * @type String
+         * @description If true, then load() will be invoked automatically upon media selection. Ignored if autoplay is enabled.
+         * <ul>
+         * <li>none</li>
+         * <li>metadata</li>
+         * <li>auto</li>
+         * </ul>
+         */
+
+        /**
+         * @name Util.ProxyPlayer#ended
+         * @type Boolean
+         * @description True if the media has loaded and playback position has progressed to the terminus of the
+         * content in the current playback direction.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#src
+         * @type String
+         * @description Gives the address of the media resource (video, audio) to show. Can be set to change
+         * the current media.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#readyState
+         * @type Integer
+         * @description Describes to what degree the media is ready to be rendered at the current playback position.
+         * <ul>
+         * <li>0 - HAVE_NOTHING</li>
+         * <li>1 - HAVE_METADATA</li>
+         * <li>2 - HAVE_CURRENT_DATA</li>
+         * <li>3 - HAVE_FUTURE_DATA</li>
+         * <li>4 - HAVE_ENOUGH_DATA</li>
+         * </ul>
+         * @see <a href="http://www.w3.org/TR/html5/media-elements.html#ready-states">readyState</a>
+         */
+
+        /**
+         * @name Util.ProxyPlayer#load
+         * @function
+         * @description Begins the download, and buffering of the media specified, beginning with media
+         * seletion from <code> &lt;source></code> tags if no <code>src</code> is specified.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#play
+         * @function
+         * @description Sets the paused attribute to false.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#pause
+         * @function
+         * @description Sets the paused attribute to false.
+         */
+
+         /**
+         * @name Util.ProxyPlayer#canPlayType
+         * @function
+         * @param {String} type A MIME type string.
+         * @description Returns the empty string if type is a type that the user agent knows it cannot render, returns
+          * "probably" if the user agent is confident that the type represents a media resource that it can
+          * render, "maybe" otherwise.
+          * @see <a href="http://www.w3.org/TR/html5/media-elements.html#dom-navigator-canplaytype">canPlayType</a>
+          * @see <a href="http://www.w3.org/TR/html5/the-source-element.html#attr-source-type">types</a>
+          */
+
+        /**
+         * @name Util.ProxyPlayer#event:timeupdate
+         * @event
+         * @description The current playback position changed as part of normal playback or discontinuously, such as seeking.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#event:seeking
+         * @event
+         * @description  The seeking property has been set to true.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#event:seeked
+         * @event
+         * @description The seeking property has been set false.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#event:playing
+         * @event
+         * @description Playback is ready to start after having been paused or delayed due to lack of media data.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#event:play
+         * @event
+         * @description The element is no longer paused. Fired after the play() method has returned, or when the autoplay attribute has caused playback to begin.
+         */
+        /**
+         * @name Util.ProxyPlayer#event:pause
+         * @event
+         * @description The element has been paused.
+         */
+        /**
+         * @name Util.ProxyPlayer#event:loadeddata
+         * @event
+         * @description The user agent can render the media data at the current playback position for the first time.
+         */
+        /**
+         * @name Util.ProxyPlayer#event:loadedmetadata
+         * @event
+         * @description The user agent has just determined the duration and dimensions of the media resource.
+         */
+        /**
+         * @name Util.ProxyPlayer#event:canplay
+         * @event
+         * @description The user agent can resume playback of the media data.
+         */
+        /**
+         * @name Util.ProxyPlayer#event:loadstart
+         * @event
+         * @description The element is constructed and is ready for a media source.
+         */
+        /**
+         * @name Util.ProxyPlayer#event:durationchange
+         * @event
+         * @description The duration attribute has just been updated.
+         */
+        /**
+         * @name Util.ProxyPlayer#event:volumechange
+         * @event
+         * @description Either the volume attribute or the muted attribute has changed.
+         */
+        /**
+         * @name Util.ProxyPlayer#event:ended
+         * @event
+         * @description Playback has stopped because the end of the media resource was reached.
+         */
+        /**
+         * @name Util.ProxyPlayer#event:error
+         * @event
+         * @description An error occurs while fetching the media data.
+         */
+
+
+        /**
+         * @name Util.ProxyPlayer#ad
+         * @type Boolen
+         * @description True if an Ad is currently rendering.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#event:adstart
+         * @event
+         * @description Fired when the player begins an ad, indicating that seeking should be disabled.
+         */
+
+        /**
+         * @name Util.ProxyPlayer#event:adstop
+         * @event
+         * @description Fired when the player finishes playing an ad, indicating that seeking can be re-enabled.
+         */
+
+
+        proxyPlayer : function (adapter, dom) {
+            var proxy = MetaPlayer.proxy.getProxyObject(dom);
+
+            Proxy.mapProperty("duration currentTime volume muted seeking" +
+                " paused controls autoplay preload src ended readyState ad",
+                proxy, adapter);
+
+            Proxy.proxyFunction("load play pause canPlayType" ,adapter, proxy);
+
+            // MetaPlayer Optional Extensions
+            Proxy.proxyFunction("mpf_resize mpf_index", adapter, proxy);
+
             Proxy.proxyEvent("timeupdate seeking seeked playing play pause " +
                 "loadeddata loadedmetadata canplay loadstart durationchange volumechange adstart adstop"
-                + " ended error",source, target);
+                + " ended error",adapter, proxy);
+
+            return proxy;
         }
     };
 
@@ -1656,7 +3089,7 @@ all copies or substantial portions of the Software.
 
     var $ = jQuery;
 
-    Ramp.script = {
+    MetaPlayer.script = {
 
         url : function (filename) {
             // returns the first matching script tag
@@ -1685,8 +3118,73 @@ all copies or substantial portions of the Software.
                 src = this.url('metaplayer(-complete)?(\.min)?\.js');
             if( src )
                 return  src.substr(0, src.lastIndexOf('/') + 1);
-        }
+        },
 
+        query : function (filter) {
+            var query = {};
+            var regex = RegExp(filter);
+            var search = location.search && location.search.substr(1).split("&");
+            $.each(search, function (i, pair) {
+                var parts = pair && pair.split("=") || [];
+                var key = parts[0];
+
+                if( ! key )
+                    return;
+
+                // namespacing by prefix
+                if( filter ) {
+                    if( ! key.match(regex) )
+                        return;
+                    else
+                        key = key.replace( regex, '');
+                }
+
+                // unescaping
+                var val = parts[1] || '';
+                val = decodeURIComponent(val.replace(/\+/g, " ") );
+
+                // casting
+                if( val == "" )
+                    val = null;
+                else if( val.match(/^\d+$/) )
+                    val = parseInt( val );
+                else if( val.match(/^true|false$/) )
+                    val = (val === "true");
+
+                query[ key ] = val
+            });
+            return query;
+        },
+
+        camelCase : function (str) {
+            return str.replace(/[\s_\-]+([A-Za-z0-9])?([A-Za-z0-9]*)/g, function(str, p1, p2) { return p1.toUpperCase() + p2.toLowerCase() } )
+        },
+
+        objectPath : function (obj, key, val, depth) {
+            if( depth == null)
+                depth = 0;
+            var i =  key.indexOf(".");
+            if( i == -1 ) {
+                if( val !== undefined )
+                    obj[key] = val;
+                return obj[key];
+            }
+            var name = key.slice(0,i);
+            var remain = key.slice(i+1);
+            if( key !== undefined && ! (obj[name] instanceof Object) )
+                obj[name] = {};
+            return MetaPlayer.script.objectPath(obj[name], remain, val, depth + 1)
+        },
+
+        parseSrtTime : function (str) {
+            var m = str.match(/^(?:(\d+):)?(\d\d):(\d\d)[\.,](\d\d\d)$/);
+            if( ! m ) {
+                return null;
+            }
+            if( ! m[1] )
+                m[1] = 0
+            return ( parseInt(m[1], 10) * 3600) + ( parseInt(m[2], 10) * 60)+ parseInt(m[3], 10) + (parseInt(m[4], 10) *.001);
+        }
     }
 
 })();
@@ -1700,6 +3198,7 @@ all copies or substantial portions of the Software.
     var $ = jQuery;
 
     var defaults = {
+        disabled : false,
         fixedHeight : false,
         minHeight : 20, //px
         mouseDrag : false,
@@ -1767,6 +3266,7 @@ all copies or substantial portions of the Software.
                 .css('border-radius', "4px")
                 .css('background', "#000")
                 .css('opacity', .4)
+                .hide()
                 .css('cursor', "pointer")
                 .width(8)
                 .addClass("mp-scroll-knob")
@@ -1778,7 +3278,7 @@ all copies or substantial portions of the Software.
             this.parent
                 .css("position", "relative")
                 .css("overflow", "visible")
-                .bind("mousewheel", function (e){
+                .bind("mousewheel DOMMouseScroll", function (e){
                     self.onScroll(e);
                 })
                 .bind((this.config.mouseDrag ? "mousedown" : '') + " touchstart", function (e) {
@@ -1790,16 +3290,19 @@ all copies or substantial portions of the Software.
         },
 
         onScroll : function(e) {
-            var x = e.originalEvent.wheelDeltaX || e.originalEvent.delta || 0;
-            var y = e.originalEvent.wheelDeltaY || e.originalEvent.delta || 0;
-            this.scrollBy(-x, -y);
-            e.preventDefault();
+            var x = e.originalEvent.wheelDeltaX || e.originalEvent.delta || e.originalEvent.detail * 10|| 0;
+            var y = e.originalEvent.wheelDeltaY || e.originalEvent.delta ||  e.originalEvent.detail * 10|| 0;
+            if( ! this.config.disabled ){
+                if( this.scrollBy(-x, -y) ){
+                    e.preventDefault();
+                }
+            }
         },
 
         scrollBy : function (x, y, duration){
             var sl = this.scroller.scrollLeft();
             var st = this.scroller.scrollTop();
-            this.scrollTo( sl + x ,  st + y, duration);
+            return this.scrollTo( sl + x ,  st + y, duration);
         },
 
         scrollTop : function () {
@@ -1807,10 +3310,12 @@ all copies or substantial portions of the Software.
         },
 
         scrollTo : function (x, y, duration){
-            var max = this.body.height() - this.parent.height();
-            var at_max = ( max > 0 && this.scroller.scrollTop() + 1 >= max ); // allow rounding fuzzyiness
 
-             if( y > max  )
+            var currentY = this.scroller.scrollTop();
+            var max = this.body.height() - this.parent.height();
+            var at_max = ( max > 0 && currentY + 1 >= max ); // allow rounding fuzzyiness
+
+            if( y > max  )
                 y = max;
 
             if( y < 0 )
@@ -1818,7 +3323,11 @@ all copies or substantial portions of the Software.
 
             this.scroller.stop();
 
-            if( duration && !at_max ){
+            if( y == currentY ){
+                return false;
+            }
+
+            if( duration ){
                 var self = this;
                 this._scrollY = y;
                 this.scroller.animate({
@@ -1828,12 +3337,29 @@ all copies or substantial portions of the Software.
                     self._scrollY = null;
                 });
                 this.render(duration);
+                return false;
             }
-            else {
+
+            if( y ) {
                 this.scroller.scrollLeft(x);
                 this.scroller.scrollTop(y);
                 this.render();
+                return true;
             }
+        },
+
+        throttledRender : function (duration) {
+            if( this._delay )
+                clearTimeout(this._delay);
+
+            if( duration == null )
+                duration = this.config.knobAnimateMs;
+
+            var self = this;
+            this._delay = setTimeout( function () {
+                self._delay = null;
+                self.render(duration);
+            }, 0);
         },
 
         render: function (duration) {
@@ -1842,6 +3368,9 @@ all copies or substantial portions of the Software.
             if( ! this.body || ! this.body.is(":visible")) {
                 return;
             }
+
+            if( this.config.disabled )
+                return;
 
             var bh = this.body.height();
             var ph = this.parent.height();
@@ -1881,11 +3410,10 @@ all copies or substantial portions of the Software.
 
         onResize : function () {
             if( this.config.listenChanges )
-                this.render(this.config.knobAnimateMs);
+                this.throttledRender();
         },
 
         onTouchStart : function (e) {
-
             this.touching = {
                 lastX : this.scroller.scrollLeft(),
                 lastY : this.scroller.scrollTop()
@@ -1921,7 +3449,7 @@ all copies or substantial portions of the Software.
 
         onTouchStop : function (e) {
 
-             $(document)
+            $(document)
                 .unbind("mousemove touchmove", this._touchMove )
                 .unbind("mouseup touchend", this._touchStop );
             this.touching = null;
@@ -1937,9 +3465,12 @@ all copies or substantial portions of the Software.
 
             this.touching.lastX = x;
             this.touching.lastY = y;
-            this.scrollTo(x, y);
-            e.stopPropagation();
-            e.preventDefault();
+
+
+            if(  this.scrollTo(x, y) ){
+                e.stopPropagation();
+                e.preventDefault();
+            }
         },
 
         onKnobStart : function (e, inverse) {
@@ -1959,7 +3490,7 @@ all copies or substantial portions of the Software.
         },
 
         onKnobStop : function (e) {
-             $(document)
+            $(document)
                 .unbind("mousemove touchmove", this._knobMove )
                 .unbind("mouseup touchend", this._knobStop );
             this.dragging = null;
@@ -1998,7 +3529,7 @@ all copies or substantial portions of the Software.
             return new Timer(delay, count);
 
         var self = this;
-        Ramp.dispatcher(this);
+        MetaPlayer.dispatcher(this);
         this.delay = delay;
         this.count = count || -1;
         this._counted = 0;
@@ -2015,7 +3546,7 @@ all copies or substantial portions of the Software.
         };
     };
 
-    Ramp.timer = Timer;
+    MetaPlayer.timer = Timer;
 
     Timer.prototype = {
         reset : function () {
@@ -2056,7 +3587,7 @@ all copies or substantial portions of the Software.
     if( ! window.Ramp )
         window.Ramp = {};
 
-    Ramp.ui = {
+    MetaPlayer.ui = {
         /**
          * Ensures that target's parentNode is it's offsetParent, creating a wrapping div if necessary.
          *  Returned box can be used to reliably position UI elements absolutely using top,left,etc.

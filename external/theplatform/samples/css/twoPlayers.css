@@ -1,0 +1,81 @@
+@import url("global.css");
+
+html {
+	background: #FFF;
+	font-family: helvetica;
+}
+
+body {
+	margin: 5px;
+}
+
+.play-video {
+	float: left;
+	width: 316px;
+	margin: 0 15px 0 0;
+}
+
+#play-video2 {
+	float: left;
+	width: 316px;	
+}
+
+#info {
+	width: 316px;
+	height: 80px;
+	margin: 0 0 5px 0;
+}
+
+#info2 {
+	width: 316px;
+	height: 80px;
+	margin: 0 0 5px 0;
+}
+
+#player {
+	width: 316px;
+	height: 252px;
+	margin: 0 0 5px 0;
+}
+
+#player2 {
+	width: 316px;
+	height: 252px;
+	margin: 0 0 5px 0;
+}
+
+#search {
+	width: 316px;
+	height: 22px;
+	margin: 0 0 5px 0;
+}
+
+#search2 {
+	width: 316px;
+	height: 22px;
+	margin: 0 0 5px 0;
+}
+
+#releaselist {
+	margin-right: auto;
+	width: 316px;
+	height: 180px;
+	position: relative;
+}
+
+#releaselist2 {
+	margin-right: auto;
+	width: 316px;
+	height: 180px;
+	position: relative;
+}
+
+#message {
+	padding: 0px;
+	width: 316px;
+	margin: 0px 0 0 0;
+}
+
+#message p {
+	margin: 5px;
+}

@@ -28,19 +28,16 @@
     <script src="../../../services/ramp/service.ramp.js"></script>
 
     <script type="text/javascript">
-        var url = "../../../../media/sxsw/mp2-playlist-e=52300242.xml";
-        var url2 = "../../../../media/sxsw/mp2-playlist-e=52307770.xml";
-        var metaplayer;
+        var mp;
 
 
         $(function () {
             var template = $('#content').hide().remove();
 
-            metaplayer = MetaPlayer().ramp().load();
-//            json2html("#dump", metaplayer.metadata.getData() );
+            mp = MetaPlayer().ramp("f455a86b28160bc0682fec3662e39d3b").load();
 
-            metaplayer.metadata.listen( MetaPlayer.MetaData.DATA, function (e) {
-                json2html("#dump", metaplayer.metadata.getData() );
+            mp.metadata.listen( "data", function (e) {
+                json2html("#dump", mp.metadata.getData() );
             });
 
 
@@ -52,15 +49,18 @@
 </head>
 <body>
 
-<div>
-    <button onclick="metaplayer.ramp('../../../../media/sxsw/L-Style.xml')">L-Style.xml</button>
-    <button onclick="metaplayer.ramp('../../../../media/sxsw/Galaxy_Mini_2.xml')">Galaxy_Mini_2.xml</button>
+<style>
+    button {
+        vertical-align: bottom;
+    }
+</style>
+<div>Load:
+    <button onclick="mp.metadata.load('ramp:52871241')">Elephant's Dream</button>
+    <button onclick="mp.metadata.load('ramp:52975368')">Sintel</button>
 </div>
 
-
-
-> metaplayer.metadata.getData()
 <div id="dump">
+...
 </div>
 
 <script>

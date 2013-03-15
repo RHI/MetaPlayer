@@ -7,7 +7,7 @@
             return new Timer(delay, count);
 
         var self = this;
-        Ramp.dispatcher(this);
+        MetaPlayer.dispatcher(this);
         this.delay = delay;
         this.count = count || -1;
         this._counted = 0;
@@ -24,7 +24,7 @@
         };
     };
 
-    Ramp.timer = Timer;
+    MetaPlayer.timer = Timer;
 
     Timer.prototype = {
         reset : function () {

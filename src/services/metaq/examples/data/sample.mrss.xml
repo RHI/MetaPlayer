@@ -1,0 +1,16 @@
+<rss xmlns:mpf="http://developer.ramp.com/mrss" xmlns:media="http://search.yahoo.com/mrss/" version="2.0">
+    <channel>
+
+        <item>
+            <title>Elephant's Dream</title>
+            <description><![CDATA[Elephants Dream is the story of two strange characters exploring a capricious and seemingly infinite machine. The elder, Proog, acts as a tour-guide and protector, happily showing off the sights and dangers of the machine to his initially curious but increasingly skeptical protege Emo. As their journey unfolds we discover signs that the machine is not all Proog thinks it is, and his guiding takes on a more desperate aspect. Elephants Dream is a story about communication and fiction, made purposefully open-ended as the world’s first 3D animated “Open movie”. The film itself is released under the Creative Commons license, along with the production files used to make it (roughly 7 Gigabytes of data). The software used to make the movie is the free/open source animation suite Blender, along with other open source software, thus allowing the movie to be remade, remixed and re-purposed. 2006, Amsterdam, the Netherlands.]]></description>
+            <guid>elephant-dream</guid>
+            <media:thumbnail url="http://publishing.ramp.com/thumbnails/cached_media/0006/0006875/0006875054/images/thumb.jpg"/>
+            <media:content url="http://sxsw.ramp.com/hosting/media/sxsw/1626298/ed_1024_512kb.mp4" type="video/mp4" duration="653.696"/>
+            <mpf:subTitle type="application/x-subrip" lang="en-us" href="data/sample.srt" />
+            <mpf:cueTrack type="application/x-metaq-xml" href="data/sample.metaq.xml" />
+            <mpf:cueTrack type="application/x-metaq-srt" href="data/sample.metaq.srt" />
+        </item>
+
+    </channel>
+</rss>

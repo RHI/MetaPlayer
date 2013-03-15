@@ -22,10 +22,13 @@
  * Date: 2011-01-10 07:50:57 -0500 (Mon, 10 Jan 2011)
  * Revision: 4901
  *
- * RAMP:
+ * RAMP: v20121102
  * - added m3u8 support
  * - fixed bug causing play() to fail every other call
  * - added html5 failover for flash not installed
+ * - fixed onBegin during replay
+ * - fixed onBegin firing before onLoad
+ * - reset state on playlist change, allow play() to not require arg if STATE_UNSTARTED
  */
 
 
@@ -235,7 +238,6 @@ $f.addPlugin("ipad", function(options) {
 	// internal func, maps flowplayer's API
 	function addAPI() {
 
-		
 		function fixClip(clip) {
 			var extendedClip = {};
 			extend(extendedClip, clipDefaults);
@@ -320,53 +322,55 @@ $f.addPlugin("ipad", function(options) {
 				} else {
 					autoPlay = false;
 				}
-			} else {
-				log("clip was not given, simply calling video.play, if not already buffering");
+            } else {
+                log("clip was not given, simply calling video.play, if not already buffering");
 
-				// clip was not given, simply calling play
-				if ( currentState != STATE_BUFFERING )
-					video.play();
-
-				return;
-			}
+                // clip was not given, simply calling play
+                if( currentState == STATE_UNSTARTED || currentState == STATE_ENDED ){
+                    clip = activePlaylist[activeIndex];
+                    url = clip.completeUrl;
+                }
+                else {
+                    if ( currentState != STATE_BUFFERING ) {
+                        video.play();
+                    }
+                    return;
+                }
+            }
 
 			log("about to play "+ url, autoBuffering, autoPlay);
 
-			// we have a new clip to play
+            // swf always plays on track advance via play(i)
+            if( currentState != STATE_LOADED ) {
+                autoPlay = true;
+            }
+
+            // we have a new clip to play
 			resetState();
 
-			if ( url ) {
+            if ( url ) {
 				log("Changing SRC attribute"+ url);
 				video.setAttribute('src', url);
 			}
 
-
-			//return;
-
-			// autoBuffering is true or we just called play
-			if ( autoBuffering ) {
-				if ( ! actionAllowed('Begin') )
-					return false;
-
-				$f.fireEvent(self.id(), 'onBegin', activeIndex);
-
-				log("calling video.load()");
-				video.load();
+			if ( !(autoBuffering || autoPlay) ){
+                return;
 			}
 
-			// auto
-			if ( autoPlay ) {
-				log("calling video.play()");
-				video.play();
-			}
-		}
+            // for consistency with flash api, always play a track then pause
+            log("calling video.play()");
+            video.play();
+
+            // auto
+            if ( ! autoPlay ) {
+                video.pause();
+            }
+		};
 
 		video.fp_pause = function() {
 			log("pause called");
-
 			if ( ! actionAllowed('Pause') )
 				return false;
-
 			video.pause();
 		};
 
@@ -376,7 +380,7 @@ $f.addPlugin("ipad", function(options) {
 			if ( ! actionAllowed('Resume') )
 				return false;
 
-			video.play();
+            video.play();
 		};
 
 		video.fp_stop = function() {
@@ -386,7 +390,7 @@ $f.addPlugin("ipad", function(options) {
 				return false;
 
 			stopping = true;
-			video.pause();
+            video.pause();
 			try {
 				video.currentTime = 0;
 			} catch(ignored) {}
@@ -399,7 +403,7 @@ $f.addPlugin("ipad", function(options) {
 				return false;
 
 			var seconds = 0;
-			var position = position + "";
+			position = position + "";
 			if ( position.charAt(position.length-1) == '%' ) {
 				var percentage = parseInt(position.substr(0, position.length-1)) / 100;
 				var duration = video.duration;
@@ -422,21 +426,20 @@ $f.addPlugin("ipad", function(options) {
 		};
 
 		video.fp_mute = function() {
-			log("mute called");
-
 			if ( ! actionAllowed('Mute') )
 				return false;
 
-			currentVolume = video.volume;
-			video.volume = 0;
-		};
+            video.muted = true;
+            $f.fireEvent(self.id(), 'onMute');
+        };
 
 		video.fp_unmute = function() {
-			if ( ! actionAllowed('Unmute') )
+            if ( ! actionAllowed('Unmute') )
 				return false;
 
-			video.volume = currentVolume;
-		};
+			video.muted = false;
+            $f.fireEvent(self.id(), 'onUnmute');
+        };
 
 		video.fp_getVolume = function() {
 			return video.volume * 100;
@@ -532,6 +535,7 @@ $f.addPlugin("ipad", function(options) {
 				playlist[i] = fixClip(playlist[i]);
 			
 			activePlaylist = playlist;
+            resetState();
 
 			// keep flowplayer.js in sync
 			$f.fireEvent(self.id(), 'onPlaylistReplace', playlist);
@@ -606,7 +610,6 @@ $f.addPlugin("ipad", function(options) {
 
 	// Internal func, maps Flowplayer's events
 	function addListeners() {
-
 		/* CLIP EVENTS MAPPING */
 
 		var events = [	'abort',
@@ -649,10 +652,16 @@ $f.addPlugin("ipad", function(options) {
 		video.addEventListener('waiting', onBufferEmpty, false);
 
 		var onBufferFull = function(e) {
+
+            if(! onStartFired ) {
+                onStartFired = true;
+                $f.fireEvent(self.id(), 'onStart', activeIndex);
+            }
+
 			if ( previousState == STATE_UNSTARTED || previousState == STATE_BUFFERING )	{
 				// wait for play event, nothing to do
-
-			} else {
+                setState(STATE_PAUSED);
+            } else {
 				log("Restoring old state "+ stateDescription(previousState));
 				setState(previousState);
 			}
@@ -669,10 +678,21 @@ $f.addPlugin("ipad", function(options) {
 			$f.fireEvent(self.id(), 'onMetaData', activeIndex, activePlaylist[activeIndex]);
 		};
 		video.addEventListener('loadedmetadata', onMetaData, false);
+
+        video.addEventListener('loadstart', function () {
+            // onBeforeBegin needs to fire when autobuffering off
+            if ( ! actionAllowed('Begin') ) {
+                video.autoplay = false;
+            }
+            video.autoplay = true;
+
+            $f.fireEvent(self.id(), 'onBegin', activeIndex);
+        }, false);
+
 		video.addEventListener('durationchange', onMetaData, false);
 
 		var onStart = function(e) {
-			if ( currentState == STATE_PAUSED ) {
+            if ( currentState == STATE_PAUSED ) {
 				if ( ! actionAllowed('Resume') ) {
 					// user initiated resume
 					log("Resume disallowed, pausing");
@@ -680,19 +700,23 @@ $f.addPlugin("ipad", function(options) {
 					return stopEvent(e);
 				}
 
-				$f.fireEvent(self.id(), 'onResume', activeIndex);
+                $f.fireEvent(self.id(), 'onResume', activeIndex);
 			}
 
-			setState(STATE_PLAYING);
+            setState(STATE_PLAYING);
 
-			if ( ! onStartFired ) {
-				onStartFired = true;
-				$f.fireEvent(self.id(), 'onStart', activeIndex);
-			}
+			if(! onStartFired ) {
+                onStartFired = true;
+                $f.fireEvent(self.id(), 'onStart', activeIndex);
+            }
 		};
 		video.addEventListener('playing', onStart, false);
+		video.addEventListener('play', onStart, false);
 
 		var onFinish = function(e) {
+            if(! video.ended ) // is being called twice...
+                return;
+
 			if ( ! actionAllowed('Finish') ) {
 				if ( activePlaylist.length == 1 ) {
 					//In the case of a single clip, the player will start from the beginning of the clip.
@@ -713,8 +737,13 @@ $f.addPlugin("ipad", function(options) {
 				return stopEvent(e);
 			}	// action was canceled
 
-			setState(STATE_ENDED);
-			$f.fireEvent(self.id(), 'onFinish', activeIndex);
+            onStartFired = false;
+            setState(STATE_ENDED);
+
+            var ai = activeIndex;
+            var ret = $f.fireEvent(self.id(), 'onFinish', activeIndex);
+            if( ! ret )
+                return;
 
 			if ( activePlaylist.length > 1 && activeIndex < (activePlaylist.length - 1) ) {
 				// not the last clip in the playlist
@@ -723,6 +752,7 @@ $f.addPlugin("ipad", function(options) {
 			}
 
 		};
+
 		video.addEventListener('ended', onFinish, false);
 
 		var onError = function(e) {
@@ -791,7 +821,9 @@ $f.addPlugin("ipad", function(options) {
 
 	// this is called only on iDevices
 	function onPlayerLoaded() {
-		video.fp_play(0);
+        setTimeout( function () {
+            video.fp_play(0);
+        }, 0);
 		//installControlbar();
 	}
 
@@ -822,7 +854,6 @@ $f.addPlugin("ipad", function(options) {
 
 
 
-
 	// Here we are getting serious. If we're on an iDevice, we don't care about Flash embed.
 	// replace it by ours so we can install a video html5 tag instead when FP's init will be called.
 
@@ -830,8 +861,9 @@ $f.addPlugin("ipad", function(options) {
 		if ( ! window.flashembed.__replaced ) {
 
 			var realFlashembed = window.flashembed;
-			window.flashembed = function(root, opts, conf) {
-				// DON'T, I mean, DON'T use self here as we are in a global func
+
+            window.flashembed = function(root, opts, conf) {
+                // DON'T, I mean, DON'T use self here as we are in a global func
 
 				if (typeof root == 'string') {
 					root = document.getElementById(root.replace("#", ""));
@@ -883,14 +915,16 @@ $f.addPlugin("ipad", function(options) {
 				api.playerConfig = conf.config;
 
 				// tell the player we are ready and go back to player's closure
-				$f.fireEvent(conf.config.playerId, 'onLoad', 'player');
-						
+                // ...async because flash is
+                setTimeout( function (){
+                    $f.fireEvent(conf.config.playerId, 'onLoad', 'player');
+                },0);
 				//api.fp_play(conf.config.playlist);
 			};
 			
 			flashembed.getVersion = realFlashembed.getVersion;
 			flashembed.asString = realFlashembed.asString;
-			flashembed.isSupported = function() {return true;}
+			flashembed.isSupported = function() {return true};
 			flashembed.__replaced = true;
 		}
 

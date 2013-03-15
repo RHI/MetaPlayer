@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:tp="http://player.theplatform.com/" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-language" content="en" />
+	<title>PDK :: Custom / Custom PlugIns</title>
+
+	<!-- ************************************************* -->
+	<!-- This is the Feed Url for the videos on this page. -->
+	<!-- Note that because this page does not contain a release list -->
+	<!-- the player will not play any items from the feed. In this case	-->
+	<!-- the player uses its releaseUrl property for media playback. -->
+	<!-- ************************************************* -->
+	<link rel="alternate" href="http://feed.theplatform.com/f/3JHsmB/TpW4aioBvs6N?form=rss" type="application/rss+xml" />
+
+	<!-- This is the site stylesheet and doesn't care about the PDK -->
+	<link rel="stylesheet" href="../css/video.css" type="text/css" media="screen" />
+	<!-- temp css -->
+	<style type="text/css">
+		
+		#play-video {
+			float: left;
+			width: 780px;
+		}				
+		
+		#info {
+			float: left;
+			width: 295px;
+			height: 360px;
+			margin: 0 0 0 5px;	
+			background: #131313;
+		}
+	
+	</style>
+	<script type="text/javascript" src="../../pdk/tpPdk.js"></script> 
+</head>
+<body>
+	<div id="play-video">
+		<div id="player" class="tpPlayer"
+			tp:fp.bgcolor="0x131313"
+			tp:wmode="opaque"
+			tp:plugin0="type=overlay|URL=../../pdk/swf/samplePlugIn.swf|subURL=../../pdk/swf/sampleOverlay.swf|welcome=Hello|priority=0"
+			tp:plugin1="type=overlay|URL=../../pdk/swf/customEmailForm.swf|subURL=../../pdk/swf/customEmailFormSubPlugIn.swf"
+			tp:plugin2="type=overlay|URL=../../pdk/swf/customLinkForm.swf|subURL=../../pdk/swf/customLinkFormSubPlugIn.swf"
+			tp:plugin3="type=url|URL=../../pdk/swf/sampleUrlPlugIn.swf|delay=2|modify=true"
+			tp:plugin4="type=ad|URL=../../pdk/swf/sampleClipWrapperPlugIn.swf|priority=1"
+			tp:plugin5="type=visual|URL=../../pdk/swf/sampleVisualizationPlugIn.swf"
+			tp:emailServiceURL="http://player.theplatform.com/m/3JHsmB/demo/select/{releasePid}"
+			tp:playerURL="http://player.theplatform.com/m/3JHsmB/demo/select/{releasePid}"
+			tp:embeddedPlayerHTML="&lt;embed src=&quot;http://player.theplatform.com/m/3JHsmB/demo/embed/select/{releasePid}&quot; width=&quot;412&quot; height=&quot;329&quot; type=&quot;application/x-shockwave-flash&quot; allowFullScreen=&quot;true&quot; bgcolor=&quot;#131313&quot; /&gt;"
+			tp:RSSURL="http://feed.theplatform.com/f/3JHsmB/TpW4aioBvs6N?form=rss"
+			tp:layoutUrl="../../data/metaLayout_glass.xml"
+            tp:releaseUrl="http://link.theplatform.com/s/RU/l-liiPDg6v-tJy2QzELO3w_NXPWlx_j6?&amp;format=SMIL&amp;Tracking=true&amp;Embedded=true"
+            tp:backgroundColor="0x131313"
+			tp:controlBackgroundColor="0x131313"
+			tp:controlColor="0xBEBEBE"
+			tp:controlFrameColor="0x545759"
+			tp:controlHoverColor="0xBEBEBE"
+			tp:controlSelectedColor="0x00CCFF"
+			tp:frameColor="0x545759"
+			tp:pageBackgroundColor="0x131313"
+			tp:playProgressColor="0x00CCFF"
+			tp:scrubberColor="0xBEBEBE"
+			tp:scrubberFrameColor="0x00CCFF"
+			tp:scrubTrackColor="0xBEBEBE"
+			tp:textBackgroundColor="0x383838"
+			tp:textColor="0xBEBEBE"
+			tp:loadProgressColor="0x5D9070">
+		</div>
+		<!--
+		// This clip info plug-in prepends each clip's title with a dash.
+		// See the sample code to understand how this works.
+		-->
+		<div id="info" class="tpClipInfo"
+			tp:wmode="transparent"
+			tp:plugin0="type=metadataComponent|URL=../../pdk/swf/sampleClipInfoMetadata.swf|priority=1"
+			tp:backgroundColor="0x000000"
+			tp:titleColor="0xFFFFFF"
+			tp:descriptionColor="0xFFFFFF">
+		</div>		
+	</div>
+</body>
+</html>	

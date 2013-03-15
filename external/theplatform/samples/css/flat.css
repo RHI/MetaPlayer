@@ -1,0 +1,94 @@
+@import url("global.css");
+
+html {
+	background: #BEC7D8;
+	font-family: helvetica;
+}
+
+body {
+	margin: 4px;
+}
+
+
+#search-video {
+	float: left;
+	width: 486px;
+}
+
+#browse-video {
+	float: left;
+	width: 486px;
+}
+
+#header {
+	width: 618px;
+	height: 78px;
+	background: #FFF url(../../images/lights.jpg) no-repeat top left ;
+	border: 1px solid #88A1BF;
+	margin: 0 0 4px 0;
+}   
+
+#info {
+	float: left;
+	width: 300px;
+	height: 252px;	
+	margin: 0 0 4px 0;
+}
+
+#player {
+	float: left;
+	width: 316px;
+	height: 252px;
+	margin: 0 4px 4px 0;
+}
+
+#categorylist {
+	float: left;
+	width: 130px;
+	height: 205px;
+	position: relative;
+	margin: 0 4px 0 0;
+	z-index: 1;
+	overflow: visible !important;
+	overflow: hidden;
+}
+
+#search {
+	float: left;
+	width: 241px;
+	height: 22px;
+	position: relative;
+	margin: 0 4px 0 0;
+	display: inline;
+	z-index: 2;
+}
+
+#navigation {  
+	width: 241px;
+	height: 22px; 
+	position: relative;
+	float: left;
+	z-index: 2;
+}
+
+#releaselist {
+	float: left;
+	width: 486px;
+	height: 180px;
+	margin: 3px 0 0 0;
+	position: relative;
+	z-index: 2;
+}
+
+.releaseListItemSelected a {
+
+line-height:14px;
+
+}
+
+.releaseListItem a {
+
+line-height:14px;
+
+}
+

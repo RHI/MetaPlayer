@@ -5,7 +5,7 @@ var PlayerUnit = function (unit){
         return new PlayerUnit(unit)
 
     this.unit = unit;
-    this.nearTimeSec = 3; // forgiveness for keyframes,
+    this.nearTimeSec = 10; // forgiveness for seeking in wide keyframes,
     this.media = null;
 };
 
@@ -19,122 +19,150 @@ PlayerUnit.prototype = {
         var unit = this.unit;
         var self = this;
 
-        unit.test("media setup",  function () {
-            unit.nequal( self.media, undefined, "media instance not null");
-            unit.equal( isNaN(self.media.duration), true, "duration at start is NaN");
-
-            unit.assert( self.media.canPlayType instanceof Function, "canPlayType defined" );
-
-            unit.event("loadstart", self.media, "loadstart event");
-
-            // FF bug: won't fire unless media.play() already called
-            unit.log("canplay/canplaythrough event are not supported in FF w/ autoplay=false");
-            unit.event("canplay", self.media, "canplay event");
-//            unit.event("canplaythrough", self.media, "canplaythrough event");
-
-            self.media.src = self.src;
-
+        unit.test("initial state",  function () {
+            unit.assert("media instance not null", self.media);
+            unit.assert("autoplay disabled", self.media.autoplay, false);
+            unit.assert("preload disabled", self.media.preload, "none" );
+            unit.assert("duration at start is NaN", isNaN(self.media.duration) );
+            unit.assert("canPlayType defined", self.media.canPlayType instanceof Function);
+            unit.assert("has src", self.media.src);
+            unit.assert("readystate 0", self.media.readyState, 0);
         });
 
-        unit.test("load events",  function () {
+        unit.test("loading",  function () {
+            unit.event("loadstart event", self.media, "loadstart");
+            unit.event("canplay event", self.media, "canplay", function () {
+                unit.assert("readyState is 4", self.media.readyState, 4);
+                unit.assert("media.paused is true", self.media.paused, true);
+            });
+            unit.event( "loadeddata event", self.media, "loadeddata");
 
-            unit.event("loadeddata", self.media, "loadeddata event");
-
-            unit.event("durationchange", self.media, "durationchange event", function (){
-                unit.equal( self.media.duration > 0, true, "duration > 0");
+            unit.event("durationchange event", self.media, "durationchange", function (){
+                unit.assert("duration > 0", self.media.duration > 0, true);
             });
 
-            unit.event("loadedmetadata", self.media, "loadedmetadata event", function (){
-                unit.equal( isNaN(self.media.duration), false, "duration defined");
+            unit.event("loadedmetadata event", self.media, "loadedmetadata", function (){
+                unit.assert("duration isNaN", isNaN(self.media.duration), true);
             });
 
-            unit.equal( self.media.paused, true, "media instance paused");
+            unit.assert("media instance paused", self.media.paused, true);
 
             self.media.load();
-        }, {postDelay : 0 });
+        });
 
-        unit.test("currentTime",  function () {
-            var seekTarget = Math.floor(self.media.duration / 2);            
+        unit.test("seeking",  function () {
+            var seekTarget = Math.min( Math.floor(self.media.duration / 2), 30 );
             unit.log("Seek target: " + seekTarget);
-            unit.equal( self.isNearTime(0), true, "initial self.media.currentTime is 0");
-            unit.equal( self.media.seeking, false, "initial self.media.seeking is false");
-            unit.event("seeking", self.media, "seeking event", function (e) {
-                unit.equal( self.media.seeking, true, "on seeking: media.seeking is true");
+            unit.assert("initial self.media.currentTime is 0", self.isNearTime(0));
+            unit.assert("initial self.media.seeking is false", self.media.seeking, false);
+
+            unit.event("seeking", self.media, "seeking", function (e) {
+                unit.assert("on seeking: media.seeking is true", self.media.seeking, true);
             });
-            unit.event("seeked", self.media, "seeked event", function (e) {
-                unit.equal( self.isNearTime(seekTarget), true, "seeked currentTime near "  + seekTarget);
-            });
-            unit.event("timeupdate", self.media, "timeupdate event", function (e) {
-                unit.equal( self.isNearTime(seekTarget), true, "timeupdate currentTime near " + seekTarget);
+            unit.event("seeked", self.media, "seeked", function (e) {
+                unit.assert("seeked currentTime near "  + seekTarget, self.isNearTime(seekTarget));
+                unit.assert("post seek media.seeking is false", self.media.seeking, false);
+            }, 15000);
+            unit.event("timeupdate", self.media, "timeupdate", function (e) {
+                unit.assert("timeupdate currentTime near " + seekTarget, self.isNearTime(seekTarget));
             });
             self.media.currentTime = seekTarget;
-        }, {postDelay : 0 });
+        });
 
-        unit.test("play",  function () {
-            unit.equal( self.media.ended, false, "media.ended is false");
-            unit.equal( self.media.paused, true, "media.paused is true");
+        unit.test("playing",  function () {
+            unit.assert("media.ended is false", self.media.ended, false);
+            unit.assert("media.paused is false", self.media.paused, false);
 
-            unit.event("playing", self.media, "play event", function (e) {
-                unit.equal( self.media.paused, false, "media.paused is false");
+            unit.event("playing event", self.media, "playing", function (e) {
+                unit.assert("media.paused is false", self.media.paused, false);
             });
-            unit.event("timeupdate", self.media, "timeupdate event");
+            unit.event("timeupdate event", self.media, "timeupdate");
             self.media.play();
         });
 
-
         unit.test("volume",  function () {
-            unit.equal( self.media.volume, 1, "media.volume is 1");
-            unit.event("volumechange", self.media, "volumechange event", function (e) {
-                unit.equal( self.media.volume, .5, "self.volume is 1");
+            unit.assert("media.volume is 1", self.media.volume, 1);
+            unit.event("volumechange", self.media, "volumechange", function (e) {
+                unit.assert("self.volume is 0.5", self.media.volume, 0.5);
             });
-            self.media.volume = .5;
+            self.media.volume = 0.5;
         });
 
-        unit.test("mute",  function () {
-            unit.equal( self.media.muted, false, "set self.media.muted false");
-            unit.event("volumechange", self.media, "muted volumechange event", function (e) {
-                unit.equal( self.media.muted, true, "set self.media.muted true");
+        unit.test("muting",  function () {
+            unit.assert("set self.media.muted false", self.media.muted, false);
+
+            unit.event("muted volumechange event", self.media, "volumechange", function (e) {
+                unit.assert("set self.media.muted true", self.media.muted, true);
             });
             self.media.muted = true;
         });
 
         unit.test("pause",  function () {
-            unit.equal( self.media.ended, false, "media.ended is false");
-            unit.equal( self.media.paused, false, "media.paused is false");
-
-            unit.event("pause", self.media, "pause event", function (e) {
-                unit.equal( self.media.paused, true, "media.paused is true");
+            unit.assert("media.ended is false", self.media.ended, false);
+            unit.assert("media.paused is false", self.media.paused, false);
+            unit.event("pause event", self.media, "pause", function (e) {
+                unit.assert("media.paused is true", self.media.paused, true);
             });
             self.media.pause();
-        }, { postDelay : 0 });
+        });
 
         unit.test("seek while playing",  function () {
-            unit.equal( self.media.paused, true, "media.paused is true");
-            unit.equal( self.media.seeking, false, "initial self.media.seeking is false");
+            var target = self.media.duration - 15;
 
-            unit.event("play", self.media, "play event", function (e) {
-                unit.equal( self.media.paused, false, "media.paused is false");                
-                self.media.currentTime = 5;
+            unit.assert("media.paused is true", self.media.paused, true);
+            unit.assert("initial self.media.seeking is false", self.media.seeking, false);
+
+            unit.event("playing event", self.media, "playing");
+            unit.event("play event", self.media, "play", function (e) {
+                unit.assert("media is playing", self.media.paused, false);
+                unit.log("Seek target: " + target);
+                self.media.currentTime = target;
             });
 
-            unit.event("seeking", self.media, "seeking event", function (e) {
-                unit.equal( self.media.seeking, true, "media.seeking is true");
+            unit.event("seeking event", self.media, "seeking", function (e) {
+                unit.assert("media.seeking is true", self.media.seeking, true);
             });
 
-            unit.event("seeked", self.media, "seeked event", function (e) {
-                unit.equal( self.isNearTime(5), true, "seeked currentTime is near 5");
+            unit.event("seeked event", self.media, "seeked", function (e) {
+                unit.assert("seeked currentTime is near "+ target, self.isNearTime(target));
             });
 
-            unit.event("timeupdate", self.media, "timeupdate event");
+            unit.event("timeupdate event", self.media, "timeupdate");
             self.media.play();
         });
 
+        unit.test("ended",  function () {
+            unit.assert("media.paused is near end", self.media.duration - self.media.currentTime < 20);
+            unit.assert("media is playing", self.media.paused, false);
+            unit.assert("media has duration", self.media.duration   );
 
-        unit.test("ended event",  function () {
-            unit.equal( self.media.paused, false, "media.paused is false");
-            unit.event("seeking", self.media, "seeking event");
-            unit.event("ended", self.media, "ended event", null, 7000);
-            self.media.currentTime = self.media.duration - 3;            
+            unit.event("ended event", self.media, "ended", function () {
+                unit.assert("media.ended is true", self.media.ended, true);
+                unit.assert("media.paused is true", self.media.paused, true);
+            }, 60000);  // seeking to the end of a long progressive download can take a while, so we give time
+
+
+            unit.event("seeked event", self.media, "seeked", function (e) {
+                unit.assert("seeked currentTime is near "+ target, self.isNearTime(target));
+            });
+
+            var target = self.media.duration - 5;
+            unit.log("Seek target: " + target);
+            self.media.currentTime = target;
+        });
+
+        unit.test("replay after ended",  function () {
+            unit.event("play event", self.media, "play", function (e){
+                unit.assert("media.ended is false", self.media.ended, false);
+                unit.assert("media.paused is false", self.media.paused, false);
+                unit.assert("replay currentTime is near 0", self.isNearTime(0));
+                self.media.pause();
+            }, 6000);
+            unit.event("playing event", self.media, "playing", null, 6000);
+
+            setTimeout(function() {
+                self.media.play();
+            }, 1000);
         });
 
     }

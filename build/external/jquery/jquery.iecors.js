@@ -17,6 +17,24 @@
         return (window.XDomainRequest ? new window.XDomainRequest() : null);
     };
 
+
+    // IE8 will randomly abort concurrent xDomain requests, so queue them
+    var current = null;
+    var queue = [];
+    var queueNext = function () {
+        current = null;
+        queueCheck();
+    };
+    var queueCheck = function () {
+        if(! current ){
+            current = queue.shift();
+            if( current && current instanceof Function )
+                current();
+            else
+                current = null;
+        }
+    };
+
     // Determine support properties
     (function( xdr ) {
         jQuery.extend( jQuery.support, { iecors: !!xdr });
@@ -33,6 +51,7 @@
                     var xdr = s.xdr();
 
                     xdr.onload = function() {
+                        queueNext();
                         var headers = { 'Content-Type': xdr.contentType };
                         complete(200, 'OK', { text: xdr.responseText }, headers);
                     };
@@ -40,6 +59,12 @@
                     // need to define handlers to avoid aborts
                     // http://stackoverflow.com/a/9928073/369724
                     xdr.onprogress = function () {};
+                    xdr.onerror = function () {
+                        queueNext();
+                    };
+                    xdr.ontimeout = function () {
+                        queueNext();
+                    };
 
                     // Apply custom fields if provided
                     if ( s.xhrFields ) {
@@ -51,7 +76,20 @@
 
                     // XDR has no method for setting headers O_o
 
-                    xdr.send( ( s.hasContent && s.data ) || null );
+                    // http://stackoverflow.com/a/6699148/369724
+                    var sendFn = function () {
+                        if( s.hasContent && s.data )
+                            xdr.send( s.data );
+                        else
+                            xdr.send();
+                    };
+                    if( document.documentMode == 8 ) {
+                        queue.push( sendFn );
+                        queueCheck();
+                    }
+                    else {
+                        setTimeout( sendFn, 0);
+                    }
                 },
 
                 abort: function() {

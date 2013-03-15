@@ -67,15 +67,14 @@
 
     <script type="text/javascript">
         var player = MetaPlayer('#target')
-                .youtube()
+                .ramp("f455a86b28160bc0682fec3662e39d3b", "52871241")
 
-        player.transcript('#transcript', {
-            timestamps: false,
-            breaks: false
-        });
+                .transcript('#transcript', {
+                    timestamps: false,
+                    breaks: false
+                })
 
-        player.ramp("http://api.ramp.com/v1/mp2/playlist?e=52345506&apikey=0302cd28e05e0800f752e0db235d5440")
-
+                .load();
     </script>
 </body>
 </html>
